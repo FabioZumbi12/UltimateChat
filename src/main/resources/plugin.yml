@@ -1,0 +1,39 @@
+name: ${project.name}
+main: ${project.groupId}.${project.artifactId}
+version: ${project.version}
+author: FabioZumbi12
+description: ${project.description}
+softdepend: [mcMMO, SkillAPI, Essentials, SimpleClans, Vault, MarriageMaster, Marriage]
+commands:
+  uchat:
+    description: "Main command for ${project.name}."
+    aliases: [uchat, chat]
+  channel:
+    description: "Channel commands"
+  tell:
+    description: "Tell command"
+permissions:
+  uchat.*:
+    description: "All ultimatechat commands."
+    default: op
+    children:
+      uchat.admin: true
+      uchat.player: true
+  uchat.admin:
+    description: "All admin commands."
+    default: false
+    children:
+      uchat.cmd.reload: true
+      uchat.cmd.spy: true
+      uchat.cmd.mute: true
+      uchat.chat.mention: true
+      uchat.chat.color: true
+      uchat.channel.admin: true
+  uchat.player:
+    description: "All player commands."
+    default: true
+    children:
+      uchat.cmd.ignore: true
+      uchat.cmd.tell: true
+      uchat.channel.global: true
+      uchat.channel.local: true

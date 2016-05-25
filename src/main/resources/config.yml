@@ -1,0 +1,78 @@
+config-version: 1.0
+debug-messages: false
+language: PT-BR
+mention:
+  enable: true
+  prefix-color: '&e@'
+  playsound: note_pling
+  hover-message: '&e{playername} mentioned you!'
+general:
+  console-tag: '&6 {console}&3'
+  remove-from-chat: '[]'
+  channel-cmd-aliases: channel,ch
+  hover-events: true
+  default-channel: g
+  custom-formats: []
+  use-channel-tag-builder: false
+  spy-format: '&c&o[Spy] {output}'
+  default-tag-builder: world,marry-tag,ch-tags,clan-tag,group-prefix,nickname,group-suffix,message
+tell:
+  cmd-aliases: tell,t,w,m,msg,private,priv,r
+  prefix: '&6[{playername} -> {receivername}]: '
+  format: '{message}'
+  hover-messages: []
+tags:
+  group-prefix:
+    format: '&7[{group-prefix}&7]&r'
+    click-cmd: ''
+    hover-messages: 
+    - '&bRank: &e{prim-group}'
+  playername:
+    format: '{playername}'
+    click-cmd: 'tpa {playername}'
+    hover-messages: 
+    - '&7Click to send teleport request'
+  nickname:
+    format: '{nickname}'
+    click-cmd: ''
+    hover-messages:
+    - '&6Realname: {playername}'
+  group-suffix:
+    format: '&r{group-suffix}: '
+    click-cmd: ''
+    hover-messages: []
+  world:
+    format: '&7[{world}]&r'
+    click-cmd: ''
+    hover-messages:
+    - '&7Sent from world {world}'
+  message:
+    format: '{message}'
+    click-cmd: ''
+    hover-messages: []
+  ch-tags:
+    format: '{ch-color}[{ch-alias}]&r'
+    click-cmd: 'ch {ch-alias}'
+    hover-messages:
+    - '&3Channel name: {ch-color}{ch-name}'
+    - '&bClick to go to this channel!'
+  clan-tag:
+    format: '{clan-ctag}'
+    click-cmd: 'clan search {playername}'
+    hover-messages:
+    - '&bClan Tag: &7{clan-tag}'
+    - '&bClan Name: &7{clan-name}'
+    - '&bClan KDR: &7{clan-totalkdr}'
+    - '&bPlayer KDR: &7{clan-kdr}'
+    - '&bPlayer Rank: &7{clan-rank}'
+    - '&bIs Leader: &7{clan-isleader}'
+    - '&3Click for more info about this player'
+  marry-tag:
+    format: '{marry-prefix}{marry-suffix}'
+    click-cmd: ''
+    hover-messages: 
+    - '&cMarried with {marry-partner}'
+  admin-chat:
+    format: '&b[&r{playername}&b] '
+    click-cmd: ''
+    hover-messages: []

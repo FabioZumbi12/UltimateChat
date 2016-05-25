@@ -1,0 +1,218 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
+  <artifactId>UChat</artifactId>
+  <packaging>jar</packaging>
+  <name>UltimateChat</name>
+  <version>1.0.0</version>
+  <description>Ultimate Chat is an advanced chat hooking into most used plugins to show more info on player chat.</description>
+  <dependencies>
+		<!--Spigot-API-->
+        <dependency>
+          <groupId>org.spigotmc</groupId>
+          <artifactId>spigot-api</artifactId>
+          <version>1.9.2-R0.1-SNAPSHOT</version>
+          <!--  <version>1.8.8-R0.1-SNAPSHOT</version> -->
+        </dependency>
+        
+		<dependency>
+			<groupId>spigot-1.9</groupId>
+			<artifactId>spigot-1.9</artifactId>
+			<version>v1</version>
+			<scope>system</scope>
+			<systemPath>D:/ProjetosBukkit/APIs/spigot-1.9.jar</systemPath>
+		</dependency>
+		
+		<dependency>
+			<groupId>SimpleClans</groupId>
+			<artifactId>sSimpleClans</artifactId>
+			<version>v1</version>
+			<scope>system</scope>
+			<systemPath>D:/ProjetosBukkit/APIs/SimpleClans.jar</systemPath>
+		</dependency>
+		
+		<dependency>
+			<groupId>MarriageMaster</groupId>
+			<artifactId>MarriageMaster</artifactId>
+			<version>v1</version>
+			<scope>system</scope>
+			<systemPath>D:/ProjetosBukkit/APIs/MarriageMaster.jar</systemPath>
+		</dependency>
+		
+		<dependency>
+			<groupId>Marriage</groupId>
+			<artifactId>Marriage</artifactId>
+			<version>v1</version>
+			<scope>system</scope>
+			<systemPath>D:/ProjetosBukkit/APIs/Marriage.jar</systemPath>
+		</dependency>
+		
+        <!-- <dependency>
+			<groupId>Bukkit</groupId>
+			<artifactId>Bukkit</artifactId>
+			<version>v1</version>
+			<scope>system</scope>
+			<systemPath>D:/ProjetosBukkit/APIs/KCauldron-1.7.10-1481.145-server.jar</systemPath>
+		</dependency> -->
+		<dependency>
+			<groupId>repo.libs</groupId>
+			<artifactId>BossBarAPI</artifactId>
+			<version>v1</version>
+		</dependency>
+		<dependency>
+			<groupId>repo.libs</groupId>
+			<artifactId>mcMMO</artifactId>
+			<version>v1</version>
+		</dependency>
+		<dependency>
+			<groupId>repo.libs</groupId>
+			<artifactId>SkillAPI</artifactId>
+			<version>v1</version>
+		</dependency>
+		<dependency>
+			<groupId>repo.libs</groupId>
+			<artifactId>PvPManager</artifactId>
+			<version>v2</version>
+		</dependency>
+		<dependency>
+           <groupId>net.milkbowl.vault</groupId>
+           <artifactId>VaultAPI</artifactId>            
+           <version>LATEST</version>
+           <scope>provided</scope>
+        </dependency>
+		<dependency>
+            <groupId>net.ess3</groupId>
+            <artifactId>EssentialsX</artifactId>
+            <version>2.0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        
+  </dependencies>
+  
+  <repositories>
+     <repository>
+            <id>libs-repo</id>
+            <url>http://areaz12server.net.br/maven/</url>
+     </repository>
+     
+     <repository>
+	        <id>maven-restlet</id>
+	        <name>Public online Restlet repository</name>
+	        <url>http://maven.restlet.com</url>
+	</repository>
+     <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
+     </repository>
+     <repository>
+            <id>vault-repo</id>
+            <url>http://nexus.theyeticave.net/content/repositories/pub_releases</url>
+        </repository>
+     <repository>
+            <id>ess-repo</id>
+            <url>http://ci.drtshock.net/plugin/repository/everything</url>
+     </repository>     
+     <repository>
+            <id>dmulloy2-repo</id>
+            <url>http://repo.dmulloy2.net/content/groups/public/</url>
+     </repository>
+     
+  </repositories>
+  
+  <scm>
+     <connection>scm:git:git@github.com:FabioZumbi12/RedProtect.git</connection>
+     <developerConnection>scm:git:git@github.com:FabioZumbi12/RedProtect.git</developerConnection>
+     <url>https://github.com/FabioZumbi12/RedProtect/tree/master</url>
+     <tag>${project.version}</tag>
+  </scm>
+  
+  <build>
+    <finalName>${project.name}</finalName>
+    <defaultGoal>clean package install</defaultGoal>
+    <resources>
+        <resource>
+            <targetPath>.</targetPath>
+            <filtering>true</filtering>
+            <directory>src/main/resources/</directory>
+        </resource>
+    </resources>
+  
+  <plugins>
+      
+      <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>build-helper-maven-plugin</artifactId>
+          <version>1.10</version>
+          <executions>
+              <execution>
+                  <id>parse-version</id>
+                  <goals>
+                      <goal>parse-version</goal>
+                  </goals>
+              </execution>
+          </executions>
+      </plugin>
+      
+      <plugin>  
+        <groupId>org.apache.maven.plugins</groupId>  
+        <artifactId>maven-resources-plugin</artifactId>  
+        <version>2.4.3</version>  
+        <executions>  
+         <execution>
+          <id>copy-resources</id>
+          <phase>validate</phase>
+          <goals>
+            <goal>copy-resources</goal>
+          </goals>
+          <configuration>          
+          <outputDirectory>${project.basedir}/release</outputDirectory>
+          <resources>          
+            <resource>
+              <directory>${project.basedir}/target/</directory>
+              <filtering>false</filtering>
+              <includes>
+                <include>*.jar</include>
+              </includes>              
+            </resource>
+          </resources>
+          </configuration>
+        </execution>
+      </executions>  
+     </plugin>    
+     
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.1</version>
+        <configuration>
+          <source>1.7</source>
+          <target>1.7</target>
+        </configuration>        
+      </plugin>
+      
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>buildnumber-maven-plugin</artifactId>
+        <version>1.4</version>
+        <executions>
+          <execution>
+            <phase>verify</phase>
+            <goals>
+              <goal>create</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <doCheck>true</doCheck>
+          <doUpdate>true</doUpdate>
+          <format>${project.version}-b{0,number}</format>
+          <items>
+            <item>buildNumber0</item>
+          </items>
+        </configuration>
+      </plugin>
+      
+   </plugins>
+   
+   </build>   
+</project>
