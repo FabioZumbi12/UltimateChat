@@ -53,9 +53,9 @@ public class UCYaml extends YamlConfiguration {
   }
 
   /**Save to file if loaded by {@code load(File file)}.
- * @throws IOException If file is null.
- */
-public void save() throws IOException{
+  * @throws IOException If file is null.
+  */
+  public void save() throws IOException{
 	  Validate.notNull(file, "File cannot be null");
 	  save(this.file);
   }

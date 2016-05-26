@@ -15,8 +15,9 @@ public class UCChannel {
 	private boolean receiversMsg = false;
 	private List<String> ignoring = new ArrayList<String>();
 	private List<String> mutes = new ArrayList<String>();
+	private double cost = 0.0;
 
-	public UCChannel(String name, String alias, boolean worlds, int dist, String color, String builder, boolean focus, boolean receiversMsg) {
+	public UCChannel(String name, String alias, boolean worlds, int dist, String color, String builder, boolean focus, boolean receiversMsg, double cost) {
 		this.name = name;
 		this.alias = alias;
 		this.worlds = worlds;
@@ -25,6 +26,7 @@ public class UCChannel {
 		this.builder = builder;
 		this.focus = focus;
 		this.receiversMsg = receiversMsg;
+		this.cost = cost;
 	}
 	
 	public UCChannel(String name, String alias, String color) {
@@ -36,6 +38,14 @@ public class UCChannel {
 	public UCChannel(String name) {
 		this.name = name;
 		this.alias = name.substring(0, 1).toLowerCase();
+	}
+	
+	public double getCost(){
+		return this.cost;
+	}
+	
+	public void setCost(double cost){
+		this.cost = cost;
 	}
 	
 	public void setReceiversMsg(boolean show){

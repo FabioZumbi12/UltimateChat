@@ -1,6 +1,7 @@
 name: Global
 alias: g
 across-worlds: true
+cost: 0
 distance: 0
 color: '&2'
 need-focus: false

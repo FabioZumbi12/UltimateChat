@@ -49,6 +49,7 @@ public class UChat extends JavaPlugin {
 	public static ClanManager sc;
 	public static boolean MarryReloded;
 	public static boolean MarryMaster;
+	public static boolean ProtocolLib;
 	public static MarriageMaster mm;
 	public static Marriage mapi;
 
@@ -67,6 +68,7 @@ public class UChat extends JavaPlugin {
             SClans = checkSC();
             MarryReloded = checkMR();
             MarryMaster = checkMM();
+            ProtocolLib = checkPL();
             
             serv.getPluginCommand("uchat").setExecutor(new UCListener());
             serv.getPluginManager().registerEvents(new UCListener(), this);
@@ -74,6 +76,10 @@ public class UChat extends JavaPlugin {
             
             //register aliases
             registerAliases();
+            
+            if (ProtocolLib){
+            	logger.info("ProtocolLib found. Hooked.");
+            }
             
             if (MarryReloded){
             	mapi = MarriageAPI.getInstance();
@@ -186,6 +192,14 @@ public class UChat extends JavaPlugin {
 	
 	private boolean checkMM() {
 		Plugin p = Bukkit.getPluginManager().getPlugin("MarriageMaster");
+    	if (p != null && p.isEnabled()){
+    		return true;
+    	}
+		return false;
+	}
+	
+	private boolean checkPL() {
+		Plugin p = Bukkit.getPluginManager().getPlugin("ProtocolLib");
     	if (p != null && p.isEnabled()){
     		return true;
     	}

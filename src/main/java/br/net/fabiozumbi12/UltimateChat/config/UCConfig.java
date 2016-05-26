@@ -116,7 +116,8 @@ public class UCConfig{
 									channel.getString("color", "&b"),
 									channel.getString("tag-builder", getString("general.default-tag-builder")),
 									channel.getBoolean("need-focus", false),
-									channel.getBoolean("receivers-message", true));
+									channel.getBoolean("receivers-message", true),
+									channel.getDouble("cost", 0.0));
             				channels.put(Arrays.asList(file.getName().replace(".yml", ""), ch.getAlias()), ch);
             				channel.set("name", ch.getName());
             				channel.set("alias", ch.getAlias());
@@ -126,6 +127,7 @@ public class UCConfig{
             				channel.set("tag-builder", ch.getRawBuilder());
             				channel.set("need-focus", ch.neeFocus());
             				channel.set("receivers-message", ch.getReceiversMsg());
+            				channel.set("cost", ch.getCost());
             				try {
 								channel.save(file);
 							} catch (IOException e) {

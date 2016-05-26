@@ -29,6 +29,7 @@ permissions:
       uchat.chat.mention: true
       uchat.chat.color: true
       uchat.channel.admin: true
+      uchat.bypass.cost: true
   uchat.player:
     description: "All player commands."
     default: true

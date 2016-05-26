@@ -1,8 +1,14 @@
 package br.net.fabiozumbi12.UltimateChat;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
 
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 
@@ -16,6 +22,7 @@ import org.bukkit.entity.Player;
 
 import br.net.fabiozumbi12.UltimateChat.API.SendChannelMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.Fanciful.FancyMessage;
+import br.net.fabiozumbi12.UltimateChat.Fanciful.util.Reflection;
 
 public class UCMessages {
 
@@ -47,6 +54,15 @@ public class UCMessages {
 			if (!UCPerms.channelPerm(sender, ch)){
 				UChat.lang.sendMessage(sender, UChat.lang.get("channel.nopermission").replace("{channel}", ch.getName()));
 				return cancel;
+			}
+			
+			if (!UCPerms.hasPerm(sender, "bypass.cost") && UChat.econ != null && sender instanceof Player && ch.getCost() > 0){
+				if (UChat.econ.getBalance((Player)sender, ((Player)sender).getWorld().getName()) < ch.getCost()){
+					UChat.lang.sendMessage(sender, UChat.lang.get("channel.cost").replace("{value}", ""+ch.getCost()));
+					return cancel;
+				} else {
+					UChat.econ.withdrawPlayer((Player)sender, ((Player)sender).getWorld().getName(), ch.getCost());
+				}
 			}
 			
 			List<Player> receivers = new ArrayList<Player>();	
@@ -410,5 +426,74 @@ public class UCMessages {
 			return UChat.lang.get("tag.notset");
 		}
 		return tag;
+	}
+	
+	
+	public static void sendPlayerFakeMessage(Player p, String JsonMessage){
+		Object connection;	
+		 Object handle = Reflection.getHandle(p);
+		 try {
+			connection = Reflection.getField(handle.getClass(), "playerConnection").get(handle);
+			Reflection.getMethod(connection.getClass(), "sendPacket", Reflection.getNMSClass("Packet")).invoke(connection, createChatPacket(JsonMessage));
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private static Object createChatPacket(String json) throws IllegalArgumentException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException {
+		 Object nmsChatSerializerGsonInstance = null;
+		 Method fromJsonMethod = null;
+		 Constructor<?> nmsPacketPlayOutChatConstructor = null;
+		 try {
+				nmsPacketPlayOutChatConstructor = Reflection.getNMSClass("PacketPlayOutChat").getDeclaredConstructor(Reflection.getNMSClass("IChatBaseComponent"));
+				nmsPacketPlayOutChatConstructor.setAccessible(true);
+			} catch (NoSuchMethodException e) {
+				Bukkit.getLogger().log(Level.SEVERE, "Could not find Minecraft method or constructor.", e);
+			} catch (SecurityException e) {
+				Bukkit.getLogger().log(Level.WARNING, "Could not access constructor.", e);
+			}
+		 
+		// Find the field and its value, completely bypassing obfuscation
+					Class<?> chatSerializerClazz;
+
+					String version = Reflection.getVersion();
+					double majorVersion = Double.parseDouble(version.replace('_', '.').substring(1, 4));
+					int lesserVersion = Integer.parseInt(version.substring(6, 7));
+
+					if (majorVersion < 1.8 || (majorVersion == 1.8 && lesserVersion == 1)) {
+						chatSerializerClazz = Reflection.getNMSClass("ChatSerializer");
+					} else {
+						chatSerializerClazz = Reflection.getNMSClass("IChatBaseComponent$ChatSerializer");
+					}
+
+					if (chatSerializerClazz == null) {
+						throw new ClassNotFoundException("Can't find the ChatSerializer class");
+					}
+
+					for (Field declaredField : chatSerializerClazz.getDeclaredFields()) {
+						if (Modifier.isFinal(declaredField.getModifiers()) && Modifier.isStatic(declaredField.getModifiers()) && declaredField.getType().getName().endsWith("Gson")) {
+							// We've found our field
+							declaredField.setAccessible(true);
+							nmsChatSerializerGsonInstance = declaredField.get(null);
+							fromJsonMethod = nmsChatSerializerGsonInstance.getClass().getMethod("fromJson", String.class, Class.class);
+							break;
+						}
+					}
+
+		// Since the method is so simple, and all the obfuscated methods have the same name, it's easier to reimplement 'IChatBaseComponent a(String)' than to reflectively call it
+		// Of course, the implementation may change, but fuzzy matches might break with signature changes
+		Object serializedChatComponent = fromJsonMethod.invoke(nmsChatSerializerGsonInstance, json, Reflection.getNMSClass("IChatBaseComponent"));
+
+		return nmsPacketPlayOutChatConstructor.newInstance(serializedChatComponent);
 	}
 }

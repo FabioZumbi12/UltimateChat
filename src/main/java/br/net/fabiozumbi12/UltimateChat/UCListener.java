@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -20,11 +19,13 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.metadata.FixedMetadataValue;
-
 import br.net.fabiozumbi12.UltimateChat.config.UCConfig;
 import br.net.fabiozumbi12.UltimateChat.config.UCLang;
 
 public class UCListener implements CommandExecutor,Listener {
+	
+	
+	
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -54,16 +55,28 @@ public class UCListener implements CommandExecutor,Listener {
 				 
 				 if (args.length == 1){
 					 
-					 if (args[0].equalsIgnoreCase("help") || args[0].equalsIgnoreCase("?")){
+					 if (args[0].equalsIgnoreCase("help") || args[0].equalsIgnoreCase("?")){						 
 						 sendHelp(sender);
+						 return true;
+					 }
+									 
+					 if (args[0].equalsIgnoreCase("clear")){	
+						 if (!UCPerms.cmdPerm(p, "clear")){
+							 UChat.lang.sendMessage(p, UChat.lang.get("cmd.nopermission"));
+							 return true;
+						 }
+						 for (int i = 0; i < 100; i++){
+							 UCMessages.sendPlayerFakeMessage(p, " ");
+						 }						 
+						 UChat.lang.sendMessage(p, UChat.lang.get("cmd.clearchat.cleared"));
 						 return true;
 					 }
 					 
 					 if (args[0].equalsIgnoreCase("spy")){
 						if (!UCPerms.cmdPerm(p, "spy")){
 							UChat.lang.sendMessage(p, UChat.lang.get("cmd.nopermission"));
-								return true;
-							}
+							return true;
+						}
 						
 						boolean ispy = p.getMetadata("isSpy").get(0).asBoolean();
 						p.removeMetadata("isSpy", UChat.plugin);
