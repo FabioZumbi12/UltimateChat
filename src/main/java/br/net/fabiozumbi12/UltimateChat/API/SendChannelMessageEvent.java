@@ -23,7 +23,7 @@ public class SendChannelMessageEvent extends Event implements Cancellable{
 	private UCChannel channel;
 	private String[] defBuilder;
 	private String[] defFormat;
-	private HashMap<String,String> registeredReplacers;
+	private HashMap<String,String> registeredTags;
 	private boolean cancelChat = true;
 	
 	public SendChannelMessageEvent(HashMap<String,String> registeredReplacers, String[] defFormat, CommandSender sender, UCChannel channel, String msg){
@@ -32,7 +32,7 @@ public class SendChannelMessageEvent extends Event implements Cancellable{
 		this.channel = channel;
 		this.defBuilder = UChat.config.getDefBuilder();
 		this.defFormat = defFormat;
-		this.registeredReplacers = registeredReplacers;
+		this.registeredTags = registeredReplacers;
 	}
 	
 	/**Option to cancel or not the AsynPlayerChatEvent, for debug or some reason.
@@ -49,36 +49,40 @@ public class SendChannelMessageEvent extends Event implements Cancellable{
 		return this.cancelChat;
 	}
 	
-	/**Removes a custom registered {@code replacer}.
-	 * @param replacer - Replacer to remove.
+	/**Removes a custom registered tag {@code replacer}.
+	 * @param tagname - Tag to remove.
 	 * @return {@code true} if removed or {@code false} if dont contains the replacer.
 	 */
-	public boolean removeReplacer(String replacer){
-		if (this.registeredReplacers.keySet().contains(replacer)){
-			this.registeredReplacers.remove(replacer);
+	public boolean removeTag(String tagname){
+		if (this.registeredTags.keySet().contains(tagname)){
+			this.registeredTags.remove(tagname);
 			return true;
 		}
 		return false;
 	}
 	
-	/**Register a replacer.
-	 * @param replacer {@code String} - The replacer name.
-	 * @param result {@code String} - Result to show on chat.
-	 * @return {@code true} if added or {@code false} if already contains the replacer.
+	/**Register a tag and value. Add your chat tags here.
+	 * @param tagname {@code String} - The tag name.
+	 * @param value {@code String} - Result to show on chat.
+	 * @return {@code true} if added or {@code false} if already contains the tag.
 	 */
-	public boolean registerReplacer(String replacer, String result){
-		if (!this.registeredReplacers.keySet().contains(replacer)){
-			this.registeredReplacers.put(replacer, result);
+	public boolean addTag(String tagname, String value){
+		if (!this.registeredTags.keySet().contains(tagname)){
+			this.registeredTags.put(tagname, value);
 			return true;
 		}
 		return false;
 	}
 	
-	/**Get all registered replacers.
+	public void setTags(HashMap<String,String> tags){
+		this.registeredTags = tags;
+	}
+	
+	/**Get all registered tags.
 	 * @return {@code HashMap<String,String>} with all registered replacers.
 	 */
-	public HashMap<String,String> getResgisteredReplacers(){
-		return this.registeredReplacers;
+	public HashMap<String,String> getResgisteredTags(){
+		return this.registeredTags;
 	}
 	
 	/**Get an array of default tags set by other plugins as array.

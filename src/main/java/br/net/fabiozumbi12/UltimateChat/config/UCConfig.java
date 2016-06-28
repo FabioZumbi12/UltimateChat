@@ -239,6 +239,19 @@ public class UCConfig{
     	            UChat.logger.info("All configurations loaded!");
 	}
     
+	public List<String> getTagList(){
+		List<String> tags = new ArrayList<String>();
+		for (String key:configs.getKeys(true)){
+			if (key.startsWith("tags.") && key.split("\\.").length == 2){
+				tags.add(key.replace("tags.", ""));
+			}			
+		}
+		for (String str:getStringList("general.custom-tags")){
+			tags.add(str);
+		}
+		return tags;
+	}
+	
 	public UCChannel getChannel(String alias){		
 		for (List<String> aliases:channels.keySet()){
 			if (aliases.contains(alias)){				

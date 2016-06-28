@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -18,7 +19,9 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerCommandEvent;
-import org.bukkit.metadata.FixedMetadataValue;
+
+import br.com.devpaulo.legendchat.api.events.ChatMessageEvent;
+import br.net.fabiozumbi12.UltimateChat.API.SendChannelMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.config.UCConfig;
 import br.net.fabiozumbi12.UltimateChat.config.UCLang;
 
@@ -66,9 +69,9 @@ public class UCListener implements CommandExecutor,Listener {
 							 return true;
 						 }
 						 for (int i = 0; i < 100; i++){
-							 UCMessages.sendPlayerFakeMessage(p, " ");
+							 UCMessages.sendPlayerFakeMessage(p, "{\"text\":\" \"}");
 						 }						 
-						 UChat.lang.sendMessage(p, UChat.lang.get("cmd.clearchat.cleared"));
+						 UChat.lang.sendMessage(p, UChat.lang.get("cmd.clear.cleared"));
 						 return true;
 					 }
 					 
@@ -78,12 +81,11 @@ public class UCListener implements CommandExecutor,Listener {
 							return true;
 						}
 						
-						boolean ispy = p.getMetadata("isSpy").get(0).asBoolean();
-						p.removeMetadata("isSpy", UChat.plugin);
-						p.setMetadata("isSpy", new FixedMetadataValue(UChat.plugin, !ispy));	
-						if (!ispy){
+						if (!UCMessages.isSpy.contains(p.getName())){
+							UCMessages.isSpy.add(p.getName());
 							UChat.lang.sendMessage(p, UChat.lang.get("cmd.spy.enabled"));
 						} else {
+							UCMessages.isSpy.remove(p.getName());
 							UChat.lang.sendMessage(p, UChat.lang.get("cmd.spy.disabled"));
 						}
 						return true;
@@ -254,16 +256,8 @@ public class UCListener implements CommandExecutor,Listener {
 					//run bukkit chat event
 					Set<Player> pls = new HashSet<Player>();
 					pls.addAll(Bukkit.getOnlinePlayers());
-					String customFormat = "";
-					for (String format:UChat.config.getStringList("general.custom-formats")){
-						customFormat = customFormat+" "+format;
-					}
-					if (customFormat.length() > 0){
-						customFormat = customFormat.substring(1);
-					}
 					UCMessages.tempChannels.put(p.getName(), ch.getAlias());
 					AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(false, p, msg, pls);
-					event.setFormat(customFormat+" "+event.getFormat());
 					Bukkit.getPluginManager().callEvent(event); 
 					return;
 				}			
@@ -333,7 +327,12 @@ public class UCListener implements CommandExecutor,Listener {
 				
 				//send to player
 				Player receiver = UChat.serv.getPlayer(args[1]);
-									
+					
+				if (receiver == null || !receiver.isOnline()){
+					UChat.lang.sendMessage(p, UChat.lang.get("listener.invalidplayer"));
+					return;
+				}
+				
 				if (receiver.equals(p)){
 					UChat.lang.sendMessage(p, UChat.lang.get("cmd.tell.self"));
 					return;
@@ -392,12 +391,28 @@ public class UCListener implements CommandExecutor,Listener {
 		UCMessages.respondTell.put(tellreceiver.getName(),p.getName());
 		UCMessages.sendFancyMessage(new String[0], msg, null, p, tellreceiver);			
 	}
+	/*
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onChatMONITOR(AsyncPlayerChatEvent e){
+		UChat.logger.severe("Chat MONITOR: "+e.getFormat());
+	}
 	
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void onChatLOWEST(AsyncPlayerChatEvent e){
+		UChat.logger.severe("Chat LOWEST: "+e.getFormat());
+	}
+	
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onChatHIGHEST(AsyncPlayerChatEvent e){
+		UChat.logger.severe("Chat HIGHEST: "+e.getFormat());
+	}
+	*/
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onChat(AsyncPlayerChatEvent e){
 		if (e.isCancelled()){
 			return;
 		}
+		e.setCancelled(true);
 		Player p = e.getPlayer();
 		UChat.logger.debug("AsyncPlayerChatEvent - Channel: "+UCMessages.pChannels.get(p.getName()));		
 		
@@ -427,10 +442,21 @@ public class UCListener implements CommandExecutor,Listener {
 	@EventHandler
 	public void onJoin(PlayerJoinEvent e){
 		Player p = e.getPlayer();		
-		UCMessages.pChannels.put(p.getName(), UChat.config.getDefChannel().getAlias());		
-		if (!p.hasMetadata("isSpy")){
-			p.setMetadata("isSpy", new FixedMetadataValue(UChat.plugin, false));
+		UCMessages.pChannels.put(p.getName(), UChat.config.getDefChannel().getAlias());
+	}
+	
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void legendCompatEvent(SendChannelMessageEvent e){
+		if (e.isCancelled()){
+			return;
 		}		
+		ChatMessageEvent event = new ChatMessageEvent(e.getPlayer(), e.getResgisteredTags(), e.getMessage());
+		Bukkit.getPluginManager().callEvent(event);
+		if (event.isCancelled()){
+			e.setCancelled(true);
+		}
+		e.setMessage(event.getMessage());
+		e.setTags(event.getTagMap());
 	}
 	
 	@EventHandler
@@ -469,15 +495,19 @@ public class UCListener implements CommandExecutor,Listener {
 				channels.append(", "+ch.getName());
 			}
 		}
-		p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7>> -------------- "+UChat.lang.get("_UChat.prefix")+" Help &7-------------- <<"));
+		p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7--------------- "+UChat.lang.get("_UChat.prefix")+" Help &7---------------"));
 		p.sendMessage(UChat.lang.get("help.channels.available").replace("{channels}", channels.toString().substring(2)));
+		p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7------------------------------------------ <<"));
 		p.sendMessage(UChat.lang.get("help.channels.enter"));
 		p.sendMessage(UChat.lang.get("help.channels.send"));
 		if (p.hasPermission("uchat.cmd.tell")){
 			p.sendMessage(UChat.lang.get("help.tell.lock"));
 			p.sendMessage(UChat.lang.get("help.tell.send"));
 			p.sendMessage(UChat.lang.get("help.tell.respond"));
-		}		
+		}	
+		if (p.hasPermission("uchat.cmd.clear")){
+			p.sendMessage(UChat.lang.get("help.cmd.clear"));
+		}
 		if (p.hasPermission("uchat.cmd.spy")){
 			p.sendMessage(UChat.lang.get("help.cmd.spy"));
 		}

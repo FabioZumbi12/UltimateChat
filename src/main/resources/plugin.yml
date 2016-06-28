@@ -36,5 +36,6 @@ permissions:
     children:
       uchat.cmd.ignore: true
       uchat.cmd.tell: true
+      uchat.cmd.clear: true
       uchat.channel.global: true
       uchat.channel.local: true

@@ -4,7 +4,7 @@
   <artifactId>UChat</artifactId>
   <packaging>jar</packaging>
   <name>UltimateChat</name>
-  <version>1.0.0</version>
+  <version>1.3</version>
   <description>Ultimate Chat is an advanced chat hooking into most used plugins to show more info on player chat.</description>
   <dependencies>
 		<!--Spigot-API-->
@@ -126,9 +126,9 @@
   </repositories>
   
   <scm>
-     <connection>scm:git:git@github.com:FabioZumbi12/RedProtect.git</connection>
-     <developerConnection>scm:git:git@github.com:FabioZumbi12/RedProtect.git</developerConnection>
-     <url>https://github.com/FabioZumbi12/RedProtect/tree/master</url>
+     <connection>scm:git:git@github.com:FabioZumbi12/UltimateChat.git</connection>
+     <developerConnection>scm:git:git@github.com:FabioZumbi12/UltimateChat.git</developerConnection>
+     <url>https://github.com/FabioZumbi12/UltimateChat/tree/master</url>
      <tag>${project.version}</tag>
   </scm>
   

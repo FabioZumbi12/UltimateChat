@@ -7,12 +7,12 @@ mention:
   playsound: note_pling
   hover-message: '&e{playername} mentioned you!'
 general:
+  custom-tags: []
   console-tag: '&6 {console}&3'
   remove-from-chat: '[]'
   channel-cmd-aliases: channel,ch
   hover-events: true
   default-channel: g
-  custom-formats: []
   use-channel-tag-builder: false
   spy-format: '&c&o[Spy] {output}'
   default-tag-builder: world,marry-tag,ch-tags,clan-tag,group-prefix,nickname,group-suffix,message

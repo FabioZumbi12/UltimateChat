@@ -24,6 +24,7 @@ public class uChatAPI {
 			UChat.config.setConfig("tags."+tagName+".format", format);
 			UChat.config.setConfig("tags."+tagName+".click-cmd", clickCmd);
 			UChat.config.setConfig("tags."+tagName+".hover-messages", hoverMessages);
+			UChat.config.save();
 			return true;
 		}
 		return false;

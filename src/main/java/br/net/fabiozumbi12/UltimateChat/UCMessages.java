@@ -34,10 +34,15 @@ public class UCMessages {
 	public static HashMap<String,String> tempTellPlayers = new HashMap<String,String>();
 	public static HashMap<String,String> respondTell = new HashMap<String,String>();
 	public static List<String> mutes = new ArrayList<String>();
+	public static List<String> isSpy = new ArrayList<String>();
 	
 	protected static boolean sendFancyMessage(String[] format, String msg, UCChannel channel, CommandSender sender, Player tellReceiver){
 		//Execute listener:
-		SendChannelMessageEvent event = new SendChannelMessageEvent(new HashMap<String,String>(), format, sender, channel, msg);
+		HashMap<String,String> tags = new HashMap<String,String>();
+		for (String str:UChat.config.getStringList("general.custom-tags")){
+			tags.put(str, str);
+		}
+		SendChannelMessageEvent event = new SendChannelMessageEvent(tags, format, sender, channel, msg);
 		Bukkit.getPluginManager().callEvent(event);
 		if (event.isCancelled()){
 			return event.getCancelIncomingChat();
@@ -45,7 +50,7 @@ public class UCMessages {
 			
 		boolean cancel = event.getCancelIncomingChat();
 		String toConsole = "";
-		registeredReplacers = event.getResgisteredReplacers();
+		registeredReplacers = event.getResgisteredTags();
 		defFormat = event.getDefFormat();
 		
 		if (event.getChannel() != null){					
@@ -101,7 +106,7 @@ public class UCMessages {
 									
 			//send spy
 			for (Player receiver:UChat.serv.getOnlinePlayers()){			
-				if (!receiver.equals(sender) && !receivers.contains(receiver) && !receivers.contains(sender) && receiver.getMetadata("isSpy").get(0).asBoolean()){	
+				if (!receiver.equals(sender) && !receivers.contains(receiver) && !receivers.contains(sender) && isSpy.contains(receiver.getName())){	
 					String spyformat = UChat.config.getString("general.spy-format");
 					spyformat = spyformat.replace("{output}", ChatColor.stripColor(sendMessage(sender, receiver, event.getMessage(), ch, true)));
 					receiver.sendMessage(ChatColor.translateAlternateColorCodes('&', spyformat));
@@ -130,7 +135,7 @@ public class UCMessages {
 			UChat.serv.getConsoleSender().sendMessage(toConsole);
 			
 			for (Player receiver:UChat.serv.getOnlinePlayers()){			
-				if (!receiver.equals(tellReceiver) && !receiver.equals(sender) && receiver.getMetadata("isSpy").get(0).asBoolean()){	
+				if (!receiver.equals(tellReceiver) && !receiver.equals(sender) && isSpy.contains(receiver.getName())){	
 					String spyformat = UChat.config.getString("general.spy-format");
 					spyformat = spyformat.replace("{output}", ChatColor.stripColor(sendMessage(sender, tellReceiver, event.getMessage(), fakech, true)));
 					receiver.sendMessage(ChatColor.translateAlternateColorCodes('&', spyformat));
@@ -325,7 +330,11 @@ public class UCMessages {
 		.replace("{playername}", cmdSender.getName())
 		.replace("{receivername}", receiver.getName());
 		for (String repl:registeredReplacers.keySet()){
-			text = text.replace(repl, registeredReplacers.get(repl));
+			if (registeredReplacers.get(repl).equals(repl)){
+				text = text.replace(repl, "");
+				continue;
+			}
+			text = text.replace(repl, registeredReplacers.get(repl));			
 		}		
 		String def = "";
 		for (int i = 0; i < defFormat.length; i++){
@@ -466,11 +475,16 @@ public class UCMessages {
 		// Find the field and its value, completely bypassing obfuscation
 					Class<?> chatSerializerClazz;
 
-					String version = Reflection.getVersion();
-					double majorVersion = Double.parseDouble(version.replace('_', '.').substring(1, 4));
-					int lesserVersion = Integer.parseInt(version.substring(6, 7));
+					String[] version = Reflection.getVersion().replace('_', '.').split("\\.");			
+					int majorVersion = Integer.parseInt((version[0]+version[1]).substring(1));
+					
+					int lesserVersion = 0;
+					try {
+						lesserVersion = Integer.parseInt(version[2]);
+					} catch (NumberFormatException ex){				
+					}
 
-					if (majorVersion < 1.8 || (majorVersion == 1.8 && lesserVersion == 1)) {
+					if (majorVersion < 18 || (majorVersion == 18 && lesserVersion == 1)) {
 						chatSerializerClazz = Reflection.getNMSClass("ChatSerializer");
 					} else {
 						chatSerializerClazz = Reflection.getNMSClass("IChatBaseComponent$ChatSerializer");
