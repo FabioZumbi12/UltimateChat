@@ -34,7 +34,8 @@ permissions:
     description: "All player commands."
     default: true
     children:
-      uchat.cmd.ignore: true
+      uchat.cmd.ignore.player: true
+      uchat.cmd.ignore.channel: true
       uchat.cmd.tell: true
       uchat.cmd.clear: true
       uchat.channel.global: true

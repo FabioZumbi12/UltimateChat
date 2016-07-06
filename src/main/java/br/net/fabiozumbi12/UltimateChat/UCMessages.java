@@ -33,6 +33,7 @@ public class UCMessages {
 	public static HashMap<String,String> tellPlayers = new HashMap<String,String>();
 	public static HashMap<String,String> tempTellPlayers = new HashMap<String,String>();
 	public static HashMap<String,String> respondTell = new HashMap<String,String>();
+	private static HashMap<String,List<String>> ignoringPlayer = new HashMap<String,List<String>>();
 	public static List<String> mutes = new ArrayList<String>();
 	public static List<String> isSpy = new ArrayList<String>();
 	
@@ -130,9 +131,6 @@ public class UCMessages {
 		} else {						
 			//tell send spy
 			UCChannel fakech = new UCChannel("tell");
-					
-			toConsole = sendMessage(sender, tellReceiver, event.getMessage(), fakech, false);
-			UChat.serv.getConsoleSender().sendMessage(toConsole);
 			
 			for (Player receiver:UChat.serv.getOnlinePlayers()){			
 				if (!receiver.equals(tellReceiver) && !receiver.equals(sender) && isSpy.contains(receiver.getName())){	
@@ -140,9 +138,37 @@ public class UCMessages {
 					spyformat = spyformat.replace("{output}", ChatColor.stripColor(sendMessage(sender, tellReceiver, event.getMessage(), fakech, true)));
 					receiver.sendMessage(ChatColor.translateAlternateColorCodes('&', spyformat));
 				}
-			}
+			}			
+			toConsole = sendMessage(sender, tellReceiver, event.getMessage(), fakech, false);
+			UChat.serv.getConsoleSender().sendMessage(toConsole);
 		}
 		return cancel;
+	}
+	
+	public static boolean isIgnoringPlayers(String p){
+		List<String> list = new ArrayList<String>();
+		if (ignoringPlayer.containsKey(p)){
+			list = ignoringPlayer.get(p);
+		}
+		return list.contains(p);
+	}
+	
+	public static void ignorePlayer(String p, String victim){
+		List<String> list = new ArrayList<String>();
+		if (ignoringPlayer.containsKey(p)){
+			list = ignoringPlayer.get(p);
+		}
+		list.add(victim);
+		ignoringPlayer.put(p, list);
+	}
+	
+	public static void unIgnorePlayer(String p, String victim){
+		List<String> list = new ArrayList<String>();
+		if (ignoringPlayer.containsKey(p)){
+			list = ignoringPlayer.get(p);
+		}
+		list.remove(victim);
+		ignoringPlayer.put(p, list);
 	}
 	
 	private static String sendMessage(CommandSender sender, CommandSender receiver, String msg, UCChannel ch, boolean isSpy){
@@ -250,8 +276,7 @@ public class UCMessages {
 			}			
 		}
 		
-		
-		if (!isSpy){
+		if (!isSpy && !isIgnoringPlayers(sender.getName())){
 			fanci.send(receiver);
 		}		
 		return fanci.toOldMessageFormat();
@@ -294,7 +319,7 @@ public class UCMessages {
 			}			
 		}
 		
-		if (!isSpy){
+		if (!isSpy && !isIgnoringPlayers(sender.getName())){
 			receiver.sendMessage(msgFinal.toString());	
 		}		
 		return msgFinal.toString();

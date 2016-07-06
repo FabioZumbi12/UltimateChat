@@ -18,7 +18,7 @@ general:
   default-tag-builder: world,marry-tag,ch-tags,clan-tag,group-prefix,nickname,group-suffix,message
 tell:
   cmd-aliases: tell,t,w,m,msg,private,priv,r
-  prefix: '&6[{playername} -> {receivername}]: '
+  prefix: '&6[&c{playername} &6-> &c{receivername}&6]: '
   format: '{message}'
   hover-messages: []
 tags:

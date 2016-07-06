@@ -93,26 +93,40 @@ public class UCListener implements CommandExecutor,Listener {
 				 }
 				 
 				 if (args.length == 2){
-					 // chat ignore <channel>
-					 if (args[0].equalsIgnoreCase("ignore")){
-						 if (!UCPerms.cmdPerm(p, "ignore")){
-							 UChat.lang.sendMessage(p, UChat.lang.get("cmd.nopermission"));
-							 return true;
-						 }						 
+					 // chat ignore <channel/player>
+					 if (args[0].equalsIgnoreCase("ignore")){						 						 
 						 UCChannel ch = UChat.config.getChannel(args[1]);
-						 if (ch == null){
+						 if (Bukkit.getPlayer(args[1]) != null){
+							 Player pi = Bukkit.getPlayer(args[1]);
+							 if (!UCPerms.cmdPerm(p, "ignore.player")){
+								 UChat.lang.sendMessage(p, UChat.lang.get("cmd.nopermission"));
+								 return true;
+							 }
+							 if (UCMessages.isIgnoringPlayers(pi.getName())){
+								 UCMessages.unIgnorePlayer(p.getName(), pi.getName());
+								 UChat.lang.sendMessage(p, UChat.lang.get("player.unignoring").replace("{player}", pi.getName()));
+							 } else {
+								 UCMessages.ignorePlayer(p.getName(), pi.getName());
+								 UChat.lang.sendMessage(p, UChat.lang.get("player.ignoring").replace("{player}", pi.getName()));
+							 }
+							 return true;
+						 } else if (ch != null){	
+							 if (!UCPerms.cmdPerm(p, "ignore.channel")){
+								 UChat.lang.sendMessage(p, UChat.lang.get("cmd.nopermission"));
+								 return true;
+							 }
+							 if (ch.isIgnoring(p.getName())){
+								 ch.unIgnoreThis(p.getName());
+								 UChat.lang.sendMessage(p, UChat.lang.get("channel.notignoring").replace("{channel}", ch.getName()));
+							 } else {
+								 ch.ignoreThis(p.getName());
+								 UChat.lang.sendMessage(p, UChat.lang.get("channel.ignoring").replace("{channel}", ch.getName()));
+							 }
+							 return true;
+						 } else {
 							 UChat.lang.sendMessage(p, UChat.lang.get("channel.dontexist").replace("{channel}", args[1]));
 							 return true;
 						 }
-						 
-						 if (ch.isIgnoring(p.getName())){
-							 ch.unIgnoreThis(p.getName());
-							 UChat.lang.sendMessage(p, UChat.lang.get("channel.notignoring").replace("{channel}", ch.getName()));
-						 } else {
-							 ch.ignoreThis(p.getName());
-							 UChat.lang.sendMessage(p, UChat.lang.get("channel.ignoring").replace("{channel}", ch.getName()));
-						 }
-						 return true;
 					 }
 					 
 					 //chat mute <player>
@@ -386,8 +400,7 @@ public class UCListener implements CommandExecutor,Listener {
 		if (receiver == null || !receiver.isOnline() || !p.canSee(receiver)){
 			UChat.lang.sendMessage(p, UChat.lang.get("listener.invalidplayer"));
 			return;
-		}
-							
+		}							
 		UCMessages.respondTell.put(tellreceiver.getName(),p.getName());
 		UCMessages.sendFancyMessage(new String[0], msg, null, p, tellreceiver);			
 	}
@@ -514,8 +527,11 @@ public class UCListener implements CommandExecutor,Listener {
 		if (p.hasPermission("uchat.cmd.mute")){
 			p.sendMessage(UChat.lang.get("help.cmd.mute"));
 		}
-		if (p.hasPermission("uchat.cmd.ignore")){
-			p.sendMessage(UChat.lang.get("help.cmd.ignore"));
+		if (p.hasPermission("uchat.cmd.ignore.player")){
+			p.sendMessage(UChat.lang.get("help.cmd.ignore.player"));
+		}
+		if (p.hasPermission("uchat.cmd.ignore.channel")){
+			p.sendMessage(UChat.lang.get("help.cmd.ignore.channel"));
 		}
 		if (p.hasPermission("uchat.cmd.reload")){
 			p.sendMessage(UChat.lang.get("help.cmd.reload"));
