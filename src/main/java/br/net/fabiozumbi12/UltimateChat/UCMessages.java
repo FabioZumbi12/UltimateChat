@@ -268,7 +268,7 @@ public class UCMessages {
 				fanci.text(prefix,"")
 		   		   .then(" ");
 			}			
-			fanci.text(format,"")
+			fanci.text(format,"message")
 	   		   .then(" ");
 			
 			if (!isSpy){

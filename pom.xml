@@ -4,7 +4,7 @@
   <artifactId>UChat</artifactId>
   <packaging>jar</packaging>
   <name>UltimateChat</name>
-  <version>1.5</version>
+  <version>1.4</version>
   <description>Ultimate Chat is an advanced chat hooking into most used plugins to show more info on player chat.</description>
   <dependencies>
 		<!--Spigot-API-->
