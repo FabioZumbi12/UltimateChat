@@ -13,11 +13,14 @@ general:
   channel-cmd-aliases: channel,ch
   hover-events: true
   default-channel: g
-  use-channel-tag-builder: false
   spy-format: '&c&o[Spy] {output}'
   default-tag-builder: world,marry-tag,ch-tags,clan-tag,group-prefix,nickname,group-suffix,message
 tell:
   cmd-aliases: tell,t,w,m,msg,private,priv,r
+  prefix: '&6[&c{playername} &6-> &c{receivername}&6]: '
+  format: '{message}'
+  hover-messages: []
+bungee:
   prefix: '&6[&c{playername} &6-> &c{receivername}&6]: '
   format: '{message}'
   hover-messages: []
@@ -76,3 +79,8 @@ tags:
     format: '&b[&r{playername}&b] '
     click-cmd: ''
     hover-messages: []
+  bungee:
+    format: '&7[{world}]{ch-color}[Bungee-{server}] {playername}: &7'
+    click-cmd: ''
+    hover-messages:
+    - '{ch-color}Sent from server -{server}-'

@@ -22,10 +22,10 @@ class UCChatProtection implements Listener{
 
 	@EventHandler
 	public void onPlayerChat(SendChannelMessageEvent e){
-		if (!(e.getPlayer() instanceof Player)){
+		if (!(e.getSender() instanceof Player)){
 			return;
 		}
-		final Player p = (Player) e.getPlayer();
+		final Player p = (Player) e.getSender();
 		String msg = e.getMessage();
 		
 		//mute check

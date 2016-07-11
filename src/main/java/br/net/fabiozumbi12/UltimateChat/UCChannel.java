@@ -16,8 +16,10 @@ public class UCChannel {
 	private List<String> ignoring = new ArrayList<String>();
 	private List<String> mutes = new ArrayList<String>();
 	private double cost = 0.0;
+	private boolean bungee = false;
+	private boolean ownBuilder = false;
 
-	public UCChannel(String name, String alias, boolean worlds, int dist, String color, String builder, boolean focus, boolean receiversMsg, double cost) {
+	public UCChannel(String name, String alias, boolean worlds, int dist, String color, String builder, boolean focus, boolean receiversMsg, double cost, boolean isbungee, boolean ownBuilder) {
 		this.name = name;
 		this.alias = alias;
 		this.worlds = worlds;
@@ -27,6 +29,8 @@ public class UCChannel {
 		this.focus = focus;
 		this.receiversMsg = receiversMsg;
 		this.cost = cost;
+		this.bungee = isbungee;
+		this.ownBuilder  = ownBuilder;
 	}
 	
 	public UCChannel(String name, String alias, String color) {
@@ -38,6 +42,10 @@ public class UCChannel {
 	public UCChannel(String name) {
 		this.name = name;
 		this.alias = name.substring(0, 1).toLowerCase();
+	}
+	
+	public boolean useOwnBuilder(){
+		return this.ownBuilder;
 	}
 	
 	public double getCost(){
@@ -122,5 +130,9 @@ public class UCChannel {
 	
 	public boolean matchChannel(String aliasOrName){
 		return this.alias.equalsIgnoreCase(aliasOrName) || this.name.equalsIgnoreCase(aliasOrName);
+	}
+
+	public boolean isBungee() {		
+		return this.bungee ;
 	}
 }

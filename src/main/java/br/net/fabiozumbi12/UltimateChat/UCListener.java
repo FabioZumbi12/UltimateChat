@@ -27,9 +27,6 @@ import br.net.fabiozumbi12.UltimateChat.config.UCLang;
 
 public class UCListener implements CommandExecutor,Listener {
 	
-	
-	
-	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		
@@ -331,8 +328,8 @@ public class UCListener implements CommandExecutor,Listener {
 					String prefix = UChat.config.getString("tell.prefix");
 					String format = UChat.config.getString("tell.format");
 					
-					prefix = UCMessages.formatSecondTag("", prefix, p, UChat.serv.getConsoleSender(), msg, new UCChannel("tell"));
-					format = UCMessages.formatSecondTag("tell", format, p, UChat.serv.getConsoleSender(), msg, new UCChannel("tell"));
+					prefix = UCMessages.formatTags("", prefix, p, UChat.serv.getConsoleSender(), msg, new UCChannel("tell"));
+					format = UCMessages.formatTags("tell", format, p, UChat.serv.getConsoleSender(), msg, new UCChannel("tell"));
 							
 					p.sendMessage(prefix+format);
 					UChat.serv.getConsoleSender().sendMessage(prefix+format);
@@ -383,8 +380,8 @@ public class UCListener implements CommandExecutor,Listener {
 				String prefix = UChat.config.getString("tell.prefix");
 				String format = UChat.config.getString("tell.format");
 				
-				prefix = UCMessages.formatSecondTag("", prefix, UChat.serv.getConsoleSender(), p, msg, new UCChannel("tell"));
-				format = UCMessages.formatSecondTag("tell", format, UChat.serv.getConsoleSender(), p, msg, new UCChannel("tell"));
+				prefix = UCMessages.formatTags("", prefix, UChat.serv.getConsoleSender(), p, msg, new UCChannel("tell"));
+				format = UCMessages.formatTags("tell", format, UChat.serv.getConsoleSender(), p, msg, new UCChannel("tell"));
 						
 				p.sendMessage(prefix+format);
 				UChat.serv.getConsoleSender().sendMessage(prefix+format);
@@ -458,12 +455,12 @@ public class UCListener implements CommandExecutor,Listener {
 		UCMessages.pChannels.put(p.getName(), UChat.config.getDefChannel().getAlias());
 	}
 	
-	@EventHandler(priority = EventPriority.LOWEST)
+	@EventHandler(priority = EventPriority.LOW)
 	public void legendCompatEvent(SendChannelMessageEvent e){
 		if (e.isCancelled()){
 			return;
 		}		
-		ChatMessageEvent event = new ChatMessageEvent(e.getPlayer(), e.getResgisteredTags(), e.getMessage());
+		ChatMessageEvent event = new ChatMessageEvent(e.getSender(), e.getResgisteredTags(), e.getMessage());
 		Bukkit.getPluginManager().callEvent(event);
 		if (event.isCancelled()){
 			e.setCancelled(true);

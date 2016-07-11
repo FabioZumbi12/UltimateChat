@@ -183,7 +183,7 @@ public class UCMessages {
 				
 		if (!ch.getName().equals("tell")){
 			String[] defaultBuilder = UChat.config.getDefBuilder();
-			if (UChat.config.getBool("general.use-channel-tag-builder")){
+			if (ch.useOwnBuilder()){
 				defaultBuilder = ch.getBuilder();
 			}
 			
@@ -208,15 +208,15 @@ public class UCMessages {
 				}			
 							
 				if (execute != null && execute.length() > 0){
-					fanci.command(formatSecondTag(tag, "/"+execute, sender, receiver, msg, ch));
+					fanci.command(formatTags(tag, "/"+execute, sender, receiver, msg, ch));
 				}
 				
 				if (UChat.config.getBool("mention.enable") && tag.equals("message") && !StringUtils.containsIgnoreCase(msg, sender.getName())){
-					tooltip = formatSecondTag(tag, tooltip, sender, receiver, msg, ch);
+					tooltip = formatTags(tag, tooltip, sender, receiver, msg, ch);
 					msg = mention(sender, receiver, msg);		
-					format = formatSecondTag(tag, format, sender, receiver, msg, ch);
+					format = formatTags(tag, format, sender, receiver, msg, ch);
 					if (UChat.config.getString("mention.hover-message").length() > 0 && StringUtils.containsIgnoreCase(msg, receiver.getName())){
-						tooltip = formatSecondTag(tag, UChat.config.getString("mention.hover-message"), sender, receiver, msg, ch);
+						tooltip = formatTags(tag, UChat.config.getString("mention.hover-message"), sender, receiver, msg, ch);
 						fanci.text(format,tag)
 				   		   .tooltip(tooltip)
 				   		   .then(" ");
@@ -229,8 +229,8 @@ public class UCMessages {
 				   		   .then(" ");
 					}				
 				} else {
-					format = formatSecondTag(tag, format, sender, receiver, msg, ch);
-					tooltip = formatSecondTag(tag, tooltip, sender, receiver, msg, ch);
+					format = formatTags(tag, format, sender, receiver, msg, ch);
+					tooltip = formatTags(tag, tooltip, sender, receiver, msg, ch);
 					if (tooltip.length() > 0){				
 						fanci.text(format,tag)
 				   		   .tooltip(tooltip)
@@ -256,9 +256,9 @@ public class UCMessages {
 			}
 						
 			
-			prefix = formatSecondTag("", prefix, sender, receiver, msg, ch);						
-			format = formatSecondTag("tell", format, sender, receiver, msg, ch);
-			tooltip = formatSecondTag("", tooltip, sender, receiver, msg, ch);
+			prefix = formatTags("", prefix, sender, receiver, msg, ch);						
+			format = formatTags("tell", format, sender, receiver, msg, ch);
+			tooltip = formatTags("", tooltip, sender, receiver, msg, ch);
 			
 			if (tooltip.length() > 0){				
 				fanci.text(prefix,"")
@@ -287,7 +287,7 @@ public class UCMessages {
 		
 		if (!ch.getName().equals("tell")){
 			String[] defaultBuilder = UChat.config.getDefBuilder();
-			if (UChat.config.getBool("general.use-channel-tag-builder")){
+			if (ch.useOwnBuilder()){
 				defaultBuilder = ch.getBuilder();
 			}
 					
@@ -298,7 +298,7 @@ public class UCMessages {
 				}
 				String format = UChat.config.getString("tags."+tag+".format");
 				
-				format = formatSecondTag(tag, format, sender, receiver, msg, ch);
+				format = formatTags(tag, format, sender, receiver, msg, ch);
 				
 				if (UChat.config.getBool("mention.enable") && tag.equals("message") && !StringUtils.containsIgnoreCase(msg, sender.getName())){
 					format = mention(sender, receiver, format);
@@ -310,8 +310,8 @@ public class UCMessages {
 			String prefix = UChat.config.getString("tell.prefix");
 			String format = UChat.config.getString("tell.format");
 			
-			prefix = formatSecondTag("", prefix, sender, receiver, msg, ch);
-			format = formatSecondTag("tell", format, sender, receiver, msg, ch);
+			prefix = formatTags("", prefix, sender, receiver, msg, ch);
+			format = formatTags("tell", format, sender, receiver, msg, ch);
 			msgFinal.append(prefix).append(format);
 			
 			if (!isSpy){
@@ -325,12 +325,16 @@ public class UCMessages {
 		return msgFinal.toString();
 	}
 	
-	private static String mention(CommandSender sender, CommandSender receiver, String msg) {
+	public static String mention(Object sender, CommandSender receiver, String msg) {
 		//mention
 		for (Player p:UChat.serv.getOnlinePlayers()){
 			if (UChat.config.getBool("mention.enable")){
 				if (StringUtils.containsIgnoreCase(msg, p.getName())){
-					if (receiver instanceof Player && receiver.equals(p) && UCPerms.hasPerm(sender, "chat.mention")){
+					if (receiver instanceof Player && receiver.equals(p)){
+						if (sender instanceof CommandSender && !UCPerms.hasPerm((CommandSender)sender, "chat.mention")){
+							msg = msg.replaceAll("(?i)\\b"+p.getName()+"\\b", p.getName());
+							continue;
+						}
 						msg = msg.replaceAll("(?i)\\b"+p.getName()+"\\b", UChat.config.getColor("mention.prefix-color")+p.getName()+ChatColor.RESET);
 						for (Sound sound:Sound.values()){
 							if (StringUtils.containsIgnoreCase(sound.toString(),UChat.config.getString("mention.playsound"))){
@@ -347,13 +351,18 @@ public class UCMessages {
 		return msg;
 	}
 	
-	static String formatSecondTag(String tag, String text, CommandSender cmdSender, CommandSender receiver, String msg, UCChannel ch){
+	public static String formatTags(String tag, String text, Object cmdSender, Object receiver, String msg, UCChannel ch){
 		text = text.replace("{ch-color}", ch.getColor())
 		.replace("{ch-name}", ch.getName())
 		.replace("{ch-alias}", ch.getAlias())
-		.replace("{message}", msg)
-		.replace("{playername}", cmdSender.getName())
-		.replace("{receivername}", receiver.getName());
+		.replace("{message}", msg);
+		if (cmdSender instanceof CommandSender){
+			text = text.replace("{playername}", ((CommandSender)cmdSender).getName())
+					.replace("{receivername}", ((CommandSender)receiver).getName());
+		} else {
+			text = text.replace("{playername}", (String)cmdSender)
+					.replace("{receivername}", (String)receiver);
+		}
 		for (String repl:registeredReplacers.keySet()){
 			if (registeredReplacers.get(repl).equals(repl)){
 				text = text.replace(repl, "");
@@ -434,8 +443,11 @@ public class UCMessages {
 				}
 			}
 		}						
-		text = text.replace("{nickname}", UChat.config.getString("general.console-tag").replace("{console}", cmdSender.getName()));
-		
+		if (cmdSender instanceof CommandSender){
+			text = text.replace("{nickname}", UChat.config.getString("general.console-tag").replace("{console}", ((CommandSender)cmdSender).getName()));
+		} else {
+			text = text.replace("{nickname}", UChat.config.getString("general.console-tag").replace("{console}", (String)cmdSender));
+		}
 		text = text.replaceAll("\\{.*\\}", "");
 		
 		if (!tag.equals("message")){
@@ -448,11 +460,15 @@ public class UCMessages {
 			return text = "";
 		}
 		
-		if (tag.equals("tell") || (tag.equals("message") && !UCPerms.hasPerm(cmdSender, "chat.color"))){
-			return text;
+		if (cmdSender instanceof CommandSender){
+			if (tag.equals("tell") || (tag.equals("message") && !UCPerms.hasPerm((CommandSender)cmdSender, "chat.color"))){
+				return text;
+			} else {
+				return ChatColor.translateAlternateColorCodes('&', text);
+			}
 		} else {
 			return ChatColor.translateAlternateColorCodes('&', text);
-		}
+		}		
 	}
 	
 	private static String checkEmpty(String tag){

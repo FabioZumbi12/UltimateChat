@@ -117,7 +117,9 @@ public class UCConfig{
 									channel.getString("tag-builder", getString("general.default-tag-builder")),
 									channel.getBoolean("need-focus", false),
 									channel.getBoolean("receivers-message", true),
-									channel.getDouble("cost", 0.0));
+									channel.getDouble("cost", 0.0),
+									channel.getBoolean("bungee", false),
+									channel.getBoolean("use-this-builder", false));
             				channels.put(Arrays.asList(file.getName().replace(".yml", ""), ch.getAlias()), ch);
             				channel.set("name", ch.getName());
             				channel.set("alias", ch.getAlias());
@@ -128,6 +130,8 @@ public class UCConfig{
             				channel.set("need-focus", ch.neeFocus());
             				channel.set("receivers-message", ch.getReceiversMsg());
             				channel.set("cost", ch.getCost());
+            				channel.set("bungee", ch.isBungee());
+            				channel.set("use-this-builder", ch.useOwnBuilder());
             				try {
 								channel.save(file);
 							} catch (IOException e) {
@@ -181,6 +185,10 @@ public class UCConfig{
             					+ " - {marry-partner}: Get the partner name;\n"       			
             					+ " - {marry-prefix}: Get the married prefix tag, normally the heart;\n"   
             					+ " - {marry-suffix}: Get the married suffix tag, or male tag for Marriage Reloaded;\n"
+            					+ "BungeeCord:\n"
+            					+ "For BungeeCord theres 2 new tags. The other tags still working except username, group and other plugin tags.\n"
+            					+ "- {world}: World from sender;\n"
+            					+ "- {server}: Server from sender, equals on server list on Bungee config.yml;\n"
             					+ "");
             		}
             		if (lang.equalsIgnoreCase("PT-BR")){
@@ -224,6 +232,10 @@ public class UCConfig{
             					+ " - {marry-partner}: Mostra o nome do(a) parceiro(a);\n"      			
             					+ " - {marry-prefix}: Pega a tag de prefixo, normalmente o coração;\n"   
             					+ " - {marry-suffix}: Pega a tag de sufixo, ou simbolo masculino do Marriage Reloaded;\n"  
+            					+ "BungeeCord:\n"
+            					+ "Para bungee cord tem 2 tags novas. Algumas das outras tags ainda funcionam, com excessão da username, de grupo e de outros plugins.\n"
+            					+ "- {world}: Mundo de quem enviou;\n"
+            					+ "- {server}: O Server de quem enviou, igual o especificado em config.yml do BungeeCord;\n"
             					+ "");
             		}
             		

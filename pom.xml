@@ -4,7 +4,7 @@
   <artifactId>UChat</artifactId>
   <packaging>jar</packaging>
   <name>UltimateChat</name>
-  <version>1.4</version>
+  <version>1.5</version>
   <description>Ultimate Chat is an advanced chat hooking into most used plugins to show more info on player chat.</description>
   <dependencies>
 		<!--Spigot-API-->
@@ -22,7 +22,7 @@
 			<scope>system</scope>
 			<systemPath>D:/ProjetosBukkit/APIs/spigot-1.9.jar</systemPath>
 		</dependency>
-		
+		         
 		<dependency>
 			<groupId>SimpleClans</groupId>
 			<artifactId>sSimpleClans</artifactId>

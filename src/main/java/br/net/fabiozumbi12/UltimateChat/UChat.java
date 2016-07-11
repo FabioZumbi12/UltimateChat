@@ -26,6 +26,7 @@ import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import at.pcgamingfreaks.MarriageMaster.Bukkit.MarriageMaster;
+import br.net.fabiozumbi12.Bungee.UChatBungee;
 import br.net.fabiozumbi12.UltimateChat.config.UCConfig;
 import br.net.fabiozumbi12.UltimateChat.config.UCLang;
 
@@ -73,6 +74,10 @@ public class UChat extends JavaPlugin {
             serv.getPluginCommand("uchat").setExecutor(new UCListener());
             serv.getPluginManager().registerEvents(new UCListener(), this);
             serv.getPluginManager().registerEvents(new UCChatProtection(), this);
+            serv.getPluginManager().registerEvents(new UChatBungee(), this);
+            
+            serv.getMessenger().registerOutgoingPluginChannel(this, "uChat");
+            serv.getMessenger().registerIncomingPluginChannel(this, "uChat", new UChatBungee());
             
             //register aliases
             registerAliases();

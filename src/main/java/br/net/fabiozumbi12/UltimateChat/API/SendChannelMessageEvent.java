@@ -18,7 +18,7 @@ public class SendChannelMessageEvent extends Event implements Cancellable{
 
 	private static final HandlerList handlers = new HandlerList();
 	private boolean cancelled;
-	private CommandSender player;
+	private CommandSender sender;
 	private String msg;
 	private UCChannel channel;
 	private String[] defBuilder;
@@ -27,7 +27,7 @@ public class SendChannelMessageEvent extends Event implements Cancellable{
 	private boolean cancelChat = true;
 	
 	public SendChannelMessageEvent(HashMap<String,String> registeredReplacers, String[] defFormat, CommandSender sender, UCChannel channel, String msg){
-		this.player = sender;
+		this.sender = sender;
 		this.msg = msg;
 		this.channel = channel;
 		this.defBuilder = UChat.config.getDefBuilder();
@@ -145,8 +145,8 @@ public class SendChannelMessageEvent extends Event implements Cancellable{
 	/**The sender.
 	 * @return CommandSender - The sender.
 	 */
-	public CommandSender getPlayer(){
-		return this.player;
+	public CommandSender getSender(){
+		return this.sender;
 	}
 	
 	@Override

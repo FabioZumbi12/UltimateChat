@@ -43,14 +43,14 @@ public class uChatAPI {
 	 * @return {@code true} - If registered with sucess or {@code false} if channel alerady registered.
 	 * @throws IOException - If can't save the channel file on channels folder.
 	 */
-	public static boolean registerNewChannel(String chName, String chAlias, boolean crossWorlds, int distance, String color, String tagBuilder, boolean needFocus, boolean receiverMsg, double cost) throws IOException{
+	public static boolean registerNewChannel(String chName, String chAlias, boolean crossWorlds, int distance, String color, String tagBuilder, boolean needFocus, boolean receiverMsg, double cost, boolean bungee) throws IOException{
 		if (UChat.config.getChannel(chName) != null){
 			return false;
 		}
 		if (tagBuilder == null || tagBuilder.equals("")){
 			tagBuilder = UChat.config.getString("general.default-tag-builder");			
 		}
-		UCChannel ch = new UCChannel(chName, chAlias, crossWorlds, distance, color, tagBuilder, needFocus, receiverMsg, cost);		
+		UCChannel ch = new UCChannel(chName, chAlias, crossWorlds, distance, color, tagBuilder, needFocus, receiverMsg, cost, bungee, false);		
 		UChat.config.addChannel(ch);
 		
 		File defch = new File(UChat.mainPath+File.separator+"channels"+File.separator+chName+".yml");		
@@ -63,6 +63,8 @@ public class uChatAPI {
 		chFile.set("need-focus", ch.neeFocus());
 		chFile.set("tag-builder", ch.getRawBuilder());
 		chFile.set("cost", ch.getCost());
+		chFile.set("bungee", ch.isBungee());
+		chFile.set("use-this-builder", ch.useOwnBuilder());
 		chFile.save(defch);
 		return true;
 	}
