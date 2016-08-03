@@ -22,6 +22,7 @@ import org.bukkit.event.server.ServerCommandEvent;
 
 import br.com.devpaulo.legendchat.api.events.ChatMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.API.SendChannelMessageEvent;
+import br.net.fabiozumbi12.UltimateChat.Fanciful.FancyMessage;
 import br.net.fabiozumbi12.UltimateChat.config.UCConfig;
 import br.net.fabiozumbi12.UltimateChat.config.UCLang;
 
@@ -195,6 +196,48 @@ public class UCListener implements CommandExecutor,Listener {
 					return true;							
 				 }
 			 }
+		 }
+		 
+		 if (cmd.getName().equalsIgnoreCase("ubroadcast") && sender.hasPermission("uchat.broadcast")){
+			 StringBuilder message = new StringBuilder();
+			 StringBuilder hover = new StringBuilder();
+			 boolean isHover = false;
+			 for (String arg:args){
+				 if (arg.contains(UChat.config.getString("broadcast.hover-cmd"))){
+					 hover.append(" "+ChatColor.translateAlternateColorCodes('&', arg.replace(UChat.config.getString("broadcast.hover-cmd"), "")));
+					 isHover = true;
+					 continue;
+				 }
+				 if (isHover){
+					 hover.append(" "+ChatColor.translateAlternateColorCodes('&', arg));
+				 } else {
+					 message.append(" "+ChatColor.translateAlternateColorCodes('&', arg));
+				 }
+			 }
+			 
+			 if (message.toString().length() <= 1){
+				 sendHelp(sender);
+				 return true;
+			 }
+			 
+			 Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_GRAY+"> Broadcast: "+ChatColor.RESET+message.toString().substring(1));
+			 if (hover.toString().length() > 1){
+				 Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_GRAY+"> Hover: "+ChatColor.RESET+hover.toString().substring(1)); 
+			 }			 
+			 
+			 if (UChat.config.getBool("general.hover-events") && hover.toString().length() > 1){
+				 FancyMessage fanci = new FancyMessage();
+				 fanci.text(message.toString().substring(1), "")
+				 .tooltip(hover.toString().substring(1));
+				 for (Player p:Bukkit.getOnlinePlayers()){
+					 fanci.send(p);
+				 }
+			 } else {
+				 for (Player p:Bukkit.getOnlinePlayers()){
+					 p.sendMessage(message.toString().substring(1));
+				 }				 
+			 }
+			 return true;
 		 }
 		 sendHelp(sender);
 		return true;
@@ -498,23 +541,18 @@ public class UCListener implements CommandExecutor,Listener {
 		}
 	}
 		
-	public void sendHelp(CommandSender p){
-		StringBuilder channels = new StringBuilder();
-		for (UCChannel ch:UChat.config.getChannels()){
-			if (!(p instanceof Player) || UCPerms.channelPerm((Player)p, ch)){
-				channels.append(", "+ch.getName());
-			}
-		}
-		p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7--------------- "+UChat.lang.get("_UChat.prefix")+" Help &7---------------"));
-		p.sendMessage(UChat.lang.get("help.channels.available").replace("{channels}", channels.toString().substring(2)));
-		p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7------------------------------------------ <<"));
+	public void sendHelp(CommandSender p){		
+		p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7--------------- "+UChat.lang.get("_UChat.prefix")+" Help &7---------------"));		
 		p.sendMessage(UChat.lang.get("help.channels.enter"));
 		p.sendMessage(UChat.lang.get("help.channels.send"));
 		if (p.hasPermission("uchat.cmd.tell")){
 			p.sendMessage(UChat.lang.get("help.tell.lock"));
 			p.sendMessage(UChat.lang.get("help.tell.send"));
 			p.sendMessage(UChat.lang.get("help.tell.respond"));
-		}	
+		}
+		if (p.hasPermission("uchat.broadcast")){
+			p.sendMessage(UChat.lang.get("help.cmd.broadcast"));
+		}
 		if (p.hasPermission("uchat.cmd.clear")){
 			p.sendMessage(UChat.lang.get("help.cmd.clear"));
 		}
@@ -533,6 +571,15 @@ public class UCListener implements CommandExecutor,Listener {
 		if (p.hasPermission("uchat.cmd.reload")){
 			p.sendMessage(UChat.lang.get("help.cmd.reload"));
 		}
+		StringBuilder channels = new StringBuilder();
+		for (UCChannel ch:UChat.config.getChannels()){
+			if (!(p instanceof Player) || UCPerms.channelPerm((Player)p, ch)){
+				channels.append(", "+ch.getName());
+			}
+		}
+		p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7------------------------------------------ "));
+		p.sendMessage(UChat.lang.get("help.channels.available").replace("{channels}", channels.toString().substring(2)));
+		p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7------------------------------------------ "));
 	}
 
 	private void sendChannelHelp(Player p) {

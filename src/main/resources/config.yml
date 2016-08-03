@@ -24,6 +24,10 @@ bungee:
   prefix: '&6[&c{playername} &6-> &c{receivername}&6]: '
   format: '{message}'
   hover-messages: []
+broadcast:
+  enable: true
+  hover-cmd: 'hover:'
+  aliases: ubroadcast,ubroad,uannounce,usay,uaction,all,anunciar,todos
 tags:
   group-prefix:
     format: '&7[{group-prefix}&7]&r'

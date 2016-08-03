@@ -318,6 +318,10 @@ public class UCConfig{
 		return aliases;
 	}
 	
+	public List<String> getBroadcastAliases() {
+		return Arrays.asList(configs.getString("broadcast.aliases").replace(" ", "").split(","));
+	}
+	
 	public List<String> getTellAliases() {
 		return Arrays.asList(configs.getString("tell.cmd-aliases").replace(" ", "").split(","));
 	}

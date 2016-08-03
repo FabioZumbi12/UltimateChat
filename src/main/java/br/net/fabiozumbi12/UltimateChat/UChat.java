@@ -148,6 +148,9 @@ public class UChat extends JavaPlugin {
 	public static void registerAliases(){
 		registerAliases("channel",config.getChAliases());
         registerAliases("tell",config.getTellAliases());
+        if (config.getBool("broadcast.enable")){
+        	registerAliases("ubroadcast",config.getBroadcastAliases());
+        }
 	}
 	private static void registerAliases(String name, List<String> aliases) {  
 		List<String> aliases1 = new ArrayList<String>();

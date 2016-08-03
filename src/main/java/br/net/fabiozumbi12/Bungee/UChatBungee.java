@@ -157,7 +157,7 @@ public class UChatBungee implements PluginMessageListener, Listener {
 	
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onchatmessage(SendChannelMessageEvent e){
-		if (e.isCancelled() || !e.getChannel().isBungee()){
+		if (e.isCancelled() || e.getChannel() == null || !e.getChannel().isBungee()){
 			return;
 		}
 		e.setCancelled(true);
