@@ -43,3 +43,11 @@ permissions:
       uchat.cmd.clear: true
       uchat.channel.global: true
       uchat.channel.local: true
+  uchat.bypass-protections:
+    description: "Permissions to bypass chat checks."
+    default: false
+    children:
+      uchat.bypass-spam: true
+      uchat.bypass-censor: true
+      uchat.bypass-anti-ip: true
+      uchat.bypass-enhancement: true
