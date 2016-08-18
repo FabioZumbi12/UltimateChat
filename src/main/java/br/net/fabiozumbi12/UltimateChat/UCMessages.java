@@ -477,7 +477,7 @@ public class UCMessages {
 			if ((tag.equals("tell") || tag.equals("message")) && !UCPerms.hasPerm((CommandSender)cmdSender, "chat.color")){
 				return text.replace("§", "&");
 			} else {
-				return text;
+				return ChatColor.translateAlternateColorCodes('&', text);
 			}
 		} else {
 			return ChatColor.translateAlternateColorCodes('&', text);
