@@ -53,6 +53,7 @@ public class UChat extends JavaPlugin {
 	public static boolean ProtocolLib;
 	public static MarriageMaster mm;
 	public static Marriage mapi;
+	public static boolean PlaceHolderAPI;
 
 	public void onEnable() {
         try {
@@ -70,6 +71,7 @@ public class UChat extends JavaPlugin {
             MarryReloded = checkMR();
             MarryMaster = checkMM();
             ProtocolLib = checkPL();
+            PlaceHolderAPI = checkPHAPI();
             
             serv.getPluginCommand("uchat").setExecutor(new UCListener());
             serv.getPluginManager().registerEvents(new UCListener(), this);
@@ -84,6 +86,11 @@ public class UChat extends JavaPlugin {
             
             if (ProtocolLib){
             	logger.info("ProtocolLib found. Hooked.");
+            }
+            
+            if (PlaceHolderAPI){
+            	new UCPlaceHolders(this).hook();
+            	logger.info("PlaceHolderAPI found. Hooked and registered some chat placeholders.");
             }
             
             if (MarryReloded){
@@ -208,6 +215,15 @@ public class UChat extends JavaPlugin {
 	
 	private boolean checkPL() {
 		Plugin p = Bukkit.getPluginManager().getPlugin("ProtocolLib");
+    	if (p != null && p.isEnabled()){
+    		return true;
+    	}
+		return false;
+	}
+	
+
+	private boolean checkPHAPI() {
+		Plugin p = Bukkit.getPluginManager().getPlugin("PlaceholderAPI");
     	if (p != null && p.isEnabled()){
     		return true;
     	}

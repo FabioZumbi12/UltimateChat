@@ -113,15 +113,16 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 	 * @return This builder instance.
 	 */
 	public FancyMessage text(String text, String tag) {
-		String newstr = "";		
+		String newstr = "";
 		if (tag.equals("message")){
-			for (String st:text.split(" ")){			
+			for (String st:text.split(" ")){				
 				newstr = newstr+lastColor+st+" ";
+				lastColor = ChatColor.getLastColors(newstr);
 			}
 		} else {
 			newstr = lastColor+text;
+			lastColor = ChatColor.getLastColors(newstr);
 		}
-		lastColor = ChatColor.getLastColors(newstr);
 		MessagePart latest = latest();
 		latest.text = rawText(newstr);
 		dirty = true;

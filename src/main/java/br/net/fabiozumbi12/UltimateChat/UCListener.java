@@ -100,7 +100,7 @@ public class UCListener implements CommandExecutor,Listener {
 								 UChat.lang.sendMessage(p, UChat.lang.get("cmd.nopermission"));
 								 return true;
 							 }
-							 if (UCMessages.isIgnoringPlayers(pi.getName())){
+							 if (UCMessages.isIgnoringPlayers(p.getName(), pi.getName())){
 								 UCMessages.unIgnorePlayer(p.getName(), pi.getName());
 								 UChat.lang.sendMessage(p, UChat.lang.get("player.unignoring").replace("{player}", pi.getName()));
 							 } else {
@@ -201,13 +201,26 @@ public class UCListener implements CommandExecutor,Listener {
 		 if (cmd.getName().equalsIgnoreCase("ubroadcast") && sender.hasPermission("uchat.broadcast")){
 			 StringBuilder message = new StringBuilder();
 			 StringBuilder hover = new StringBuilder();
+			 StringBuilder cmdline = new StringBuilder();
 			 boolean isHover = false;
+			 boolean isCmd = false;
 			 for (String arg:args){
-				 if (arg.contains(UChat.config.getString("broadcast.hover-cmd"))){
-					 hover.append(" "+ChatColor.translateAlternateColorCodes('&', arg.replace(UChat.config.getString("broadcast.hover-cmd"), "")));
+				 if (arg.contains(UChat.config.getString("broadcast.on-hover"))){
+					 hover.append(" "+ChatColor.translateAlternateColorCodes('&', arg.replace(UChat.config.getString("broadcast.on-hover"), "")));
 					 isHover = true;
+					 isCmd = false;
 					 continue;
 				 }
+				 if (arg.contains(UChat.config.getString("broadcast.on-click"))){
+					 cmdline.append(" "+ChatColor.translateAlternateColorCodes('&', arg.replace(UChat.config.getString("broadcast.on-click"), "")));
+					 isCmd = true;
+					 isHover = false;
+					 continue;
+				 }
+				 
+				 if (isCmd){
+					 cmdline.append(" "+ChatColor.translateAlternateColorCodes('&', arg));
+				 } else
 				 if (isHover){
 					 hover.append(" "+ChatColor.translateAlternateColorCodes('&', arg));
 				 } else {
@@ -221,15 +234,24 @@ public class UCListener implements CommandExecutor,Listener {
 			 }
 			 
 			 Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_GRAY+"> Broadcast: "+ChatColor.RESET+message.toString().substring(1));
-			 if (hover.toString().length() > 1){
-				 Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_GRAY+"> Hover: "+ChatColor.RESET+hover.toString().substring(1)); 
-			 }			 
-			 
-			 if (UChat.config.getBool("general.hover-events") && hover.toString().length() > 1){
+			 			 
+			 if (UChat.config.getBool("general.hover-events")){
 				 FancyMessage fanci = new FancyMessage();
-				 fanci.text(message.toString().substring(1), "")
-				 .tooltip(hover.toString().substring(1));
+				 fanci.text(message.toString().substring(1), "message");
+				 
+				 if (hover.toString().length() > 1){
+					 fanci.tooltip(hover.toString().substring(1));
+					 Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_GRAY+"> OnHover: "+ChatColor.RESET+hover.toString().substring(1)); 
+				 }				 
+				 
+				 if (cmdline.toString().length() > 1){
+					 Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_GRAY+"> OnClick: "+ChatColor.RESET+cmdline.toString().substring(1));
+				 }				 
+				 
 				 for (Player p:Bukkit.getOnlinePlayers()){
+					 if (cmdline.toString().length() > 1){
+						 fanci.command("/"+cmdline.toString().substring(1).replace("{clicked}", p.getName()));						 
+					 }
 					 fanci.send(p);
 				 }
 			 } else {

@@ -5,6 +5,10 @@ import org.bukkit.ChatColor;
 
 public class UCLogger{
 	 
+	public void logClear(String s) {
+    	Bukkit.getConsoleSender().sendMessage("UltimateChat: ["+s+"]");
+    }
+	
 	public void sucess(String s) {
     	Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "UltimateChat: [&a&l"+s+"&r]"));
     }

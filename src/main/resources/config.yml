@@ -26,7 +26,8 @@ bungee:
   hover-messages: []
 broadcast:
   enable: true
-  hover-cmd: 'hover:'
+  on-hover: 'hover:'
+  on-click: 'click:'
   aliases: ubroadcast,ubroad,uannounce,usay,uaction,all,anunciar,todos
 tags:
   group-prefix:

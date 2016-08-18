@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 
+import me.clip.placeholderapi.PlaceholderAPI;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 
 import org.apache.commons.lang.StringUtils;
@@ -33,7 +34,7 @@ public class UCMessages {
 	public static HashMap<String,String> tellPlayers = new HashMap<String,String>();
 	public static HashMap<String,String> tempTellPlayers = new HashMap<String,String>();
 	public static HashMap<String,String> respondTell = new HashMap<String,String>();
-	private static HashMap<String,List<String>> ignoringPlayer = new HashMap<String,List<String>>();
+	public static HashMap<String,List<String>> ignoringPlayer = new HashMap<String,List<String>>();
 	public static List<String> mutes = new ArrayList<String>();
 	public static List<String> isSpy = new ArrayList<String>();
 	
@@ -92,7 +93,7 @@ public class UCMessages {
 				for (Player receiver:UChat.serv.getOnlinePlayers()){	
 					if (receiver.equals(sender) || !UCPerms.channelPerm(receiver, ch) || (!ch.crossWorlds() && (sender instanceof Player && !receiver.getWorld().equals(((Player)sender).getWorld())))){				
 						continue;
-					} 
+					} 					
 					noWorldReceived++;
 					if (ch.isIgnoring(receiver.getName())){
 						continue;
@@ -105,14 +106,14 @@ public class UCMessages {
 				toConsole = sendMessage(sender, sender, event.getMessage(), ch, false);
 			}	
 									
-			//send spy
+			//chat spy
 			for (Player receiver:UChat.serv.getOnlinePlayers()){			
 				if (!receiver.equals(sender) && !receivers.contains(receiver) && !receivers.contains(sender) && isSpy.contains(receiver.getName())){	
 					String spyformat = UChat.config.getString("general.spy-format");
-					spyformat = spyformat.replace("{output}", ChatColor.stripColor(sendMessage(sender, receiver, event.getMessage(), ch, true)));
+					spyformat = spyformat.replace("{output}", ChatColor.stripColor(sendMessage(sender, receiver, event.getMessage(), ch, true)));					
 					receiver.sendMessage(ChatColor.translateAlternateColorCodes('&', spyformat));
 				}
-			}		
+			}
 			
 			UChat.serv.getConsoleSender().sendMessage(toConsole);
 			
@@ -129,34 +130,41 @@ public class UCMessages {
 			}
 			
 		} else {						
-			//tell send spy
+			//send tell
 			UCChannel fakech = new UCChannel("tell");
 			
+			//send spy			
 			for (Player receiver:UChat.serv.getOnlinePlayers()){			
-				if (!receiver.equals(tellReceiver) && !receiver.equals(sender) && isSpy.contains(receiver.getName())){	
+				if (!receiver.equals(tellReceiver) && !receiver.equals(sender) && isSpy.contains(receiver.getName())){
 					String spyformat = UChat.config.getString("general.spy-format");
-					spyformat = spyformat.replace("{output}", ChatColor.stripColor(sendMessage(sender, tellReceiver, event.getMessage(), fakech, true)));
+					if (isIgnoringPlayers(tellReceiver.getName(), sender.getName())){
+						spyformat = UChat.lang.get("chat.ignored")+spyformat;
+					}
+					spyformat = spyformat.replace("{output}", ChatColor.stripColor(sendMessage(sender, tellReceiver, event.getMessage(), fakech, true)));					
 					receiver.sendMessage(ChatColor.translateAlternateColorCodes('&', spyformat));
 				}
-			}			
+			}
 			toConsole = sendMessage(sender, tellReceiver, event.getMessage(), fakech, false);
+			if (isIgnoringPlayers(tellReceiver.getName(), sender.getName())){
+				toConsole = UChat.lang.get("chat.ignored")+toConsole;
+			}
 			UChat.serv.getConsoleSender().sendMessage(toConsole);
 		}
 		return cancel;
 	}
 	
-	public static boolean isIgnoringPlayers(String p){
+	public static boolean isIgnoringPlayers(String p, String victim){
 		List<String> list = new ArrayList<String>();
 		if (ignoringPlayer.containsKey(p)){
-			list = ignoringPlayer.get(p);
+			list.addAll(ignoringPlayer.get(p));			
 		}
-		return list.contains(p);
+		return list.contains(victim);
 	}
 	
 	public static void ignorePlayer(String p, String victim){
 		List<String> list = new ArrayList<String>();
 		if (ignoringPlayer.containsKey(p)){
-			list = ignoringPlayer.get(p);
+			list.addAll(ignoringPlayer.get(p));
 		}
 		list.add(victim);
 		ignoringPlayer.put(p, list);
@@ -165,7 +173,7 @@ public class UCMessages {
 	public static void unIgnorePlayer(String p, String victim){
 		List<String> list = new ArrayList<String>();
 		if (ignoringPlayer.containsKey(p)){
-			list = ignoringPlayer.get(p);
+			list.addAll(ignoringPlayer.get(p));
 		}
 		list.remove(victim);
 		ignoringPlayer.put(p, list);
@@ -231,11 +239,12 @@ public class UCMessages {
 				} else {
 					format = formatTags(tag, format, sender, receiver, msg, ch);
 					tooltip = formatTags(tag, tooltip, sender, receiver, msg, ch);
+										
 					if (tooltip.length() > 0){				
 						fanci.text(format,tag)
 				   		   .tooltip(tooltip)
 				   		   .then(" ");
-					} else {
+					} else {						
 						fanci.text(format,tag)
 				   		   .then(" ");
 					}
@@ -276,7 +285,7 @@ public class UCMessages {
 			}			
 		}
 		
-		if (!isSpy && !isIgnoringPlayers(sender.getName())){
+		if (!isSpy && !isIgnoringPlayers(receiver.getName(), sender.getName())){
 			fanci.send(receiver);
 		}		
 		return fanci.toOldMessageFormat();
@@ -319,7 +328,7 @@ public class UCMessages {
 			}			
 		}
 		
-		if (!isSpy && !isIgnoringPlayers(sender.getName())){
+		if (!isSpy && !isIgnoringPlayers(receiver.getName(), sender.getName())){
 			receiver.sendMessage(msgFinal.toString());	
 		}		
 		return msgFinal.toString();
@@ -351,11 +360,11 @@ public class UCMessages {
 		return msg;
 	}
 	
-	public static String formatTags(String tag, String text, Object cmdSender, Object receiver, String msg, UCChannel ch){
+	public static String formatTags(String tag, String text, Object cmdSender, Object receiver, String msg, UCChannel ch){		
 		text = text.replace("{ch-color}", ch.getColor())
 		.replace("{ch-name}", ch.getName())
 		.replace("{ch-alias}", ch.getAlias())
-		.replace("{message}", msg);
+		.replace("{message}", msg);		
 		if (cmdSender instanceof CommandSender){
 			text = text.replace("{playername}", ((CommandSender)cmdSender).getName())
 					.replace("{receivername}", ((CommandSender)receiver).getName());
@@ -441,8 +450,12 @@ public class UCMessages {
 							.replace("{marry-prefix}", UChat.mm.config.GetPrefix().replace("<heart>", ChatColor.RED + "❤" + ChatColor.WHITE))
 							.replace("{marry-suffix}", UChat.mm.config.GetSuffix().replace("<heart>", ChatColor.RED + "❤" + ChatColor.WHITE));
 				}
+			}			
+			if (UChat.PlaceHolderAPI){
+				text = PlaceholderAPI.setPlaceholders(sender, text);
 			}
-		}						
+		}		
+		
 		if (cmdSender instanceof CommandSender){
 			text = text.replace("{nickname}", UChat.config.getString("general.console-tag").replace("{console}", ((CommandSender)cmdSender).getName()));
 		} else {
@@ -461,10 +474,10 @@ public class UCMessages {
 		}
 		
 		if (cmdSender instanceof CommandSender){
-			if (tag.equals("tell") || (tag.equals("message") && !UCPerms.hasPerm((CommandSender)cmdSender, "chat.color"))){
-				return text;
+			if ((tag.equals("tell") || tag.equals("message")) && !UCPerms.hasPerm((CommandSender)cmdSender, "chat.color")){
+				return text.replace("§", "&");
 			} else {
-				return ChatColor.translateAlternateColorCodes('&', text);
+				return text;
 			}
 		} else {
 			return ChatColor.translateAlternateColorCodes('&', text);
