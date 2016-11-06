@@ -27,8 +27,9 @@ bungee:
 broadcast:
   enable: true
   on-hover: 'hover:'
-  on-click: 'click:'
-  aliases: ubroadcast,ubroad,uannounce,usay,uaction,all,anunciar,todos
+  on-click: 'click:'  
+  url: 'url:'
+  aliases: ubroad,uannounce,usay,uaction,all,anunciar,todos
 tags:
   group-prefix:
     format: '&7[{group-prefix}&7]&r'
@@ -89,3 +90,8 @@ tags:
     click-cmd: ''
     hover-messages:
     - '{ch-color}Sent from server -{server}-'
+  custom-tag:
+    format: '&7[&2MyTag&7]&r'
+    click-cmd: ''
+    hover-messages: []
+    permission: 'any-name-perm.custom-tag'

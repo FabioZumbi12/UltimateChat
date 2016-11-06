@@ -7,6 +7,7 @@ import java.util.Map;
 import com.google.gson.stream.JsonWriter;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
+
 /**
  * Represents a JSON string value.
  * Writes by this object will not write name values nor begin/end objects in the JSON stream.
@@ -15,8 +16,8 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
 final class JsonString implements JsonRepresentedObject, ConfigurationSerializable {
 
 	private String _value;
-	
-	public JsonString(CharSequence value){
+
+	public JsonString(CharSequence value) {
 		_value = value == null ? null : value.toString();
 	}
 
@@ -24,8 +25,8 @@ final class JsonString implements JsonRepresentedObject, ConfigurationSerializab
 	public void writeJson(JsonWriter writer) throws IOException {
 		writer.value(getValue());
 	}
-	
-	public String getValue(){
+
+	public String getValue() {
 		return _value;
 	}
 
@@ -34,13 +35,14 @@ final class JsonString implements JsonRepresentedObject, ConfigurationSerializab
 		theSingleValue.put("stringValue", _value);
 		return theSingleValue;
 	}
-	
-	public static JsonString deserialize(Map<String, Object> map){
+
+	public static JsonString deserialize(Map<String, Object> map) {
 		return new JsonString(map.get("stringValue").toString());
 	}
-	
+
 	@Override
-	public String toString(){
+	public String toString() {
 		return _value;
 	}
+
 }

@@ -18,8 +18,11 @@ public class UCChannel {
 	private double cost = 0.0;
 	private boolean bungee = false;
 	private boolean ownBuilder = false;
+	private boolean isAlias = false;
+	private String aliasSender = "";
+	private String aliasCmd = "";
 
-	public UCChannel(String name, String alias, boolean worlds, int dist, String color, String builder, boolean focus, boolean receiversMsg, double cost, boolean isbungee, boolean ownBuilder) {
+	public UCChannel(String name, String alias, boolean worlds, int dist, String color, String builder, boolean focus, boolean receiversMsg, double cost, boolean isbungee, boolean ownBuilder, boolean isAlias, String aliasSender, String aliasCmd) {
 		this.name = name;
 		this.alias = alias;
 		this.worlds = worlds;
@@ -31,6 +34,9 @@ public class UCChannel {
 		this.cost = cost;
 		this.bungee = isbungee;
 		this.ownBuilder  = ownBuilder;
+		this.isAlias = isAlias;
+		this.aliasCmd  = aliasCmd;
+		this.aliasSender = aliasSender;
 	}
 	
 	public UCChannel(String name, String alias, String color) {
@@ -42,6 +48,18 @@ public class UCChannel {
 	public UCChannel(String name) {
 		this.name = name;
 		this.alias = name.substring(0, 1).toLowerCase();
+	}
+	
+	public String getAliasCmd(){
+		return this.aliasCmd;
+	}
+	
+	public String getAliasSender(){		
+		return this.aliasSender;
+	}
+	
+	public boolean isCmdAlias(){
+		return this.isAlias;
 	}
 	
 	public boolean useOwnBuilder(){

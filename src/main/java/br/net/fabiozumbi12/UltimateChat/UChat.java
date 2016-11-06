@@ -1,6 +1,7 @@
 package br.net.fabiozumbi12.UltimateChat;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -18,6 +19,9 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.PluginCommandYamlParser;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -38,7 +42,7 @@ public class UChat extends JavaPlugin {
     private static boolean Vault = false;
 	public static UChat plugin;
     public static UCLogger logger;
-    public static Server serv;
+    public Server serv;
     public static PluginDescriptionFile pdf;
     public static UCLang lang;
 	public static UCConfig config;
@@ -54,7 +58,13 @@ public class UChat extends JavaPlugin {
 	public static MarriageMaster mm;
 	public static Marriage mapi;
 	public static boolean PlaceHolderAPI;
+	private FileConfiguration amConfig;
+	private int index = 0;
 
+	public FileConfiguration getAMConfig(){
+		return this.amConfig;
+	}
+	
 	public void onEnable() {
         try {
             plugin = this;
@@ -64,7 +74,7 @@ public class UChat extends JavaPlugin {
             mainPath = "plugins" + File.separator + pdf.getName() + File.separator;
             config = new UCConfig(this, mainPath);
             lang = new UCLang(this, logger, mainPath, config);
-            
+            amConfig = new YamlConfiguration();
             //check hooks
             Vault = checkVault();            
             SClans = checkSC();
@@ -140,6 +150,9 @@ public class UChat extends JavaPlugin {
             		UCMessages.pChannels.put(p.getName(), UChat.config.getDefChannel().getAlias());
             	}
             }
+            
+            initAutomessage();
+            
             UChat.logger.sucess(pdf.getFullName()+" enabled!");
             
         } catch (Exception e){
@@ -148,18 +161,104 @@ public class UChat extends JavaPlugin {
         }
 	}
 	
+	public void initAutomessage(){
+		File am = new File(mainPath+"automessages.yml");
+		try {
+			if (!am.exists()){
+				am.createNewFile();
+				this.amConfig.load(am);
+			} else {
+				this.amConfig.load(am);
+			}
+			getAMConfig().options().header("\n"
+					+ "AutoMessages configuration for UltimateChat:\n"
+					+ "\n"
+					+ "You can use the placeholder {clicked} on \"onclick\" to get the name of player who clicked on message.\n"
+					+ "\n"
+					+ "This is the default configuration:\n"
+					+ "\n"
+					+ "interval: 60 #Interval in seconds.\n"
+					+ "silent: true #Do not log the messages on console?"					
+					+ "messages\n"
+					+ "  '0': #The index (order) to show the messages.\n"
+					+ "    minPlayers: 4 #Minimun players to show the message. Set to 0 to always send the message.\n"
+					+ "    text: Your plain text message here! #Plain text.\n"
+					+ "    hover: Your hover text message here! #Hover text.\n"
+					+ "    onclick: Command on click here! #On click text with placeholder {clicked} to show who clicked.\n"
+					+ "    url: http://google.com # Some url to go on click. Need to have \"http://\" to url work.\n"
+					+ "\n"
+					+ "*If you dont want hover message or click command, set to '' (blank quotes)\n"
+					+ "\n");
+			if (!getAMConfig().isConfigurationSection("messages")){
+				getAMConfig().set("enable", true);
+				getAMConfig().set("silent", true);
+				getAMConfig().set("interval", 60);
+				getAMConfig().set("messages.0.minPlayers", 4);
+				getAMConfig().set("messages.0.text", "This is UChat Automessage! Put your plain text message here!");
+				getAMConfig().set("messages.0.hover", "Your hover text message here!");
+				getAMConfig().set("messages.0.onclick", "Command on click here!");
+				getAMConfig().set("messages.0.url", "http://google.com");
+			}		
+			
+			getAMConfig().save(am);
+		} catch (IOException | InvalidConfigurationException e) {
+			e.printStackTrace();
+		}		
+		
+		if (!getAMConfig().getBoolean("enable")){
+			return;
+		}
+		
+		int total = getAMConfig().getConfigurationSection("messages").getKeys(false).size();		
+		int loop = getAMConfig().getInt("interval");
+		boolean silent = getAMConfig().getBoolean("silent");
+		
+		Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable(){
+			@Override
+			public void run() {
+				if (getAMConfig().isConfigurationSection("messages."+index)){
+					int plays = getAMConfig().getInt("messages."+index+".minPlayers");
+					String text = getAMConfig().getString("messages."+index+".text");
+					String hover = getAMConfig().getString("messages."+index+".hover");
+					String onclick = getAMConfig().getString("messages."+index+".onclick");
+					String url = getAMConfig().getString("messages."+index+".url");
+					
+					String cmd = text;
+					if (hover.length() > 1){
+						cmd = cmd+" "+UChat.config.getString("broadcast.on-hover")+hover;
+					}
+					if (onclick.length() > 1){
+						cmd = cmd+" "+UChat.config.getString("broadcast.on-click")+onclick;
+					}
+					if (url.length() > 1){
+						cmd = cmd+" "+UChat.config.getString("broadcast.url")+url;
+					}
+					if (plays == 0 || serv.getOnlinePlayers().size() >= plays){						
+						UCUtil.sendBroadcast(serv.getConsoleSender(), cmd.split(" "), silent);
+					}
+				}	
+				if (index+1 >= total){
+					index = 0;
+				} else {
+					index++;
+				}
+			}				
+		}, loop*20, loop*20);
+	}	
+	
 	public void onDisable() {
 		UChat.logger.severe(pdf.getFullName()+" disabled!");
 	}
 	
-	public static void registerAliases(){
+	public void registerAliases(){
 		registerAliases("channel",config.getChAliases());
         registerAliases("tell",config.getTellAliases());
         if (config.getBool("broadcast.enable")){
         	registerAliases("ubroadcast",config.getBroadcastAliases());
         }
 	}
-	private static void registerAliases(String name, List<String> aliases) {  
+	
+	private void registerAliases(String name, List<String> aliases) {  
 		List<String> aliases1 = new ArrayList<String>();
 		aliases1.addAll(aliases);
 		for (Command cmd:PluginCommandYamlParser.parse(plugin)){

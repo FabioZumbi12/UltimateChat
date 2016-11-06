@@ -22,7 +22,6 @@ import org.bukkit.event.server.ServerCommandEvent;
 
 import br.com.devpaulo.legendchat.api.events.ChatMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.API.SendChannelMessageEvent;
-import br.net.fabiozumbi12.UltimateChat.Fanciful.FancyMessage;
 import br.net.fabiozumbi12.UltimateChat.config.UCConfig;
 import br.net.fabiozumbi12.UltimateChat.config.UCLang;
 
@@ -31,18 +30,32 @@ public class UCListener implements CommandExecutor,Listener {
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		
-		UChat.logger.debug("onCommand - Label: "+label);
-		
+		 UChat.logger.debug("onCommand - Label: "+label);
+		 if (args.length == 0){
+			 sender.sendMessage(ChatColor.AQUA + "---------------- " + UChat.pdf.getFullName() + " ----------------");
+	         sender.sendMessage(ChatColor.AQUA + "Developed by " + ChatColor.GOLD + UChat.pdf.getAuthors() + ".");
+	         sender.sendMessage(ChatColor.AQUA + "For more information about the commands, type [" + ChatColor.GOLD + "/uchat ?"+ChatColor.AQUA+"].");
+	         sender.sendMessage(ChatColor.AQUA + "---------------------------------------------------");
+	         return true;
+		 }
+		 
 		 if (args.length == 1){
+			 if (args[0].equalsIgnoreCase("?") || args[0].equalsIgnoreCase("help")){
+				 sendHelp(sender);
+				 return true;
+			 }
+					 
 			 if (args[0].equalsIgnoreCase("reload") && sender.hasPermission("uchat.cmd.reload")){
+				 UChat.plugin.serv.getScheduler().cancelTasks(UChat.plugin);
 				 UChat.config = new UCConfig(UChat.plugin, UChat.mainPath);
 				 UChat.lang = new UCLang(UChat.plugin, UChat.logger, UChat.mainPath, UChat.config);
-				 UChat.registerAliases();
+				 UChat.plugin.registerAliases();
 				 for (Player p:Bukkit.getOnlinePlayers()){
 					 if (UChat.config.getChannel(UCMessages.pChannels.get(p.getName())) == null){
 						 UCMessages.pChannels.put(p.getName(), UChat.config.getDefChannel().getAlias());
 					 }					 
 				 }
+				 UChat.plugin.initAutomessage();
 				 UChat.lang.sendMessage(sender, "plugin.reloaded");
 				 return true;
 			 }			 
@@ -199,65 +212,8 @@ public class UCListener implements CommandExecutor,Listener {
 		 }
 		 
 		 if (cmd.getName().equalsIgnoreCase("ubroadcast") && sender.hasPermission("uchat.broadcast")){
-			 StringBuilder message = new StringBuilder();
-			 StringBuilder hover = new StringBuilder();
-			 StringBuilder cmdline = new StringBuilder();
-			 boolean isHover = false;
-			 boolean isCmd = false;
-			 for (String arg:args){
-				 if (arg.contains(UChat.config.getString("broadcast.on-hover"))){
-					 hover.append(" "+ChatColor.translateAlternateColorCodes('&', arg.replace(UChat.config.getString("broadcast.on-hover"), "")));
-					 isHover = true;
-					 isCmd = false;
-					 continue;
-				 }
-				 if (arg.contains(UChat.config.getString("broadcast.on-click"))){
-					 cmdline.append(" "+ChatColor.translateAlternateColorCodes('&', arg.replace(UChat.config.getString("broadcast.on-click"), "")));
-					 isCmd = true;
-					 isHover = false;
-					 continue;
-				 }
-				 
-				 if (isCmd){
-					 cmdline.append(" "+ChatColor.translateAlternateColorCodes('&', arg));
-				 } else
-				 if (isHover){
-					 hover.append(" "+ChatColor.translateAlternateColorCodes('&', arg));
-				 } else {
-					 message.append(" "+ChatColor.translateAlternateColorCodes('&', arg));
-				 }
-			 }
-			 
-			 if (message.toString().length() <= 1){
+			 if (!UCUtil.sendBroadcast(sender, args, false)){
 				 sendHelp(sender);
-				 return true;
-			 }
-			 
-			 Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_GRAY+"> Broadcast: "+ChatColor.RESET+message.toString().substring(1));
-			 			 
-			 if (UChat.config.getBool("general.hover-events")){
-				 FancyMessage fanci = new FancyMessage();
-				 fanci.text(message.toString().substring(1), "message");
-				 
-				 if (hover.toString().length() > 1){
-					 fanci.tooltip(hover.toString().substring(1));
-					 Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_GRAY+"> OnHover: "+ChatColor.RESET+hover.toString().substring(1)); 
-				 }				 
-				 
-				 if (cmdline.toString().length() > 1){
-					 Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_GRAY+"> OnClick: "+ChatColor.RESET+cmdline.toString().substring(1));
-				 }				 
-				 
-				 for (Player p:Bukkit.getOnlinePlayers()){
-					 if (cmdline.toString().length() > 1){
-						 fanci.command("/"+cmdline.toString().substring(1).replace("{clicked}", p.getName()));						 
-					 }
-					 fanci.send(p);
-				 }
-			 } else {
-				 for (Player p:Bukkit.getOnlinePlayers()){
-					 p.sendMessage(message.toString().substring(1));
-				 }				 
 			 }
 			 return true;
 		 }
@@ -286,7 +242,7 @@ public class UCListener implements CommandExecutor,Listener {
 						UChat.lang.sendMessage(p, UChat.lang.get("channel.nopermission").replace("{channel}", ch.getName()));
 						return;
 					}
-					if (UCMessages.pChannels.containsKey(p.getName()) && UCMessages.pChannels.get(p.getName()).equals(ch.getAlias())){
+					if (UCMessages.pChannels.containsKey(p.getName()) && UCMessages.pChannels.get(p.getName()).equalsIgnoreCase(ch.getAlias())){
 						UChat.lang.sendMessage(p, UChat.lang.get("channel.alreadyon").replace("{channel}", ch.getName()));
 						return;
 					}
@@ -353,7 +309,7 @@ public class UCListener implements CommandExecutor,Listener {
 			if (args.length >= 2){
 				if (args[0].equalsIgnoreCase("r")){
 					if (UCMessages.respondTell.containsKey(p.getName())){
-						Player receiver = UChat.serv.getPlayer(UCMessages.respondTell.get(p.getName()));
+						Player receiver = UChat.plugin.serv.getPlayer(UCMessages.respondTell.get(p.getName()));
 						
 						sendTell(p, receiver, msg);
 						return;
@@ -365,7 +321,7 @@ public class UCListener implements CommandExecutor,Listener {
 			}
 			
 			if (args.length == 2){
-				Player receiver = UChat.serv.getPlayer(args[1]);
+				Player receiver = UChat.plugin.serv.getPlayer(args[1]);
 				if (receiver == null || !receiver.isOnline()){
 					UChat.lang.sendMessage(p, UChat.lang.get("listener.invalidplayer"));
 					return;
@@ -393,16 +349,16 @@ public class UCListener implements CommandExecutor,Listener {
 					String prefix = UChat.config.getString("tell.prefix");
 					String format = UChat.config.getString("tell.format");
 					
-					prefix = UCMessages.formatTags("", prefix, p, UChat.serv.getConsoleSender(), msg, new UCChannel("tell"));
-					format = UCMessages.formatTags("tell", format, p, UChat.serv.getConsoleSender(), msg, new UCChannel("tell"));
+					prefix = UCMessages.formatTags("", prefix, p, UChat.plugin.serv.getConsoleSender(), msg, new UCChannel("tell"));
+					format = UCMessages.formatTags("tell", format, p, UChat.plugin.serv.getConsoleSender(), msg, new UCChannel("tell"));
 							
 					p.sendMessage(prefix+format);
-					UChat.serv.getConsoleSender().sendMessage(prefix+format);
+					UChat.plugin.serv.getConsoleSender().sendMessage(prefix+format);
 					return;
 				}
 				
 				//send to player
-				Player receiver = UChat.serv.getPlayer(args[1]);
+				Player receiver = UChat.plugin.serv.getPlayer(args[1]);
 					
 				if (receiver == null || !receiver.isOnline()){
 					UChat.lang.sendMessage(p, UChat.lang.get("listener.invalidplayer"));
@@ -435,21 +391,21 @@ public class UCListener implements CommandExecutor,Listener {
 		
 		if (UChat.config.getTellAliases().contains(args[0])){
 			if (args.length >= 3){
-				if (UChat.serv.getPlayer(args[1]) == null || !UChat.serv.getPlayer(args[1]).isOnline()){
+				if (UChat.plugin.serv.getPlayer(args[1]) == null || !UChat.plugin.serv.getPlayer(args[1]).isOnline()){
 					UChat.lang.sendMessage(e.getSender(), "listener.invalidplayer");
 					return;
 				}
-				Player p = UChat.serv.getPlayer(args[1]);
+				Player p = UChat.plugin.serv.getPlayer(args[1]);
 				msg = msg.substring(args[1].length()+1);
 				
 				String prefix = UChat.config.getString("tell.prefix");
 				String format = UChat.config.getString("tell.format");
 				
-				prefix = UCMessages.formatTags("", prefix, UChat.serv.getConsoleSender(), p, msg, new UCChannel("tell"));
-				format = UCMessages.formatTags("tell", format, UChat.serv.getConsoleSender(), p, msg, new UCChannel("tell"));
+				prefix = UCMessages.formatTags("", prefix, UChat.plugin.serv.getConsoleSender(), p, msg, new UCChannel("tell"));
+				format = UCMessages.formatTags("tell", format, UChat.plugin.serv.getConsoleSender(), p, msg, new UCChannel("tell"));
 						
 				p.sendMessage(prefix+format);
-				UChat.serv.getConsoleSender().sendMessage(prefix+format);
+				UChat.plugin.serv.getConsoleSender().sendMessage(prefix+format);
 				return;				
 			}
 			return;
@@ -492,7 +448,7 @@ public class UCListener implements CommandExecutor,Listener {
 		UChat.logger.debug("AsyncPlayerChatEvent - Channel: "+UCMessages.pChannels.get(p.getName()));		
 		
 		if (UCMessages.tellPlayers.containsKey(p.getName())){
-			Player tellreceiver = UChat.serv.getPlayer(UCMessages.tellPlayers.get(p.getName()));
+			Player tellreceiver = UChat.plugin.serv.getPlayer(UCMessages.tellPlayers.get(p.getName()));
 			sendTell(p, tellreceiver, e.getMessage());
 			e.setCancelled(true);
 		} else {
@@ -507,9 +463,23 @@ public class UCListener implements CommandExecutor,Listener {
 				UChat.lang.sendMessage(p, "channel.muted");
 				return;
 			}			
-			boolean cancel = UCMessages.sendFancyMessage(e.getFormat().split(","), e.getMessage(), ch, p, null);
-			if (cancel){
+			
+			if (ch.isCmdAlias()){
+				String start = ch.getAliasCmd();
+				if (start.startsWith("/")){
+					start = start.substring(1);
+				}
+				if (ch.getAliasSender().equalsIgnoreCase("console")){					
+					UCUtil.performCommand(Bukkit.getConsoleSender(), start+" "+e.getMessage());
+				} else {
+					UCUtil.performCommand(p, start+" "+e.getMessage());
+				}				
 				e.setCancelled(true);
+			} else {
+				boolean cancel = UCMessages.sendFancyMessage(e.getFormat().split(","), e.getMessage(), ch, p, null);
+				if (cancel){
+					e.setCancelled(true);
+				}
 			}
 		}				
 	}

@@ -24,7 +24,7 @@ import br.net.fabiozumbi12.UltimateChat.API.SendChannelMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.Fanciful.FancyMessage;
 
 public class UChatBungee implements PluginMessageListener, Listener {
-
+	
 	@Override
     public void onPluginMessageReceived(String channel, Player player, byte[] message) {
 		if (!channel.equals("uChat")){
@@ -152,7 +152,7 @@ public class UChatBungee implements PluginMessageListener, Listener {
         		}        		
     		}
         }	
-		UChat.serv.getConsoleSender().sendMessage(toConsole);
+		UChat.plugin.serv.getConsoleSender().sendMessage(toConsole);
 	}	
 	
 	@EventHandler(priority = EventPriority.LOWEST)

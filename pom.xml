@@ -4,7 +4,7 @@
   <artifactId>UChat</artifactId>
   <packaging>jar</packaging>
   <name>UltimateChat</name>
-  <version>1.6.2</version>
+  <version>1.6.5</version>
   <description>Ultimate Chat is an advanced chat hooking into most used plugins to show more info on player chat.</description>
   <dependencies>
 		<!--Spigot-API-->
@@ -145,8 +145,8 @@
   </scm>
   
   <build>
-    <finalName>${project.name}</finalName>
-    <defaultGoal>clean package install</defaultGoal>
+    <finalName>${project.name}-${buildNumber}</finalName>
+    <defaultGoal>clean package</defaultGoal>
     <resources>
         <resource>
             <targetPath>.</targetPath>
@@ -155,82 +155,67 @@
         </resource>
     </resources>
   
-  <plugins>
-      
-      <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>build-helper-maven-plugin</artifactId>
-          <version>1.10</version>
-          <executions>
-              <execution>
-                  <id>parse-version</id>
-                  <goals>
-                      <goal>parse-version</goal>
-                  </goals>
-              </execution>
-          </executions>
-      </plugin>
-      
-      <plugin>  
-        <groupId>org.apache.maven.plugins</groupId>  
-        <artifactId>maven-resources-plugin</artifactId>  
-        <version>2.4.3</version>  
-        <executions>  
-         <execution>
-          <id>copy-resources</id>
-          <phase>validate</phase>
-          <goals>
-            <goal>copy-resources</goal>
-          </goals>
-          <configuration>          
-          <outputDirectory>${project.basedir}/release</outputDirectory>
-          <resources>          
-            <resource>
-              <directory>${project.basedir}/target/</directory>
-              <filtering>false</filtering>
-              <includes>
-                <include>*.jar</include>
-              </includes>              
-            </resource>
-          </resources>
-          </configuration>
-        </execution>
-      </executions>  
-     </plugin>    
-     
+    <plugins>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.1</version>
         <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
+          <source>1.8</source>
+          <target>1.8</target>
         </configuration>        
       </plugin>
       
-      <plugin>
+    <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>buildnumber-maven-plugin</artifactId>
         <version>1.4</version>
         <executions>
           <execution>
-            <phase>verify</phase>
+            <phase>validate</phase>
             <goals>
               <goal>create</goal>
             </goals>
           </execution>
         </executions>
         <configuration>
-          <doCheck>true</doCheck>
-          <doUpdate>true</doUpdate>
           <format>${project.version}-b{0,number}</format>
           <items>
             <item>buildNumber0</item>
           </items>
         </configuration>
       </plugin>
-      
-   </plugins>
+      <!-- 
+      <plugin>
+        <groupId>com.github.wvengen</groupId>
+          <artifactId>proguard-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                 <phase>package</phase>
+                 <goals><goal>proguard</goal></goals>
+              </execution>
+            </executions>
+            <configuration>
+               <options>
+                 <option>-keepattributes *Annotation*</option>
+                 <option>-keep class ${project.groupId}.${project.artifactId} { *; }</option>
+                 <option>-keep class ${project.groupId}.API.* { *; }</option>
+                 <option>-keep class br.com.devpaulo.legendchat.api.events.* { *; }</option>
+                 <option>-dontshrink</option>
+                 <option>-dontoptimize</option>   
+                 <option>-ignorewarnings</option>     
+                 <option>-dontnote</option>                 
+                 </options>
+                 <injar>${project.name}-free.jar</injar>
+                 <outjar>${project.name}-${buildNumber}.jar</outjar>
+                 <libs>
+                    <lib>${java.home}/lib/rt.jar</lib>
+                 </libs>
+            </configuration>
+    </plugin>
+           -->
+    </plugins>
    
    </build>   
 </project>

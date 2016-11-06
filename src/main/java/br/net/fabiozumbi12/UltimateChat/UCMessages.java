@@ -90,7 +90,7 @@ public class UCMessages {
 				}
 				toConsole = sendMessage(sender, sender, event.getMessage(), ch, false);
 			} else {
-				for (Player receiver:UChat.serv.getOnlinePlayers()){	
+				for (Player receiver:UChat.plugin.serv.getOnlinePlayers()){	
 					if (receiver.equals(sender) || !UCPerms.channelPerm(receiver, ch) || (!ch.crossWorlds() && (sender instanceof Player && !receiver.getWorld().equals(((Player)sender).getWorld())))){				
 						continue;
 					} 					
@@ -107,7 +107,7 @@ public class UCMessages {
 			}	
 									
 			//chat spy
-			for (Player receiver:UChat.serv.getOnlinePlayers()){			
+			for (Player receiver:UChat.plugin.serv.getOnlinePlayers()){			
 				if (!receiver.equals(sender) && !receivers.contains(receiver) && !receivers.contains(sender) && isSpy.contains(receiver.getName())){	
 					String spyformat = UChat.config.getString("general.spy-format");
 					spyformat = spyformat.replace("{output}", ChatColor.stripColor(sendMessage(sender, receiver, event.getMessage(), ch, true)));					
@@ -115,7 +115,7 @@ public class UCMessages {
 				}
 			}
 			
-			UChat.serv.getConsoleSender().sendMessage(toConsole);
+			UChat.plugin.serv.getConsoleSender().sendMessage(toConsole);
 			
 			if (ch.getDistance() == 0 && noWorldReceived <= 0){
 				if (ch.getReceiversMsg()){
@@ -134,7 +134,7 @@ public class UCMessages {
 			UCChannel fakech = new UCChannel("tell");
 			
 			//send spy			
-			for (Player receiver:UChat.serv.getOnlinePlayers()){			
+			for (Player receiver:UChat.plugin.serv.getOnlinePlayers()){			
 				if (!receiver.equals(tellReceiver) && !receiver.equals(sender) && isSpy.contains(receiver.getName())){
 					String spyformat = UChat.config.getString("general.spy-format");
 					if (isIgnoringPlayers(tellReceiver.getName(), sender.getName())){
@@ -148,7 +148,7 @@ public class UCMessages {
 			if (isIgnoringPlayers(tellReceiver.getName(), sender.getName())){
 				toConsole = UChat.lang.get("chat.ignored")+toConsole;
 			}
-			UChat.serv.getConsoleSender().sendMessage(toConsole);
+			UChat.plugin.serv.getConsoleSender().sendMessage(toConsole);
 		}
 		return cancel;
 	}
@@ -202,10 +202,14 @@ public class UCMessages {
 					continue;
 				}
 				
-				
+				String perm = UChat.config.getString("tags."+tag+".permission");
 				String format = UChat.config.getString("tags."+tag+".format");
 				String execute = UChat.config.getString("tags."+tag+".click-cmd");
 				List<String> messages = UChat.config.getStringList("tags."+tag+".hover-messages");
+				
+				if (perm != null && !perm.isEmpty() && !sender.hasPermission(perm)){
+					continue;
+				}
 							
 				String tooltip = "";
 				for (String tp:messages){
@@ -309,7 +313,7 @@ public class UCMessages {
 				
 				format = formatTags(tag, format, sender, receiver, msg, ch);
 				
-				if (UChat.config.getBool("mention.enable") && tag.equals("message") && !StringUtils.containsIgnoreCase(msg, sender.getName())){
+				if (tag.equals("message")){
 					format = mention(sender, receiver, format);
 				}
 				msgFinal.append(format);
@@ -336,7 +340,7 @@ public class UCMessages {
 	
 	public static String mention(Object sender, CommandSender receiver, String msg) {
 		//mention
-		for (Player p:UChat.serv.getOnlinePlayers()){
+		for (Player p:UChat.plugin.serv.getOnlinePlayers()){
 			if (UChat.config.getBool("mention.enable")){
 				if (StringUtils.containsIgnoreCase(msg, p.getName())){
 					if (receiver instanceof Player && receiver.equals(p)){
@@ -344,13 +348,16 @@ public class UCMessages {
 							msg = msg.replaceAll("(?i)\\b"+p.getName()+"\\b", p.getName());
 							continue;
 						}
-						msg = msg.replaceAll("(?i)\\b"+p.getName()+"\\b", UChat.config.getColor("mention.prefix-color")+p.getName()+ChatColor.RESET);
+						String mentionc = UChat.config.getColor("mention.prefix-color")+p.getName()+ChatColor.RESET;
+											
 						for (Sound sound:Sound.values()){
-							if (StringUtils.containsIgnoreCase(sound.toString(),UChat.config.getString("mention.playsound"))){
+							if (StringUtils.containsIgnoreCase(sound.toString(),UChat.config.getString("mention.playsound")) && !msg.contains(mentionc)){
 								((Player)receiver).playSound(((Player)receiver).getLocation(), sound, 1F, 1F);
 								break;
 							}
 						}
+						msg = msg.replace(mentionc, p.getName());	
+						msg = msg.replaceAll("(?i)\\b"+p.getName()+"\\b", mentionc);
 					} else {
 						msg = msg.replaceAll("(?i)\\b"+p.getName()+"\\b", p.getName());
 					}					
@@ -397,15 +404,36 @@ public class UCMessages {
 				text = text
 						.replace("{group-suffix}", UChat.chat.getPlayerSuffix(sender))
 						.replace("{group-prefix}", UChat.chat.getPlayerPrefix(sender));
+				String[] pgs = UChat.chat.getPlayerGroups(sender.getWorld().getName(), sender);
+				if (pgs.length > 0){
+					StringBuilder gprefixes = new StringBuilder();
+					StringBuilder gsuffixes = new StringBuilder();
+					for (String g:pgs){
+						gprefixes.append(UChat.chat.getGroupPrefix(sender.getWorld().getName(), g));
+						gsuffixes.append(UChat.chat.getGroupSuffix(sender.getWorld().getName(), g));
+					}
+					text = text
+							.replace("{player-groups-prefixes}", gprefixes.toString())
+							.replace("{player-groups-suffixes}", gsuffixes.toString());
+				}
 			}
 			if (UChat.econ != null){			
 				text = text
 						.replace("{balance}", ""+UChat.econ.getBalance(sender,sender.getWorld().getName()));
 			}	
-			if (UChat.perms != null){			
+			if (UChat.perms != null){	
+				String[] pgs = UChat.perms.getPlayerGroups(sender.getWorld().getName(), sender);
+				if (pgs.length > 0){
+					StringBuilder groups = new StringBuilder();
+					for (String g:pgs){
+						groups.append(g+",");
+					}
+					text = text.replace("{player-groups}", groups.toString().substring(0, groups.length()-1));
+					
+				}
 				text = text
-						.replace("{prim-group}", UChat.perms.getPrimaryGroup(sender.getWorld().getName(),sender))
-						.replace("{player-groups}", ""+UChat.perms.getPlayerGroups(sender.getWorld().getName(), sender));
+						.replace("{prim-group}", UChat.perms.getPrimaryGroup(sender.getWorld().getName(),sender));
+						
 			}
 			if (UChat.SClans){		
 				ClanPlayer cp = UChat.sc.getClanPlayer(sender.getUniqueId());
@@ -475,7 +503,9 @@ public class UCMessages {
 		
 		if (cmdSender instanceof CommandSender){
 			if ((tag.equals("tell") || tag.equals("message")) && !UCPerms.hasPerm((CommandSender)cmdSender, "chat.color")){
-				return text.replace("§", "&");
+				text = text.replace("§", "&");
+				text = mention((CommandSender)cmdSender, (CommandSender)receiver, text);
+				return text;
 			} else {
 				return ChatColor.translateAlternateColorCodes('&', text);
 			}

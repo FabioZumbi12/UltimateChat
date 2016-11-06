@@ -69,7 +69,7 @@ class UCChatProtection implements Listener{
 				msgSpam.put(msg, msgSpam.get(msg)+1);
 				e.setCancelled(true);				
 				if (msgSpam.get(msg) >= UChat.config.getProtInt("chat-protection.antispam.count-of-same-message")){
-					UCUtil.performCommand(UChat.serv.getConsoleSender(),UChat.config.getProtString("chat-protection.antispam.cmd-action").replace("{player}", p.getName()));
+					UCUtil.performCommand(UChat.plugin.serv.getConsoleSender(),UChat.config.getProtString("chat-protection.antispam.cmd-action").replace("{player}", p.getName()));
 					msgSpam.remove(msg);
 				} else {
 					UChat.lang.sendMessage(p, UChat.config.getProtMsg("chat-protection.antispam.wait-message"));
@@ -150,23 +150,6 @@ class UCChatProtection implements Listener{
 		if (UChat.config.getProtBool("chat-protection.chat-enhancement.enabled") && !p.hasPermission("uchat.bypass-enhancement")){
 			if (!Pattern.compile(regexIP).matcher(msg).find() && !Pattern.compile(regexUrl).matcher(msg).find()){
 				msg = msg.replaceAll("([.!?])\\1+", "$1").replaceAll(" +", " ").substring(0, 1).toUpperCase()+msg.substring(1).toLowerCase();
-				/*String[] messages = msg.split("(?<=[.!?])");
-				StringBuilder finalmsg = new StringBuilder(); 
-				boolean first = true;
-				for (String msgw:messages){
-					if (msgw.length() <= 0){
-						continue;
-					}
-					if (first){
-						finalmsg.append(msgw.substring(0, 1).toUpperCase()+msgw.substring(1).toLowerCase());
-						first = false;
-					} else if (msgw.startsWith(" ")){
-						finalmsg.append(msgw.substring(0, 2).toUpperCase()+msgw.substring(2).toLowerCase());
-					} else {
-						finalmsg.append(" "+msgw.substring(0, 1).toUpperCase()+msgw.substring(1).toLowerCase());
-					}
-				}					
-				msg = finalmsg.toString();*/
 				if (UChat.config.getProtBool("chat-protection.chat-enhancement.end-with-dot") && !msg.endsWith("?") && !msg.endsWith("!") && !msg.endsWith(".") && msg.split(" ").length > 2){
 					msg = msg+".";
 				}
@@ -205,7 +188,7 @@ class UCChatProtection implements Listener{
 							}						
 						},(UChat.config.getProtInt("chat-protection.anti-ip.punish.mute-duration")*60)*20);
 					} else {
-						UCUtil.performCommand(UChat.serv.getConsoleSender(),UChat.config.getProtString("chat-protection.anti-ip.punish.cmd-punish"));
+						UCUtil.performCommand(UChat.plugin.serv.getConsoleSender(),UChat.config.getProtString("chat-protection.anti-ip.punish.cmd-punish"));
 					}	
 					UrlSpam.remove(p);
 				}

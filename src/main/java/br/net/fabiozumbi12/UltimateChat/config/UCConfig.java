@@ -62,38 +62,15 @@ public class UCConfig{
     	            
     	            configs = updateFile(config, "config.yml"); 
     	            
-    	            /*
-    	            UCYaml temp = new UCYaml();
-    	            try {
-    	            	temp.load(config);
-					} catch (Exception e) {
-						e.printStackTrace();
-					} 
-    	            
-    	            try {
-						configs.load(config);
-					} catch (IOException | InvalidConfigurationException e) {
-						e.printStackTrace();
-					}
-    	            
-    	            defConfigs = inputLoader(plugin.getResource("config.yml"));  
-                    for (String key:defConfigs.getKeys(true)){                        	
-    	            	defConfigs.set(key, configs.get(key));    	            	   	            	
-    	            }                        
-                    for (String key:defConfigs.getKeys(false)){    
-                    	configs.set(key, defConfigs.get(key));
-                    	UChat.logger.debug("Set key: "+key);
-                    }  */
-                    
                     //--------------------------------------------------------------------------//
                     
-                    UChat.logger.info("Server version: " + UChat.serv.getBukkitVersion());
+                    UChat.logger.info("Server version: " + plugin.serv.getBukkitVersion());
                     
                     // check if can enable json support
                     if (getBool("general.hover-events")){                    	
                     	try {
                     		Class.forName("com.google.gson.JsonParser");
-                          	if (UChat.serv.getBukkitVersion().contains("1.7")){
+                          	if (plugin.serv.getBukkitVersion().contains("1.7")){
                           		configs.set("general.hover-events", false);
                           		UChat.logger.warning("Your server version do not support Hover features, only 1.8.+");
                           	}                           	
@@ -119,8 +96,34 @@ public class UCConfig{
 									channel.getBoolean("receivers-message", true),
 									channel.getDouble("cost", 0.0),
 									channel.getBoolean("bungee", false),
-									channel.getBoolean("use-this-builder", false));
+									channel.getBoolean("use-this-builder", false),
+									channel.getBoolean("channelAlias.enable", false),
+									channel.getString("channelAlias.sendAs", "player"),
+									channel.getString("channelAlias.cmd", ""));
             				channels.put(Arrays.asList(file.getName().replace(".yml", ""), ch.getAlias()), ch);
+            				channel.options().header(""
+            						+ "###################################################\n"
+            						+ "############## Channel Configuration ##############\n"
+            						+ "###################################################\n"
+            						+ "\n"
+            						+ "This the channel configuration.\n"
+            						+ "You can change and copy this file to create as many channels you want.\n"
+            						+ "This is the default options:\n"
+            						+ "\n"
+            						+ "name: Global - The name of channel.\n"
+            						+ "alias: g - The alias to use the channel\n"
+            						+ "across-worlds: true - Send messages of this channel to all worlds?\n"
+            						+ "distance: 0 - If across worlds is false, distance to receive this messages.\n"
+            						+ "color: &b - The color of channel\n"
+            						+ "tag-builder: ch-tags,world,clan-tag,marry-tag,group-prefix,nickname,group-suffix,message - Tags of this channel\n"
+            						+ "need-focus: false - Player can use the alias or need to use '/ch g' to use this channel?\n"
+            						+ "receivers-message: true - Send chat messages like if no player near to receive the message?\n"
+            						+ "cost: 0.0 - Cost to player use this channel.\n"
+            						+ "use-this-builder: false - Use this tag builder or use the 'config.yml' tag-builder?\n"
+            						+ "channelAlias - Use this channel as a command alias.\n"
+            						+ "  enable: true - Enable this execute a command alias?\n"
+            						+ "  sendAs: player - Send the command alias as 'player' or 'console'?\n"
+            						+ "  cmd: '' - Command to send on every message send by this channel.\n");
             				channel.set("name", ch.getName());
             				channel.set("alias", ch.getAlias());
             				channel.set("across-worlds", ch.crossWorlds());
@@ -131,7 +134,9 @@ public class UCConfig{
             				channel.set("receivers-message", ch.getReceiversMsg());
             				channel.set("cost", ch.getCost());
             				channel.set("bungee", ch.isBungee());
-            				channel.set("use-this-builder", ch.useOwnBuilder());
+            				channel.set("channelAlias.enable", ch.isCmdAlias());
+            				channel.set("channelAlias.sendAs", ch.getAliasSender());
+            				channel.set("channelAlias.cmd", ch.getAliasCmd());
             				try {
 								channel.save(file);
 							} catch (IOException e) {
@@ -172,7 +177,9 @@ public class UCConfig{
             					+ " - {group-suffix}: Get group suffix;\n"
             					+ " - {balance}: Get the sender money;\n"
             					+ " - {prim-group}: Get the primary group tag;\n"
-            					+ " - {player-groups}: Get all groupas the sender has;\n"
+            					+ " - {player-groups}: Get all groups names the sender has;\n"
+            					+ " - {player-groups-prefixes}: Get all group prefixes the sender has;\n"
+            					+ " - {player-groups-suffixes}: Get all group suffixes the sender has;\n"
             					+ "Simpleclans:\n"
             					+ " - {clan-tag}: Clan tag without colors;\n"
             					+ " - {clan-ctag}: Clan with colors;\n"
@@ -220,6 +227,8 @@ public class UCConfig{
             					+ " - {balance}: Dinheiro do player;\n"
             					+ " - {prim-group}: Tag do grupo primário;\n"
             					+ " - {player-groups}: Lista todos grupos que o player faz parte;\n"
+            					+ " - {player-groups-prefixes}: Lista todo prefixes dos grupos que o player esta;\n"
+            					+ " - {player-groups-suffixes}: Lista todo suffixes dos grupos que o player esta;\n"
             					+ "Simpleclans:\n"
             					+ " - {clan-tag}: Tag do Clan sem cores;\n"
             					+ " - {clan-ctag}: Tag do Clan com cores;\n"
@@ -237,6 +246,18 @@ public class UCConfig{
             					+ "- {world}: Mundo de quem enviou;\n"
             					+ "- {server}: O Server de quem enviou, igual o especificado em config.yml do BungeeCord;\n"
             					+ "");
+            		}
+            		
+            		/*------------------------------------------------------------------------------------*/
+            		
+            		//add new config on update
+            		if (configs.getDouble("config-version") < 1.2){
+            			configs.set("config-version", 1.2);
+            			
+            			configs.set("tags.custom-tag.format", "&7[&2MyTag&7]&r");
+            			configs.set("tags.custom-tag.click-cmd", "");
+            			configs.set("tags.custom-tag.hover-messages", new ArrayList<String>());
+            			configs.set("tags.custom-tag.permission", "any-name-perm.custom-tag");            			
             		}
             		
                     /*------------------------------------------------------------------------------------*/
