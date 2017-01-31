@@ -11,6 +11,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -20,6 +22,7 @@ import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 
 import br.net.fabiozumbi12.UltimateChat.UCUtil;
+import br.net.fabiozumbi12.UltimateChat.UChat;
 import br.net.fabiozumbi12.UltimateChat.Fanciful.util.ArrayWrapper;
 
 import com.google.gson.JsonArray;
@@ -70,13 +73,27 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 		this(rawText(firstPartText));
 	}
 	
-	public FancyMessage text(String text, String tag) {
+	public FancyMessage text(String text, String tag) {		
 		String newstr = "";
 		if (tag.equals("message")){
-			for (String st:text.split(" ")){				
+			for (String st:text.split(" ")){
+				String regexUrl = "((http:\\/\\/|https:\\/\\/)?(www\\.)?(([a-zA-Z0-9-]){2,}\\.){1,4}([a-zA-Z]){2,6}(\\/([a-zA-Z-_\\/\\.0-9#:?=&;,]*)?)?)";
+				Matcher match = Pattern.compile(regexUrl).matcher(st);
+				if (match.find()){
+					String matchg = ChatColor.stripColor(match.group(1));	
+					//sender.sendMessage("Match: "+matchg);
+					if (!matchg.startsWith("http")){
+						matchg = "http://"+matchg;
+					}
+					
+					this.text(match.group(1)).link(matchg).tooltip(UChat.config.getURLTemplate().replace("{url}", match.group(1)));
+					newstr = newstr+lastColor+st+" ";
+					lastColor = ChatColor.getLastColors(newstr);
+					continue;
+				}				
 				newstr = newstr+lastColor+st+" ";
 				lastColor = ChatColor.getLastColors(newstr);
-			}
+			}			
 		} else {
 			newstr = lastColor+text;
 			lastColor = ChatColor.getLastColors(newstr);

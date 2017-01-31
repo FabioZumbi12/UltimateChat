@@ -15,6 +15,6 @@ public class UCPerms {
 	}
 	
 	public static boolean hasPerm(CommandSender p, String perm){
-		return (p instanceof ConsoleCommandSender) || p.isOp() || p.hasPermission("uchat."+perm);
+		return (p instanceof ConsoleCommandSender) || p.isOp() || p.hasPermission("uchat."+perm) || p.hasPermission("uchat.admin");
 	}
 }

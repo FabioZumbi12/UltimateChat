@@ -4,24 +4,24 @@
   <artifactId>UChat</artifactId>
   <packaging>jar</packaging>
   <name>UltimateChat</name>
-  <version>1.6.5</version>
+  <version>1.7.0</version>
   <description>Ultimate Chat is an advanced chat hooking into most used plugins to show more info on player chat.</description>
   <dependencies>
 		<!--Spigot-API-->
         <dependency>
           <groupId>org.spigotmc</groupId>
           <artifactId>spigot-api</artifactId>
-          <version>1.9.2-R0.1-SNAPSHOT</version>
+          <version>1.11-R0.1-SNAPSHOT</version>
           <!--  <version>1.8.8-R0.1-SNAPSHOT</version> -->
         </dependency>
-        
+        <!-- 
 		<dependency>
 			<groupId>spigot-1.9</groupId>
 			<artifactId>spigot-1.9</artifactId>
 			<version>v1</version>
 			<scope>system</scope>
 			<systemPath>D:/ProjetosBukkit/APIs/spigot-1.9.jar</systemPath>
-		</dependency>
+		</dependency>-->
 		
         <dependency>
          <groupId>me.clip</groupId>
@@ -30,20 +30,30 @@
          <scope>provided</scope>
         </dependency>
 		         
+		<!-- start of local repos -->
+		         
 		<dependency>
 			<groupId>SimpleClans</groupId>
-			<artifactId>sSimpleClans</artifactId>
+			<artifactId>SimpleClans</artifactId>
 			<version>v1</version>
 			<scope>system</scope>
-			<systemPath>D:/ProjetosBukkit/APIs/SimpleClans.jar</systemPath>
+			<systemPath>${project.basedir}/libs/SimpleClans.jar</systemPath>
 		</dependency>
 		
 		<dependency>
-			<groupId>MarriageMaster</groupId>
-			<artifactId>MarriageMaster</artifactId>
+			<groupId>MassiveCore</groupId>
+			<artifactId>MassiveCore</artifactId>
 			<version>v1</version>
 			<scope>system</scope>
-			<systemPath>D:/ProjetosBukkit/APIs/MarriageMaster.jar</systemPath>
+			<systemPath>${project.basedir}/libs/MassiveCore.jar</systemPath>
+		</dependency>
+		
+		<dependency>
+			<groupId>Factions</groupId>
+			<artifactId>Factions</artifactId>
+			<version>v1</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/libs/Factions.jar</systemPath>
 		</dependency>
 		
 		<dependency>
@@ -51,7 +61,15 @@
 			<artifactId>Marriage</artifactId>
 			<version>v1</version>
 			<scope>system</scope>
-			<systemPath>D:/ProjetosBukkit/APIs/Marriage.jar</systemPath>
+			<systemPath>${project.basedir}/libs/Marriage.jar</systemPath>
+		</dependency>
+		
+		<dependency>
+			<groupId>MarriageMaster</groupId>
+			<artifactId>MarriageMaster</artifactId>
+			<version>v1</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/libs/MarriageMaster.jar</systemPath>
 		</dependency>
 		
         <!-- <dependency>
@@ -60,7 +78,7 @@
 			<version>v1</version>
 			<scope>system</scope>
 			<systemPath>D:/ProjetosBukkit/APIs/KCauldron-1.7.10-1481.145-server.jar</systemPath>
-		</dependency> -->
+		</dependency> 
 		<dependency>
 			<groupId>repo.libs</groupId>
 			<artifactId>BossBarAPI</artifactId>
@@ -80,7 +98,7 @@
 			<groupId>repo.libs</groupId>
 			<artifactId>PvPManager</artifactId>
 			<version>v2</version>
-		</dependency>
+		</dependency>-->
 		<dependency>
            <groupId>net.milkbowl.vault</groupId>
            <artifactId>VaultAPI</artifactId>            
@@ -107,11 +125,7 @@
             <id>dmulloy2-repo</id>
             <url>http://repo.dmulloy2.net/content/groups/public/</url>
      </repository>
-     <repository>
-            <id>libs-repo</id>
-            <url>http://areaz12server.net.br/maven/</url>
-     </repository>
-     
+          
      <repository>
             <id>placeholderapi</id>
             <url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>

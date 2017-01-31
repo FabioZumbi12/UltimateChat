@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import net.milkbowl.vault.chat.Chat;
@@ -36,6 +37,7 @@ import br.net.fabiozumbi12.UltimateChat.config.UCLang;
 
 import com.lenis0012.bukkit.marriage2.Marriage;
 import com.lenis0012.bukkit.marriage2.MarriageAPI;
+import com.massivecraft.factions.entity.BoardColl;
 
 public class UChat extends JavaPlugin {
 	
@@ -58,9 +60,20 @@ public class UChat extends JavaPlugin {
 	public static MarriageMaster mm;
 	public static Marriage mapi;
 	public static boolean PlaceHolderAPI;
+	public static boolean Factions;
+	public static BoardColl fac;
 	private FileConfiguration amConfig;
-	private int index = 0;
+	private int index = 0;	
 
+	public static HashMap<String,String> pChannels = new HashMap<String,String>();
+	public static HashMap<String,String> tempChannels = new HashMap<String,String>();
+	public static HashMap<String,String> tellPlayers = new HashMap<String,String>();
+	public static HashMap<String,String> tempTellPlayers = new HashMap<String,String>();
+	public static HashMap<String,String> respondTell = new HashMap<String,String>();
+	public static HashMap<String,List<String>> ignoringPlayer = new HashMap<String,List<String>>();
+	public static List<String> mutes = new ArrayList<String>();
+	public static List<String> isSpy = new ArrayList<String>();
+	
 	public FileConfiguration getAMConfig(){
 		return this.amConfig;
 	}
@@ -82,6 +95,7 @@ public class UChat extends JavaPlugin {
             MarryMaster = checkMM();
             ProtocolLib = checkPL();
             PlaceHolderAPI = checkPHAPI();
+            Factions = checkFac();
             
             serv.getPluginCommand("uchat").setExecutor(new UCListener());
             serv.getPluginManager().registerEvents(new UCListener(), this);
@@ -118,6 +132,11 @@ public class UChat extends JavaPlugin {
             	logger.info("SimpleClans found. Hooked.");
             }
             
+            if (Factions){
+            	fac = BoardColl.get();
+            	logger.info("Factions found. Hooked.");
+            }
+            
             if (Vault){
             	RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
             	RegisteredServiceProvider<Chat> rschat = getServer().getServicesManager().getRegistration(Chat.class);
@@ -146,8 +165,8 @@ public class UChat extends JavaPlugin {
             }
             
             for (Player p:serv.getOnlinePlayers()){
-            	if (!UCMessages.pChannels.containsKey(p.getName())){
-            		UCMessages.pChannels.put(p.getName(), UChat.config.getDefChannel().getAlias());
+            	if (!pChannels.containsKey(p.getName())){
+            		pChannels.put(p.getName(), UChat.config.getDefChannel().getAlias());
             	}
             }
             
@@ -253,6 +272,7 @@ public class UChat extends JavaPlugin {
 	public void registerAliases(){
 		registerAliases("channel",config.getChAliases());
         registerAliases("tell",config.getTellAliases());
+        registerAliases("umsg",config.getMsgAliases());
         if (config.getBool("broadcast.enable")){
         	registerAliases("ubroadcast",config.getBroadcastAliases());
         }
@@ -323,6 +343,14 @@ public class UChat extends JavaPlugin {
 
 	private boolean checkPHAPI() {
 		Plugin p = Bukkit.getPluginManager().getPlugin("PlaceholderAPI");
+    	if (p != null && p.isEnabled()){
+    		return true;
+    	}
+		return false;
+	}
+	
+	private boolean checkFac() {
+		Plugin p = Bukkit.getPluginManager().getPlugin("Factions");
     	if (p != null && p.isEnabled()){
     		return true;
     	}

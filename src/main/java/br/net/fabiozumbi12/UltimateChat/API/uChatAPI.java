@@ -1,14 +1,11 @@
 package br.net.fabiozumbi12.UltimateChat.API;
 
-import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-
-import org.bukkit.configuration.file.YamlConfiguration;
 
 import br.net.fabiozumbi12.UltimateChat.UCChannel;
 import br.net.fabiozumbi12.UltimateChat.UChat;
-import br.net.fabiozumbi12.UltimateChat.config.UCYaml;
 
 public class uChatAPI {
 
@@ -50,22 +47,8 @@ public class uChatAPI {
 		if (tagBuilder == null || tagBuilder.equals("")){
 			tagBuilder = UChat.config.getString("general.default-tag-builder");			
 		}
-		UCChannel ch = new UCChannel(chName, chAlias, crossWorlds, distance, color, tagBuilder, needFocus, receiverMsg, cost, bungee, false, false, "player", "");		
-		UChat.config.addChannel(ch);
-		
-		File defch = new File(UChat.mainPath+File.separator+"channels"+File.separator+chName+".yml");		
-		YamlConfiguration chFile = UCYaml.loadConfiguration(defch);
-		chFile.set("name", ch.getName());
-		chFile.set("alias", ch.getAlias());
-		chFile.set("across-worlds", ch.crossWorlds());
-		chFile.set("distance", ch.getDistance());
-		chFile.set("color", ch.getColor());
-		chFile.set("need-focus", ch.neeFocus());
-		chFile.set("tag-builder", ch.getRawBuilder());
-		chFile.set("cost", ch.getCost());
-		chFile.set("bungee", ch.isBungee());
-		chFile.set("use-this-builder", ch.useOwnBuilder());
-		chFile.save(defch);
+		UCChannel ch = new UCChannel(chName, chAlias, crossWorlds, distance, color, tagBuilder, needFocus, receiverMsg, cost, bungee, false, false, "player", "", new ArrayList<String>(), true);		
+		UChat.config.addChannel(ch);		
 		return true;
 	}
 }

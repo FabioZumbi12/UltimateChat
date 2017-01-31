@@ -23,7 +23,7 @@ public class UCConfig{
 	static UCYaml defConfigs = new UCYaml();
 	static UCYaml configs = new UCYaml();
 	static UCYaml Prots = new UCYaml();
-	private HashMap<List<String>,UCChannel> channels = new HashMap<List<String>,UCChannel>();
+	private HashMap<List<String>,UCChannel> channels = null;
 	
 	public UCConfig(UChat plugin, String mainPath) {
 		            File main = new File(mainPath);
@@ -82,6 +82,7 @@ public class UCConfig{
                     
                     //--------------------------------------- Load Aliases -----------------------------------//
                                         
+                    channels = new HashMap<List<String>,UCChannel>();
                     File[] listOfFiles = chfolder.listFiles();
             		for (File file:listOfFiles){
             			if (file.getName().endsWith(".yml")){
@@ -99,46 +100,11 @@ public class UCConfig{
 									channel.getBoolean("use-this-builder", false),
 									channel.getBoolean("channelAlias.enable", false),
 									channel.getString("channelAlias.sendAs", "player"),
-									channel.getString("channelAlias.cmd", ""));
-            				channels.put(Arrays.asList(file.getName().replace(".yml", ""), ch.getAlias()), ch);
-            				channel.options().header(""
-            						+ "###################################################\n"
-            						+ "############## Channel Configuration ##############\n"
-            						+ "###################################################\n"
-            						+ "\n"
-            						+ "This the channel configuration.\n"
-            						+ "You can change and copy this file to create as many channels you want.\n"
-            						+ "This is the default options:\n"
-            						+ "\n"
-            						+ "name: Global - The name of channel.\n"
-            						+ "alias: g - The alias to use the channel\n"
-            						+ "across-worlds: true - Send messages of this channel to all worlds?\n"
-            						+ "distance: 0 - If across worlds is false, distance to receive this messages.\n"
-            						+ "color: &b - The color of channel\n"
-            						+ "tag-builder: ch-tags,world,clan-tag,marry-tag,group-prefix,nickname,group-suffix,message - Tags of this channel\n"
-            						+ "need-focus: false - Player can use the alias or need to use '/ch g' to use this channel?\n"
-            						+ "receivers-message: true - Send chat messages like if no player near to receive the message?\n"
-            						+ "cost: 0.0 - Cost to player use this channel.\n"
-            						+ "use-this-builder: false - Use this tag builder or use the 'config.yml' tag-builder?\n"
-            						+ "channelAlias - Use this channel as a command alias.\n"
-            						+ "  enable: true - Enable this execute a command alias?\n"
-            						+ "  sendAs: player - Send the command alias as 'player' or 'console'?\n"
-            						+ "  cmd: '' - Command to send on every message send by this channel.\n");
-            				channel.set("name", ch.getName());
-            				channel.set("alias", ch.getAlias());
-            				channel.set("across-worlds", ch.crossWorlds());
-            				channel.set("distance", ch.getDistance());
-            				channel.set("color", ch.getColor());
-            				channel.set("tag-builder", ch.getRawBuilder());
-            				channel.set("need-focus", ch.neeFocus());
-            				channel.set("receivers-message", ch.getReceiversMsg());
-            				channel.set("cost", ch.getCost());
-            				channel.set("bungee", ch.isBungee());
-            				channel.set("channelAlias.enable", ch.isCmdAlias());
-            				channel.set("channelAlias.sendAs", ch.getAliasSender());
-            				channel.set("channelAlias.cmd", ch.getAliasCmd());
+									channel.getString("channelAlias.cmd", ""),
+									channel.getStringList("available-worlds"),
+									channel.getBoolean("canLock", true));
             				try {
-								channel.save(file);
+								addChannel(ch);
 							} catch (IOException e) {
 								e.printStackTrace();
 							}
@@ -196,6 +162,14 @@ public class UCConfig{
             					+ "For BungeeCord theres 2 new tags. The other tags still working except username, group and other plugin tags.\n"
             					+ "- {world}: World from sender;\n"
             					+ "- {server}: Server from sender, equals on server list on Bungee config.yml;\n"
+            					+ "Factions:\n"
+            					+ "Gets the info of faction to show on chat.\n"
+            					+ "- {fac-id}: Faction ID;\n"
+            					+ "- {fac-name}: Faction Name;\n"
+            					+ "- {fac-motd}: Faction MOTD;\n"
+            					+ "- {fac-description}: Faction Description;\n"
+            					+ "- {fac-relation-name}: Faction name in relation of reader of tag;\n"
+            					+ "- {fac-relation-color}: Faction color in relation of reader of tag;\n"
             					+ "");
             		}
             		if (lang.equalsIgnoreCase("PT-BR")){
@@ -245,6 +219,14 @@ public class UCConfig{
             					+ "Para bungee cord tem 2 tags novas. Algumas das outras tags ainda funcionam, com excessão da username, de grupo e de outros plugins.\n"
             					+ "- {world}: Mundo de quem enviou;\n"
             					+ "- {server}: O Server de quem enviou, igual o especificado em config.yml do BungeeCord;\n"
+            					+ "Factions:\n"
+            					+ "Pega as informações das Factions pra mostrar no chat.\n"
+            					+ "- {fac-id}: Faction ID;\n"
+            					+ "- {fac-name}: Nome da Faction;\n"
+            					+ "- {fac-motd}: MOTD da faction;\n"
+            					+ "- {fac-description}: Descrição da Faction;\n"
+            					+ "- {fac-relation-name}: Nome da Faction em relação á quem ta lendo a tag;\n"
+            					+ "- {fac-relation-color}: Cor da Faction em relação á quem ta lendo a tag;\n"
             					+ "");
             		}
             		
@@ -257,7 +239,22 @@ public class UCConfig{
             			configs.set("tags.custom-tag.format", "&7[&2MyTag&7]&r");
             			configs.set("tags.custom-tag.click-cmd", "");
             			configs.set("tags.custom-tag.hover-messages", new ArrayList<String>());
-            			configs.set("tags.custom-tag.permission", "any-name-perm.custom-tag");            			
+            			configs.set("tags.custom-tag.permission", "any-name-perm.custom-tag");     
+            			configs.set("tags.custom-tag.show-in-worlds", new ArrayList<String>());
+            			configs.set("tags.custom-tag.hide-in-worlds", new ArrayList<String>());
+            		}
+            		if (configs.getDouble("config-version") < 1.3){
+            			configs.set("config-version", 1.3);
+            			
+            			configs.set("tags.factions.format", "&7[{fac-relation-color}{fac-relation-name}&7]&r");
+            			configs.set("tags.factions.click-cmd", "");
+            			configs.set("tags.factions.hover-messages", Arrays.asList(
+            					"&7Faction name: {fac-relation-color}{fac-name}", 
+            					"&7Motd: &a{fac-motd}", 
+            					"&7Description: {fac-description}"));   
+            			configs.set("tags.factions.permission", ""); 
+            			configs.set("tags.factions.show-in-worlds", new ArrayList<String>());
+            			configs.set("tags.factions.hide-in-worlds", new ArrayList<String>());
             		}
             		
                     /*------------------------------------------------------------------------------------*/
@@ -298,8 +295,52 @@ public class UCConfig{
 		return this.channels.values();
 	}
 	
-	public void addChannel(UCChannel channel){
-		channels.put(Arrays.asList(channel.getName(), channel.getAlias()), channel);
+	public void addChannel(UCChannel ch) throws IOException{
+		File defch = new File(UChat.mainPath+File.separator+"channels"+File.separator+ch.getName()+".yml");		
+		YamlConfiguration chFile = UCYaml.loadConfiguration(defch);
+		chFile.options().header(""
+				+ "###################################################\n"
+				+ "############## Channel Configuration ##############\n"
+				+ "###################################################\n"
+				+ "\n"
+				+ "This the channel configuration.\n"
+				+ "You can change and copy this file to create as many channels you want.\n"
+				+ "This is the default options:\n"
+				+ "\n"
+				+ "name: Global - The name of channel.\n"
+				+ "alias: g - The alias to use the channel\n"
+				+ "across-worlds: true - Send messages of this channel to all worlds?\n"
+				+ "distance: 0 - If across worlds is false, distance to receive this messages.\n"
+				+ "color: &b - The color of channel\n"
+				+ "tag-builder: ch-tags,world,clan-tag,marry-tag,group-prefix,nickname,group-suffix,message - Tags of this channel\n"
+				+ "need-focus: false - Player can use the alias or need to use '/ch g' to use this channel?\n"
+				+ "canLock: true - Change if the player can use /<channel> to lock on channel."
+				+ "receivers-message: true - Send chat messages like if no player near to receive the message?\n"
+				+ "cost: 0.0 - Cost to player use this channel.\n"
+				+ "use-this-builder: false - Use this tag builder or use the 'config.yml' tag-builder?\n"
+				+ "channelAlias - Use this channel as a command alias.\n"
+				+ "  enable: true - Enable this execute a command alias?\n"
+				+ "  sendAs: player - Send the command alias as 'player' or 'console'?\n"
+				+ "  cmd: '' - Command to send on every message send by this channel.\n"
+				+ "available-worlds - Worlds and only this world where this chat can be used and messages sent/received.");
+		chFile.set("name", ch.getName());
+		chFile.set("alias", ch.getAlias());
+		chFile.set("across-worlds", ch.crossWorlds());
+		chFile.set("distance", ch.getDistance());
+		chFile.set("color", ch.getColor());
+		chFile.set("use-this-builder", ch.useOwnBuilder());
+		chFile.set("tag-builder", ch.getRawBuilder());
+		chFile.set("need-focus", ch.neeFocus());
+		chFile.set("canLock", ch.canLock());
+		chFile.set("receivers-message", ch.getReceiversMsg());
+		chFile.set("cost", ch.getCost());
+		chFile.set("bungee", ch.isBungee());
+		chFile.set("channelAlias.enable", ch.isCmdAlias());
+		chFile.set("channelAlias.sendAs", ch.getAliasSender());
+		chFile.set("channelAlias.cmd", ch.getAliasCmd());
+		chFile.set("available-worlds", ch.availableWorlds());		
+		chFile.save(defch);
+		channels.put(Arrays.asList(ch.getName(), ch.getAlias().toLowerCase()), ch);
 	}
 	
 	public void unMuteInAllChannels(String player){
@@ -345,6 +386,10 @@ public class UCConfig{
 	
 	public List<String> getTellAliases() {
 		return Arrays.asList(configs.getString("tell.cmd-aliases").replace(" ", "").split(","));
+	}
+	
+	public List<String> getMsgAliases() {
+		return Arrays.asList(configs.getString("general.umsg-cmd-aliases").replace(" ", "").split(","));
 	}
 	
     public Boolean getBool(String key){		
@@ -439,6 +484,9 @@ public class UCConfig{
         }  
         return finalyml;
 	}
-	
+
+	public String getURLTemplate() {
+		return ChatColor.translateAlternateColorCodes('&', configs.getString("general.URL-template"));
+	}	
 }
    

@@ -13,15 +13,15 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
-import com.google.common.collect.Iterables;
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
-
 import br.net.fabiozumbi12.UltimateChat.UCChannel;
 import br.net.fabiozumbi12.UltimateChat.UCMessages;
 import br.net.fabiozumbi12.UltimateChat.UChat;
 import br.net.fabiozumbi12.UltimateChat.API.SendChannelMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.Fanciful.FancyMessage;
+
+import com.google.common.collect.Iterables;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 
 public class UChatBungee implements PluginMessageListener, Listener {
 	
@@ -91,8 +91,7 @@ public class UChatBungee implements PluginMessageListener, Listener {
         				}
         				
         				if (UChat.config.getBool("mention.enable") && tag.equals("message") && !StringUtils.containsIgnoreCase(msg, sender)){
-        					tooltip = UCMessages.formatTags(tag, tooltip, sender, p.getName(), msg, chan);
-        					msg = UCMessages.mention(sender, p, msg);		
+        					tooltip = UCMessages.formatTags(tag, tooltip, sender, p.getName(), msg, chan);	
         					format = UCMessages.formatTags(tag, format, sender, p.getName(), msg, chan);
         					if (UChat.config.getString("mention.hover-message").length() > 0 && StringUtils.containsIgnoreCase(msg, p.getName())){
         						tooltip = UCMessages.formatTags(tag, UChat.config.getString("mention.hover-message"), sender, p.getName(), msg, chan);
@@ -142,9 +141,6 @@ public class UChatBungee implements PluginMessageListener, Listener {
     					
     					format = UCMessages.formatTags(tag, format, sender, p.getName(), msg, chan);
     					
-    					if (UChat.config.getBool("mention.enable") && tag.equals("message") && !StringUtils.containsIgnoreCase(msg, sender)){
-    						format = UCMessages.mention(sender, p, format);
-    					}
     					msgFinal.append(format);
     				}
     				p.sendMessage(msgFinal.toString());

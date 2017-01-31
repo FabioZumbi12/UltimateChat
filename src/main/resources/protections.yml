@@ -5,13 +5,22 @@ chat-protection:
     # All to lower-case and first word to uppercase.
     enabled: true
     # Always end with dots.
-    end-with-dot: true
-    # Anti-Flood
-    anti-flood:
-      enable: true
-      whitelist-flood-characs:
-      - k
+    end-with-dot: true    
+    # Minimun lentgh of message to apply enhancement
+    minimum-lenght: 3
 
+  # Anti-Flood
+  anti-flood:
+    enable: true
+    whitelist-flood-characs:
+    - k
+
+  # Caps Lock filter
+  caps-filter:
+    enabled: true
+    # Minimun lentgh of upper case letters to apply filter
+    minimum-lenght: 3
+    
   # Anti-Spam system.
   antispam:
     enabled: false

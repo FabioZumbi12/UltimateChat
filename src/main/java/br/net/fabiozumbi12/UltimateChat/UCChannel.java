@@ -3,6 +3,8 @@ package br.net.fabiozumbi12.UltimateChat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.World;
+
 public class UCChannel {
 
 	private String name;
@@ -21,8 +23,10 @@ public class UCChannel {
 	private boolean isAlias = false;
 	private String aliasSender = "";
 	private String aliasCmd = "";
+	private List<String> availableWorlds = new ArrayList<String>();
+	private boolean canLock = true;
 
-	public UCChannel(String name, String alias, boolean worlds, int dist, String color, String builder, boolean focus, boolean receiversMsg, double cost, boolean isbungee, boolean ownBuilder, boolean isAlias, String aliasSender, String aliasCmd) {
+	public UCChannel(String name, String alias, boolean worlds, int dist, String color, String builder, boolean focus, boolean receiversMsg, double cost, boolean isbungee, boolean ownBuilder, boolean isAlias, String aliasSender, String aliasCmd, List<String> availableWorlds, boolean lock) {
 		this.name = name;
 		this.alias = alias;
 		this.worlds = worlds;
@@ -37,6 +41,8 @@ public class UCChannel {
 		this.isAlias = isAlias;
 		this.aliasCmd  = aliasCmd;
 		this.aliasSender = aliasSender;
+		this.availableWorlds = availableWorlds;
+		this.canLock = lock;
 	}
 	
 	public UCChannel(String name, String alias, String color) {
@@ -48,6 +54,18 @@ public class UCChannel {
 	public UCChannel(String name) {
 		this.name = name;
 		this.alias = name.substring(0, 1).toLowerCase();
+	}
+	
+	public boolean canLock(){
+		return this.canLock;
+	}
+	
+	public boolean availableInWorld(World w){
+		return this.availableWorlds.contains(w.getName());
+	}
+	
+	public List<String> availableWorlds(){
+		return this.availableWorlds;
 	}
 	
 	public String getAliasCmd(){

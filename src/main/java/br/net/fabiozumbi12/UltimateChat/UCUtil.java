@@ -22,6 +22,27 @@ public class UCUtil {
 	    }).execute();
 	}
 	
+	public static void sendUmsg(CommandSender sender, String[] args){
+		if (args.length < 2){
+			sender.sendMessage(UChat.lang.get("help.cmd.umsg"));
+			return;
+		}
+		
+		Player receiver = Bukkit.getPlayer(args[0]);
+		if (receiver == null){
+			sender.sendMessage(UChat.lang.get("listener.invalidplayer"));
+			return;
+		}
+		StringBuilder ssmsgs = new StringBuilder();	
+		for (String st:args){
+			ssmsgs.append(st+" ");
+		}		
+		String msgs = UCUtil.colorize(ssmsgs.toString().substring((args[0]).length()+1));
+		
+		receiver.sendMessage(msgs);
+		Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_GRAY+"> Private to "+ChatColor.GOLD+receiver.getName()+ChatColor.DARK_GRAY+": "+ChatColor.RESET+msgs);
+	}
+	
 	public static boolean sendBroadcast(CommandSender sender, String[] args, boolean silent){
 		StringBuilder message = new StringBuilder();
 		 StringBuilder hover = new StringBuilder();

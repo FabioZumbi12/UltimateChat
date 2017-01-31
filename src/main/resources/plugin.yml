@@ -3,7 +3,7 @@ main: ${project.groupId}.${project.artifactId}
 version: ${project.version}
 author: FabioZumbi12
 description: ${project.description}
-softdepend: [mcMMO, SkillAPI, Essentials, SimpleClans, Vault, MarriageMaster, Marriage, PlaceholderAPI]
+softdepend: [mcMMO, SkillAPI, Essentials, SimpleClans, Vault, MarriageMaster, Marriage, PlaceholderAPI, Factions]
 commands:
   uchat:
     description: "Main command for ${project.name}."
@@ -14,6 +14,8 @@ commands:
     description: "Tell command"
   ubroadcast:
     description: "Broadcast command"
+  umsg:
+    description: "Send a message to player"
 permissions:
   uchat.*:
     description: "All ultimatechat commands."
@@ -28,11 +30,17 @@ permissions:
       uchat.cmd.reload: true
       uchat.cmd.spy: true
       uchat.cmd.mute: true
+      uchat.cmd.umsg: true
       uchat.chat.mention: true
       uchat.chat.color: true
+      uchat.chat.color.formats: true
+      uchat.chat.color.magic: true
+      uchat.cmd.clear-all: true
       uchat.channel.admin: true
-      uchat.broadcast: true
+      uchat.broadcast: true      
       uchat.bypass.cost: true
+      uchat.bypass-anti-ip: true
+      uchat.bypass-spam: true
   uchat.player:
     description: "All player commands."
     default: true
@@ -41,6 +49,7 @@ permissions:
       uchat.cmd.ignore.channel: true
       uchat.cmd.tell: true
       uchat.cmd.clear: true
+      uchat.chat.click-urls: true
       uchat.channel.global: true
       uchat.channel.local: true
   uchat.bypass-protections:

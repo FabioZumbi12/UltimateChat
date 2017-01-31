@@ -1,20 +1,23 @@
-config-version: 1.1
+config-version: 1.3
 debug-messages: false
 language: PT-BR
 mention:
   enable: true
-  prefix-color: '&e@'
+  color-template: '&e@{mentioned-player}{group-suffix}'
   playsound: note_pling
   hover-message: '&e{playername} mentioned you!'
 general:
+  URL-template: 'Click to open &n{url}&r'
   custom-tags: []
   console-tag: '&6 {console}&3'
   remove-from-chat: '[]'
   channel-cmd-aliases: channel,ch
+  umsg-cmd-aliases: umsg, pv
   hover-events: true
   default-channel: g
   spy-format: '&c&o[Spy] {output}'
-  default-tag-builder: world,marry-tag,ch-tags,clan-tag,group-prefix,nickname,group-suffix,message
+  use-channel-tag-builder: true
+  default-tag-builder: world,marry-tag,ch-tags,clan-tag,factions,group-prefix,nickname,group-suffix,message
 tell:
   cmd-aliases: tell,t,w,m,msg,private,priv,r
   prefix: '&6[&c{playername} &6-> &c{receivername}&6]: '
@@ -36,35 +39,53 @@ tags:
     click-cmd: ''
     hover-messages: 
     - '&bRank: &e{prim-group}'
+    permission: ''
+    show-in-worlds: []
+    hide-in-worlds: []
   playername:
     format: '{playername}'
     click-cmd: 'tpa {playername}'
     hover-messages: 
     - '&7Click to send teleport request'
+    permission: ''
+    show-in-worlds: []
   nickname:
     format: '{nickname}'
     click-cmd: ''
     hover-messages:
     - '&6Realname: {playername}'
+    permission: ''
+    show-in-worlds: []
+    hide-in-worlds: []
   group-suffix:
     format: '&r{group-suffix}: '
     click-cmd: ''
     hover-messages: []
+    permission: ''
+    show-in-worlds: []
+    hide-in-worlds: []
   world:
     format: '&7[{world}]&r'
     click-cmd: ''
     hover-messages:
     - '&7Sent from world {world}'
+    permission: ''
+    show-in-worlds: []
   message:
     format: '{message}'
     click-cmd: ''
     hover-messages: []
+    show-in-worlds: []
+    hide-in-worlds: []
   ch-tags:
     format: '{ch-color}[{ch-alias}]&r'
     click-cmd: 'ch {ch-alias}'
     hover-messages:
     - '&3Channel name: {ch-color}{ch-name}'
     - '&bClick to go to this channel!'
+    permission: ''
+    show-in-worlds: []
+    hide-in-worlds: []
   clan-tag:
     format: '{clan-ctag}'
     click-cmd: 'clan search {playername}'
@@ -76,22 +97,46 @@ tags:
     - '&bPlayer Rank: &7{clan-rank}'
     - '&bIs Leader: &7{clan-isleader}'
     - '&3Click for more info about this player'
+    permission: ''
+    show-in-worlds: []
+    hide-in-worlds: []
   marry-tag:
     format: '{marry-prefix}{marry-suffix}'
     click-cmd: ''
     hover-messages: 
     - '&cMarried with {marry-partner}'
+    permission: ''
+    show-in-worlds: []
+    hide-in-worlds: []
   admin-chat:
     format: '&b[&r{playername}&b] '
     click-cmd: ''
     hover-messages: []
+    permission: ''
+    show-in-worlds: []
+    hide-in-worlds: []
   bungee:
     format: '&7[{world}]{ch-color}[Bungee-{server}] {playername}: &7'
     click-cmd: ''
     hover-messages:
     - '{ch-color}Sent from server -{server}-'
+    permission: ''
+    show-in-worlds: []
+    hide-in-worlds: []
   custom-tag:
     format: '&7[&2MyTag&7]&r'
     click-cmd: ''
     hover-messages: []
     permission: 'any-name-perm.custom-tag'
+    show-in-worlds: []
+    hide-in-worlds: []
+  factions:
+    format: '&7[{fac-relation-color}{fac-relation-name}&7]&r'
+    click-cmd: ''
+    hover-messages: 
+    - '&7Faction name: {fac-relation-color}{fac-name}'
+    - '&7Motd: &a{fac-motd}'
+    - '&7Description: {fac-description}'
+    permission: ''
+    show-in-worlds: []
+    hide-in-worlds: []
