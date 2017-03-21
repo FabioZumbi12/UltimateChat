@@ -1,9 +1,0 @@
-name: Local
-alias: l
-across-worlds: false
-distance: 40
-cost: 0
-color: '&e'
-need-focus: false
-receivers-message: true
-tag-builder: ch-tags,group-preffix,nickname,group-suffix,message

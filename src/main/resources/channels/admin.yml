@@ -1,8 +1,0 @@
-name: Admin
-alias: ad
-across-worlds: true
-cost: 0
-distance: 0
-color: '&e'
-need-focus: false
-tag-builder: admin-chat,message

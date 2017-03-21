@@ -1,9 +1,0 @@
-name: Global
-alias: g
-across-worlds: true
-cost: 0
-distance: 0
-color: '&2'
-need-focus: false
-receivers-message: true
-tag-builder: ch-tags,world,group-preffix,nickname,group-suffix,message

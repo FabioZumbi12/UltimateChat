@@ -2,154 +2,11 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
   <artifactId>UChat</artifactId>
-  <packaging>jar</packaging>
+  <packaging>pom</packaging>
   <name>UltimateChat</name>
   <version>1.7.0</version>
   <description>Ultimate Chat is an advanced chat hooking into most used plugins to show more info on player chat.</description>
-  <dependencies>
-		<!--Spigot-API-->
-        <dependency>
-          <groupId>org.spigotmc</groupId>
-          <artifactId>spigot-api</artifactId>
-          <version>1.11-R0.1-SNAPSHOT</version>
-          <!--  <version>1.8.8-R0.1-SNAPSHOT</version> -->
-        </dependency>
-        <!-- 
-		<dependency>
-			<groupId>spigot-1.9</groupId>
-			<artifactId>spigot-1.9</artifactId>
-			<version>v1</version>
-			<scope>system</scope>
-			<systemPath>D:/ProjetosBukkit/APIs/spigot-1.9.jar</systemPath>
-		</dependency>-->
-		
-        <dependency>
-         <groupId>me.clip</groupId>
-          <artifactId>placeholderapi</artifactId>
-          <version>2.0.8</version>
-         <scope>provided</scope>
-        </dependency>
-		         
-		<!-- start of local repos -->
-		         
-		<dependency>
-			<groupId>SimpleClans</groupId>
-			<artifactId>SimpleClans</artifactId>
-			<version>v1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/libs/SimpleClans.jar</systemPath>
-		</dependency>
-		
-		<dependency>
-			<groupId>MassiveCore</groupId>
-			<artifactId>MassiveCore</artifactId>
-			<version>v1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/libs/MassiveCore.jar</systemPath>
-		</dependency>
-		
-		<dependency>
-			<groupId>Factions</groupId>
-			<artifactId>Factions</artifactId>
-			<version>v1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/libs/Factions.jar</systemPath>
-		</dependency>
-		
-		<dependency>
-			<groupId>Marriage</groupId>
-			<artifactId>Marriage</artifactId>
-			<version>v1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/libs/Marriage.jar</systemPath>
-		</dependency>
-		
-		<dependency>
-			<groupId>MarriageMaster</groupId>
-			<artifactId>MarriageMaster</artifactId>
-			<version>v1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/libs/MarriageMaster.jar</systemPath>
-		</dependency>
-		
-        <!-- <dependency>
-			<groupId>Bukkit</groupId>
-			<artifactId>Bukkit</artifactId>
-			<version>v1</version>
-			<scope>system</scope>
-			<systemPath>D:/ProjetosBukkit/APIs/KCauldron-1.7.10-1481.145-server.jar</systemPath>
-		</dependency> 
-		<dependency>
-			<groupId>repo.libs</groupId>
-			<artifactId>BossBarAPI</artifactId>
-			<version>v1</version>
-		</dependency>
-		<dependency>
-			<groupId>repo.libs</groupId>
-			<artifactId>mcMMO</artifactId>
-			<version>v1</version>
-		</dependency>
-		<dependency>
-			<groupId>repo.libs</groupId>
-			<artifactId>SkillAPI</artifactId>
-			<version>v1</version>
-		</dependency>
-		<dependency>
-			<groupId>repo.libs</groupId>
-			<artifactId>PvPManager</artifactId>
-			<version>v2</version>
-		</dependency>-->
-		<dependency>
-           <groupId>net.milkbowl.vault</groupId>
-           <artifactId>VaultAPI</artifactId>            
-           <version>LATEST</version>
-           <scope>provided</scope>
-        </dependency>
-		<dependency>
-            <groupId>net.ess3</groupId>
-            <artifactId>EssentialsX</artifactId>
-            <version>2.0.1</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.comphenix.protocol</groupId>
-            <artifactId>ProtocolLib-API</artifactId>
-            <version>4.0</version>
-        </dependency>
-        
-  </dependencies>
   
-  <repositories>
-  
-     <repository>
-            <id>dmulloy2-repo</id>
-            <url>http://repo.dmulloy2.net/content/groups/public/</url>
-     </repository>
-          
-     <repository>
-            <id>placeholderapi</id>
-            <url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
-     </repository>
-        
-     <repository>
-	        <id>maven-restlet</id>
-	        <name>Public online Restlet repository</name>
-	        <url>http://maven.restlet.com</url>
-	</repository>
-     <repository>
-            <id>spigot-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
-     </repository>
-     <repository>
-            <id>vault-repo</id>
-            <url>http://nexus.theyeticave.net/content/repositories/pub_releases</url>
-        </repository>
-     <repository>
-            <id>ess-repo</id>
-            <url>http://ci.drtshock.net/plugin/repository/everything</url>
-     </repository>     
-     
-  </repositories>
   
   <scm>
      <connection>scm:git:git@github.com:FabioZumbi12/UltimateChat.git</connection>
@@ -200,36 +57,11 @@
           </items>
         </configuration>
       </plugin>
-      <!-- 
-      <plugin>
-        <groupId>com.github.wvengen</groupId>
-          <artifactId>proguard-maven-plugin</artifactId>
-            <executions>
-              <execution>
-                 <phase>package</phase>
-                 <goals><goal>proguard</goal></goals>
-              </execution>
-            </executions>
-            <configuration>
-               <options>
-                 <option>-keepattributes *Annotation*</option>
-                 <option>-keep class ${project.groupId}.${project.artifactId} { *; }</option>
-                 <option>-keep class ${project.groupId}.API.* { *; }</option>
-                 <option>-keep class br.com.devpaulo.legendchat.api.events.* { *; }</option>
-                 <option>-dontshrink</option>
-                 <option>-dontoptimize</option>   
-                 <option>-ignorewarnings</option>     
-                 <option>-dontnote</option>                 
-                 </options>
-                 <injar>${project.name}-free.jar</injar>
-                 <outjar>${project.name}-${buildNumber}.jar</outjar>
-                 <libs>
-                    <lib>${java.home}/lib/rt.jar</lib>
-                 </libs>
-            </configuration>
-    </plugin>
-           -->
     </plugins>
    
    </build>   
+  <modules>
+  	<module>UltimateChat-Bukkit-Spigot</module>
+  	<module>UltimateChat-Bungee</module>
+  </modules>
 </project>
