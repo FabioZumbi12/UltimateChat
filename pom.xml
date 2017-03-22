@@ -52,7 +52,7 @@
   
   <build>
     <finalName>${project.name}-${buildNumber}</finalName>
-    <defaultGoal>clean package</defaultGoal>
+    <defaultGoal>clean install</defaultGoal>
     <resources>
         <resource>
             <targetPath>.</targetPath>
