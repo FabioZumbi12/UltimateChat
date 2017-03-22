@@ -599,7 +599,7 @@ public class UCMessages {
 		//remove blank items		
 		text = text.replaceAll("\\{.*\\}", "");		
 		if (!tag.equals("message")){
-			for (String rpl:UChat.config.getString("general.remove-from-chat").split(",")){
+			for (String rpl:UChat.config.getStringList("general.remove-from-chat")){
 				text = text.replace(rpl, "");
 			}
 		}		

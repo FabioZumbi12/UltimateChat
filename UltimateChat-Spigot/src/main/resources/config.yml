@@ -10,7 +10,8 @@ general:
   URL-template: 'Click to open &n{url}&r'
   custom-tags: []
   console-tag: '&6 {console}&3'
-  remove-from-chat: '[]'
+  remove-from-chat: 
+  - '[]'
   channel-cmd-aliases: channel,ch
   umsg-cmd-aliases: umsg, pv
   hover-events: true
