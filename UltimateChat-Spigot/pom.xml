@@ -3,9 +3,9 @@
   <parent>
     <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
     <artifactId>UChat</artifactId>
-    <version>1.7.0</version>
+    <version>${pluginVersion}</version>
   </parent>
-  <artifactId>UltimateChat-Bukkit-Spigot</artifactId>
+  <artifactId>UltimateChat-Spigot</artifactId>
   
   <dependencies>
 		<!--Spigot-API-->

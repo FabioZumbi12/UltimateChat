@@ -4,9 +4,44 @@
   <artifactId>UChat</artifactId>
   <packaging>pom</packaging>
   <name>UltimateChat</name>
-  <version>1.7.0</version>
+  <version>${pluginVersion}</version>
   <description>Ultimate Chat is an advanced chat hooking into most used plugins to show more info on player chat.</description>
   
+  <repositories>
+    <!-- Sponge repos -->
+    <repository>
+        <id>sponge-maven-repo</id>
+        <name>Sponge maven repo</name>
+        <url>http://repo.spongepowered.org/maven</url>
+        <releases>
+            <enabled>true</enabled>
+        </releases>
+        <snapshots>
+            <enabled>true</enabled>
+        </snapshots>
+    </repository>  
+     
+    <!-- Spigot repos -->
+    <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
+     </repository>
+     <repository>
+            <id>vault-repo</id>
+            <url>http://nexus.theyeticave.net/content/repositories/pub_releases</url>
+        </repository>
+     <repository>
+            <id>placeholderapi</id>
+            <url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+     </repository>
+     
+     <!-- Bungee repo -->
+     <repository>
+            <id>bungeecord-repo</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+     </repository>
+         
+  </repositories>
   
   <scm>
      <connection>scm:git:git@github.com:FabioZumbi12/UltimateChat.git</connection>
@@ -23,6 +58,10 @@
             <targetPath>.</targetPath>
             <filtering>true</filtering>
             <directory>src/main/resources/</directory>
+        </resource>
+        <resource>
+            <directory>src/main/java/br/net/fabiozumbi12/UltimateChat/</directory>
+            <filtering>true</filtering>
         </resource>
     </resources>
   
@@ -63,9 +102,11 @@
    <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-  </properties>
+        <pluginVersion>1.7.1</pluginVersion>
+   </properties>
   <modules>
-  	<module>UltimateChat-Bukkit-Spigot</module>
+  	<module>UltimateChat-Spigot</module>
   	<module>UltimateChat-Bungee</module>
+  	<module>UltimateChat-Sponge</module>
   </modules>
 </project>
