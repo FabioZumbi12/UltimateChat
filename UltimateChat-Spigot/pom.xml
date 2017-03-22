@@ -12,8 +12,14 @@
         <dependency>
           <groupId>org.spigotmc</groupId>
           <artifactId>spigot-api</artifactId>
-          <version>1.11-R0.1-SNAPSHOT</version>
-          <!--  <version>1.8.8-R0.1-SNAPSHOT</version> -->
+          <version>${mineVersion}</version>
+        </dependency>
+        
+        <dependency>
+          <groupId>org.spigotmc</groupId>
+          <artifactId>spigot-api</artifactId>
+          <version>${mineVersion}</version>
+          <classifier>javadoc</classifier>
         </dependency>
         <!-- 
 		<dependency>
@@ -141,4 +147,8 @@
             <url>http://nexus.theyeticave.net/content/repositories/pub_releases</url>
         </repository> 
   </repositories>
+  
+  <properties>
+  	<mineVersion>1.11.2-R0.1-SNAPSHOT</mineVersion>
+  </properties>
 </project>
