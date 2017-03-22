@@ -8,7 +8,7 @@ Sponge: https://ore.spongepowered.org/FabioZumbi12/UltimateChat
 
 ## Dev Builds:
 
-Dev build on Jenkins: [![Build Status](http://158.69.121.149:8080/buildStatus/icon?job=UltimateChat - Bukkit)](http://158.69.121.149:8080/job/UltimateChat%20-%20Bukkit/)
+Dev build on Jenkins: [![Build Status](http://158.69.121.149:8080/buildStatus/icon?job=UltimateChat)](http://158.69.121.149:8080/job/UltimateChat/)
 
 ## Jenkins Builds:
 
