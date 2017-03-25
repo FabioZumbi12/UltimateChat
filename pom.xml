@@ -20,6 +20,10 @@
             <enabled>true</enabled>
         </snapshots>
     </repository>  
+    <repository>
+            <id>kitteh-repo</id>
+            <url>http://repo.kitteh.org/content/groups/public</url>
+    </repository>
      
     <!-- Spigot repos -->
     <repository>
@@ -39,9 +43,15 @@
      <repository>
             <id>bungeecord-repo</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-     </repository>
-         
+     </repository>         
   </repositories>
+  
+  <pluginRepositories>
+        <pluginRepository>
+            <id>kitteh-repo</id>
+            <url>http://repo.kitteh.org/content/groups/public</url>
+        </pluginRepository>
+  </pluginRepositories>
   
   <scm>
      <connection>scm:git:git@github.com:FabioZumbi12/UltimateChat.git</connection>
@@ -59,10 +69,6 @@
             <filtering>true</filtering>
             <directory>src/main/resources/</directory>
         </resource>
-        <resource>
-            <directory>src/main/java/br/net/fabiozumbi12/UltimateChat/</directory>
-            <filtering>true</filtering>
-        </resource>
     </resources>
   
     <plugins>
@@ -75,6 +81,20 @@
           <source>1.8</source>
           <target>1.8</target>
         </configuration>        
+      </plugin>
+      
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>templating-maven-plugin</artifactId>
+        <version>1.0.0</version>
+            <executions>
+               <execution>
+                  <id>filter-src</id>
+                    <goals>
+                      <goal>filter-sources</goal>
+                    </goals>
+               </execution>
+            </executions>
       </plugin>
       
     <plugin>

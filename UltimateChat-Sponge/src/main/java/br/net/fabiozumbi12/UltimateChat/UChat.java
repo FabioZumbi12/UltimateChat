@@ -21,16 +21,17 @@ import org.spongepowered.api.service.economy.EconomyService;
 
 import br.net.fabiozumbi12.UltimateChat.config.UCConfig;
 import br.net.fabiozumbi12.UltimateChat.config.UCLang;
+import br.net.fabiozumbi12.UltimateChat.config.VersionData;
 
 import com.google.inject.Inject;
 
 @Plugin(id = "ultimatechat", 
 name = "UltimateChat", 
-version = "${buildNumber}",
+version = VersionData.VERSION,
 authors="FabioZumbi12", 
 description="Complete and advanced chat plugin")
 public class UChat {
-
+	
 	private UCLogger logger;
 	public UCLogger getLogger(){	
 		return logger;
