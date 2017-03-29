@@ -1,5 +1,5 @@
-name: ${project.name}
-main: ${project.groupId}.${project.artifactId}
+name: UltimateChat
+main: br.net.fabiozumbi12.UltimateChat.UChat
 version: ${project.version}
 author: FabioZumbi12
 description: ${project.description}

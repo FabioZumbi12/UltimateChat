@@ -384,7 +384,7 @@ public class UCConfig{
 	
 	public UCChannel getChannel(String alias){		
 		for (List<String> aliases:channels.keySet()){
-			if (aliases.contains(alias)){				
+			if (aliases.contains(alias.toLowerCase())){				
 				return channels.get(aliases);
 			}
 		}
