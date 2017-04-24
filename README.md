@@ -10,7 +10,7 @@ Sponge: https://ore.spongepowered.org/FabioZumbi12/UltimateChat
 The source is available on GitHub: https://github.com/FabioZumbi12/UltimateChat
 
 ## Dev Builds:
-Dev build on Jenkins: [![Build Status](http://158.69.121.149:8080/buildStatus/icon?job=UltimateChat)](http://158.69.121.149:8080/job/UltimateChat/)
+Dev build on Jenkins: [![Build Status](http://areaz12server.net.br:8080/buildStatus/icon?job=UltimateChat)](http://areaz12server.net.br:8080/job/UltimateChat/)
 
 ## Jenkins Builds:
 The jar buils are diferent of jenkins builds.
