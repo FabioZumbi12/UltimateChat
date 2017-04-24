@@ -499,7 +499,7 @@ class UCMessages {
                 if (clanServiceOpt.isPresent()) {
 					ClanService clan = clanServiceOpt.get();
 					ClanPlayer cp = clan.getClanPlayer(sender.getUniqueId());
-					if (cp.isMemberOfAClan()){
+					if (cp != null && cp.isMemberOfAClan()){
 						text = text
 								.replace("{clan_name}", cp.getClan().getName())
 								.replace("{clan_tag}", cp.getClan().getTag())

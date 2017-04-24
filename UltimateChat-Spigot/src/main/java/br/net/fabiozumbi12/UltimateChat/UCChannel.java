@@ -1,9 +1,14 @@
 package br.net.fabiozumbi12.UltimateChat;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.bukkit.Bukkit;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 public class UCChannel {
 
@@ -170,5 +175,13 @@ public class UCChannel {
 
 	public boolean isBungee() {		
 		return this.bungee ;
+	}
+	
+	public void sendMessage(Player sender, String message){
+		Set<Player> pls = new HashSet<Player>();
+		pls.addAll(Bukkit.getOnlinePlayers());
+		UChat.tempChannels.put(sender.getName(), this.alias);
+		AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(false, sender, message, pls);
+		Bukkit.getPluginManager().callEvent(event); 
 	}
 }

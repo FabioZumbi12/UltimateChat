@@ -51,4 +51,12 @@ public class uChatAPI {
 		UChat.config.addChannel(ch);		
 		return true;
 	}
+	
+	/**Gets an existing channel, or null no channel matching name or alias
+	 * @param chName - Chanel name or alias.
+	 * @return {@code UCChanel} - The channel.
+	 */
+	public static UCChannel getChannel(String chName){
+		return UChat.config.getChannel(chName);
+	}
 }

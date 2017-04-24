@@ -22,9 +22,6 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import com.massivecraft.factions.entity.Faction;
-import com.massivecraft.factions.entity.MPlayer;
-
 import br.net.fabiozumbi12.UltimateChat.API.SendChannelMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.Fanciful.FancyMessage;
 import br.net.fabiozumbi12.UltimateChat.Fanciful.util.Reflection;
@@ -525,27 +522,7 @@ public class UCMessages {
 				}
 			}
 			if (UChat.Factions){		
-				MPlayer mp = MPlayer.get(sender.getUniqueId());
-				if (!mp.getFaction().isNone()){
-					Faction fac = mp.getFaction();
-					text = text
-							.replace("{fac-id}", fac.getId())
-							.replace("{fac-name}", fac.getName());
-					if (fac.hasMotd()){
-						text = text
-								.replace("{fac-motd}", fac.getMotd());		
-					}	
-					if (fac.hasDescription()){
-						text = text
-								.replace("{fac-description}", fac.getDescription());		
-					}
-					if (receiver instanceof Player){
-						MPlayer recmp = MPlayer.get(((Player)receiver).getUniqueId());
-						text = text
-								.replace("{fac-relation-name}", fac.getName(recmp))
-								.replace("{fac-relation-color}", fac.getColorTo(recmp).toString());
-					}
-				}
+				text = UCFactionsHook.formatFac(text, sender, receiver);
 			}
 			if (UChat.MarryReloded && sender.hasMetadata("marriedTo")){
 				String partner = sender.getMetadata("marriedTo").get(0).asString();		
