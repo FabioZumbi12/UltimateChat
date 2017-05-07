@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
@@ -183,5 +184,9 @@ public class UCChannel {
 		UChat.tempChannels.put(sender.getName(), this.alias);
 		AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(false, sender, message, pls);
 		Bukkit.getPluginManager().callEvent(event); 
+	}
+	
+	public void sendMessage(ConsoleCommandSender sender, String message){		
+		UCMessages.sendFancyMessage(new String[0], message, this, sender, null);
 	}
 }

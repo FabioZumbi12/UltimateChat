@@ -3,7 +3,7 @@ package br.net.fabiozumbi12.UltimateChat;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.channel.MutableMessageChannel;
 import org.spongepowered.api.world.World;
@@ -169,9 +169,10 @@ public class UCChannel {
 		return this.bungee ;
 	}
 	
-	public void sendMessage(Player p, String message){
+	public void sendMessage(CommandSource p, String message){
 		Object[] chArgs = UCMessages.sendFancyMessage(new String[0], message, this, p, null);  
 		if (chArgs != null){
+			UChat.tempChannels.put(p.getName(), this.alias);
 			MutableMessageChannel msgCh = (MutableMessageChannel) chArgs[0];	
 			msgCh.send(Text.join((Text)chArgs[1],(Text)chArgs[2],(Text)chArgs[3]));
 		}
