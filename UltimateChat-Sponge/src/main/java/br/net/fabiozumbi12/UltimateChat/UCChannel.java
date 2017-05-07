@@ -8,6 +8,11 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.channel.MutableMessageChannel;
 import org.spongepowered.api.world.World;
 
+/**Represents a chat channel use by UltimateChat to control from where/to send/receive messages.
+ * 
+ * @author FabioZumbi12
+ *
+ */
 public class UCChannel {
 
 	private String name;

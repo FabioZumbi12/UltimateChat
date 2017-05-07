@@ -3,7 +3,7 @@ Ultimate and advanced Chat for Spigot, Sponge and BungeeCoord
 
 ## Available versions:
 Spigot: https://www.spigotmc.org/resources/uchat.23767/  
-Bukkit: https://dev.bukkit.org/projects/uchat
+Bukkit: https://dev.bukkit.org/projects/uchat  
 Sponge: https://ore.spongepowered.org/FabioZumbi12/UltimateChat
 
 ## Source:

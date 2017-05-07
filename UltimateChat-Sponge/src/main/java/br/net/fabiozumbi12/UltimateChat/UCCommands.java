@@ -152,12 +152,12 @@ public class UCCommands {
 							if (!UChat.get().getPerms().channelPerm(p, ch)){
 								throw new CommandException(UCUtil.toText(UCLang.get("channel.nopermission").replace("{channel}", ch.getName())));	
 							}
-							if (UChat.pChannels.containsKey(p.getName()) && UChat.pChannels.get(p.getName()).equals(ch.getAlias())){
+							if (UChat.get().pChannels.containsKey(p.getName()) && UChat.get().pChannels.get(p.getName()).equals(ch.getAlias())){
 								UCLang.sendMessage(p, UCLang.get("channel.alreadyon").replace("{channel}", ch.getName()));
 								return CommandResult.success();	
 							}
 							
-							UChat.pChannels.put(p.getName(), ch.getAlias());
+							UChat.get().pChannels.put(p.getName(), ch.getAlias());
 							UCLang.sendMessage(p, UCLang.get("channel.entered").replace("{channel}", ch.getName()));
 				    	} 
 				    	return CommandResult.success();	
@@ -245,12 +245,12 @@ public class UCCommands {
 				    				UCLang.sendMessage(src, "help.channels.send");
 									return CommandResult.success();
 								}
-					    		if (UChat.pChannels.containsKey(src.getName()) && UChat.pChannels.get(src.getName()).equalsIgnoreCase(ch.getAlias())){
+					    		if (UChat.get().pChannels.containsKey(src.getName()) && UChat.get().pChannels.get(src.getName()).equalsIgnoreCase(ch.getAlias())){
 					    			UChat.tempChannels.put(src.getName(), ch.getAlias());
 					    			UCLang.sendMessage(src, UCLang.get("channel.alreadyon").replace("{channel}", ch.getName()));
 									return CommandResult.success();
 								}
-					    		UChat.pChannels.put(src.getName(), ch.getAlias());
+					    		UChat.get().pChannels.put(src.getName(), ch.getAlias());
 					    		UCLang.sendMessage(src, UCLang.get("channel.entered").replace("{channel}", ch.getName()));	
 				    		}
 				    	} else {

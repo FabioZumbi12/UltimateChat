@@ -54,9 +54,17 @@ public class uChatAPI {
 
 	/**Gets an existing channel, or null no channel matching name or alias
 	 * @param chName - Chanel name or alias.
-	 * @return {@code UCChanel} - The channel.
+	 * @return {@link UCChanel} - The channel.
 	 */
 	public static UCChannel getChannel(String chName){
 		return UChat.get().getConfig().getChannel(chName);
+	}
+		
+	/**Gets the actual player channel 
+	 * @param player - Player name.
+	 * @return {@link UCChannel} - The player channel.
+	 */
+	public static UCChannel getPlayerChannel(String player){
+		return UChat.get().getConfig().getChannel(UChat.get().pChannels.get(player));
 	}
 }

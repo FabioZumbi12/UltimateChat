@@ -11,6 +11,11 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
+/**Represents a chat channel use by UltimateChat to control from where/to send/receive messages.
+ * 
+ * @author FabioZumbi12
+ *
+ */
 public class UCChannel {
 
 	private String name;

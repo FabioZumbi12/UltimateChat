@@ -119,7 +119,7 @@ class UCMessages {
 						if (!((Player)sender).canSee(p)){
 							vanish++;
 						}
-						if ((ch.neeFocus() && UChat.pChannels.get(((Player)ent).getName()).equals(ch.getAlias())) || !ch.neeFocus()){					
+						if ((ch.neeFocus() && UChat.get().pChannels.get(((Player)ent).getName()).equals(ch.getAlias())) || !ch.neeFocus()){					
 							toConsole = sendMessage(sender,(Player)ent, evmsg, ch, false);
 							receivers.add((Player)ent);
 							msgCh.transformMessage(sender, (Player)ent, buildMessage(toConsole), ChatTypes.SYSTEM);
@@ -143,7 +143,7 @@ class UCMessages {
 					} else {
 						noWorldReceived++;
 					}					
-					if ((ch.neeFocus() && UChat.pChannels.get(receiver.getName()).equals(ch.getAlias())) || !ch.neeFocus()){
+					if ((ch.neeFocus() && UChat.get().pChannels.get(receiver.getName()).equals(ch.getAlias())) || !ch.neeFocus()){
 						toConsole = sendMessage(sender, receiver, evmsg, ch, false);
 						receivers.add(receiver);
 						msgCh.transformMessage(sender, receiver, buildMessage(toConsole), ChatTypes.SYSTEM);

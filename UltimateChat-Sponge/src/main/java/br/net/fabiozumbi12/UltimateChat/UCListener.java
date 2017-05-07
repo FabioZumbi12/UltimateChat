@@ -37,7 +37,7 @@ public class UCListener {
 			sendTell(p, tellreceiver, e.getRawMessage().toPlain());
 			e.setMessageCancelled(true);
 		} else {
-			UCChannel ch = UChat.get().getConfig().getChannel(UChat.pChannels.get(p.getName()));
+			UCChannel ch = UChat.get().getConfig().getChannel(UChat.get().pChannels.get(p.getName()));
 			if (UChat.tempChannels.containsKey(p.getName()) && !UChat.tempChannels.get(p.getName()).equals(ch.getAlias())){
 				ch = UChat.get().getConfig().getChannel(UChat.tempChannels.get(p.getName()));
 				UChat.tempChannels.remove(p.getName());
@@ -82,7 +82,7 @@ public class UCListener {
 	@Listener
 	public void onJoin(ClientConnectionEvent.Join e){
 		Player p = e.getTargetEntity();		
-		UChat.pChannels.put(p.getName(), UChat.get().getConfig().getDefChannel().getAlias());
+		UChat.get().pChannels.put(p.getName(), UChat.get().getConfig().getDefChannel().getAlias());
 	}
 		
 	@Listener
@@ -106,8 +106,8 @@ public class UCListener {
 		for (String remove:toRemove2){
 			UChat.respondTell.remove(remove);
 		}
-		if (UChat.pChannels.containsKey(p.getName())){
-			UChat.pChannels.remove(p.getName());
+		if (UChat.get().pChannels.containsKey(p.getName())){
+			UChat.get().pChannels.remove(p.getName());
 		}
 		if (UChat.tempChannels.containsKey(p.getName())){
 			UChat.tempChannels.remove(p.getName());
