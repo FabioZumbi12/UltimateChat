@@ -30,9 +30,9 @@ public class UCYaml extends YamlConfiguration {
   public void load(File file) throws FileNotFoundException, IOException, InvalidConfigurationException {
 	  this.file = file;
 	  load(new FileInputStream(file));
+	  this.load("");
   }
 
-  @Override
   public void load(InputStream stream) throws IOException, InvalidConfigurationException {
     Validate.notNull(stream, "Stream cannot be null");
 
