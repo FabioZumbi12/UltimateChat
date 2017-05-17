@@ -580,6 +580,12 @@ public class UCMessages {
 		
 		//remove blank items		
 		text = text.replaceAll("\\{.*\\}", "");		
+		
+		//remove remain PlaceholderAPI
+		if (UChat.config.getBool("general.remove-unnused-placeholderapi")){
+			text = text.replaceAll("\\%.*\\%", "");	
+		}		
+		
 		if (!tag.equals("message")){
 			for (String rpl:UChat.config.getStringList("general.remove-from-chat")){
 				text = text.replace(rpl, "");

@@ -12,6 +12,7 @@ general:
   console-tag: '&6 {console}&3'
   remove-from-chat: 
   - '[]'
+  remove-unnused-placeholderapi: true
   channel-cmd-aliases: channel,ch
   umsg-cmd-aliases: umsg, pv
   hover-events: true
