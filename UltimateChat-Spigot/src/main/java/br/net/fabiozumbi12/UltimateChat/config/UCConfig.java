@@ -238,6 +238,7 @@ public class UCConfig{
             			
             			configs.set("tags.custom-tag.format", "&7[&2MyTag&7]&r");
             			configs.set("tags.custom-tag.click-cmd", "");
+            			configs.set("tags.custom-tag.suggest-cmd", "");
             			configs.set("tags.custom-tag.hover-messages", new ArrayList<String>());
             			configs.set("tags.custom-tag.permission", "any-name-perm.custom-tag");     
             			configs.set("tags.custom-tag.show-in-worlds", new ArrayList<String>());

@@ -52,15 +52,18 @@ public class UCUtil {
 		 StringBuilder hover = new StringBuilder();
 		 StringBuilder cmdline = new StringBuilder();
 		 StringBuilder url = new StringBuilder();
+		 StringBuilder suggest = new StringBuilder();
 		 boolean isHover = false;
 		 boolean isCmd = false;
 		 boolean isUrl = false;
+		 boolean isSug = false;
 		 for (String arg:args){
 			 if (arg.contains(UChat.config.getString("broadcast.on-hover"))){
 				 hover.append(" "+ChatColor.translateAlternateColorCodes('&', arg.replace(UChat.config.getString("broadcast.on-hover"), "")));
 				 isHover = true;
 				 isCmd = false;
 				 isUrl = false;
+				 isSug = false;
 				 continue;
 			 }
 			 if (arg.contains(UChat.config.getString("broadcast.on-click"))){
@@ -68,6 +71,7 @@ public class UCUtil {
 				 isCmd = true;
 				 isHover = false;
 				 isUrl = false;
+				 isSug = false;
 				 continue;
 			 }
 			 if (arg.contains(UChat.config.getString("broadcast.url"))){
@@ -75,6 +79,15 @@ public class UCUtil {
 				 isCmd = false;
 				 isHover = false;
 				 isUrl = true;
+				 isSug = false;
+				 continue;
+			 }
+			 if (arg.contains(UChat.config.getString("broadcast.suggest"))){
+				 suggest.append(" "+ChatColor.translateAlternateColorCodes('&', arg.replace(UChat.config.getString("broadcast.suggest"), "")));
+				 isCmd = false;
+				 isHover = false;
+				 isUrl = false;
+				 isSug = true;
 				 continue;
 			 }
 			 
@@ -86,6 +99,9 @@ public class UCUtil {
 			 } else
 			 if (isUrl){
 				 url.append(" "+ChatColor.translateAlternateColorCodes('&', arg));
+			 } else 
+		     if (isSug){
+		    	 suggest.append(" "+ChatColor.translateAlternateColorCodes('&', arg));
 			 } else {
 				 message.append(" "+ChatColor.translateAlternateColorCodes('&', arg));
 			 }
@@ -124,6 +140,9 @@ public class UCUtil {
 			 for (Player p:Bukkit.getOnlinePlayers()){
 				 if (cmdline.toString().length() > 1){
 					 fanci.command("/"+cmdline.toString().substring(1).replace("{clicked}", p.getName()));						 
+				 }
+				 if (suggest.toString().length() > 1){
+					 fanci.suggest(suggest.toString().substring(1).replace("{clicked}", p.getName()));						 
 				 }
 				 fanci.send(p);
 			 }

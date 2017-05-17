@@ -31,13 +31,15 @@ bungee:
 broadcast:
   enable: true
   on-hover: 'hover:'
-  on-click: 'click:'  
+  on-click: 'click:' 
+  suggest: 'suggest:'  
   url: 'url:'
   aliases: ubroad,uannounce,usay,uaction,all,anunciar,todos
 tags:
   group-prefix:
     format: '&7[{group-prefix}&7]&r'
     click-cmd: ''
+    suggest-cmd: ''
     hover-messages: 
     - '&bRank: &e{prim-group}'
     permission: ''
@@ -46,6 +48,7 @@ tags:
   playername:
     format: '{playername}'
     click-cmd: 'tpa {playername}'
+    suggest-cmd: ''
     hover-messages: 
     - '&7Click to send teleport request'
     permission: ''
@@ -53,6 +56,7 @@ tags:
   nickname:
     format: '{nickname}'
     click-cmd: ''
+    suggest-cmd: ''
     hover-messages:
     - '&6Realname: {playername}'
     permission: ''
@@ -61,6 +65,7 @@ tags:
   group-suffix:
     format: '&r{group-suffix}: '
     click-cmd: ''
+    suggest-cmd: ''
     hover-messages: []
     permission: ''
     show-in-worlds: []
@@ -68,6 +73,7 @@ tags:
   world:
     format: '&7[{world}]&r'
     click-cmd: ''
+    suggest-cmd: ''
     hover-messages:
     - '&7Sent from world {world}'
     permission: ''
@@ -75,12 +81,14 @@ tags:
   message:
     format: '{message}'
     click-cmd: ''
+    suggest-cmd: ''
     hover-messages: []
     show-in-worlds: []
     hide-in-worlds: []
   ch-tags:
     format: '{ch-color}[{ch-alias}]&r'
     click-cmd: 'ch {ch-alias}'
+    suggest-cmd: ''
     hover-messages:
     - '&3Channel name: {ch-color}{ch-name}'
     - '&bClick to go to this channel!'
@@ -90,6 +98,7 @@ tags:
   clan-tag:
     format: '{clan-ctag}'
     click-cmd: 'clan search {playername}'
+    suggest-cmd: ''
     hover-messages:
     - '&bClan Tag: &7{clan-tag}'
     - '&bClan Name: &7{clan-name}'
@@ -104,6 +113,7 @@ tags:
   marry-tag:
     format: '{marry-prefix}{marry-suffix}'
     click-cmd: ''
+    suggest-cmd: ''
     hover-messages: 
     - '&cMarried with {marry-partner}'
     permission: ''
@@ -112,6 +122,7 @@ tags:
   admin-chat:
     format: '&b[&r{playername}&b] '
     click-cmd: ''
+    suggest-cmd: ''
     hover-messages: []
     permission: ''
     show-in-worlds: []
@@ -119,6 +130,7 @@ tags:
   bungee:
     format: '&7[{world}]{ch-color}[Bungee-{server}] {playername}: &7'
     click-cmd: ''
+    suggest-cmd: ''
     hover-messages:
     - '{ch-color}Sent from server -{server}-'
     permission: ''
@@ -127,6 +139,7 @@ tags:
   custom-tag:
     format: '&7[&2MyTag&7]&r'
     click-cmd: ''
+    suggest-cmd: ''
     hover-messages: []
     permission: 'any-name-perm.custom-tag'
     show-in-worlds: []
@@ -134,6 +147,7 @@ tags:
   factions:
     format: '&7[{fac-relation-color}{fac-relation-name}&7]&r'
     click-cmd: ''
+    suggest-cmd: ''
     hover-messages: 
     - '&7Faction name: {fac-relation-color}{fac-name}'
     - '&7Motd: &a{fac-motd}'

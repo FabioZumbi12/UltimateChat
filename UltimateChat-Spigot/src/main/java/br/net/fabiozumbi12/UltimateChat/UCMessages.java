@@ -239,6 +239,7 @@ public class UCMessages {
 				String perm = UChat.config.getString("tags."+tag+".permission");
 				String format = UChat.config.getString("tags."+tag+".format");
 				String execute = UChat.config.getString("tags."+tag+".click-cmd");
+				String suggest = UChat.config.getString("tags."+tag+".suggest-cmd");
 				List<String> messages = UChat.config.getStringList("tags."+tag+".hover-messages");
 				List<String> showWorlds = UChat.config.getStringList("tags."+tag+".show-in-worlds");
 				List<String> hideWorlds = UChat.config.getStringList("tags."+tag+".hide-in-worlds");
@@ -268,6 +269,10 @@ public class UCMessages {
 							
 				if (execute != null && execute.length() > 0){
 					fanci.command(formatTags(tag, "/"+execute, sender, receiver, msg, ch));
+				}
+				
+				if (suggest != null && suggest.length() > 0){
+					fanci.suggest(formatTags(tag, suggest, sender, receiver, msg, ch));
 				}
 								
 				if (tag.equals("message") && !msg.equals(mention(sender, receiver, msg))){

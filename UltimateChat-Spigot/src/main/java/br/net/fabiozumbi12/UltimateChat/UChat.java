@@ -204,6 +204,7 @@ public class UChat extends JavaPlugin {
 					+ "    text: Your plain text message here! #Plain text.\n"
 					+ "    hover: Your hover text message here! #Hover text.\n"
 					+ "    onclick: Command on click here! #On click text with placeholder {clicked} to show who clicked.\n"
+					+ "    suggest: Put the text to suggest on player chat on click.\n"
 					+ "    url: http://google.com # Some url to go on click. Need to have \"http://\" to url work.\n"
 					+ "\n"
 					+ "*If you dont want hover message or click command, set to '' (blank quotes)\n"
@@ -216,6 +217,7 @@ public class UChat extends JavaPlugin {
 				getAMConfig().set("messages.0.text", "This is UChat Automessage! Put your plain text message here!");
 				getAMConfig().set("messages.0.hover", "Your hover text message here!");
 				getAMConfig().set("messages.0.onclick", "Command on click here!");
+				getAMConfig().set("messages.0.suggest", "Text to suggest on click");
 				getAMConfig().set("messages.0.url", "http://google.com");
 			}		
 			
@@ -240,6 +242,7 @@ public class UChat extends JavaPlugin {
 					String text = getAMConfig().getString("messages."+index+".text");
 					String hover = getAMConfig().getString("messages."+index+".hover");
 					String onclick = getAMConfig().getString("messages."+index+".onclick");
+					String suggest = getAMConfig().getString("messages."+index+".suggest");
 					String url = getAMConfig().getString("messages."+index+".url");
 					
 					String cmd = text;
@@ -248,6 +251,9 @@ public class UChat extends JavaPlugin {
 					}
 					if (onclick.length() > 1){
 						cmd = cmd+" "+UChat.config.getString("broadcast.on-click")+onclick;
+					}
+					if (suggest.length() > 1){
+						cmd = cmd+" "+UChat.config.getString("broadcast.suggest")+suggest;
 					}
 					if (url.length() > 1){
 						cmd = cmd+" "+UChat.config.getString("broadcast.url")+url;
