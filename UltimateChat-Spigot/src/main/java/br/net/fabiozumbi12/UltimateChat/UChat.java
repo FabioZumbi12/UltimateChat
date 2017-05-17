@@ -239,11 +239,11 @@ public class UChat extends JavaPlugin {
 			public void run() {
 				if (getAMConfig().isConfigurationSection("messages."+index)){
 					int plays = getAMConfig().getInt("messages."+index+".minPlayers");
-					String text = getAMConfig().getString("messages."+index+".text");
-					String hover = getAMConfig().getString("messages."+index+".hover");
-					String onclick = getAMConfig().getString("messages."+index+".onclick");
-					String suggest = getAMConfig().getString("messages."+index+".suggest");
-					String url = getAMConfig().getString("messages."+index+".url");
+					String text = getAMConfig().getString("messages."+index+".text", "");
+					String hover = getAMConfig().getString("messages."+index+".hover", "");
+					String onclick = getAMConfig().getString("messages."+index+".onclick", "");
+					String suggest = getAMConfig().getString("messages."+index+".suggest", "");
+					String url = getAMConfig().getString("messages."+index+".url", "");
 					
 					String cmd = text;
 					if (hover.length() > 1){
