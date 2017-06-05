@@ -199,7 +199,8 @@ public class UCChannel {
 			UCMessages.sendFancyMessage(new String[0], message, this, sender, null);
 		} else {
 			for (Entry<String, String> chEnt:UChat.pChannels.entrySet()){
-				if (!this.isIgnoring(chEnt.getKey()) && (this.neeFocus() && chEnt.getValue().equalsIgnoreCase(this.alias) || !this.neeFocus())){
+				Player p = Bukkit.getPlayer(chEnt.getKey());
+				if (UCPerms.channelPerm(p, this) && !this.isIgnoring(chEnt.getKey()) && (this.neeFocus() && chEnt.getValue().equalsIgnoreCase(this.alias) || !this.neeFocus())){
 					Bukkit.getPlayer(chEnt.getKey()).sendMessage(ChatColor.translateAlternateColorCodes('&', message));
 				}
 			}
