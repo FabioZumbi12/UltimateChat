@@ -201,7 +201,7 @@ public class UCChannel {
 			for (Entry<String, String> chEnt:UChat.pChannels.entrySet()){
 				Player p = Bukkit.getPlayer(chEnt.getKey());
 				if (UCPerms.channelPerm(p, this) && !this.isIgnoring(chEnt.getKey()) && (this.neeFocus() && chEnt.getValue().equalsIgnoreCase(this.alias) || !this.neeFocus())){
-					Bukkit.getPlayer(chEnt.getKey()).sendMessage(ChatColor.translateAlternateColorCodes('&', message));
+					p.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
 				}
 			}
 			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', message));

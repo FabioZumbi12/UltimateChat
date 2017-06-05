@@ -58,6 +58,9 @@ public class UCConfig{
 			config.getNode("mention","playsound").setValue(config.getNode("mention","playsound").getString("minecraft:block.note.pling"));
 			config.getNode("mention","hover-message").setValue(config.getNode("mention","hover-message").getString("&e{playername} mentioned you!"));
 			
+			config.getNode("api").setComment("API configurations.");
+			config.getNode("api","format-console-messages").setValue(config.getNode("api","format-console-messages").getBoolean(false));
+			
 			config.getNode("general").setComment("General settings.");
 			config.getNode("general","URL-template").setValue(config.getNode("general","URL-template").getString("Click to open &n{url}&r"))
 			.setComment("Template to show when players send links or urls.");

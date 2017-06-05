@@ -2,8 +2,11 @@ package br.net.fabiozumbi12.UltimateChat;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 
-import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.command.source.ConsoleSource;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.channel.MutableMessageChannel;
 import org.spongepowered.api.world.World;
@@ -174,12 +177,26 @@ public class UCChannel {
 		return this.bungee ;
 	}
 	
-	public void sendMessage(CommandSource p, String message){
+	public void sendMessage(Player p, String message){
 		Object[] chArgs = UCMessages.sendFancyMessage(new String[0], message, this, p, null);  
 		if (chArgs != null){
 			UChat.tempChannels.put(p.getName(), this.alias);
 			MutableMessageChannel msgCh = (MutableMessageChannel) chArgs[0];	
 			msgCh.send(Text.join((Text)chArgs[1],(Text)chArgs[2],(Text)chArgs[3]));
+		}
+	}
+	
+	public void sendMessage(ConsoleSource sender, String message){
+		if (UChat.get().getConfig().getBool("api","format-console-messages")){
+			UCMessages.sendFancyMessage(new String[0], message, this, sender, null);
+		} else {
+			for (Entry<String, String> chEnt:UChat.get().pChannels.entrySet()){
+				Player p = Sponge.getServer().getPlayer(chEnt.getKey()).get();
+				if (UChat.get().getPerms().channelPerm(p, this) && !this.isIgnoring(chEnt.getKey()) && (this.neeFocus() && chEnt.getValue().equalsIgnoreCase(this.alias) || !this.neeFocus())){
+					p.sendMessage(UCUtil.toText(message));
+				}
+			}
+			sender.sendMessage(UCUtil.toText(message));
 		}
 	}
 }
