@@ -94,7 +94,7 @@ public class UCListener implements CommandExecutor,Listener {
 						 for (Player play:Bukkit.getOnlinePlayers()){
 							 for (int i = 0; i < 100; i++){
 								 if (!play.isOnline()){
-									 break;
+									 continue;
 								 }
 								 UCMessages.sendPlayerFakeMessage(play, "{\"text\":\" \"}");
 							 }
@@ -458,7 +458,7 @@ public class UCListener implements CommandExecutor,Listener {
 		if (e.isCancelled()){
 			return;
 		}
-		e.setCancelled(true);
+		//e.setCancelled(true);
 		Player p = e.getPlayer();
 		UChat.logger.debug("AsyncPlayerChatEvent - Channel: "+UChat.pChannels.get(p.getName()));		
 		
@@ -476,6 +476,7 @@ public class UCListener implements CommandExecutor,Listener {
 			
 			if (UChat.mutes.contains(p.getName()) || ch.isMuted(p.getName())){
 				UChat.lang.sendMessage(p, "channel.muted");
+				e.setCancelled(true);
 				return;
 			}			
 			

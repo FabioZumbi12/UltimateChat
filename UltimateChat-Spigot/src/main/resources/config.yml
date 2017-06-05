@@ -1,6 +1,8 @@
 config-version: 1.3
 debug-messages: false
 language: PT-BR
+api:
+  format-console-messages: false
 mention:
   enable: true
   color-template: '&e@{mentioned-player}{group-suffix}'
@@ -11,7 +13,8 @@ general:
   custom-tags: []
   console-tag: '&6 {console}&3'
   remove-from-chat: 
-  - '[]'
+  - '&7[]'
+  - '&7[&7]'
   remove-unnused-placeholderapi: true
   channel-cmd-aliases: channel,ch
   umsg-cmd-aliases: umsg, pv

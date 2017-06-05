@@ -52,7 +52,7 @@ public class uChatAPI {
 		return true;
 	}
 	
-	/**Gets an existing channel, or null no channel matching name or alias
+	/**Gets an existing channel, or null if no channel matching name or alias
 	 * @param chName - Chanel name or alias.
 	 * @return {@link UCChanel} - The channel.
 	 */

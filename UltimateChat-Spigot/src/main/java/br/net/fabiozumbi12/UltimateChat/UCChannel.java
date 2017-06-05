@@ -3,7 +3,10 @@ package br.net.fabiozumbi12.UltimateChat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
+
+import net.md_5.bungee.api.ChatColor;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -191,7 +194,16 @@ public class UCChannel {
 		Bukkit.getPluginManager().callEvent(event); 
 	}
 	
-	public void sendMessage(ConsoleCommandSender sender, String message){		
-		UCMessages.sendFancyMessage(new String[0], message, this, sender, null);
+	public void sendMessage(ConsoleCommandSender sender, String message){	
+		if (UChat.config.getBool("api.format-console-messages")){
+			UCMessages.sendFancyMessage(new String[0], message, this, sender, null);
+		} else {
+			for (Entry<String, String> chEnt:UChat.pChannels.entrySet()){
+				if (!this.isIgnoring(chEnt.getKey()) && (this.neeFocus() && chEnt.getValue().equalsIgnoreCase(this.alias) || !this.neeFocus())){
+					Bukkit.getPlayer(chEnt.getKey()).sendMessage(ChatColor.translateAlternateColorCodes('&', message));
+				}
+			}
+			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
+		}
 	}
 }

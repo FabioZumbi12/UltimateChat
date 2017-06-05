@@ -569,14 +569,12 @@ public class UCMessages {
 			text = text.replace("{nickname}", UChat.config.getString("general.console-tag").replace("{console}", ((CommandSender)cmdSender).getName()));
 		} else {
 			text = text.replace("{nickname}", UChat.config.getString("general.console-tag").replace("{console}", (String)cmdSender));
-		}
-			
+		}			
 		
 		//colorize tags (not message)
 		if (!tag.equals("message")){
 			text = ChatColor.translateAlternateColorCodes('&', text);
-		}
-		
+		}		
 		
 		//remove blank items		
 		text = text.replaceAll("\\{.*\\}", "");		
@@ -588,7 +586,7 @@ public class UCMessages {
 		
 		if (!tag.equals("message")){
 			for (String rpl:UChat.config.getStringList("general.remove-from-chat")){
-				text = text.replace(rpl, "");
+				text = text.replace(ChatColor.translateAlternateColorCodes('&', rpl), "");
 			}
 		}		
 		if (text.equals(" ") || text.equals("  ")){
