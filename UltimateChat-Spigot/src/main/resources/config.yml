@@ -12,7 +12,8 @@ general:
   URL-template: 'Click to open &n{url}&r'
   custom-tags: []
   console-tag: '&6 {console}&3'
-  remove-from-chat: 
+  remove-from-chat:
+  - '[]' 
   - '&7[]'
   - '&7[&7]'
   remove-unnused-placeholderapi: true

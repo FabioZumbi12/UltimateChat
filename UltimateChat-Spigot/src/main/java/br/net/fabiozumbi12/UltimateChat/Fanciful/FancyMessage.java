@@ -25,10 +25,6 @@ import br.net.fabiozumbi12.UltimateChat.UCUtil;
 import br.net.fabiozumbi12.UltimateChat.UChat;
 import br.net.fabiozumbi12.UltimateChat.Fanciful.util.ArrayWrapper;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonWriter;
 
 /**
@@ -617,80 +613,6 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 	 */
 	public Iterator<MessagePart> iterator() {
 		return messageParts.iterator();
-	}
-
-	private static JsonParser _stringParser = new JsonParser();
-
-	/**
-	 * Deserializes a fancy message from its JSON representation. This JSON representation is of the format of
-	 * that returned by {@link #toJSONString()}, and is compatible with vanilla inputs.
-	 *
-	 * @param json The JSON string which represents a fancy message.
-	 * @return A {@code FancyMessage} representing the parameterized JSON message.
-	 */
-	public static FancyMessage deserialize(String json) {
-		JsonObject serialized = _stringParser.parse(json).getAsJsonObject();
-		JsonArray extra = serialized.getAsJsonArray("extra"); // Get the extra component
-		FancyMessage returnVal = new FancyMessage();
-		returnVal.messageParts.clear();
-		for (JsonElement mPrt : extra) {
-			MessagePart component = new MessagePart();
-			JsonObject messagePart = mPrt.getAsJsonObject();
-			for (Map.Entry<String, JsonElement> entry : messagePart.entrySet()) {
-				// Deserialize text
-				if (TextualComponent.isTextKey(entry.getKey())) {
-					// The map mimics the YAML serialization, which has a "key" field and one or more "value" fields
-					Map<String, Object> serializedMapForm = new HashMap<String, Object>(); // Must be object due to Bukkit serializer API compliance
-					serializedMapForm.put("key", entry.getKey());
-					if (entry.getValue().isJsonPrimitive()) {
-						// Assume string
-						serializedMapForm.put("value", entry.getValue().getAsString());
-					} else {
-						// Composite object, but we assume each element is a string
-						for (Map.Entry<String, JsonElement> compositeNestedElement : entry.getValue().getAsJsonObject().entrySet()) {
-							serializedMapForm.put("value." + compositeNestedElement.getKey(), compositeNestedElement.getValue().getAsString());
-						}
-					}
-					component.text = TextualComponent.deserialize(serializedMapForm);
-				} else if (MessagePart.stylesToNames.inverse().containsKey(entry.getKey())) {
-					if (entry.getValue().getAsBoolean()) {
-						component.styles.add(MessagePart.stylesToNames.inverse().get(entry.getKey()));
-					}
-				} else if (entry.getKey().equals("color")) {
-					component.color = ChatColor.valueOf(entry.getValue().getAsString().toUpperCase());
-				} else if (entry.getKey().equals("clickEvent")) {
-					JsonObject object = entry.getValue().getAsJsonObject();
-					component.clickActionName = object.get("action").getAsString();
-					component.clickActionData = object.get("value").getAsString();
-				} else if (entry.getKey().equals("hoverEvent")) {
-					JsonObject object = entry.getValue().getAsJsonObject();
-					component.hoverActionName = object.get("action").getAsString();
-					if (object.get("value").isJsonPrimitive()) {
-						// Assume string
-						component.hoverActionData = new JsonString(object.get("value").getAsString());
-					} else {
-						// Assume composite type
-						// The only composite type we currently store is another FancyMessage
-						// Therefore, recursion time!
-						component.hoverActionData = deserialize(object.get("value").toString() /* This should properly serialize the JSON object as a JSON string */);
-					}
-				} else if (entry.getKey().equals("insertion")) {
-					component.insertionData = entry.getValue().getAsString();
-				} else if (entry.getKey().equals("with")) {
-					for (JsonElement object : entry.getValue().getAsJsonArray()) {
-						if (object.isJsonPrimitive()) {
-							component.translationReplacements.add(new JsonString(object.getAsString()));
-						} else {
-							// Only composite type stored in this array is - again - FancyMessages
-							// Recurse within this function to parse this as a translation replacement
-							component.translationReplacements.add(deserialize(object.toString()));
-						}
-					}
-				}
-			}
-			returnVal.messageParts.add(component);
-		}
-		return returnVal;
 	}
 
 }

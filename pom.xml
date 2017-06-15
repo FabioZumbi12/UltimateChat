@@ -137,7 +137,7 @@
    <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <pluginVersion>1.7.1</pluginVersion>
+        <pluginVersion>1.7.2</pluginVersion>
    </properties>
   <modules>
   	<module>UltimateChat-Spigot</module>

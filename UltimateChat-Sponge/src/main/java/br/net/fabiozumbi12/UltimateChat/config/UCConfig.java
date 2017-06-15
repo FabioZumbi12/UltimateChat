@@ -66,7 +66,7 @@ public class UCConfig{
 			.setComment("Template to show when players send links or urls.");
 			config.getNode("general","console-tag").setValue(config.getNode("general","console-tag").getString("&6 {console}&3"))
 			.setComment("Tag to show when sent messagens from console to channels.");
-			config.getNode("general","remove-from-chat").setValue(config.getNode("general","remove-from-chat").getList(TypeToken.of(String.class), Arrays.asList("[]")))
+			config.getNode("general","remove-from-chat").setValue(config.getNode("general","remove-from-chat").getList(TypeToken.of(String.class), Arrays.asList("[]","&7[]","&7[&7]")))
 			.setComment("Remove this from chat (like empty tags)");
 			config.getNode("general","channel-cmd-aliases").setValue(config.getNode("general","channel-cmd-aliases").getString("channel, ch"))
 			.setComment("Command and aliases for /channel command.");

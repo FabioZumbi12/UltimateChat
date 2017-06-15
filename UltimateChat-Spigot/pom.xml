@@ -119,7 +119,7 @@
         <dependency>
             <groupId>com.comphenix.protocol</groupId>
             <artifactId>ProtocolLib-API</artifactId>
-            <version>4.0</version>
+            <version>LATEST</version>
         </dependency>        
   </dependencies>
   
@@ -149,6 +149,6 @@
   </repositories>
   
   <properties>
-  	<mineVersion>1.12-pre2-SNAPSHOT</mineVersion>
+  	<mineVersion>1.12-R0.1-SNAPSHOT</mineVersion>
   </properties>
 </project>

@@ -501,11 +501,11 @@ class UCMessages {
 					ClanPlayer cp = clan.getClanPlayer(sender.getUniqueId());
 					if (cp != null && cp.isMemberOfAClan()){
 						text = text
-								.replace("{clan_name}", cp.getClan().getName())
+								.replace("{clan_name}", checkEmpty(cp.getClan().getName()))
 								.replace("{clan_tag}", cp.getClan().getTag())
 								.replace("{clan_tag_color}", TextSerializers.FORMATTING_CODE.serialize(cp.getClan().getTagColored()))
 								.replace("{clan_kdr}", ""+cp.getClan().getKDR())
-								.replace("{clan_player_rank}", ""+cp.getRank().getName())
+								.replace("{clan_player_rank}", checkEmpty(cp.getRank().getName()))
 								.replace("{clan_player_kdr}", ""+cp.getKillDeath().getKDR())
 								.replace("{clan_player_ffprotected}", String.valueOf(cp.isFfProtected()))
 								.replace("{clan_player_isowner}", String.valueOf(cp.getClan().getOwner().equals(cp)));
@@ -521,25 +521,25 @@ class UCMessages {
 		} else {
 			text = text.replace("{nickname}", UChat.get().getConfig().getString("general","console-tag").replace("{console}", (String)cmdSender));
 		}
-			
-		/*
-		//colorize tags (not message)
-		if (!tag.equals("message")){
-			text = UCUtil.toColor(text);
-		}
-		*/
 		
 		//remove blank items		
 		text = text.replaceAll("\\{.*\\}", "");		
 		if (!tag.equals("message")){
 			for (String rpl:UChat.get().getConfig().getStringList("general","remove-from-chat")){
-				text = text.replace(rpl, "");
+				text = text.replace(UCUtil.toColor(rpl), "");
 			}
 		}		
 		if (text.equals(" ") || text.equals("  ")){
 			return text = "";
 		}
 		return text;
+	}
+	
+	private static String checkEmpty(String tag){
+		if (tag.length() <= 0){
+			return UCLang.get("tag.notset");
+		}
+		return tag;
 	}
 	
 }

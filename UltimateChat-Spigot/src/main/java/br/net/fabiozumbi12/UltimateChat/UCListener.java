@@ -80,7 +80,10 @@ public class UCListener implements CommandExecutor,Listener {
 							 return true;
 						 }
 						 for (int i = 0; i < 100; i++){
-							 UCMessages.sendPlayerFakeMessage(p, "{\"text\":\" \"}");
+							 if (!p.isOnline()){
+								 break;
+							 }
+							 UCUtil.performCommand(Bukkit.getConsoleSender(), "tellraw " + p.getName() + " {\"text\":\" \"}");
 						 }						 
 						 UChat.lang.sendMessage(p, UChat.lang.get("cmd.clear.cleared"));
 						 return true;
@@ -96,7 +99,7 @@ public class UCListener implements CommandExecutor,Listener {
 								 if (!play.isOnline()){
 									 continue;
 								 }
-								 UCMessages.sendPlayerFakeMessage(play, "{\"text\":\" \"}");
+								 UCUtil.performCommand(Bukkit.getConsoleSender(), "tellraw " + play.getName() + " {\"text\":\" \"}");
 							 }
 						 }						 						 
 						 UChat.lang.sendMessage(p, UChat.lang.get("cmd.clear.cleared"));

@@ -66,6 +66,7 @@ public class UCConfig{
                     
                     UChat.logger.info("Server version: " + plugin.serv.getBukkitVersion());
                     
+                    /*
                     // check if can enable json support
                     if (getBool("general.hover-events")){                    	
                     	try {
@@ -78,7 +79,7 @@ public class UCConfig{
                        		configs.set("general.hover-events", false);
                        		UChat.logger.warning("Your server version do not support JSON events, disabling Hover and Clicking features.");
                        	}
-                    }           
+                    }     */      
                     
                     //--------------------------------------- Load Aliases -----------------------------------//
                                         
@@ -316,7 +317,7 @@ public class UCConfig{
 				+ "tag-builder: ch-tags,world,clan-tag,marry-tag,group-prefix,nickname,group-suffix,message - Tags of this channel\n"
 				+ "need-focus: false - Player can use the alias or need to use '/ch g' to use this channel?\n"
 				+ "canLock: true - Change if the player can use /<channel> to lock on channel."
-				+ "receivers-message: true - Send chat messages like if no player near to receive the message?\n"
+				+ "receivers-message: true - Send chat messages like if 'no players near to receive the message'?\n"
 				+ "cost: 0.0 - Cost to player use this channel.\n"
 				+ "use-this-builder: false - Use this tag builder or use the 'config.yml' tag-builder?\n"
 				+ "channelAlias - Use this channel as a command alias.\n"
