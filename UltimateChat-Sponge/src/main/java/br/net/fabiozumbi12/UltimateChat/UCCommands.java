@@ -208,6 +208,9 @@ public class UCCommands {
 		for (String cha:UChat.get().getConfig().getChAliases()){
 			unregisterCmd(cha);
 			UCChannel ch = UChat.get().getConfig().getChannel(cha);
+			if (ch == null){
+				continue;
+			}
 			Sponge.getCommandManager().register(UChat.plugin, CommandSpec.builder()
 					.arguments(GenericArguments.optional(GenericArguments.remainingJoinedStrings(Text.of("message"))))
 					.permission("uchat.channel."+ch.getName())

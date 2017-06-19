@@ -484,6 +484,9 @@ public class UCConfig{
 	public List<String> getChAliases(){
 		List<String> aliases = new ArrayList<String>();
 		for (List<String> alias:channels.keySet()){
+			if (alias == null){
+				continue;
+			}
 			aliases.addAll(alias);
 		}
 		return aliases;
