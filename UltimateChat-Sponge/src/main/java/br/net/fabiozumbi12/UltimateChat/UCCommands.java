@@ -10,8 +10,13 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.SpongeEventFactory;
+import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.cause.NamedCause;
+import org.spongepowered.api.event.message.MessageChannelEvent;
+import org.spongepowered.api.event.message.MessageEvent;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.channel.MutableMessageChannel;
+import org.spongepowered.api.text.action.TextActions;
 
 import br.net.fabiozumbi12.UltimateChat.config.UCLang;
 
@@ -78,10 +83,29 @@ public class UCCommands {
 					    	if (src instanceof Player){
 					    		Player p = (Player) src;						
 					    		if (UChat.respondTell.containsKey(p.getName())){
-									Optional<Player> receiver = Sponge.getServer().getPlayer(UChat.respondTell.get(p.getName()));
+									Optional<Player> receiver = Sponge.getServer().getPlayer(UChat.respondTell.get(p.getName()));									
+									//sendTell(p, receiver, args.<String>getOne("message").get());
 									
-									sendTell(p, receiver, args.<String>getOne("message").get());
-									return CommandResult.success();	
+									if (!receiver.isPresent() || !receiver.get().isOnline() || !p.canSee(receiver.get())){
+										UCLang.sendMessage(p, "listener.invalidplayer");
+										return CommandResult.success();
+									}	
+									
+									Text msg = Text.of(args.<String>getOne("message").get());				    			
+					    			MessageChannelEvent.Chat event = SpongeEventFactory.createMessageChannelEventChat(
+			    							Cause.source(src).named(NamedCause.notifier(src)).build(), 
+			    							src.getMessageChannel(), 
+			    							Optional.of(src.getMessageChannel()), 				    							
+			    							new MessageEvent.MessageFormatter(Text.builder("<" + src.getName() + "> ")
+			    									.onShiftClick(TextActions.insertText(src.getName()))
+			    									.onClick(TextActions.suggestCommand("/msg " + src.getName()))
+			    									.build(), msg),
+			    							msg,  
+			    							false);
+					    			if (!Sponge.getEventManager().post(event)){
+						    			UChat.respondTell.put(receiver.get().getName(),p.getName());
+					    			}								
+					    			return CommandResult.success();	
 								} else {
 									throw new CommandException(UCLang.getText("cmd.tell.nonetorespond"));
 								}
@@ -101,10 +125,30 @@ public class UCCommands {
 					    		if (args.<String>getOne("message").isPresent()){
 					    			if (receiver.equals(p)){
 					    				throw new CommandException(UCLang.getText("cmd.tell.self"), true);
-									}
+									}									
+									//sendTell(p, args.<Player>getOne("player"), args.<String>getOne("message").get());
 																		
-									UChat.tempTellPlayers.put(p.getName(), receiver.getName());
-									sendTell(p, args.<Player>getOne("player"), args.<String>getOne("message").get());
+									if (!receiver.isOnline() || !p.canSee(receiver)){
+										UCLang.sendMessage(p, "listener.invalidplayer");
+										return CommandResult.success();
+									}
+									
+									Text msg = Text.of(args.<String>getOne("message").get());				    			
+					    			MessageChannelEvent.Chat event = SpongeEventFactory.createMessageChannelEventChat(
+			    							Cause.source(src).named(NamedCause.notifier(src)).build(), 
+			    							src.getMessageChannel(), 
+			    							Optional.of(src.getMessageChannel()), 				    							
+			    							new MessageEvent.MessageFormatter(Text.builder("<" + src.getName() + "> ")
+			    									.onShiftClick(TextActions.insertText(src.getName()))
+			    									.onClick(TextActions.suggestCommand("/msg " + src.getName()))
+			    									.build(), msg),
+			    							msg,  
+			    							false);
+					    			if (!Sponge.getEventManager().post(event)){
+					    				UChat.tempTellPlayers.put(p.getName(), receiver.getName());
+						    			UChat.respondTell.put(receiver.getName(),p.getName());
+					    			}					    			
+									
 									return CommandResult.success();
 					    		} else {
 					    			if (receiver.equals(p)){
@@ -218,31 +262,34 @@ public class UCCommands {
 				    .executor((src, args) -> { {
 				    	if (src instanceof Player){
 				    		if (args.<String>getOne("message").isPresent()){
-				    			UChat.tempChannels.put(src.getName(), ch.getAlias());
-				    			/*
+				    			if (UChat.mutes.contains(src.getName()) || ch.isMuted(src.getName())){
+				    				UCLang.sendMessage(src, "channel.muted");
+				    				return CommandResult.success();
+				    			}
+				    			
 				    			Text msg = Text.of(args.<String>getOne("message").get());				    			
 				    			MessageChannelEvent.Chat event = SpongeEventFactory.createMessageChannelEventChat(
 		    							Cause.source(src).named(NamedCause.notifier(src)).build(), 
 		    							src.getMessageChannel(), 
 		    							Optional.of(src.getMessageChannel()), 				    							
 		    							new MessageEvent.MessageFormatter(Text.builder("<" + src.getName() + "> ")
-		    		                            .onShiftClick(TextActions.insertText(src.getName()))
-		    		                            .onClick(TextActions.suggestCommand("/msg " + src.getName()))
-		    		                            .build(), msg), 
-		    		                    msg, 
+		    									.onShiftClick(TextActions.insertText(src.getName()))
+		    									.onClick(TextActions.suggestCommand("/msg " + src.getName()))
+		    									.build(), msg),
+		    							msg,  
 		    							false);
-				    			Sponge.getEventManager().post(event);*/
-				    					
-				    			if (UChat.mutes.contains(src.getName()) || ch.isMuted(src.getName())){
-				    				UCLang.sendMessage(src, "channel.muted");
-				    				return CommandResult.success();
-				    			}
+				    			if (!Sponge.getEventManager().post(event)){
+				    				UChat.tempChannels.put(src.getName(), ch.getAlias());
+				    			}				    			
 				    			
+				    			/*
 				    			Object[] chArgs = UCMessages.sendFancyMessage(new String[0], args.<String>getOne("message").get(), ch, src, null);  
 				    			if (chArgs != null){
 				    				MutableMessageChannel msgCh = (MutableMessageChannel) chArgs[0];	
+				    				
+				    				//send to console
 				    				msgCh.send(Text.join((Text)chArgs[1],(Text)chArgs[2],(Text)chArgs[3]));
-				    			}
+				    			}*/
 				    		} else {
 				    			if (!ch.canLock()){
 				    				UCLang.sendMessage(src, "help.channels.send");
@@ -435,7 +482,8 @@ public class UCCommands {
 		
 		return uchat;
 	}
-
+    
+	/*
 	private void sendTell(Player p, Optional<Player> receiver, String msg){		
 		if (!receiver.isPresent() || !receiver.get().isOnline() || !p.canSee(receiver.get())){
 			UCLang.sendMessage(p, "listener.invalidplayer");
@@ -445,7 +493,7 @@ public class UCCommands {
 		UChat.respondTell.put(tellreceiver.getName(),p.getName());
 		UCMessages.sendFancyMessage(new String[0], msg, null, p, tellreceiver);			
 	}
-	
+	*/
 	private void sendHelp(CommandSource p){		
 		p.sendMessage(UCUtil.toText("&7--------------- "+UCLang.get("_UChat.prefix")+" Help &7---------------"));		
 		p.sendMessage(UCLang.getText("help.channels.enter"));

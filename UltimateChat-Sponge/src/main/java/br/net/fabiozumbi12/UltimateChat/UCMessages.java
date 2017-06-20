@@ -175,7 +175,10 @@ class UCMessages {
 			if ((receivers.size()-vanish) <= 0){
 				if (ch.getReceiversMsg()){
 					UCLang.sendMessage(sender, "channel.noplayer.near");	
-				}				
+				}		
+				
+				//send to console
+				msgCh.send(Text.join(toConsole[0].build(),toConsole[1].build(),toConsole[2].build()));	
 				return new Object[]{msgCh,toConsole[0].build(),toConsole[1].build(),toConsole[2].build()};
 			}
 			
@@ -201,6 +204,9 @@ class UCMessages {
 			Sponge.getServer().getConsole().sendMessage(to);
 			return null;
 		}
+		
+		//send to console
+		msgCh.send(Text.join(toConsole[0].build(),toConsole[1].build(),toConsole[2].build()));	
 		
 		return new Object[]{msgCh,toConsole[0].build(),toConsole[1].build(),toConsole[2].build()};
 	}

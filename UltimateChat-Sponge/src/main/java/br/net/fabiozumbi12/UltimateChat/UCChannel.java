@@ -3,12 +3,18 @@ package br.net.fabiozumbi12.UltimateChat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.source.ConsoleSource;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.SpongeEventFactory;
+import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.cause.NamedCause;
+import org.spongepowered.api.event.message.MessageChannelEvent;
+import org.spongepowered.api.event.message.MessageEvent;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.channel.MutableMessageChannel;
+import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.world.World;
 
 /**Represents a chat channel use by UltimateChat to control from where/to send/receive messages.
@@ -177,13 +183,28 @@ public class UCChannel {
 		return this.bungee ;
 	}
 	
-	public void sendMessage(Player p, String message){
+	public void sendMessage(Player src, String message){
+		Text msg = Text.of(message);				    			
+		MessageChannelEvent.Chat event = SpongeEventFactory.createMessageChannelEventChat(
+				Cause.source(src).named(NamedCause.notifier(src)).build(), 
+				src.getMessageChannel(), 
+				Optional.of(src.getMessageChannel()), 				    							
+				new MessageEvent.MessageFormatter(Text.builder("<" + src.getName() + "> ")
+						.onShiftClick(TextActions.insertText(src.getName()))
+						.onClick(TextActions.suggestCommand("/msg " + src.getName()))
+						.build(), msg),
+				msg,  
+				false);
+		if (!Sponge.getEventManager().post(event)){
+			UChat.tempChannels.put(src.getName(), this.alias);
+		}
+		/*
 		Object[] chArgs = UCMessages.sendFancyMessage(new String[0], message, this, p, null);  
 		if (chArgs != null){
 			UChat.tempChannels.put(p.getName(), this.alias);
 			MutableMessageChannel msgCh = (MutableMessageChannel) chArgs[0];	
 			msgCh.send(Text.join((Text)chArgs[1],(Text)chArgs[2],(Text)chArgs[3]));
-		}
+		}*/
 	}
 	
 	public void sendMessage(ConsoleSource sender, String message){

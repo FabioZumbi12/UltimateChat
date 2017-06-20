@@ -69,8 +69,8 @@ public class UCListener {
 				if (args == null){					
 					e.setMessageCancelled(true);
 				} else {
-					MutableMessageChannel msgCh = (MutableMessageChannel) args[0];	
-					msgCh.addMember(Sponge.getServer().getConsole());
+					MutableMessageChannel msgCh = (MutableMessageChannel) args[0];
+					msgCh.removeMember(Sponge.getServer().getConsole());
 					
 					e.setChannel(msgCh);
 					e.setMessage((Text)args[1], (Text)args[2], (Text)args[3]);
