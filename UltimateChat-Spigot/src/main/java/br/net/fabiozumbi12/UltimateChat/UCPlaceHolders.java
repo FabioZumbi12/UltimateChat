@@ -12,24 +12,25 @@ public class UCPlaceHolders extends EZPlaceholderHook {
 
 	@Override
 	public String onPlaceholderRequest(Player p, String arg) {
+		String text = "--";
 		if (arg.equals("player_channel_name")){
-			return UChat.config.getChannel(UChat.pChannels.get(p.getName())).getName();
+			text = UChat.config.getChannel(UChat.pChannels.get(p.getName())).getName();
 		}
 		if (arg.equals("player_channel_alias")){
-			return UChat.config.getChannel(UChat.pChannels.get(p.getName())).getAlias();
+			text = UChat.config.getChannel(UChat.pChannels.get(p.getName())).getAlias();
 		}
 		if (arg.equals("player_channel_color")){
-			return UChat.config.getChannel(UChat.pChannels.get(p.getName())).getColor();
+			text = UChat.config.getChannel(UChat.pChannels.get(p.getName())).getColor();
 		}
 		if (arg.equals("player_tell_with") && UChat.tellPlayers.containsKey(p.getName())){
-			return UChat.tellPlayers.get(p.getName());
+			text = UChat.tellPlayers.get(p.getName());
 		}
 		if (arg.equals("player_ignoring") && UChat.ignoringPlayer.containsKey(p.getName())){
-			return UChat.ignoringPlayer.get(p.getName()).toArray().toString();
+			text = UChat.ignoringPlayer.get(p.getName()).toArray().toString();
 		}
 		if (arg.equals("default_channel")){
-			return UChat.config.getDefChannel().getName();
+			text = UChat.config.getDefChannel().getName();
 		}		
-		return null;
+		return text;
 	}
 }
