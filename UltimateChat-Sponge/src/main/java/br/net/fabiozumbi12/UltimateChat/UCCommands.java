@@ -267,6 +267,8 @@ public class UCCommands {
 				    				return CommandResult.success();
 				    			}
 				    			
+				    			UChat.tempChannels.put(src.getName(), ch.getAlias());
+				    			
 				    			Text msg = Text.of(args.<String>getOne("message").get());				    			
 				    			MessageChannelEvent.Chat event = SpongeEventFactory.createMessageChannelEventChat(
 		    							Cause.source(src).named(NamedCause.notifier(src)).build(), 
@@ -278,10 +280,7 @@ public class UCCommands {
 		    									.build(), msg),
 		    							msg,  
 		    							false);
-				    			if (!Sponge.getEventManager().post(event)){
-				    				UChat.tempChannels.put(src.getName(), ch.getAlias());
-				    			}				    			
-				    			
+				    			Sponge.getEventManager().post(event);
 				    			/*
 				    			Object[] chArgs = UCMessages.sendFancyMessage(new String[0], args.<String>getOne("message").get(), ch, src, null);  
 				    			if (chArgs != null){
