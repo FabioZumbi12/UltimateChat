@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import nl.riebie.mcclans.api.ClanPlayer;
 import nl.riebie.mcclans.api.ClanService;
@@ -221,15 +222,25 @@ class UCMessages {
 	}
 	private static String composeColor(CommandSource sender, String evmsg){
 		if (sender instanceof Player){			
+			Pattern mat1 = Pattern.compile("(?i)&([a-f0-9r])");
+			Pattern mat2 = Pattern.compile("(?i)&([l-o])");
+			Pattern mat3 = Pattern.compile("(?i)&([k])");
+			
 			if (!UChat.get().getPerms().hasPerm((Player)sender, "chat.color")){
-				evmsg = evmsg.replaceAll("(?i)&([a-f0-9r])", "");
-			}
+				while (mat1.matcher(evmsg).find()){
+					evmsg = evmsg.replaceAll("(?i)&([a-f0-9r])", "");
+				}				
+			}			
 			if (!UChat.get().getPerms().hasPerm((Player)sender, "chat.color.formats")){
-				evmsg = evmsg.replaceAll("(?i)&([l-o])", "");
-			}
+				while (mat2.matcher(evmsg).find()){
+					evmsg = evmsg.replaceAll("(?i)&([l-o])", "");
+				}				
+			}			
 			if (!UChat.get().getPerms().hasPerm((Player)sender, "chat.color.magic")){
-				evmsg = evmsg.replaceAll("(?i)&([k])", "");
-			}
+				while (mat3.matcher(evmsg).find()){
+					evmsg = evmsg.replaceAll("(?i)&([k])", "");
+				}				
+			}					
 		}	
 		return evmsg;
 	}

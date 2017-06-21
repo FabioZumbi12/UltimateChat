@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
+import org.spongepowered.api.command.CommandMapping;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.GenericArguments;
@@ -54,7 +55,9 @@ public class UCCommands {
 			}
 		}
 		for (String cmd:UChat.get().getConfig().getChAliases()){
-			Sponge.getCommandManager().removeMapping(Sponge.getCommandManager().get(cmd).get());
+			Optional<? extends CommandMapping> cmdo = Sponge.getCommandManager().get(cmd);
+			if (cmdo.isPresent())
+			Sponge.getCommandManager().removeMapping(cmdo.get());
 		}		
 		for (String cmd:UChat.get().getConfig().getMsgAliases()){
 			Sponge.getCommandManager().removeMapping(Sponge.getCommandManager().get(cmd).get());
