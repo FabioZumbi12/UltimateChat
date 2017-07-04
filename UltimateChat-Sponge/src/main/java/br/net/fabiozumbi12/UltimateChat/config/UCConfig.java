@@ -189,7 +189,7 @@ public class UCConfig{
 			prots.getNode("chat-protection","censor","action","only-on-channels").setValue(prots.getNode("chat-protection","censor","action","only-on-channels").getList(TypeToken.of(String.class), Arrays.asList("global")));
 			prots.getNode("chat-protection","censor","action","partial-words").setValue(prots.getNode("chat-protection","censor","action","partial-words").getBoolean(false));
 			prots.getNode("chat-protection","censor","replace-words")
-			.setValue(prots.getNode("chat-protection","censor","replace-words").getList(TypeToken.of(String.class), Arrays.asList("word1")));
+			.setValue(prots.getNode("chat-protection","censor","replace-words").getList(TypeToken.of(String.class), Arrays.asList("world")));
 			
 			prots.getNode("chat-protection","anti-ip","enable").setValue(prots.getNode("chat-protection","anti-ip","enable").getBoolean(true));
 			prots.getNode("chat-protection","anti-ip","custom-ip-regex").setValue(prots.getNode("chat-protection","anti-ip","custom-ip-regex").getString("^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"));
