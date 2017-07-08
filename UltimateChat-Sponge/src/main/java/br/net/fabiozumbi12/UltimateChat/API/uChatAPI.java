@@ -73,7 +73,7 @@ public class uChatAPI {
 	 * 
 	 * @return {@code Collection<UCChannel>}
 	 */
-	public static Collection<UCChannel> getChanells(){
+	public static Collection<UCChannel> getChannels(){
 		return UChat.get().getConfig().getChannels();
 	}
 }
