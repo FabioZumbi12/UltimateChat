@@ -93,10 +93,12 @@ public class UCCommands {
 										UCLang.sendMessage(p, "listener.invalidplayer");
 										return CommandResult.success();
 									}	
-									
+																		
+					    			UChat.respondTell.put(receiver.get().getName(),p.getName());
+					    			
 									Text msg = Text.of(args.<String>getOne("message").get());				    			
 					    			MessageChannelEvent.Chat event = SpongeEventFactory.createMessageChannelEventChat(
-			    							Cause.source(src).named(NamedCause.notifier(src)).build(), 
+					    					Cause.source(src).named(NamedCause.notifier(src)).build(), 
 			    							src.getMessageChannel(), 
 			    							Optional.of(src.getMessageChannel()), 				    							
 			    							new MessageEvent.MessageFormatter(Text.builder("<" + src.getName() + "> ")
@@ -105,9 +107,7 @@ public class UCCommands {
 			    									.build(), msg),
 			    							msg,  
 			    							false);
-					    			if (!Sponge.getEventManager().post(event)){
-						    			UChat.respondTell.put(receiver.get().getName(),p.getName());
-					    			}								
+					    			Sponge.getEventManager().post(event);							
 					    			return CommandResult.success();	
 								} else {
 									throw new CommandException(UCLang.getText("cmd.tell.nonetorespond"));
@@ -136,9 +136,12 @@ public class UCCommands {
 										return CommandResult.success();
 									}
 									
+									UChat.tempTellPlayers.put(p.getName(), receiver.getName());
+									UChat.respondTell.put(receiver.getName(),p.getName());
+									
 									Text msg = Text.of(args.<String>getOne("message").get());				    			
 					    			MessageChannelEvent.Chat event = SpongeEventFactory.createMessageChannelEventChat(
-			    							Cause.source(src).named(NamedCause.notifier(src)).build(), 
+					    					Cause.source(src).named(NamedCause.notifier(src)).build(), 
 			    							src.getMessageChannel(), 
 			    							Optional.of(src.getMessageChannel()), 				    							
 			    							new MessageEvent.MessageFormatter(Text.builder("<" + src.getName() + "> ")
@@ -147,11 +150,7 @@ public class UCCommands {
 			    									.build(), msg),
 			    							msg,  
 			    							false);
-					    			if (!Sponge.getEventManager().post(event)){
-					    				UChat.tempTellPlayers.put(p.getName(), receiver.getName());
-						    			UChat.respondTell.put(receiver.getName(),p.getName());
-					    			}					    			
-									
+					    			Sponge.getEventManager().post(event);					    			
 									return CommandResult.success();
 					    		} else {
 					    			if (receiver.equals(p)){
