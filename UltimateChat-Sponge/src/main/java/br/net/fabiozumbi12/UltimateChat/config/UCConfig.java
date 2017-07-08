@@ -395,7 +395,9 @@ public class UCConfig{
 	}
 	
 	public Collection<UCChannel> getChannels(){
-		return this.channels.values();
+		Collection<UCChannel> chs = this.channels.values();
+		chs.removeIf(ch -> ch == null);
+		return chs;
 	}
 	
 	public void addChannel(UCChannel ch) throws IOException{

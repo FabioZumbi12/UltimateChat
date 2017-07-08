@@ -2,6 +2,7 @@ package br.net.fabiozumbi12.UltimateChat.API;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import br.net.fabiozumbi12.UltimateChat.UCChannel;
@@ -66,5 +67,13 @@ public class uChatAPI {
 	 */
 	public static UCChannel getPlayerChannel(String player){
 		return UChat.get().getConfig().getChannel(UChat.get().pChannels.get(player));
+	}
+	
+	/**Gets all available loaded channels.
+	 * 
+	 * @return {@code Collection<UCChannel>}
+	 */
+	public static Collection<UCChannel> getChanells(){
+		return UChat.get().getConfig().getChannels();
 	}
 }
