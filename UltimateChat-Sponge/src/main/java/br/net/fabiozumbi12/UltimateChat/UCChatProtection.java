@@ -67,12 +67,13 @@ class UCChatProtection {
 			} else {
 				msgSpam.put(msg, msgSpam.get(msg)+1);				
 				if (msgSpam.get(msg) >= UChat.get().getConfig().getProtInt("chat-protection","antispam","count-of-same-message")){
-					Sponge.getCommandManager().process(Sponge.getServer().getConsole(),UChat.get().getConfig().getProtString("chat-protection.antispam.cmd-action").replace("{player}", p.getName()));
+					Sponge.getCommandManager().process(Sponge.getServer().getConsole(),UChat.get().getConfig().getProtString("chat-protection","antispam","cmd-action").replace("{player}", p.getName()));
 					msgSpam.remove(msg);
-					return null;
 				} else {
 					p.sendMessage(UChat.get().getConfig().getProtMsg("chat-protection","antispam","wait-message"));
+					
 				}
+				return null;
 			}			
 		}
 				
