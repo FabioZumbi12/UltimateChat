@@ -12,7 +12,7 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.GameReloadEvent;
-import org.spongepowered.api.event.game.state.GameStartedServerEvent;
+import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 import org.spongepowered.api.event.service.ChangeServiceProviderEvent;
 import org.spongepowered.api.plugin.Plugin;
@@ -88,7 +88,7 @@ public class UChat {
 	static List<String> isSpy = new ArrayList<String>();	
 		
 	@Listener
-    public void onServerStart(GameStartedServerEvent event) {	
+    public void onServerStart(GameInitializationEvent event) {	
         try {
         	plugin = Sponge.getPluginManager().getPlugin("ultimatechat").get();
         	uchat = this;   
