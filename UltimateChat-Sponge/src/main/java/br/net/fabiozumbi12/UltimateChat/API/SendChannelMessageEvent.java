@@ -11,7 +11,7 @@ import org.spongepowered.api.event.cause.NamedCause;
 import br.net.fabiozumbi12.UltimateChat.UCChannel;
 import br.net.fabiozumbi12.UltimateChat.UChat;
 
-/**This event listen to all chat messages sent by player and allow devs to change the message, tags, channel and canccel the chat event too.
+/**This event listen to all chat messages sent by players before get formated and separated by player and channel.
  * @author FabioZumbi12
  *
  */

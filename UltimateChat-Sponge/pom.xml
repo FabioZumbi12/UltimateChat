@@ -33,6 +33,13 @@
 		<scope>system</scope>
 		<systemPath>${project.basedir}/libs/MCClans-API-1.2.jar</systemPath>
 	</dependency>
+	
+	<dependency>
+        <groupId>io.github.nucleuspowered</groupId>
+        <artifactId>nucleus-api</artifactId>
+        <version>0.30.0-SNAPSHOT-S5.1</version>
+    </dependency> 
+    
   </dependencies>
   
 </project>

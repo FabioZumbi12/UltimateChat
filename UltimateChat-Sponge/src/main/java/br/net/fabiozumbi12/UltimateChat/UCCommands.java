@@ -1,5 +1,8 @@
 package br.net.fabiozumbi12.UltimateChat;
 
+import io.github.nucleuspowered.nucleus.api.NucleusAPI;
+import io.github.nucleuspowered.nucleus.api.service.NucleusMessageTokenService.TokenParser;
+
 import java.util.Optional;
 
 import org.spongepowered.api.Sponge;
@@ -18,13 +21,20 @@ import org.spongepowered.api.event.message.MessageChannelEvent;
 import org.spongepowered.api.event.message.MessageEvent;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
+import org.spongepowered.api.util.Tuple;
 
 import br.net.fabiozumbi12.UltimateChat.config.UCLang;
 
 public class UCCommands {
 	
 	UCCommands(UChat plugin) {
-		
+		if (Sponge.getPluginManager().getPlugin("nucleus").isPresent()){
+			Optional<Tuple<TokenParser, String>> service = NucleusAPI.getMessageTokenService().getPrimaryTokenParserAndIdentifier("{{displayname}}");
+			if (service.isPresent()){
+				
+			}
+		}	
+
 		unregisterCmd("uchat");
 		Sponge.getCommandManager().register(plugin, uchat(),"ultimatechat","uchat","chat");	
 		
@@ -38,6 +48,7 @@ public class UCCommands {
 		registerUmsgAliases();
 		registerChAliases();
 		
+			
 	}
 	
 

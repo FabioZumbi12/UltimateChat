@@ -24,6 +24,10 @@
             <id>kitteh-repo</id>
             <url>http://repo.kitteh.org/content/groups/public</url>
     </repository>
+    <repository>
+            <id>nucleus-repo</id>
+            <url>http://repo.drnaylor.co.uk/artifactory/list/minecraft</url>
+    </repository>
      
     <!-- Spigot repos -->
     <repository>

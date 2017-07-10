@@ -15,6 +15,7 @@ import org.spongepowered.api.event.game.GameReloadEvent;
 import org.spongepowered.api.event.game.state.GamePostInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 import org.spongepowered.api.event.service.ChangeServiceProviderEvent;
+import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.service.economy.EconomyService;
@@ -29,7 +30,8 @@ import com.google.inject.Inject;
 name = "UltimateChat", 
 version = VersionData.VERSION,
 authors="FabioZumbi12", 
-description="Complete and advanced chat plugin")
+description="Complete and advanced chat plugin",
+dependencies=@Dependency(id = "nucleus", optional = true))
 public class UChat {
 	
 	private UCLogger logger;

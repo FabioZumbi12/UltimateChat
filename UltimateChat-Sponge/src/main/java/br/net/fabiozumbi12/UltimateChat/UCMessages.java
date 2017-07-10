@@ -13,7 +13,6 @@ import nl.riebie.mcclans.api.ClanService;
 import org.apache.commons.lang3.StringUtils;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.command.source.ConsoleSource;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.effect.sound.SoundType;
 import org.spongepowered.api.entity.Entity;
@@ -27,9 +26,9 @@ import org.spongepowered.api.text.Text.Builder;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.channel.MessageChannel;
 import org.spongepowered.api.text.channel.MutableMessageChannel;
-import org.spongepowered.api.text.chat.ChatTypes;
 import org.spongepowered.api.text.serializer.TextSerializers;
 
+import br.net.fabiozumbi12.UltimateChat.API.PostFormatChatMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.API.SendChannelMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.config.UCLang;
 
@@ -49,7 +48,7 @@ class UCMessages {
 	 * @param tellReceiver
 	 * @return Object[]
 	 */
-	protected static Object[] sendFancyMessage(String[] format, String msg, UCChannel channel, CommandSource sender, Player tellReceiver){
+	protected static MutableMessageChannel sendFancyMessage(String[] format, String msg, UCChannel channel, CommandSource sender, Player tellReceiver){
 		//Execute listener:
 		HashMap<String,String> tags = new HashMap<String,String>();
 		for (String str:UChat.get().getConfig().getStringList("general","custom-tags")){
@@ -61,7 +60,7 @@ class UCMessages {
 			return null;
 		}
 		
-		Builder[] toConsole = new Builder[0];
+		//Builder[] toConsole = new Builder[0];
 		registeredReplacers = event.getResgisteredTags();
 		defFormat = event.getDefFormat();
 		String evmsg = event.getMessage();
@@ -74,6 +73,7 @@ class UCMessages {
 			return null;
 		}
 		
+		HashMap<CommandSource, Text> msgPlayers = new HashMap<CommandSource, Text>();
 		evmsg = composeColor(sender,evmsg);
 						
 		if (event.getChannel() != null){					
@@ -104,6 +104,10 @@ class UCMessages {
 			int vanish = 0;
 			List<Player> receivers = new ArrayList<Player>();
 			
+			//put sender
+			msgPlayers.put(sender, sendMessage(sender, sender, evmsg, ch, false));
+			msgCh.addMember(sender);			
+			
 			if (ch.getDistance() > 0 && sender instanceof Player){			
 				for (Entity ent:((Player)sender).getNearbyEntities(ch.getDistance())){
 					if (ent instanceof Player && UChat.get().getPerms().channelPerm((Player)ent, ch)){	
@@ -120,14 +124,14 @@ class UCMessages {
 						if (!((Player)sender).canSee(p)){
 							vanish++;
 						}
-						if ((ch.neeFocus() && UChat.get().pChannels.get(((Player)ent).getName()).equals(ch.getAlias())) || !ch.neeFocus()){					
-							toConsole = sendMessage(sender,(Player)ent, evmsg, ch, false);
-							receivers.add((Player)ent);
-							msgCh.transformMessage(sender, (Player)ent, buildMessage(toConsole), ChatTypes.SYSTEM);
+						if ((ch.neeFocus() && UChat.get().pChannels.get(p.getName()).equals(ch.getAlias())) || !ch.neeFocus()){					
+							msgPlayers.put(p, sendMessage(sender, p, evmsg, ch, false));
+							receivers.add(p);
+							msgCh.addMember(p);
 						}
 					}				
 				}
-				toConsole = sendMessage(sender, sender, evmsg, ch, false);
+				//toConsole = sendMessage(sender, sender, evmsg, ch, false);
 			} else {
 				for (Player receiver:Sponge.getServer().getOnlinePlayers()){	
 					if (receiver.equals(sender) || !UChat.get().getPerms().channelPerm(receiver, ch) || (!ch.crossWorlds() && (sender instanceof Player && !receiver.getWorld().equals(((Player)sender).getWorld())))){				
@@ -145,29 +149,27 @@ class UCMessages {
 						noWorldReceived++;
 					}					
 					if ((ch.neeFocus() && UChat.get().pChannels.get(receiver.getName()).equals(ch.getAlias())) || !ch.neeFocus()){
-						toConsole = sendMessage(sender, receiver, evmsg, ch, false);
+						msgPlayers.put(receiver, sendMessage(sender, receiver, evmsg, ch, false));
 						receivers.add(receiver);
-						msgCh.transformMessage(sender, receiver, buildMessage(toConsole), ChatTypes.SYSTEM);
+						msgCh.addMember(receiver);
 					}				
 				}
-				toConsole = sendMessage(sender, sender, evmsg, ch, false);
+				//toConsole = sendMessage(sender, sender, evmsg, ch, false);
 			}	
 									
 			//chat spy
 			for (Player receiver:Sponge.getServer().getOnlinePlayers()){			
 				if (!receiver.equals(sender) && !receivers.contains(receiver) && !receivers.contains(sender) && UChat.isSpy.contains(receiver.getName())){	
 					String spyformat = UChat.get().getConfig().getString("general","spy-format");
-					spyformat = spyformat.replace("{output}", UCUtil.stripColor(buildMessage(sendMessage(sender, receiver, evmsg, ch, true)).toPlain()));					
+					spyformat = spyformat.replace("{output}", UCUtil.stripColor(sendMessage(sender, receiver, evmsg, ch, true).toPlain()));					
 					receiver.sendMessage(UCUtil.toText(spyformat));
 				}
 			}
-			
-			
+			/*
 			if (!(sender instanceof ConsoleSource)){
 				msgCh.transformMessage(sender, Sponge.getServer().getConsole(), buildMessage(toConsole), ChatTypes.SYSTEM);
-			}			
-			
-			
+			}
+			*/
 			if (ch.getDistance() == 0 && noWorldReceived <= 0){
 				if (ch.getReceiversMsg()){
 					UCLang.sendMessage(sender, "channel.noplayer.world");
@@ -179,8 +181,8 @@ class UCMessages {
 				}		
 				
 				//send to console
-				msgCh.send(Text.join(toConsole[0].build(),toConsole[1].build(),toConsole[2].build()));	
-				return new Object[]{msgCh,toConsole[0].build(),toConsole[1].build(),toConsole[2].build()};
+				//msgCh.send(Text.join(toConsole[0].build(),toConsole[1].build(),toConsole[2].build()));	
+				//return new Object[]{msgCh,toConsole[0].build(),toConsole[1].build(),toConsole[2].build()};
 			}
 			
 		} else {						
@@ -194,22 +196,39 @@ class UCMessages {
 					if (isIgnoringPlayers(tellReceiver.getName(), sender.getName())){
 						spyformat = UCLang.get("chat.ignored")+spyformat;
 					}
-					spyformat = spyformat.replace("{output}", UCUtil.stripColor(buildMessage(sendMessage(sender, tellReceiver, evmsg, fakech, true)).toPlain()));					
+					spyformat = spyformat.replace("{output}", UCUtil.stripColor(sendMessage(sender, tellReceiver, evmsg, fakech, true).toPlain()));					
 					receiver.sendMessage(UCUtil.toText(spyformat));					
 				}
 			}
-			Text to = buildMessage(sendMessage(sender, tellReceiver, evmsg, fakech, false));
+			Text to = sendMessage(sender, tellReceiver, evmsg, fakech, false);
+			msgPlayers.put(tellReceiver, to);
+			msgPlayers.put(sender, to);
 			if (isIgnoringPlayers(tellReceiver.getName(), sender.getName())){
 				to = Text.of(UCUtil.toText(UCLang.get("chat.ignored")),to);
 			}
-			Sponge.getServer().getConsole().sendMessage(to);
+			
+			//Sponge.getServer().getConsole().sendMessage(to);
+			msgPlayers.put(Sponge.getServer().getConsole(), to);
+		}
+				
+		//send to console
+		//msgCh.send(Text.join(toConsole[0].build(),toConsole[1].build(),toConsole[2].build()));	
+
+		if (!msgPlayers.keySet().contains(Sponge.getServer().getConsole())){
+			msgPlayers.put(Sponge.getServer().getConsole(), msgPlayers.values().stream().findAny().get());
+		}
+		//return new Object[]{msgCh,toConsole[0].build(),toConsole[1].build(),toConsole[2].build()};
+		PostFormatChatMessageEvent postEvent = new PostFormatChatMessageEvent(sender, msgPlayers, channel);
+		Sponge.getEventManager().post(postEvent);
+		if (postEvent.isCancelled()){
 			return null;
 		}
 		
-		//send to console
-		msgCh.send(Text.join(toConsole[0].build(),toConsole[1].build(),toConsole[2].build()));	
+		msgPlayers.forEach((send,text)->{
+			send.sendMessage(text);
+		});		
 		
-		return new Object[]{msgCh,toConsole[0].build(),toConsole[1].build(),toConsole[2].build()};
+		return msgCh;
 	}
 	
 	private static Text buildMessage(Builder[] build){
@@ -271,7 +290,7 @@ class UCMessages {
 		UChat.ignoringPlayer.put(p, list);
 	}
 	
-	private static Builder[] sendMessage(CommandSource sender, CommandSource receiver, String msg, UCChannel ch, boolean isSpy){
+	private static Text sendMessage(CommandSource sender, CommandSource receiver, String msg, UCChannel ch, boolean isSpy){
 		Builder formatter = Text.builder();
 		Builder playername = Text.builder();
 		Builder message = Text.builder();
@@ -394,16 +413,16 @@ class UCMessages {
 				formatter.append(UCUtil.toText(prefix));
 			}			
 			message.append(UCUtil.toText(format));
-			
+			/*
 			if (!isSpy){
 				sender.sendMessage(Text.of(formatter, message));
-			}			
+			}	*/		
 		}
-		
+		/*
 		if (!isSpy && !isIgnoringPlayers(receiver.getName(), sender.getName())){
 			receiver.sendMessage(Text.of(formatter,playername,message));			
-		}		
-		return new Builder[]{formatter,playername,message};
+		}	*/	
+		return buildMessage(new Builder[]{formatter,playername,message});
 	}
 	
 	private static String getLastColor(String str){
@@ -482,7 +501,13 @@ class UCMessages {
 			Player sender = (Player)cmdSender;
 			
 			if (sender.get(Keys.DISPLAY_NAME).isPresent()){
-				text = text.replace("{nickname}", sender.get(Keys.DISPLAY_NAME).get().toPlain());
+				String nick = sender.get(Keys.DISPLAY_NAME).get().toPlain();				
+				if (nick.equals(sender.getName()) && defFormat.length == 3){
+					String[] nuNick = defFormat[1].split(" ");
+					text = text.replace("{nickname}", nuNick[nuNick.length-1]);
+				} else {
+					text = text.replace("{nickname}", nick);
+				}
 			}				
 			
 			text = text.replace("{world}", sender.getWorld().getName());

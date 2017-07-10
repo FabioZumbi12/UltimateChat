@@ -11,7 +11,6 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.event.message.MessageChannelEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
-import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.channel.MutableMessageChannel;
 import org.spongepowered.api.text.serializer.TextSerializers;
 
@@ -32,8 +31,17 @@ public class UCListener {
 	
 	@Listener
 	public void onChat(MessageChannelEvent.Chat e, @First Player p){
-		if (UChat.tellPlayers.containsKey(p.getName())){
-			Optional<Player> tellreceiver = Sponge.getServer().getPlayer(UChat.tellPlayers.get(p.getName()));
+		if (UChat.tellPlayers.containsKey(p.getName()) || UChat.tempTellPlayers.containsKey(p.getName()) || UChat.respondTell.containsKey(p.getName())){			
+			Optional<Player> tellreceiver = null;
+			if (UChat.tellPlayers.containsKey(p.getName())){
+				tellreceiver = Sponge.getServer().getPlayer(UChat.tellPlayers.get(p.getName()));				
+			} else if (UChat.respondTell.containsKey(p.getName())){ 
+				tellreceiver = Sponge.getServer().getPlayer(UChat.respondTell.get(p.getName()));
+				UChat.respondTell.remove(p.getName());
+			} else {			
+				tellreceiver = Sponge.getServer().getPlayer(UChat.tempTellPlayers.get(p.getName()));
+				UChat.tempTellPlayers.remove(p.getName());
+			}
 			sendTell(p, tellreceiver, e.getRawMessage().toPlain());
 			e.setMessageCancelled(true);
 		} else {
@@ -61,19 +69,22 @@ public class UCListener {
 				}				
 				e.setMessageCancelled(true);
 			} else {
-				Object[] args = UCMessages.sendFancyMessage(new String[]{
+				e.setMessageCancelled(true);				
+				MutableMessageChannel msgCh = UCMessages.sendFancyMessage(new String[]{
 						TextSerializers.FORMATTING_CODE.serialize(e.getFormatter().getHeader().format()),
 						TextSerializers.FORMATTING_CODE.serialize(e.getFormatter().getBody().format()),
 						TextSerializers.FORMATTING_CODE.serialize(e.getFormatter().getFooter().format())
 						}, TextSerializers.FORMATTING_CODE.serialize(e.getRawMessage()), ch, p, null);	
-				if (args == null){					
+				
+				if (msgCh == null){					
 					e.setMessageCancelled(true);
 				} else {
+					/*
 					MutableMessageChannel msgCh = (MutableMessageChannel) args[0];
 					msgCh.removeMember(Sponge.getServer().getConsole());
-					
-					e.setChannel(msgCh);
-					e.setMessage((Text)args[1], (Text)args[2], (Text)args[3]);
+					*/
+					e.setChannel(msgCh);									
+					//e.setMessage((Text)args[1], (Text)args[2], (Text)args[3]);
 				}										
 			}
 		}				
