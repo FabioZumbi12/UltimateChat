@@ -3,6 +3,7 @@ package br.net.fabiozumbi12.UltimateChat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 
@@ -11,10 +12,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
+import br.net.fabiozumbi12.UltimateChat.API.PostFormatChatMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.API.SendChannelMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.Fanciful.FancyMessage;
 
@@ -36,11 +37,12 @@ public class UCMessages {
 		}
 			
 		boolean cancel = event.getCancelIncomingChat();
-		String toConsole = "";
+		//String toConsole = "";
 		registeredReplacers = event.getResgisteredTags();
 		defFormat = event.getDefFormat();
 		String evmsg = event.getMessage();
 				
+		HashMap<CommandSender, FancyMessage> msgPlayers = new HashMap<CommandSender, FancyMessage>();
 		evmsg = composeColor(sender,evmsg);
 						
 		if (event.getChannel() != null){					
@@ -70,6 +72,9 @@ public class UCMessages {
 			int noWorldReceived = 0;
 			int vanish = 0;
 			
+			//put sender
+			msgPlayers.put(sender, sendFancyMessage(sender, sender, evmsg, ch, false));
+			
 			if (ch.getDistance() > 0 && sender instanceof Player){			
 				for (Entity ent:((Player)sender).getNearbyEntities(ch.getDistance(), ch.getDistance(), ch.getDistance())){
 					if (ent instanceof Player && UCPerms.channelPerm((Player)ent, ch)){	
@@ -83,13 +88,13 @@ public class UCMessages {
 						if (!((Player)sender).canSee(p)){
 							vanish++;
 						}
-						if ((ch.neeFocus() && UChat.pChannels.get(((Player)ent).getName()).equals(ch.getAlias())) || !ch.neeFocus()){					
-							toConsole = sendMessage(sender,(Player)ent, evmsg, ch, false);
+						if ((ch.neeFocus() && UChat.pChannels.get(p.getName()).equals(ch.getAlias())) || !ch.neeFocus()){					
+							msgPlayers.put(p, sendFancyMessage(sender, p, evmsg, ch, false));
 							receivers.add((Player)ent);
 						}
 					}				
 				}
-				toConsole = sendMessage(sender, sender, evmsg, ch, false);
+				//toConsole = sendFancyMessage(sender, sender, evmsg, ch, false);
 			} else {
 				for (Player receiver:UChat.plugin.serv.getOnlinePlayers()){	
 					if (receiver.equals(sender) || !UCPerms.channelPerm(receiver, ch) || (!ch.crossWorlds() && (sender instanceof Player && !receiver.getWorld().equals(((Player)sender).getWorld())))){				
@@ -107,26 +112,26 @@ public class UCMessages {
 						noWorldReceived++;
 					}					
 					if ((ch.neeFocus() && UChat.pChannels.get(receiver.getName()).equals(ch.getAlias())) || !ch.neeFocus()){
-						toConsole = sendMessage(sender, receiver, evmsg, ch, false);
+						msgPlayers.put(receiver, sendFancyMessage(sender, receiver, evmsg, ch, false));
 						receivers.add(receiver);
 					}				
 				}
-				toConsole = sendMessage(sender, sender, evmsg, ch, false);
+				//toConsole = sendFancyMessage(sender, sender, evmsg, ch, false);
 			}	
 									
 			//chat spy
 			for (Player receiver:UChat.plugin.serv.getOnlinePlayers()){			
 				if (!receiver.equals(sender) && !receivers.contains(receiver) && !receivers.contains(sender) && UChat.isSpy.contains(receiver.getName())){	
 					String spyformat = UChat.config.getString("general.spy-format");
-					spyformat = spyformat.replace("{output}", ChatColor.stripColor(sendMessage(sender, receiver, evmsg, ch, true)));					
+					spyformat = spyformat.replace("{output}", ChatColor.stripColor(sendFancyMessage(sender, receiver, evmsg, ch, true).toOldMessageFormat()));					
 					receiver.sendMessage(ChatColor.translateAlternateColorCodes('&', spyformat));
 				}
 			}
-			
+			/*
 			if (!(sender instanceof ConsoleCommandSender)){
 				UChat.plugin.serv.getConsoleSender().sendMessage(toConsole);
 			}
-			
+			*/
 			if (ch.getDistance() == 0 && noWorldReceived <= 0){
 				if (ch.getReceiversMsg()){
 					UChat.lang.sendMessage(sender, "channel.noplayer.world");
@@ -135,8 +140,7 @@ public class UCMessages {
 			if ((receivers.size()-vanish) <= 0){
 				if (ch.getReceiversMsg()){
 					UChat.lang.sendMessage(sender, "channel.noplayer.near");	
-				}				
-				return cancel;
+				}
 			}
 			
 		} else {						
@@ -150,16 +154,31 @@ public class UCMessages {
 					if (isIgnoringPlayers(tellReceiver.getName(), sender.getName())){
 						spyformat = UChat.lang.get("chat.ignored")+spyformat;
 					}
-					spyformat = spyformat.replace("{output}", ChatColor.stripColor(sendMessage(sender, tellReceiver, evmsg, fakech, true)));					
+					spyformat = spyformat.replace("{output}", ChatColor.stripColor(sendFancyMessage(sender, tellReceiver, evmsg, fakech, true).toOldMessageFormat()));					
 					receiver.sendMessage(ChatColor.translateAlternateColorCodes('&', spyformat));
 				}
 			}
-			toConsole = sendMessage(sender, tellReceiver, evmsg, fakech, false);
+			msgPlayers.put(sender, sendFancyMessage(sender, tellReceiver, evmsg, fakech, false));
+			msgPlayers.put(tellReceiver, sendFancyMessage(sender, tellReceiver, evmsg, fakech, false));
 			if (isIgnoringPlayers(tellReceiver.getName(), sender.getName())){
-				toConsole = UChat.lang.get("chat.ignored")+toConsole;
+				msgPlayers.put(UChat.plugin.serv.getConsoleSender(), new FancyMessage().text(UChat.lang.get("chat.ignored")+msgPlayers.values().stream().findAny().get().toOldMessageFormat()));
 			}
-			UChat.plugin.serv.getConsoleSender().sendMessage(toConsole);
 		}
+		
+		if (!msgPlayers.keySet().contains(UChat.plugin.serv.getConsoleSender())){
+			msgPlayers.put(UChat.plugin.serv.getConsoleSender(), msgPlayers.values().stream().findAny().get());
+		}
+		
+		PostFormatChatMessageEvent postEvent = new PostFormatChatMessageEvent(sender, msgPlayers, channel);
+		Bukkit.getPluginManager().callEvent(postEvent); 
+		if (postEvent.isCancelled()){
+			return cancel;
+		}
+		
+		msgPlayers.forEach((send,text)->{
+			text.send(send);
+		});	
+		
 		return cancel;
 	}
 	
@@ -204,15 +223,15 @@ public class UCMessages {
 		list.remove(victim);
 		UChat.ignoringPlayer.put(p, list);
 	}
-	
+	/*
 	private static String sendMessage(CommandSender sender, CommandSender receiver, String msg, UCChannel ch, boolean isSpy){
 		if (UChat.config.getBool("general.hover-events")){
 			return sendFancyMessage(sender, receiver, msg, ch, isSpy);
 		} else {
 			return sendNoFancyMessage(sender, receiver, msg, ch, isSpy);
 		}
-	}
-	private static String sendFancyMessage(CommandSender sender, CommandSender receiver, String msg, UCChannel ch, boolean isSpy){
+	}*/
+	private static FancyMessage sendFancyMessage(CommandSender sender, CommandSender receiver, String msg, UCChannel ch, boolean isSpy){
 		FancyMessage fanci = new FancyMessage();
 				
 		if (!ch.getName().equals("tell")){
@@ -326,18 +345,18 @@ public class UCMessages {
 			}			
 			fanci.text(UCUtil.stripColor(format),"message")
 	   		   .then(" ");
-			
+			/*
 			if (!isSpy){
 				fanci.send(sender);
-			}			
+			}	*/		
 		}
-		
+		/*
 		if (!isSpy && !isIgnoringPlayers(receiver.getName(), sender.getName())){
 			fanci.send(receiver);
-		}		
-		return fanci.toOldMessageFormat();
+		}*/		
+		return fanci;
 	}
-	
+	/*
 	private static String sendNoFancyMessage(CommandSender sender, CommandSender receiver, String msg, UCChannel ch, boolean isSpy){
 		StringBuilder msgFinal = new StringBuilder();
 		
@@ -373,10 +392,10 @@ public class UCMessages {
 				}
 				
 				format = formatTags(tag, format, sender, receiver, msg, ch);
-				/*
+				
 				if (tag.equals("message")){
 					format = mention(sender, receiver, format);
-				}*/
+				}
 				msgFinal.append(format);
 			}
 		} else {
@@ -398,7 +417,7 @@ public class UCMessages {
 		}		
 		return msgFinal.toString();
 	}
-	
+	*/
 	public static String mention(Object sender, CommandSender receiver, String msg) {
 		if (UChat.config.getBool("mention.enable")){
 		    for (Player p:UChat.plugin.serv.getOnlinePlayers()){			
