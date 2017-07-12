@@ -70,6 +70,7 @@ public class UChat extends JavaPlugin {
 	public static HashMap<String,String> tellPlayers = new HashMap<String,String>();
 	public static HashMap<String,String> tempTellPlayers = new HashMap<String,String>();
 	public static HashMap<String,String> respondTell = new HashMap<String,String>();
+	public static List<String> command = new ArrayList<String>();
 	public static HashMap<String,List<String>> ignoringPlayer = new HashMap<String,List<String>>();
 	public static List<String> mutes = new ArrayList<String>();
 	public static List<String> isSpy = new ArrayList<String>();
