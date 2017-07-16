@@ -18,33 +18,58 @@ import br.net.fabiozumbi12.UltimateChat.config.UCLang;
 
 public class UCListener {
 	
-	private void sendTell(CommandSource p, Optional<Player> tellreceiver2, String msg){
-			
-		if (!tellreceiver2.isPresent() || !tellreceiver2.get().isOnline() || p instanceof Player && !((Player)p).canSee(tellreceiver2.get())){
-			UCLang.sendMessage(p, "listener.invalidplayer");
+	private void sendTell(CommandSource sender, Optional<CommandSource> receiver, String msg){
+		if (!receiver.isPresent() || (receiver.get() instanceof Player && (!((Player)receiver.get()).isOnline() 
+				|| (sender instanceof Player && receiver.get() instanceof Player && !((Player)sender).canSee((Player)receiver.get()))))
+				){
+			UCLang.sendMessage(sender, "listener.invalidplayer");
 			return;
 		}		
-		Player tellreceiver = tellreceiver2.get();
-		UChat.respondTell.put(tellreceiver.getName(),p.getName());
-		UCMessages.sendFancyMessage(new String[0], msg, null, p, tellreceiver);			
+		UChat.respondTell.put(receiver.get().getName(),sender.getName());
+		UCMessages.sendFancyMessage(new String[0], msg, null, sender, receiver.get());			
 	}
 	
 	@Listener
 	public void onChat(MessageChannelEvent.Chat e, @First Player p){
-		if (UChat.tellPlayers.containsKey(p.getName()) || UChat.tempTellPlayers.containsKey(p.getName()) || UChat.respondTell.containsKey(p.getName())){			
-			Optional<Player> tellreceiver = null;
-			if (UChat.tellPlayers.containsKey(p.getName())){
-				tellreceiver = Sponge.getServer().getPlayer(UChat.tellPlayers.get(p.getName()));				
-			} else if (UChat.respondTell.containsKey(p.getName())){ 
-				tellreceiver = Sponge.getServer().getPlayer(UChat.respondTell.get(p.getName()));
-				UChat.respondTell.remove(p.getName());
-			} else {			
-				tellreceiver = Sponge.getServer().getPlayer(UChat.tempTellPlayers.get(p.getName()));
-				UChat.tempTellPlayers.remove(p.getName());
-			}
+		
+		if (UChat.tellPlayers.containsKey(p.getName()) && (!UChat.tempTellPlayers.containsKey("CONSOLE") || !UChat.tempTellPlayers.get("CONSOLE").equals(p.getName()))){		
+			String recStr = UChat.tellPlayers.get(p.getName());
+			Optional<CommandSource> tellreceiver = Optional.ofNullable(Sponge.getServer().getPlayer(recStr).orElse(null));	
 			sendTell(p, tellreceiver, e.getRawMessage().toPlain());
+			e.setMessageCancelled(true);			
+		}
+		else if (UChat.command.contains(p.getName()) || UChat.command.contains("CONSOLE")){
+			if (UChat.tempTellPlayers.containsKey("CONSOLE")){
+				String recStr = UChat.tempTellPlayers.get("CONSOLE");	
+				Optional<CommandSource> pRec = Optional.ofNullable(Sponge.getServer().getPlayer(recStr).orElse(null));
+				if (pRec.isPresent() && p.equals(pRec.get())){
+					sendTell(Sponge.getServer().getConsole(), pRec, e.getRawMessage().toPlain());
+					UChat.tempTellPlayers.remove("CONSOLE");	
+					UChat.command.remove("CONSOLE");
+				}				
+			} else if (UChat.tempTellPlayers.containsKey(p.getName())){
+				String recStr = UChat.tempTellPlayers.get(p.getName());
+				if (recStr.equals("CONSOLE")){
+					sendTell(p, Optional.ofNullable(Sponge.getServer().getConsole()), e.getRawMessage().toPlain());
+				} else {
+					sendTell(p, Optional.ofNullable(Sponge.getServer().getPlayer(recStr).orElse(null)), e.getRawMessage().toPlain());
+				}		
+				UChat.tempTellPlayers.remove(p.getName());	
+				UChat.command.remove(p.getName());
+			} else if (UChat.respondTell.containsKey(p.getName())){
+				String recStr = UChat.respondTell.get(p.getName());
+				if (recStr.equals("CONSOLE")){
+					sendTell(p, Optional.ofNullable(Sponge.getServer().getConsole()), e.getRawMessage().toPlain());
+				} else {
+					sendTell(p, Optional.ofNullable(Sponge.getServer().getPlayer(recStr).orElse(null)), e.getRawMessage().toPlain());
+				}
+				UChat.respondTell.remove(p.getName());
+				UChat.command.remove(p.getName());
+			}
 			e.setMessageCancelled(true);
-		} else {
+		} 
+		
+		else {
 			UCChannel ch = UChat.get().getConfig().getChannel(UChat.get().pChannels.get(p.getName()));
 			if (UChat.tempChannels.containsKey(p.getName()) && !UChat.tempChannels.get(p.getName()).equals(ch.getAlias())){
 				ch = UChat.get().getConfig().getChannel(UChat.tempChannels.get(p.getName()));

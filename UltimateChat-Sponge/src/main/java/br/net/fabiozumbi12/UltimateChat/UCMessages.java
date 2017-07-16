@@ -48,7 +48,7 @@ class UCMessages {
 	 * @param tellReceiver
 	 * @return Object[]
 	 */
-	protected static MutableMessageChannel sendFancyMessage(String[] format, String msg, UCChannel channel, CommandSource sender, Player tellReceiver){
+	protected static MutableMessageChannel sendFancyMessage(String[] format, String msg, UCChannel channel, CommandSource sender, CommandSource tellReceiver){
 		//Execute listener:
 		HashMap<String,String> tags = new HashMap<String,String>();
 		for (String str:UChat.get().getConfig().getStringList("general","custom-tags")){
@@ -501,10 +501,14 @@ class UCMessages {
 			Player sender = (Player)cmdSender;
 			
 			if (sender.get(Keys.DISPLAY_NAME).isPresent()){
-				String nick = sender.get(Keys.DISPLAY_NAME).get().toPlain();				
-				if (nick.equals(sender.getName()) && defFormat.length == 3){
-					String[] nuNick = defFormat[1].split(" ");
-					text = text.replace("{nickname}", nuNick[nuNick.length-1]);
+				String nick = sender.get(Keys.DISPLAY_NAME).get().toPlain();	
+				String nuNick = new String();
+				if (defFormat.length == 3){
+					String[] nuNickStr = defFormat[0].split(" ");
+					nuNick = nuNickStr[nuNickStr.length-1].replace(":", "");
+				}
+				if (!nuNick.isEmpty() && !nuNick.equals(sender.getName())){					
+					text = text.replace("{nickname}", nuNick);
 				} else {
 					text = text.replace("{nickname}", nick);
 				}
