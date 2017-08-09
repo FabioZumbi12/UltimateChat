@@ -82,7 +82,7 @@ public class UCMessages {
 						if (!ch.availableWorlds().isEmpty() && !ch.availableInWorld(p.getWorld())){
 							continue;
 						}
-						if (ch.isIgnoring(p.getName())){
+						if (ch.isIgnoring(p.getName()) || isIgnoringPlayers(sender.getName(), p.getName())){
 							continue;
 						}
 						if (!((Player)sender).canSee(p)){
@@ -94,7 +94,6 @@ public class UCMessages {
 						}
 					}				
 				}
-				//toConsole = sendFancyMessage(sender, sender, evmsg, ch, false);
 			} else {
 				for (Player receiver:UChat.plugin.serv.getOnlinePlayers()){	
 					if (receiver.equals(sender) || !UCPerms.channelPerm(receiver, ch) || (!ch.crossWorlds() && (sender instanceof Player && !receiver.getWorld().equals(((Player)sender).getWorld())))){				
@@ -103,7 +102,7 @@ public class UCMessages {
 					if (!ch.availableWorlds().isEmpty() && !ch.availableInWorld(receiver.getWorld())){
 						continue;
 					}
-					if (ch.isIgnoring(receiver.getName())){
+					if (ch.isIgnoring(receiver.getName()) || isIgnoringPlayers(sender.getName(), receiver.getName())){
 						continue;
 					}
 					if (sender instanceof Player && !((Player)sender).canSee(receiver)){
@@ -116,7 +115,6 @@ public class UCMessages {
 						receivers.add(receiver);
 					}				
 				}
-				//toConsole = sendFancyMessage(sender, sender, evmsg, ch, false);
 			}	
 									
 			//chat spy
@@ -127,11 +125,6 @@ public class UCMessages {
 					receiver.sendMessage(ChatColor.translateAlternateColorCodes('&', spyformat));
 				}
 			}
-			/*
-			if (!(sender instanceof ConsoleCommandSender)){
-				UChat.plugin.serv.getConsoleSender().sendMessage(toConsole);
-			}
-			*/
 			if (ch.getDistance() == 0 && noWorldReceived <= 0){
 				if (ch.getReceiversMsg()){
 					UChat.lang.sendMessage(sender, "channel.noplayer.world");
@@ -359,7 +352,7 @@ public class UCMessages {
 											
 						for (Sound sound:Sound.values()){
 							if (StringUtils.containsIgnoreCase(sound.toString(),UChat.config.getString("mention.playsound")) && !msg.contains(mentionc)){
-								((Player)receiver).playSound(((Player)receiver).getLocation(), sound, 1F, 1F);
+								p.playSound(p.getLocation(), sound, 1F, 1F);
 								break;
 							}
 						}

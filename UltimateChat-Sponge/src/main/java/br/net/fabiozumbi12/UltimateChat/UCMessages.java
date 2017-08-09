@@ -118,7 +118,7 @@ class UCMessages {
 						if (!ch.availableWorlds().isEmpty() && !ch.availableInWorld(p.getWorld())){
 							continue;
 						}
-						if (ch.isIgnoring(p.getName())){
+						if (ch.isIgnoring(p.getName()) || isIgnoringPlayers(sender.getName(), p.getName())){
 							continue;
 						}
 						if (!((Player)sender).canSee(p)){
@@ -131,7 +131,6 @@ class UCMessages {
 						}
 					}				
 				}
-				//toConsole = sendMessage(sender, sender, evmsg, ch, false);
 			} else {
 				for (Player receiver:Sponge.getServer().getOnlinePlayers()){	
 					if (receiver.equals(sender) || !UChat.get().getPerms().channelPerm(receiver, ch) || (!ch.crossWorlds() && (sender instanceof Player && !receiver.getWorld().equals(((Player)sender).getWorld())))){				
@@ -140,7 +139,7 @@ class UCMessages {
 					if (!ch.availableWorlds().isEmpty() && !ch.availableInWorld(receiver.getWorld())){
 						continue;
 					}
-					if (ch.isIgnoring(receiver.getName())){
+					if (ch.isIgnoring(receiver.getName()) || isIgnoringPlayers(sender.getName(), receiver.getName())){
 						continue;
 					}
 					if (sender instanceof Player && !((Player)sender).canSee(receiver)){
@@ -154,7 +153,6 @@ class UCMessages {
 						msgCh.addMember(receiver);
 					}				
 				}
-				//toConsole = sendMessage(sender, sender, evmsg, ch, false);
 			}	
 									
 			//chat spy
@@ -165,11 +163,6 @@ class UCMessages {
 					receiver.sendMessage(UCUtil.toText(spyformat));
 				}
 			}
-			/*
-			if (!(sender instanceof ConsoleSource)){
-				msgCh.transformMessage(sender, Sponge.getServer().getConsole(), buildMessage(toConsole), ChatTypes.SYSTEM);
-			}
-			*/
 			if (ch.getDistance() == 0 && noWorldReceived <= 0){
 				if (ch.getReceiversMsg()){
 					UCLang.sendMessage(sender, "channel.noplayer.world");
@@ -178,11 +171,7 @@ class UCMessages {
 			if ((receivers.size()-vanish) <= 0){
 				if (ch.getReceiversMsg()){
 					UCLang.sendMessage(sender, "channel.noplayer.near");	
-				}		
-				
-				//send to console
-				//msgCh.send(Text.join(toConsole[0].build(),toConsole[1].build(),toConsole[2].build()));	
-				//return new Object[]{msgCh,toConsole[0].build(),toConsole[1].build(),toConsole[2].build()};
+				}
 			}
 			
 		} else {						
@@ -207,17 +196,12 @@ class UCMessages {
 				to = Text.of(UCUtil.toText(UCLang.get("chat.ignored")),to);
 			}
 			
-			//Sponge.getServer().getConsole().sendMessage(to);
 			msgPlayers.put(Sponge.getServer().getConsole(), to);
 		}
-				
-		//send to console
-		//msgCh.send(Text.join(toConsole[0].build(),toConsole[1].build(),toConsole[2].build()));	
-
+		
 		if (!msgPlayers.keySet().contains(Sponge.getServer().getConsole())){
 			msgPlayers.put(Sponge.getServer().getConsole(), msgPlayers.values().stream().findAny().get());
 		}
-		//return new Object[]{msgCh,toConsole[0].build(),toConsole[1].build(),toConsole[2].build()};
 		PostFormatChatMessageEvent postEvent = new PostFormatChatMessageEvent(sender, msgPlayers, channel);
 		Sponge.getEventManager().post(postEvent);
 		if (postEvent.isCancelled()){
@@ -412,16 +396,8 @@ class UCMessages {
 			} else {
 				formatter.append(UCUtil.toText(prefix));
 			}			
-			message.append(UCUtil.toText(format));
-			/*
-			if (!isSpy){
-				sender.sendMessage(Text.of(formatter, message));
-			}	*/		
+			message.append(UCUtil.toText(format));	
 		}
-		/*
-		if (!isSpy && !isIgnoringPlayers(receiver.getName(), sender.getName())){
-			receiver.sendMessage(Text.of(formatter,playername,message));			
-		}	*/	
 		return buildMessage(new Builder[]{formatter,playername,message});
 	}
 	
@@ -442,7 +418,7 @@ class UCMessages {
 					if (receiver instanceof Player && receiver.equals(p)){
 						
 						String mentionc = UChat.get().getConfig().getColor("mention","color-template").replace("{mentioned-player}", p.getName());
-						mentionc = formatTags("", mentionc, sender, receiver, "", new UCChannel("mention"));
+						mentionc = formatTags("", mentionc, sender, p, "", new UCChannel("mention"));
 						
 						if (msg.contains(mentionc) || sender instanceof CommandSource && !UChat.get().getPerms().hasPerm((CommandSource)sender, "chat.mention")){
 							msg = msg.replaceAll("(?i)\\b"+p.getName()+"\\b", p.getName());
@@ -451,7 +427,7 @@ class UCMessages {
 						
 						Optional<SoundType> sound = Sponge.getRegistry().getType(SoundType.class, UChat.get().getConfig().getString("mention","playsound"));
 						if (sound.isPresent() && !msg.contains(mentionc)){
-							((Player)receiver).playSound(sound.get(),((Player)receiver).getLocation().getPosition(), 1, 1);
+							p.playSound(sound.get(), p.getLocation().getPosition(), 1, 1);
 						}
 						
 						msg = msg.replace(mentionc, p.getName());	

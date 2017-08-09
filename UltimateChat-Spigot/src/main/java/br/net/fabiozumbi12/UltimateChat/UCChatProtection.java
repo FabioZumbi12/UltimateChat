@@ -35,7 +35,7 @@ class UCChatProtection implements Listener{
 		
 		//mute check
 		if (muted.contains(p.getName())){
-			UChat.lang.sendMessage(p, UChat.config.getProtMsg("chat-protection.anti-ip.mute-msg"));
+			UChat.lang.sendMessage(p, UChat.config.getProtMsg("chat-protection.anti-ip.punish.mute-msg"));
 			e.setCancelled(true);
 			return;
 		}
