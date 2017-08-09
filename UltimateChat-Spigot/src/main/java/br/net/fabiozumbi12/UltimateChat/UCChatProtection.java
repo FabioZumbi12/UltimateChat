@@ -211,7 +211,7 @@ class UCChatProtection implements Listener{
 				UrlSpam.put(p, 1);
 			} else {
 				UrlSpam.put(p, UrlSpam.get(p)+1);
-				p.sendMessage("UrlSpam: "+UrlSpam.get(p));
+				//p.sendMessage("UrlSpam: "+UrlSpam.get(p));
 				if (UrlSpam.get(p) >= UChat.config.getProtInt("chat-protection.anti-ip.punish.max-attempts")){
 					if (UChat.config.getProtString("chat-protection.anti-ip.punish.mute-or-cmd").equalsIgnoreCase("mute")){
 						muted.add(p.getName());
@@ -225,7 +225,7 @@ class UCChatProtection implements Listener{
 							}						
 						},(UChat.config.getProtInt("chat-protection.anti-ip.punish.mute-duration")*60)*20);
 					} else {
-						UCUtil.performCommand(UChat.plugin.serv.getConsoleSender(),UChat.config.getProtString("chat-protection.anti-ip.punish.cmd-punish"));
+						UCUtil.performCommand(UChat.plugin.serv.getConsoleSender(),UChat.config.getProtString("chat-protection.anti-ip.punish.cmd-punish").replace("{player}", p.getName()));
 					}	
 					UrlSpam.remove(p);
 				}
