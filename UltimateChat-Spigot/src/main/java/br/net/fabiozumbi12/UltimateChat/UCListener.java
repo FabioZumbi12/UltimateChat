@@ -338,7 +338,16 @@ public class UCListener implements CommandExecutor,Listener {
 				UChat.lang.sendMessage(p, UChat.lang.get("cmd.nopermission"));
 				return;
 			}			
-
+			
+			if (args.length == 1){
+				if (UChat.tellPlayers.containsKey(p.getName())){
+					String tp = UChat.tellPlayers.get(p.getName());
+					UChat.tellPlayers.remove(p.getName());
+					UChat.lang.sendMessage(p, UChat.lang.get("cmd.tell.unlocked").replace("{player}", tp));
+					return;
+				}
+			}
+			
 			if (args.length >= 2){
 				if (args[0].equalsIgnoreCase("r")){
 					if (UChat.respondTell.containsKey(p.getName())){
@@ -667,6 +676,7 @@ public class UCListener implements CommandExecutor,Listener {
 	
 	private void sendTellHelp(Player p) {
 		p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7>> -------------- "+UChat.lang.get("_UChat.prefix")+" Help &7-------------- <<"));
+		p.sendMessage(UChat.lang.get("help.tell.unlock"));
 		p.sendMessage(UChat.lang.get("help.tell.lock"));
 		p.sendMessage(UChat.lang.get("help.tell.send"));
 		p.sendMessage(UChat.lang.get("help.tell.respond"));
