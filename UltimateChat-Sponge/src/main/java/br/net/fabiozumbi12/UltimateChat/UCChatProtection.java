@@ -31,7 +31,7 @@ class UCChatProtection {
 		
 		//mute check
 		if (muted.contains(p.getName())){
-			p.sendMessage(UChat.get().getConfig().getProtMsg("chat-protection","anti-ip","mute-msg"));
+			p.sendMessage(UChat.get().getConfig().getProtMsg("chat-protection","anti-ip","punish","mute-msg"));
 			return null;
 		}
 		
@@ -215,7 +215,7 @@ class UCChatProtection {
 							}						
 						},UChat.get().getConfig().getProtInt("chat-protection","anti-ip","punish","mute-duration"),TimeUnit.MINUTES);
 					} else {
-						Sponge.getCommandManager().process(Sponge.getServer().getConsole(),UChat.get().getConfig().getProtString("chat-protection","anti-ip","punish","cmd-punish"));
+						Sponge.getCommandManager().process(Sponge.getServer().getConsole(),UChat.get().getConfig().getProtString("chat-protection","anti-ip","punish","cmd-punish").replace("{player}", p.getName()));
 					}	
 					UrlSpam.remove(p);
 				}
