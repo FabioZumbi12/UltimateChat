@@ -1,20 +1,21 @@
 package br.net.fabiozumbi12.UltimateChat;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.Set;
+import java.util.Optional;
 
-import net.md_5.bungee.api.ChatColor;
-
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
-
-import br.net.fabiozumbi12.UltimateChat.Fanciful.FancyMessage;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.command.source.ConsoleSource;
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.SpongeEventFactory;
+import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.cause.NamedCause;
+import org.spongepowered.api.event.message.MessageChannelEvent;
+import org.spongepowered.api.event.message.MessageEvent;
+import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.action.TextActions;
+import org.spongepowered.api.world.World;
 
 /**Represents a chat channel use by UltimateChat to control from where/to send/receive messages.
  * 
@@ -57,17 +58,11 @@ public class UCChannel {
 		this.isAlias = isAlias;
 		this.aliasCmd  = aliasCmd;
 		this.aliasSender = aliasSender;
-		this.availableWorlds = availableWorlds;
+		this.availableWorlds = availableWorlds;	
 		this.canLock = lock;
 	}
-	
-	public UCChannel(String name, String alias, String color) {
-		this.name = name;
-		this.alias = alias;
-		this.color = color;
-	}
-	
-	public UCChannel(String name) {
+			
+	UCChannel(String name) {
 		this.name = name;
 		this.alias = name.substring(0, 1).toLowerCase();
 	}
@@ -76,7 +71,7 @@ public class UCChannel {
 		return this.canLock;
 	}
 	
-	public boolean availableInWorld(World w){
+	boolean availableInWorld(World w){
 		return this.availableWorlds.contains(w.getName());
 	}
 	
@@ -132,19 +127,19 @@ public class UCChannel {
 		return this.mutes.contains(player);
 	}
 	
-	public void ignoreThis(String player){
+	void ignoreThis(String player){
 		if (!this.ignoring.contains(player)){
 			this.ignoring.add(player);
 		}		
 	}
 	
-	public void unIgnoreThis(String player){
+	void unIgnoreThis(String player){
 		if (this.ignoring.contains(player)){
 			this.ignoring.remove(player);
 		}		
 	}
 	
-	public boolean isIgnoring(String player){
+	boolean isIgnoring(String player){
 		return this.ignoring.contains(player);
 	}
 	
@@ -183,82 +178,80 @@ public class UCChannel {
 	public boolean matchChannel(String aliasOrName){
 		return this.alias.equalsIgnoreCase(aliasOrName) || this.name.equalsIgnoreCase(aliasOrName);
 	}
-
+		
 	public boolean isBungee() {		
 		return this.bungee ;
 	}
 	
-	/** Send a message from a channel as player.
+	/** Send a message from a channel as player.<p>
+	 * <i>Use {@code sendMessage(Player, Text)} as replecement for this method</i>
 	 * @param src {@code Player}
-	 * @param message {@code String} - Message to send.
+	 * @param message {@code Text}
 	 */
 	@Deprecated
-	public void sendMessage(Player sender, String message){
-		Set<Player> pls = new HashSet<Player>();
-		pls.addAll(Bukkit.getOnlinePlayers());
-		UChat.tempChannels.put(sender.getName(), this.alias);
-		AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(false, sender, message, pls);
-		Bukkit.getPluginManager().callEvent(event); 
+	public void sendMessage(Player src, String message){
+		sendMessage(src, message);
 	}
 	
 	/** Send a message from a channel as player.
 	 * @param src {@code Player}
-	 * @param message {@code FancyMessage} - Message to send.
+	 * @param message {@code Text} - Message to send.
 	 * @param direct {@code boolean} - Send message direct to players on channel.
 	 */
-	public void sendMessage(Player sender, FancyMessage message, boolean direct){
+	public void sendMessage(Player src, Text message, boolean direct){	
 		if (direct){
-			for (Entry<String, String> chEnt:UChat.pChannels.entrySet()){
-				Player p = Bukkit.getPlayer(chEnt.getKey());
-				if (UCPerms.channelPerm(p, this) && !this.isIgnoring(chEnt.getKey()) && (this.neeFocus() && chEnt.getValue().equalsIgnoreCase(this.alias) || !this.neeFocus())){
-					message.send(p);					
+			for (Entry<String, String> chEnt:UChat.get().pChannels.entrySet()){
+				Player p = Sponge.getServer().getPlayer(chEnt.getKey()).get();
+				if (UChat.get().getPerms().channelPerm(p, this) && !this.isIgnoring(chEnt.getKey()) && (this.neeFocus() && chEnt.getValue().equalsIgnoreCase(this.alias) || !this.neeFocus())){
+					p.sendMessage(message);
 				}
 			}
-			message.send(sender);	
+			src.sendMessage(message);
 		} else {
-			Set<Player> pls = new HashSet<Player>();
-			pls.addAll(Bukkit.getOnlinePlayers());
-			UChat.tempChannels.put(sender.getName(), this.alias);
-			AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(false, sender, message.toOldMessageFormat(), pls);
-			Bukkit.getPluginManager().callEvent(event); 
-		}		
+			MessageChannelEvent.Chat event = SpongeEventFactory.createMessageChannelEventChat(
+					Cause.source(src).named(NamedCause.notifier(src)).build(), 
+					src.getMessageChannel(), 
+					Optional.of(src.getMessageChannel()), 				    							
+					new MessageEvent.MessageFormatter(Text.builder("<" + src.getName() + "> ")
+							.onShiftClick(TextActions.insertText(src.getName()))
+							.onClick(TextActions.suggestCommand("/msg " + src.getName()))
+							.build(), message),
+							message,  
+					false);
+			if (!Sponge.getEventManager().post(event)){
+				UChat.tempChannels.put(src.getName(), this.alias);
+			}
+		}
+			
+		
 	}
 	
 	/** Send a message from a channel as console.
-	 * @param sender {@code ConsoleCommandSender} - Console sender.
-	 * @param message {@code FancyMessage} - Message to send.
+	 * @param sender {@code ConsoleSource} - Console sender.
+	 * @param message {@code Text} - Message to send.
 	 * @param direct {@code boolean} - Send message direct to players on channel.
 	 */
-	public void sendMessage(ConsoleCommandSender sender, FancyMessage message, boolean direct){	
-		if (direct){
-			for (Entry<String, String> chEnt:UChat.pChannels.entrySet()){
-				Player p = Bukkit.getPlayer(chEnt.getKey());
-				if (UCPerms.channelPerm(p, this) && !this.isIgnoring(chEnt.getKey()) && (this.neeFocus() && chEnt.getValue().equalsIgnoreCase(this.alias) || !this.neeFocus())){
-					message.send(p);					
+	public void sendMessage(ConsoleSource sender, Text message, boolean direct){
+		if (direct){			
+			for (Entry<String, String> chEnt:UChat.get().pChannels.entrySet()){
+				Player p = Sponge.getServer().getPlayer(chEnt.getKey()).get();
+				if (UChat.get().getPerms().channelPerm(p, this) && !this.isIgnoring(chEnt.getKey()) && (this.neeFocus() && chEnt.getValue().equalsIgnoreCase(this.alias) || !this.neeFocus())){
+					p.sendMessage(message);
 				}
 			}
-			message.send(sender);	
-		} else {			
-			UCMessages.sendFancyMessage(new String[0], message.toOldMessageFormat(), this, sender, null);
-		}
-	}
-	
-	/** Send a message from a channel as console.
-	 * @param sender {@code ConsoleCommandSender} - Console sender.
-	 * @param message {@code FancyMessage} - Message to send.
-	 */
-	@Deprecated
-	public void sendMessage(ConsoleCommandSender sender, String message){	
-		if (UChat.config.getBool("api.format-console-messages")){
+			sender.sendMessage(message);
+		} else {
 			UCMessages.sendFancyMessage(new String[0], message, this, sender, null);
-		} else {
-			for (Entry<String, String> chEnt:UChat.pChannels.entrySet()){
-				Player p = Bukkit.getPlayer(chEnt.getKey());
-				if (UCPerms.channelPerm(p, this) && !this.isIgnoring(chEnt.getKey()) && (this.neeFocus() && chEnt.getValue().equalsIgnoreCase(this.alias) || !this.neeFocus())){
-					p.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
-				}
-			}
-			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
 		}
+	}
+	
+	/** Send a message from a channel as console.<p>
+	 * <i>Use {@code sendMessage(ConsoleSource, message, direct)} as replecement for this method</i>
+	 * @param src {@code ConsoleSource} - Console sender.
+	 * @param message {@code Text} - message to send.
+	 */
+	@Deprecated	
+	public void sendMessage(ConsoleSource sender, String message){
+		sendMessage(sender, Text.of(message), UChat.get().getConfig().getBool("api","format-console-messages"));		
 	}
 }

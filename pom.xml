@@ -137,11 +137,12 @@
    <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <pluginVersion>1.7.3</pluginVersion>
+        <pluginVersion>1.7.4</pluginVersion>
    </properties>
   <modules>
   	<module>UltimateChat-Spigot</module>
   	<module>UltimateChat-Bungee</module>
-  	<module>UltimateChat-Sponge</module>
+  	<module>UltimateChat-Sponge-56</module>
+  	<module>UltimateChat-Sponge-7</module>
   </modules>
 </project>
