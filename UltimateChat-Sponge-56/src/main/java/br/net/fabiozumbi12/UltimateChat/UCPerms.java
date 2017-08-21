@@ -40,7 +40,7 @@ class UCPerms {
 	Subject getGroupAndTag(User player) throws InterruptedException, ExecutionException{
 		HashMap<Integer, Subject> subs = new HashMap<Integer, Subject>();		
 		for (Subject sub:player.getParents()){
-			if (sub.getContainingCollection().equals(getGroups().getIdentifier()) && (sub.getIdentifier() != null)){
+			if (sub.getContainingCollection().equals(getGroups()) && (sub.getIdentifier() != null)){
 				subs.put(sub.getParents().size(), sub);				
 			}			
 		}
