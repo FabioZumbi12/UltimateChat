@@ -511,19 +511,19 @@ class UCMessages {
 			}
 			
 			//parse permissions options
-			try {
-				
+			try {				
 				//player options
 				Pattern pp = Pattern.compile("\\{player_option_(.+?)\\}");
 				Matcher pm = pp.matcher(text);
 				
 				while (pm.find()){
-					if (sender.getOption(pm.group(1)).isPresent()){
+					if (sender.getOption(pm.group(1)).isPresent() && !text.contains(sender.getOption(pm.group(1)).get())){
 						text = text.replace("{player_option_"+pm.group(1)+"}", sender.getOption(pm.group(1)).get());
 						pm = pp.matcher(text);
 					}
 				}
-								
+					
+				//group options
 				Subject sub = UChat.get().getPerms().getGroupAndTag(sender);
 				if (sub != null){
 					
@@ -539,7 +539,7 @@ class UCMessages {
 					Matcher gm = gp.matcher(text);
 					
 					while (gm.find()){
-						if (sub.getOption(gm.group(1)).isPresent()){
+						if (sub.getOption(gm.group(1)).isPresent() && !text.contains(sub.getOption(gm.group(1)).get())){
 							text = text.replace("{option_"+gm.group(1)+"}", sub.getOption(gm.group(1)).get());
 							gm = gp.matcher(text);
 						}

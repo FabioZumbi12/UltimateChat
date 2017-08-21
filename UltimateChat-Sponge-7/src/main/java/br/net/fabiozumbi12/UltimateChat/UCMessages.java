@@ -511,43 +511,43 @@ class UCMessages {
 			}
 			
 			//parse permissions options
-			try {
+			try {				
 				//player options
 				Pattern pp = Pattern.compile("\\{player_option_(.+?)\\}");
 				Matcher pm = pp.matcher(text);
 				
 				while (pm.find()){
-					if (sender.getOption(pm.group(1)).isPresent()){
+					if (sender.getOption(pm.group(1)).isPresent() && !text.contains(sender.getOption(pm.group(1)).get())){
 						text = text.replace("{player_option_"+pm.group(1)+"}", sender.getOption(pm.group(1)).get());
 						pm = pp.matcher(text);
 					}
 				}
-				
+					
 				//group options
-				Subject gSub = UChat.get().getPerms().getGroupAndTag(sender);
-				if (gSub != null){
+				Subject sub = UChat.get().getPerms().getGroupAndTag(sender);
+				if (sub != null){
 					
-					text = text.replace("{option_group}", gSub.getIdentifier());
+					text = text.replace("{option_group}", sub.getIdentifier());
 					
-					if (gSub.getOption("display_name").isPresent()){
-						text = text.replace("{option_display_name}", gSub.getOption("display_name").get());
+					if (sub.getOption("display_name").isPresent()){
+						text = text.replace("{option_display_name}", sub.getOption("display_name").get());
 					} else {
-						text = text.replace("{option_display_name}", gSub.getIdentifier());
+						text = text.replace("{option_display_name}", sub.getIdentifier());
 					}
 					
 					Pattern gp = Pattern.compile("\\{option_(.+?)\\}");
 					Matcher gm = gp.matcher(text);
 					
 					while (gm.find()){
-						if (gSub.getOption(gm.group(1)).isPresent()){
-							text = text.replace("{option_"+gm.group(1)+"}", gSub.getOption(gm.group(1)).get());
+						if (sub.getOption(gm.group(1)).isPresent() && !text.contains(sub.getOption(gm.group(1)).get())){
+							text = text.replace("{option_"+gm.group(1)+"}", sub.getOption(gm.group(1)).get());
 							gm = gp.matcher(text);
 						}
 					}
 				}	
 			} catch (InterruptedException | ExecutionException e) {
 				e.printStackTrace();
-			}		
+			}			
 						
 			if (UChat.get().getConfig().getBool("hooks","MCClans","enable")){
 				Optional<ClanService> clanServiceOpt = Sponge.getServiceManager().provide(ClanService.class);
