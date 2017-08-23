@@ -60,9 +60,17 @@
      <tag>${project.version}</tag>
   </scm>
   
+  <distributionManagement>
+    <repository>
+        <id>internal.repo</id>
+        <name>Temporary Staging Repository</name>
+        <url>file://${project.build.directory}/mvn-repo</url>
+    </repository>
+  </distributionManagement>
+  
   <build>
     <finalName>${project.name}-${buildNumber}</finalName>
-    <defaultGoal>clean install</defaultGoal>
+    <defaultGoal>clean deploy</defaultGoal>
     <resources>
         <resource>
             <targetPath>.</targetPath>
@@ -86,6 +94,14 @@
                   </goals>
               </execution>
           </executions>
+      </plugin>
+      
+      <plugin>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <version>2.8.1</version>
+        <configuration>
+            <altDeploymentRepository>internal.repo::default::file://${project.build.directory}/mvn-repo</altDeploymentRepository>
+        </configuration>
       </plugin>
       
       <plugin>
@@ -131,13 +147,15 @@
           </items>
         </configuration>
       </plugin>
+      
     </plugins>
-   
+    
    </build>   
    <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <pluginVersion>1.7.4</pluginVersion>
+        <github.global.server>github</github.global.server>
    </properties>
   <modules>
   	<module>UltimateChat-Spigot</module>

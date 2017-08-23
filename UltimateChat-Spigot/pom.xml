@@ -21,15 +21,7 @@
           <version>${mineVersion}</version>
           <classifier>javadoc</classifier>
         </dependency>
-        <!-- 
-		<dependency>
-			<groupId>spigot-1.9</groupId>
-			<artifactId>spigot-1.9</artifactId>
-			<version>v1</version>
-			<scope>system</scope>
-			<systemPath>D:/ProjetosBukkit/APIs/spigot-1.9.jar</systemPath>
-		</dependency>-->
-		
+        
         <dependency>
          <groupId>me.clip</groupId>
           <artifactId>placeholderapi</artifactId>
@@ -74,35 +66,7 @@
 			<version>v1</version>
 			<scope>system</scope>
 			<systemPath>${project.basedir}/../libs/MarriageMaster.jar</systemPath>
-		</dependency>
-		
-        <!-- <dependency>
-			<groupId>Bukkit</groupId>
-			<artifactId>Bukkit</artifactId>
-			<version>v1</version>
-			<scope>system</scope>
-			<systemPath>D:/ProjetosBukkit/APIs/KCauldron-1.7.10-1481.145-server.jar</systemPath>
-		</dependency> 
-		<dependency>
-			<groupId>repo.libs</groupId>
-			<artifactId>BossBarAPI</artifactId>
-			<version>v1</version>
-		</dependency>
-		<dependency>
-			<groupId>repo.libs</groupId>
-			<artifactId>mcMMO</artifactId>
-			<version>v1</version>
-		</dependency>
-		<dependency>
-			<groupId>repo.libs</groupId>
-			<artifactId>SkillAPI</artifactId>
-			<version>v1</version>
-		</dependency>
-		<dependency>
-			<groupId>repo.libs</groupId>
-			<artifactId>PvPManager</artifactId>
-			<version>v2</version>
-		</dependency>-->
+		</dependency>		
 		<dependency>
            <groupId>net.milkbowl.vault</groupId>
            <artifactId>VaultAPI</artifactId>            
@@ -148,6 +112,35 @@
         </repository> 
   </repositories>
   
+  <build>
+    <plugins>
+      <plugin>
+            <groupId>com.github.github</groupId>
+            <artifactId>site-maven-plugin</artifactId>
+            <version>0.11</version>
+            <configuration>
+                <message>Maven artifacts for ${project.version}</message>  <!-- git commit message -->
+                <noJekyll>true</noJekyll>                                  <!-- disable webpage processing -->
+                <merge>true</merge>
+                <outputDirectory>${project.build.directory}/mvn-repo</outputDirectory> <!-- matches distribution management repository url above -->
+                <branch>refs/heads/mvn-repo</branch>                       <!-- remote branch name -->
+                <includes><include>**/*</include></includes>
+                <repositoryName>UltimateChat</repositoryName>      <!-- github repo name -->
+                <repositoryOwner>FabioZumbi12</repositoryOwner>    <!-- github username  -->
+            </configuration>
+            <executions>
+              <!-- run site-maven-plugin's 'site' target as part of the build's normal 'deploy' phase -->
+              <execution>
+                <goals>
+                  <goal>site</goal>
+                </goals>
+                <phase>deploy</phase>
+              </execution>
+            </executions>
+        </plugin>
+    </plugins>    
+   </build>  
+   
   <properties>
   	<mineVersion>1.12.1-R0.1-SNAPSHOT</mineVersion>
   </properties>
