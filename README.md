@@ -21,22 +21,25 @@ This mean jenkins can have new builds, but not new versions.
 Now you can hook with uchat using maven repository (from Github) to use in your projects.
 
 **Repository:**  
-`<repositories>`
-  `<repository>`
-    `<id>ultimatechat-repo</id>`
-    `<url>https://raw.github.com/FabioZumbi12/UltimateChat/mvn-repo/</url>`
-  `</repository>`
-`</repositories>`
+```
+<repositories>  
+  <repository>  
+    <id>ultimatechat-repo</id>  
+    <url>https://raw.github.com/FabioZumbi12/UltimateChat/mvn-repo/</url>  
+  </repository>  
+</repositories>  
+```
 
 **Dependency:**  
-`<dependencies>`
-  `<dependency>`
-    `<groupId>br.net.fabiozumbi12.UltimateChat</groupId>`
-    `<artifactId>UltimateChat-[Check below for dependency names]</artifactId>`
-    `<version>[Plugin Version]</version>`
-    `<scope>provided</scope>`
-  `</dependency>`
-`</dependencies>`
-
+```
+<dependencies>  
+  <dependency>  
+    <groupId>br.net.fabiozumbi12.UltimateChat</groupId>  
+    <artifactId>UltimateChat-[Check below for dependency names]</artifactId>  
+    <version>[Plugin Version]</version>  
+    <scope>provided</scope>  
+  </dependency>   
+</dependencies>  
+```
 **Check the dependency names and APIs:** [Click here](https://github.com/FabioZumbi12/UltimateChat/tree/mvn-repo/br/net/fabiozumbi12/UltimateChat)
 
