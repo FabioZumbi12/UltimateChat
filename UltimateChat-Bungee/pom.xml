@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
-    <artifactId>UChat</artifactId>
+    <artifactId>UltimateChat</artifactId>
     <version>${pluginVersion}</version>
   </parent>
   <artifactId>UltimateChat-Bungee</artifactId>
@@ -18,16 +18,37 @@
          <dependency>
              <groupId>net.md-5</groupId>
              <artifactId>bungeecord-api</artifactId>
-             <version>1.11-SNAPSHOT</version>
+             <version>${mineVersion}</version>
              <type>jar</type>
              <scope>provided</scope>
          </dependency>
          <dependency>
              <groupId>net.md-5</groupId>
              <artifactId>bungeecord-api</artifactId>
-             <version>1.12-SNAPSHOT</version>
+             <version>${mineVersion}</version>
              <type>javadoc</type>
              <scope>provided</scope>
          </dependency>
      </dependencies>
+     <properties>
+     	<mineVersion>1.12-SNAPSHOT</mineVersion>
+     </properties>
+     
+     <!-- Ignore Deploy because has no API -->
+     <build>
+     <plugins>
+       <plugin>
+        <groupId>com.github.github</groupId>
+        <artifactId>site-maven-plugin</artifactId>
+        <version>0.11</version>
+        <executions>
+          <execution>
+            <id>depoying</id>
+            <phase/>
+          </execution>
+        </executions>
+       </plugin>
+     </plugins>
+       
+     </build>
 </project>

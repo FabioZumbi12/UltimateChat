@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
-  <artifactId>UChat</artifactId>
+  <artifactId>UltimateChat</artifactId>
   <packaging>pom</packaging>
   <name>UltimateChat</name>
   <version>${pluginVersion}</version>
@@ -148,14 +148,40 @@
         </configuration>
       </plugin>
       
-    </plugins>
+      <!-- Deploy to github for maven repo -->
+      <plugin>
+            <groupId>com.github.github</groupId>
+            <artifactId>site-maven-plugin</artifactId>
+            <version>0.11</version>
+            <configuration>
+                <message>Maven artifacts for ${project.version}</message>  <!-- git commit message -->
+                <noJekyll>true</noJekyll>                                  <!-- disable webpage processing -->
+                <merge>true</merge>
+                <outputDirectory>${project.build.directory}/mvn-repo</outputDirectory> <!-- matches distribution management repository url above -->
+                <branch>refs/heads/mvn-repo</branch>                       <!-- remote branch name -->
+                <includes><include>**/*</include></includes>
+                <repositoryName>UltimateChat</repositoryName>      <!-- github repo name -->
+                <repositoryOwner>FabioZumbi12</repositoryOwner>    <!-- github username  -->
+            </configuration>
+            <executions>
+              <!-- run site-maven-plugin's 'site' target as part of the build's normal 'deploy' phase -->              
+              <execution>
+                <id>depoying</id>
+                <goals>
+                  <goal>site</goal>
+                </goals>
+                <phase>deploy</phase>
+              </execution>
+            </executions>
+        </plugin>
+    </plugins> 
     
    </build>   
    <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <pluginVersion>1.7.4</pluginVersion>
         <github.global.server>github</github.global.server>
+        <pluginVersion>1.7.4</pluginVersion>
    </properties>
   <modules>
   	<module>UltimateChat-Spigot</module>

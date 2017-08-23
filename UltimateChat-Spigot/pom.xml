@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
-    <artifactId>UChat</artifactId>
+    <artifactId>UltimateChat</artifactId>
     <version>${pluginVersion}</version>
   </parent>
   <artifactId>UltimateChat-Spigot</artifactId>
@@ -112,35 +112,6 @@
         </repository> 
   </repositories>
   
-  <build>
-    <plugins>
-      <plugin>
-            <groupId>com.github.github</groupId>
-            <artifactId>site-maven-plugin</artifactId>
-            <version>0.11</version>
-            <configuration>
-                <message>Maven artifacts for ${project.version}</message>  <!-- git commit message -->
-                <noJekyll>true</noJekyll>                                  <!-- disable webpage processing -->
-                <merge>true</merge>
-                <outputDirectory>${project.build.directory}/mvn-repo</outputDirectory> <!-- matches distribution management repository url above -->
-                <branch>refs/heads/mvn-repo</branch>                       <!-- remote branch name -->
-                <includes><include>**/*</include></includes>
-                <repositoryName>UltimateChat</repositoryName>      <!-- github repo name -->
-                <repositoryOwner>FabioZumbi12</repositoryOwner>    <!-- github username  -->
-            </configuration>
-            <executions>
-              <!-- run site-maven-plugin's 'site' target as part of the build's normal 'deploy' phase -->
-              <execution>
-                <goals>
-                  <goal>site</goal>
-                </goals>
-                <phase>deploy</phase>
-              </execution>
-            </executions>
-        </plugin>
-    </plugins>    
-   </build>  
-   
   <properties>
   	<mineVersion>1.12.1-R0.1-SNAPSHOT</mineVersion>
   </properties>
