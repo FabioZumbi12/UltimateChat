@@ -10,7 +10,7 @@ Sponge: https://ore.spongepowered.org/FabioZumbi12/UltimateChat
 The source is available on GitHub: https://github.com/FabioZumbi12/UltimateChat
 
 ## Dev Builds:
-Dev builds are available on GitHub releases pages: [GitHub releases](https://github.com/FabioZumbi12/UltimateChat/tags)
+Dev builds are available on GitHub releases page: [GitHub Releases](https://github.com/FabioZumbi12/UltimateChat/tags)
 
 ## Maven repository:
 You can hook with uchat using maven repository (from Github) to use in your projects.
