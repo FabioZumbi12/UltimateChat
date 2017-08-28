@@ -10,15 +10,10 @@ Sponge: https://ore.spongepowered.org/FabioZumbi12/UltimateChat
 The source is available on GitHub: https://github.com/FabioZumbi12/UltimateChat
 
 ## Dev Builds:
-Dev build on Jenkins: [![Build Status](http://areaz12server.net.br:8080/buildStatus/icon?job=UltimateChat)](http://areaz12server.net.br:8080/job/UltimateChat/)
-
-## Jenkins Builds:
-The jar buils are diferent of jenkins builds.
-Jar builds represents internal test builds and test builds, and jenkins builds numbers represents public dev builds.
-This mean jenkins can have new builds, but not new versions.
+Dev builds are available on GitHub releases pages: [GitHub releases](https://github.com/FabioZumbi12/UltimateChat/tags)
 
 ## Maven repository:
-Now you can hook with uchat using maven repository (from Github) to use in your projects.
+You can hook with uchat using maven repository (from Github) to use in your projects.
 
 **Repository:**  
 ```
