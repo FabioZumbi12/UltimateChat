@@ -38,7 +38,7 @@ public class TaskChain {
     boolean async;
     private final Plugin plugin;
     public TaskChain() {
-        this.plugin = UChat.plugin; // TODO: Change to get an instance to your plugin!
+        this.plugin = UChat.get(); // TODO: Change to get an instance to your plugin!
         this.async = !Bukkit.isPrimaryThread();
     }
     /**

@@ -31,7 +31,7 @@ public class UCListener {
 		UCMessages.sendFancyMessage(new String[0], msg, null, sender, receiver.get());			
 	}
 	
-	@Listener(order = Order.LATE)
+	@Listener(beforeModifications = true, order = Order.LATE)
 	public void onChat(MessageChannelEvent.Chat e, @First Player p){
 		
 		if (UChat.tellPlayers.containsKey(p.getName()) && (!UChat.tempTellPlayers.containsKey("CONSOLE") || !UChat.tempTellPlayers.get("CONSOLE").equals(p.getName()))){		

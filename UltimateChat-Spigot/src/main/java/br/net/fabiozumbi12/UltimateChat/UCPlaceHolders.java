@@ -14,13 +14,13 @@ public class UCPlaceHolders extends EZPlaceholderHook {
 	public String onPlaceholderRequest(Player p, String arg) {
 		String text = "--";
 		if (arg.equals("player_channel_name")){
-			text = UChat.config.getChannel(UChat.pChannels.get(p.getName())).getName();
+			text = UChat.get().getUCConfig().getPlayerChannel(p).getName();
 		}
 		if (arg.equals("player_channel_alias")){
-			text = UChat.config.getChannel(UChat.pChannels.get(p.getName())).getAlias();
+			text = UChat.get().getUCConfig().getPlayerChannel(p).getAlias();
 		}
 		if (arg.equals("player_channel_color")){
-			text = UChat.config.getChannel(UChat.pChannels.get(p.getName())).getColor();
+			text = UChat.get().getUCConfig().getPlayerChannel(p).getColor();
 		}
 		if (arg.equals("player_tell_with") && UChat.tellPlayers.containsKey(p.getName())){
 			text = UChat.tellPlayers.get(p.getName());
@@ -29,7 +29,7 @@ public class UCPlaceHolders extends EZPlaceholderHook {
 			text = UChat.ignoringPlayer.get(p.getName()).toArray().toString();
 		}
 		if (arg.equals("default_channel")){
-			text = UChat.config.getDefChannel().getName();
+			text = UChat.get().getUCConfig().getDefChannel().getName();
 		}		
 		return text;
 	}

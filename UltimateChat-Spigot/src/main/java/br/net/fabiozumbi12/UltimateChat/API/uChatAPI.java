@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.Bukkit;
+
 import br.net.fabiozumbi12.UltimateChat.UCChannel;
 import br.net.fabiozumbi12.UltimateChat.UChat;
 
@@ -17,11 +19,11 @@ public class uChatAPI {
 	 * @return {@code true} if sucess or {@code false} if already registred.
 	 */
 	public static boolean registerNewTag(String tagName, String format, String clickCmd, List<String> hoverMessages){
-		if (UChat.config.getString("tags."+tagName+".format") == null){
-			UChat.config.setConfig("tags."+tagName+".format", format);
-			UChat.config.setConfig("tags."+tagName+".click-cmd", clickCmd);
-			UChat.config.setConfig("tags."+tagName+".hover-messages", hoverMessages);
-			UChat.config.save();
+		if (UChat.get().getUCConfig().getString("tags."+tagName+".format") == null){
+			UChat.get().getUCConfig().setConfig("tags."+tagName+".format", format);
+			UChat.get().getUCConfig().setConfig("tags."+tagName+".click-cmd", clickCmd);
+			UChat.get().getUCConfig().setConfig("tags."+tagName+".hover-messages", hoverMessages);
+			UChat.get().getUCConfig().save();
 			return true;
 		}
 		return false;
@@ -41,14 +43,14 @@ public class uChatAPI {
 	 * @throws IOException - If can't save the channel file on channels folder.
 	 */
 	public static boolean registerNewChannel(String chName, String chAlias, boolean crossWorlds, int distance, String color, String tagBuilder, boolean needFocus, boolean receiverMsg, double cost, boolean bungee) throws IOException{
-		if (UChat.config.getChannel(chName) != null){
+		if (UChat.get().getUCConfig().getChannel(chName) != null){
 			return false;
 		}
 		if (tagBuilder == null || tagBuilder.equals("")){
-			tagBuilder = UChat.config.getString("general.default-tag-builder");			
+			tagBuilder = UChat.get().getUCConfig().getString("general.default-tag-builder");			
 		}
-		UCChannel ch = new UCChannel(chName, chAlias, crossWorlds, distance, color, tagBuilder, needFocus, receiverMsg, cost, bungee, false, false, "player", "", new ArrayList<String>(), true);		
-		UChat.config.addChannel(ch);		
+		UCChannel ch = new UCChannel(chName, chAlias, crossWorlds, distance, color, tagBuilder, needFocus, receiverMsg, cost, bungee, false, false, "player", "", new ArrayList<String>(), new String(), false, true);		
+		UChat.get().getUCConfig().addChannel(ch);		
 		return true;
 	}
 	
@@ -57,7 +59,7 @@ public class uChatAPI {
 	 * @return {@link UCChanel} - The channel.
 	 */
 	public static UCChannel getChannel(String chName){
-		return UChat.config.getChannel(chName);
+		return UChat.get().getUCConfig().getChannel(chName);
 	}
 		
 	/**Gets the actual player channel 
@@ -65,6 +67,6 @@ public class uChatAPI {
 	 * @return {@link UCChannel} - The player channel.
 	 */
 	public static UCChannel getPlayerChannel(String player){
-		return UChat.config.getChannel(UChat.pChannels.get(player));
+		return UChat.get().getUCConfig().getPlayerChannel(Bukkit.getPlayer(player));
 	}
 }

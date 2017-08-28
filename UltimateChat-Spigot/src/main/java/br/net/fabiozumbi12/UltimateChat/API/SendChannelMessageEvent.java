@@ -30,7 +30,7 @@ public class SendChannelMessageEvent extends Event implements Cancellable{
 		this.sender = sender;
 		this.msg = msg;
 		this.channel = channel;
-		this.defBuilder = UChat.config.getDefBuilder();
+		this.defBuilder = UChat.get().getUCConfig().getDefBuilder();
 		this.defFormat = defFormat;
 		this.registeredTags = registeredReplacers;
 	}
@@ -118,7 +118,7 @@ public class SendChannelMessageEvent extends Event implements Cancellable{
 	 * @param newCh - New UCChannel component to send the message.
 	 */
 	public void setChannel(String newCh){
-		this.channel = UChat.config.getChannel(newCh);
+		this.channel = UChat.get().getUCConfig().getChannel(newCh);
 	}
 	
 	/**Get the actual channel will be send the message.

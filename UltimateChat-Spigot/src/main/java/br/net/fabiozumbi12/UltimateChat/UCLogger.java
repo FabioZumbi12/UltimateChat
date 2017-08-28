@@ -30,7 +30,7 @@ public class UCLogger{
     }
     
     public void debug(String s) {
-        if (UChat.config != null && UChat.config.getBool("debug-messages")) {
+        if (UChat.get().getUCConfig() != null && UChat.get().getUCConfig().getBool("debug-messages")) {
         	Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "UltimateChat: [&b"+s+"&r]"));
         }  
     }

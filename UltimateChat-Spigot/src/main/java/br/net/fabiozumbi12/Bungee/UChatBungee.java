@@ -43,7 +43,7 @@ public class UChatBungee implements PluginMessageListener, Listener {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}				
-		UCChannel chan = UChat.config.getChannel(ch);
+		UCChannel chan = UChat.get().getUCConfig().getChannel(ch);
 		if (chan == null || !chan.isBungee()){
 			return;
 		}
@@ -52,24 +52,24 @@ public class UChatBungee implements PluginMessageListener, Listener {
         for (Player p:Bukkit.getOnlinePlayers()){
         	if (p.hasPermission("uchat.channel."+chan.getName())){
         		
-        		if (UChat.config.getBool("general.hover-events")){
+        		if (UChat.get().getUCConfig().getBool("general.hover-events")){
         			FancyMessage fanci = new FancyMessage();
             		
-            		String[] defaultBuilder = UChat.config.getDefBuilder();
+            		String[] defaultBuilder = UChat.get().getUCConfig().getDefBuilder();
         			if (chan.useOwnBuilder()){
         				defaultBuilder = chan.getBuilder();
         			}
         			
         			for (String tag:defaultBuilder){
-        				if (UChat.config.getString("tags."+tag+".format") == null){
+        				if (UChat.get().getUCConfig().getString("tags."+tag+".format") == null){
         					fanci.text(tag,tag)
         			   		   .then(" ");
         					continue;
         				}        				
         				
-        				String format = UChat.config.getString("tags."+tag+".format");
-        				String execute = UChat.config.getString("tags."+tag+".click-cmd");
-        				List<String> messages = UChat.config.getStringList("tags."+tag+".hover-messages");
+        				String format = UChat.get().getUCConfig().getString("tags."+tag+".format");
+        				String execute = UChat.get().getUCConfig().getString("tags."+tag+".click-cmd");
+        				List<String> messages = UChat.get().getUCConfig().getStringList("tags."+tag+".hover-messages");
         						
         				
         				
@@ -90,11 +90,11 @@ public class UChatBungee implements PluginMessageListener, Listener {
         					fanci.command(UCMessages.formatTags(tag, "/"+execute, sender, p.getName(), msg, chan));
         				}
         				
-        				if (UChat.config.getBool("mention.enable") && tag.equals("message") && !StringUtils.containsIgnoreCase(msg, sender)){
+        				if (UChat.get().getUCConfig().getBool("mention.enable") && tag.equals("message") && !StringUtils.containsIgnoreCase(msg, sender)){
         					tooltip = UCMessages.formatTags(tag, tooltip, sender, p.getName(), msg, chan);	
         					format = UCMessages.formatTags(tag, format, sender, p.getName(), msg, chan);
-        					if (UChat.config.getString("mention.hover-message").length() > 0 && StringUtils.containsIgnoreCase(msg, p.getName())){
-        						tooltip = UCMessages.formatTags(tag, UChat.config.getString("mention.hover-message"), sender, p.getName(), msg, chan);
+        					if (UChat.get().getUCConfig().getString("mention.hover-message").length() > 0 && StringUtils.containsIgnoreCase(msg, p.getName())){
+        						tooltip = UCMessages.formatTags(tag, UChat.get().getUCConfig().getString("mention.hover-message"), sender, p.getName(), msg, chan);
         						fanci.text(format,tag)
         				   		   .tooltip(tooltip)
         				   		   .then(" ");
@@ -124,17 +124,17 @@ public class UChatBungee implements PluginMessageListener, Listener {
         		} else {
         			StringBuilder msgFinal = new StringBuilder();
         			
-        			String[] defaultBuilder = UChat.config.getDefBuilder();
+        			String[] defaultBuilder = UChat.get().getUCConfig().getDefBuilder();
     				if (chan.useOwnBuilder()){
     					defaultBuilder = chan.getBuilder();
     				}
     						
     				for (String tag:defaultBuilder){
-    					if (UChat.config.getString("tags."+tag+".format") == null){
+    					if (UChat.get().getUCConfig().getString("tags."+tag+".format") == null){
     						msgFinal.append(tag);
     						continue;
     					}
-    					String format = UChat.config.getString("tags."+tag+".format");
+    					String format = UChat.get().getUCConfig().getString("tags."+tag+".format");
     					
     					//fix tag not found on bungee
         				format = format.replace("{world}", ws.split(",")[0]).replace("{server}", ws.split(",")[1]);
@@ -148,7 +148,7 @@ public class UChatBungee implements PluginMessageListener, Listener {
         		}        		
     		}
         }	
-		UChat.plugin.serv.getConsoleSender().sendMessage(toConsole);
+		UChat.get().getServ().getConsoleSender().sendMessage(toConsole);
 	}	
 	
 	@EventHandler(priority = EventPriority.LOWEST)
@@ -169,6 +169,6 @@ public class UChatBungee implements PluginMessageListener, Listener {
         }        
 	    
 	    Player p = Iterables.getFirst(Bukkit.getOnlinePlayers(), null);
-	    p.sendPluginMessage(UChat.plugin, "uChat", out.toByteArray());
+	    p.sendPluginMessage(UChat.get(), "uChat", out.toByteArray());
 	}
 }

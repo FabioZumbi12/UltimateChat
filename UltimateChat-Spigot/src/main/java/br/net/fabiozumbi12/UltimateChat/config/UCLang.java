@@ -108,11 +108,11 @@ public class UCLang {
 		
 		if (Lang.get("_lang.version") != null){
 			int langv = Integer.parseInt(Lang.get("_lang.version").replace(".", ""));
-			int rpv = Integer.parseInt(UChat.pdf.getVersion().replace(".", ""));
+			int rpv = Integer.parseInt(UChat.get().getPDF().getVersion().replace(".", ""));
 			if (langv < rpv || langv == 0){
 				logger.warning("Your lang file is outdated. Probally need strings updates!");
 				logger.warning("Lang file version: "+Lang.get("_lang.version"));
-				Lang.put("_lang.version", UChat.pdf.getVersion());
+				Lang.put("_lang.version", UChat.get().getPDF().getVersion());
 			}
 		}		
 	}
@@ -124,7 +124,7 @@ public class UCLang {
 	      }
 	    }
 		if (!Lang.containsKey("_lang.version")){
-			Lang.put("_lang.version", UChat.pdf.getVersion());
+			Lang.put("_lang.version", UChat.get().getPDF().getVersion());
     	}
 	    try {
 	      Properties properties = new Properties()
@@ -181,7 +181,7 @@ public class UCLang {
 		}		
 		
 		DelayedMessage.put(p, key);
-		Bukkit.getScheduler().scheduleSyncDelayedTask(UChat.plugin, new Runnable() { 
+		Bukkit.getScheduler().scheduleSyncDelayedTask(UChat.get(), new Runnable() { 
 			public void run() {
 				if (DelayedMessage.containsKey(p)){
 					DelayedMessage.remove(p);
@@ -206,7 +206,7 @@ public class UCLang {
 		if (sender instanceof Player){
 			final Player p = (Player)sender;
 			DelayedMessage.put(p, key);
-			Bukkit.getScheduler().scheduleSyncDelayedTask(UChat.plugin, new Runnable() { 
+			Bukkit.getScheduler().scheduleSyncDelayedTask(UChat.get(), new Runnable() { 
 				public void run() {
 					if (DelayedMessage.containsKey(p)){
 						DelayedMessage.remove(p);
