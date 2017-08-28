@@ -1,6 +1,9 @@
 config-version: 1.3
 debug-messages: false
 language: PT-BR
+discord:
+  use: false
+  OAuth: ""
 api:
   format-console-messages: false
 mention:

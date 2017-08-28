@@ -36,11 +36,11 @@ permissions:
       uchat.chat.color.formats: true
       uchat.chat.color.magic: true
       uchat.cmd.clear-all: true
-      uchat.channel.admin: true
+      uchat.channel.admin.read: true
+      uchat.channel.admin.send: true
+      uchat.cant-ignore.admin: true
       uchat.broadcast: true      
-      uchat.bypass.cost: true
-      uchat.bypass-anti-ip: true
-      uchat.bypass-spam: true
+      uchat.bypass-protections: true
   uchat.player:
     description: "All player commands."
     default: true
@@ -50,8 +50,10 @@ permissions:
       uchat.cmd.tell: true
       uchat.cmd.clear: true
       uchat.chat.click-urls: true
-      uchat.channel.global: true
-      uchat.channel.local: true
+      uchat.channel.global.read: true
+      uchat.channel.global.send: true
+      uchat.channel.local.read: true
+      uchat.channel.local.send: true
   uchat.bypass-protections:
     description: "Permissions to bypass chat checks."
     default: false

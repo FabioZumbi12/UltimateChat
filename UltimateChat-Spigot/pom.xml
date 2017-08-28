@@ -85,6 +85,14 @@
             <artifactId>ProtocolLib-API</artifactId>
             <version>LATEST</version>
         </dependency>        
+        
+        <!-- Test discord bridge -->
+        <dependency>
+            <groupId>net.dv8tion</groupId>
+            <artifactId>JDA</artifactId>
+            <version>3.2.0_248</version>
+        </dependency>      
+        
   </dependencies>
   
   <repositories>  
@@ -110,6 +118,13 @@
             <id>vault-repo</id>
             <url>http://nexus.hc.to/content/repositories/pub_releases</url>
         </repository> 
+        
+        <!-- Test discord bridge -->
+        <repository>
+          <id>jcenter</id>
+          <name>jcenter-bintray</name>
+          <url>http://jcenter.bintray.com</url>
+        </repository>
   </repositories>
   
   <properties>

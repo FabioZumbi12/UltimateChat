@@ -3,7 +3,7 @@
   <parent>
     <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
     <artifactId>UltimateChat</artifactId>
-    <version>${pluginVersion}</version>
+    <version>1.7.4</version>
   </parent>
   <artifactId>UltimateChat-Bungee</artifactId>
   
@@ -43,7 +43,7 @@
         <version>0.11</version>
         <executions>
           <execution>
-            <id>depoying</id>
+            <id>deploying</id>
             <phase/>
           </execution>
         </executions>
