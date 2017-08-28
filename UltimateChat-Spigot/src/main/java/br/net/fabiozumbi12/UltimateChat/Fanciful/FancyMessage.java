@@ -60,6 +60,29 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 		return instance;
 	}
 
+	private String fixText(String text){
+		String newstr = "";
+		for (String st:text.split(" ")){
+			String regexUrl = "((http:\\/\\/|https:\\/\\/)?(www\\.)?(([a-zA-Z0-9-]){2,}\\.){1,4}([a-zA-Z]){2,6}(\\/([a-zA-Z-_\\/\\.0-9#:?=&;,]*)?)?)";
+			Matcher match = Pattern.compile(regexUrl).matcher(st);
+			if (match.find()){
+				String matchg = ChatColor.stripColor(match.group(1));	
+				//sender.sendMessage("Match: "+matchg);
+				if (!matchg.startsWith("http")){
+					matchg = "http://"+matchg;
+				}
+				
+				this.text(match.group(1)).link(matchg).tooltip(UChat.get().getUCConfig().getURLTemplate().replace("{url}", match.group(1)));
+				newstr = newstr+lastColor+st+" ";
+				lastColor = ChatColor.getLastColors(newstr);
+				continue;
+			}				
+			newstr = newstr+lastColor+st+" ";
+			lastColor = ChatColor.getLastColors(newstr);
+		}
+		return newstr;
+	}
+	
 	/**
 	 * Creates a JSON message with text.
 	 *
@@ -72,24 +95,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 	public FancyMessage text(String text, String tag) {		
 		String newstr = "";
 		if (tag.equals("message")){
-			for (String st:text.split(" ")){
-				String regexUrl = "((http:\\/\\/|https:\\/\\/)?(www\\.)?(([a-zA-Z0-9-]){2,}\\.){1,4}([a-zA-Z]){2,6}(\\/([a-zA-Z-_\\/\\.0-9#:?=&;,]*)?)?)";
-				Matcher match = Pattern.compile(regexUrl).matcher(st);
-				if (match.find()){
-					String matchg = ChatColor.stripColor(match.group(1));	
-					//sender.sendMessage("Match: "+matchg);
-					if (!matchg.startsWith("http")){
-						matchg = "http://"+matchg;
-					}
-					
-					this.text(match.group(1)).link(matchg).tooltip(UChat.config.getURLTemplate().replace("{url}", match.group(1)));
-					newstr = newstr+lastColor+st+" ";
-					lastColor = ChatColor.getLastColors(newstr);
-					continue;
-				}				
-				newstr = newstr+lastColor+st+" ";
-				lastColor = ChatColor.getLastColors(newstr);
-			}			
+			newstr = fixText(text);			
 		} else {
 			newstr = lastColor+text;
 			lastColor = ChatColor.getLastColors(newstr);
@@ -120,9 +126,9 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 	 * @param text The new text of the current editing component.
 	 * @return This builder instance.
 	 */
-	public FancyMessage text(String text) {
+	public FancyMessage text(String text) {	
 		MessagePart latest = latest();
-		latest.text = rawText(text);
+		latest.text = rawText(fixText(text));
 		dirty = true;
 		return this;
 	}

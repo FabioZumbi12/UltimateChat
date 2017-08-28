@@ -37,7 +37,7 @@ permissions:
       uchat.chat.color.magic: true
       uchat.cmd.clear-all: true
       uchat.channel.admin.read: true
-      uchat.channel.admin.send: true
+      uchat.channel.admin.write: true
       uchat.cant-ignore.admin: true
       uchat.broadcast: true      
       uchat.bypass-protections: true
@@ -51,9 +51,9 @@ permissions:
       uchat.cmd.clear: true
       uchat.chat.click-urls: true
       uchat.channel.global.read: true
-      uchat.channel.global.send: true
+      uchat.channel.global.write: true
       uchat.channel.local.read: true
-      uchat.channel.local.send: true
+      uchat.channel.local.write: true
   uchat.bypass-protections:
     description: "Permissions to bypass chat checks."
     default: false

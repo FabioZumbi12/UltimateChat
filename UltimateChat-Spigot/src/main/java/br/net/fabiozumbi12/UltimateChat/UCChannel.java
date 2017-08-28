@@ -3,10 +3,7 @@ package br.net.fabiozumbi12.UltimateChat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Set;
-
-import net.md_5.bungee.api.ChatColor;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -41,8 +38,11 @@ public class UCChannel {
 	private String aliasCmd = "";
 	private List<String> availableWorlds = new ArrayList<String>();
 	private boolean canLock = true;
+	private String ddchannel = new String();
+	private boolean usedd = false;
+	private List<Player> members = new ArrayList<Player>();
 
-	public UCChannel(String name, String alias, boolean worlds, int dist, String color, String builder, boolean focus, boolean receiversMsg, double cost, boolean isbungee, boolean ownBuilder, boolean isAlias, String aliasSender, String aliasCmd, List<String> availableWorlds, boolean lock) {
+	public UCChannel(String name, String alias, boolean worlds, int dist, String color, String builder, boolean focus, boolean receiversMsg, double cost, boolean isbungee, boolean ownBuilder, boolean isAlias, String aliasSender, String aliasCmd, List<String> availableWorlds, String ddchannel, boolean usedd, boolean lock) {
 		this.name = name;
 		this.alias = alias;
 		this.worlds = worlds;
@@ -59,6 +59,7 @@ public class UCChannel {
 		this.aliasSender = aliasSender;
 		this.availableWorlds = availableWorlds;
 		this.canLock = lock;
+		this.ddchannel = ddchannel;
 	}
 	
 	public UCChannel(String name, String alias, String color) {
@@ -70,6 +71,37 @@ public class UCChannel {
 	public UCChannel(String name) {
 		this.name = name;
 		this.alias = name.substring(0, 1).toLowerCase();
+	}
+	
+	public List<Player> getMembers(){
+		return this.members;
+	}
+	
+	public void clearMembers(){
+		this.members.clear();
+	}
+	
+	public boolean addMember(Player p){
+		for (UCChannel ch:UChat.get().getUCConfig().getChannels()){
+			ch.removeMember(p);
+		}
+		return this.members.add(p);
+	}
+	
+	public boolean removeMember(Player p){
+		return this.members.remove(p);
+	}
+	
+	public boolean isMember(Player p){
+		return this.members.contains(p);
+	}
+	
+	public String getDiscordChannelID(){
+		return this.ddchannel;
+	}
+	
+	public boolean useDiscordChanel(){
+		return this.usedd;
 	}
 	
 	public boolean canLock(){
@@ -208,12 +240,12 @@ public class UCChannel {
 	 */
 	public void sendMessage(Player sender, FancyMessage message, boolean direct){
 		if (direct){
-			for (Entry<String, String> chEnt:UChat.pChannels.entrySet()){
-				Player p = Bukkit.getPlayer(chEnt.getKey());
-				if (UCPerms.channelPerm(p, this) && !this.isIgnoring(chEnt.getKey()) && (this.neeFocus() && chEnt.getValue().equalsIgnoreCase(this.alias) || !this.neeFocus())){
+			for (Player p:Bukkit.getOnlinePlayers()){
+				UCChannel chp = UChat.get().getUCConfig().getPlayerChannel(p);
+				if (UCPerms.channelReadPerm(p, this) && !this.isIgnoring(p.getName()) && (this.neeFocus() && chp.equals(this) || !this.neeFocus())){
 					message.send(p);					
 				}
-			}
+			}			
 			message.send(sender);	
 		} else {
 			Set<Player> pls = new HashSet<Player>();
@@ -231,9 +263,9 @@ public class UCChannel {
 	 */
 	public void sendMessage(ConsoleCommandSender sender, FancyMessage message, boolean direct){	
 		if (direct){
-			for (Entry<String, String> chEnt:UChat.pChannels.entrySet()){
-				Player p = Bukkit.getPlayer(chEnt.getKey());
-				if (UCPerms.channelPerm(p, this) && !this.isIgnoring(chEnt.getKey()) && (this.neeFocus() && chEnt.getValue().equalsIgnoreCase(this.alias) || !this.neeFocus())){
+			for (Player p:Bukkit.getOnlinePlayers()){
+				UCChannel chp = UChat.get().getUCConfig().getPlayerChannel(p);
+				if (UCPerms.channelReadPerm(p, this) && !this.isIgnoring(p.getName()) && (this.neeFocus() && chp.equals(this) || !this.neeFocus())){
 					message.send(p);					
 				}
 			}
@@ -249,16 +281,17 @@ public class UCChannel {
 	 */
 	@Deprecated
 	public void sendMessage(ConsoleCommandSender sender, String message){	
-		if (UChat.config.getBool("api.format-console-messages")){
+		if (UChat.get().getUCConfig().getBool("api.format-console-messages")){
 			UCMessages.sendFancyMessage(new String[0], message, this, sender, null);
 		} else {
-			for (Entry<String, String> chEnt:UChat.pChannels.entrySet()){
-				Player p = Bukkit.getPlayer(chEnt.getKey());
-				if (UCPerms.channelPerm(p, this) && !this.isIgnoring(chEnt.getKey()) && (this.neeFocus() && chEnt.getValue().equalsIgnoreCase(this.alias) || !this.neeFocus())){
-					p.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
+			FancyMessage fmsg = new FancyMessage().text(message);
+			for (Player p:Bukkit.getOnlinePlayers()){
+				UCChannel chp = UChat.get().getUCConfig().getPlayerChannel(p);
+				if (UCPerms.channelReadPerm(p, this) && !this.isIgnoring(p.getName()) && (this.neeFocus() && chp.equals(this) || !this.neeFocus())){					
+					fmsg.send(p);					
 				}
 			}
-			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
+			fmsg.send(sender);
 		}
 	}
 }

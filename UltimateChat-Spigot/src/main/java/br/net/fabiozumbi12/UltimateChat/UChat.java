@@ -34,38 +34,31 @@ import at.pcgamingfreaks.MarriageMaster.Bukkit.MarriageMaster;
 import br.net.fabiozumbi12.Bungee.UChatBungee;
 import br.net.fabiozumbi12.UltimateChat.config.UCConfig;
 import br.net.fabiozumbi12.UltimateChat.config.UCLang;
+import br.net.fabiozumbi12.UltimateChat.util.Discord.UCDiscord;
 
 import com.lenis0012.bukkit.marriage2.Marriage;
 import com.lenis0012.bukkit.marriage2.MarriageAPI;
-import com.massivecraft.factions.entity.BoardColl;
 
 public class UChat extends JavaPlugin {
 	
-    private static boolean Vault = false;
-	public static UChat plugin;
-    public static UCLogger logger;
-    public Server serv;
-    public static PluginDescriptionFile pdf;
-    public static UCLang lang;
-	public static UCConfig config;
+    private static boolean Vault = false;	
 	public static String mainPath;
-	public static Economy econ;
-	public static Chat chat;
-	public static Permission perms;
-	public static boolean SClans;
-	public static ClanManager sc;
-	public static boolean MarryReloded;
-	public static boolean MarryMaster;
-	public static boolean ProtocolLib;
-	public static MarriageMaster mm;
-	public static Marriage mapi;
-	public static boolean PlaceHolderAPI;
-	public static boolean Factions;
-	public static BoardColl fac;
+	static Economy econ;
+	static Chat chat;
+	static Permission perms;
+	static boolean SClans;
+	static ClanManager sc;
+	static boolean MarryReloded;
+	static boolean MarryMaster;
+	private static boolean ProtocolLib;
+	static MarriageMaster mm;
+	static Marriage mapi;
+	static boolean PlaceHolderAPI;
+	static boolean Factions;
 	private FileConfiguration amConfig;
 	private int index = 0;	
 
-	public static HashMap<String,String> pChannels = new HashMap<String,String>();
+	//public static HashMap<String,String> pChannels = new HashMap<String,String>();
 	public static HashMap<String,String> tempChannels = new HashMap<String,String>();
 	public static HashMap<String,String> tellPlayers = new HashMap<String,String>();
 	public static HashMap<String,String> tempTellPlayers = new HashMap<String,String>();
@@ -78,16 +71,53 @@ public class UChat extends JavaPlugin {
 	public FileConfiguration getAMConfig(){
 		return this.amConfig;
 	}
+		
+	private static UChat uchat;
+	public static UChat get(){
+		return uchat;
+	}
+	
+	private UCLogger logger;
+	public UCLogger getUCLogger(){
+		return this.logger;
+	}
+	
+	private Server serv;
+	public Server getServ(){
+		return this.serv;
+	}
+	
+	private UCConfig config;
+	public UCConfig getUCConfig(){
+		return this.config;
+	}
+	
+	private UCLang lang;
+	private UCDiscord UCJDA;	
+	public UCLang getLang(){
+		return this.lang;
+	}
+	
+	public PluginDescriptionFile getPDF(){
+		return this.getDescription();
+	}
+	
+	public void setConfig(){
+		this.config = new UCConfig(this, mainPath);
+	}
+	
+	public void setLang(){
+		this.lang = new UCLang(this, logger, mainPath, config);
+	}
 	
 	public void onEnable() {
         try {
-            plugin = this;
+            uchat = this;
             logger = new UCLogger();
             serv = getServer();
-            pdf = getDescription();
-            mainPath = "plugins" + File.separator + pdf.getName() + File.separator;
-            config = new UCConfig(this, mainPath);
-            lang = new UCLang(this, logger, mainPath, config);
+            mainPath = "plugins" + File.separator + getDescription().getName() + File.separator;
+            setConfig();
+            setLang();
             amConfig = new YamlConfiguration();
             //check hooks
             Vault = checkVault();            
@@ -133,11 +163,6 @@ public class UChat extends JavaPlugin {
             	logger.info("SimpleClans found. Hooked.");
             }
             
-            if (Factions){
-            	fac = BoardColl.get();
-            	logger.info("Factions found. Hooked.");
-            }
-            
             if (Vault){
             	RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
             	RegisteredServiceProvider<Chat> rschat = getServer().getServicesManager().getRegistration(Chat.class);
@@ -166,19 +191,28 @@ public class UChat extends JavaPlugin {
             }
             
             for (Player p:serv.getOnlinePlayers()){
-            	if (!pChannels.containsKey(p.getName())){
-            		pChannels.put(p.getName(), UChat.config.getDefChannel().getAlias());
+            	if (config.getPlayerChannel(p) == null){
+            		getUCConfig().getDefChannel().addMember(p);
             	}
             }
             
+            //init other features
+            registerJDA();            
             initAutomessage();
             
-            UChat.logger.sucess(pdf.getFullName()+" enabled!");
+            getUCLogger().sucess(getDescription().getFullName()+" enabled!");
             
         } catch (Exception e){
         	e.printStackTrace();
         	super.setEnabled(false);
         }
+	}
+	
+	private void registerJDA(){
+		if (!config.getBool("discord.use")){
+			return;
+		}		
+		this.UCJDA = new UCDiscord();
 	}
 	
 	public void initAutomessage(){
@@ -235,7 +269,7 @@ public class UChat extends JavaPlugin {
 		int loop = getAMConfig().getInt("interval");
 		boolean silent = getAMConfig().getBoolean("silent");
 		
-		Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable(){
+		Bukkit.getScheduler().scheduleSyncRepeatingTask(uchat, new Runnable(){
 			@Override
 			public void run() {
 				if (getAMConfig().isConfigurationSection("messages."+index)){
@@ -248,16 +282,16 @@ public class UChat extends JavaPlugin {
 					
 					String cmd = text;
 					if (hover.length() > 1){
-						cmd = cmd+" "+UChat.config.getString("broadcast.on-hover")+hover;
+						cmd = cmd+" "+getUCConfig().getString("broadcast.on-hover")+hover;
 					}
 					if (onclick.length() > 1){
-						cmd = cmd+" "+UChat.config.getString("broadcast.on-click")+onclick;
+						cmd = cmd+" "+getUCConfig().getString("broadcast.on-click")+onclick;
 					}
 					if (suggest.length() > 1){
-						cmd = cmd+" "+UChat.config.getString("broadcast.suggest")+suggest;
+						cmd = cmd+" "+getUCConfig().getString("broadcast.suggest")+suggest;
 					}
 					if (url.length() > 1){
-						cmd = cmd+" "+UChat.config.getString("broadcast.url")+url;
+						cmd = cmd+" "+getUCConfig().getString("broadcast.url")+url;
 					}
 					if (plays == 0 || serv.getOnlinePlayers().size() >= plays){						
 						UCUtil.sendBroadcast(serv.getConsoleSender(), cmd.split(" "), silent);
@@ -273,7 +307,10 @@ public class UChat extends JavaPlugin {
 	}	
 	
 	public void onDisable() {
-		UChat.logger.severe(pdf.getFullName()+" disabled!");
+		if (this.UCJDA != null){
+			this.UCJDA.getJDA().shutdown();
+		}
+		getUCLogger().severe(getDescription().getFullName()+" disabled!");
 	}
 	
 	public void registerAliases(){
@@ -288,7 +325,8 @@ public class UChat extends JavaPlugin {
 	private void registerAliases(String name, List<String> aliases) {  
 		List<String> aliases1 = new ArrayList<String>();
 		aliases1.addAll(aliases);
-		for (Command cmd:PluginCommandYamlParser.parse(plugin)){
+		
+		for (Command cmd:PluginCommandYamlParser.parse(uchat)){
 			if (cmd.getName().equals(name)){
 				cmd.setAliases(aliases1);
 				cmd.setLabel(name);

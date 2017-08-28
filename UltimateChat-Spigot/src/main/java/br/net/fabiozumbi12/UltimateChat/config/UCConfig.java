@@ -14,6 +14,7 @@ import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 
 import br.net.fabiozumbi12.UltimateChat.UCChannel;
 import br.net.fabiozumbi12.UltimateChat.UChat;
@@ -34,28 +35,28 @@ public class UCConfig{
     	            
     	            if (!main.exists()) {
     	                main.mkdir();
-    	                UChat.logger.info("Created folder: " +mainPath);
+    	                plugin.getUCLogger().info("Created folder: " +mainPath);
     	            }
     	            
     	            if (!chfolder.exists()) {
     	            	chfolder.mkdir();
-    	                UChat.logger.info("Created folder: " +chfolder.getPath());
+    	            	plugin.getUCLogger().info("Created folder: " +chfolder.getPath());
     	            }    	            
 
     	            if (!config.exists() && !defch.exists()) {
     	            	plugin.saveResource("channels/global.yml", false);//create config file    	 
     	            	plugin.saveResource("channels/local.yml", false);//create config file  
-    	                UChat.logger.info("Created channels file...");
+    	            	plugin.getUCLogger().info("Created channels file...");
     	            } 
     	            
     	            if (!config.exists()) {
     	            	plugin.saveResource("config.yml", false);//create config file    	            	
-    	                UChat.logger.info("Created config file: " + config.getPath());
+    	            	plugin.getUCLogger().info("Created config file: " + config.getPath());
     	            } 
     	            
     	            if (!protections.exists()) {
     	            	plugin.saveResource("protections.yml", false);//create protections file    	            	
-    	                UChat.logger.info("Created protections file: " + protections.getPath());
+    	            	plugin.getUCLogger().info("Created protections file: " + protections.getPath());
     	            }
     	                	            
     	            //------------------------------ Add default Values ----------------------------//
@@ -64,7 +65,7 @@ public class UCConfig{
     	            
                     //--------------------------------------------------------------------------//
                     
-                    UChat.logger.info("Server version: " + plugin.serv.getBukkitVersion());
+    	            plugin.getUCLogger().info("Server version: " + plugin.getServ().getBukkitVersion());
                     
                     /*
                     // check if can enable json support
@@ -103,6 +104,8 @@ public class UCConfig{
 									channel.getString("channelAlias.sendAs", "player"),
 									channel.getString("channelAlias.cmd", ""),
 									channel.getStringList("available-worlds"),
+									channel.getString("discord.channelID", new String()),
+									channel.getBoolean("discord.useChannel", false),									
 									channel.getBoolean("canLock", true));
             				try {
 								addChannel(ch);
@@ -268,7 +271,7 @@ public class UCConfig{
         			
             		//----------------------------------------------------------------------------------------//
         			save();        			
-    	            UChat.logger.info("All configurations loaded!");
+    	            plugin.getLogger().info("All configurations loaded!");
 	}
     
 	public List<String> getTagList(){
@@ -298,14 +301,14 @@ public class UCConfig{
 	}
 	
 	public void addChannel(UCChannel ch) throws IOException{
-		File defch = new File(UChat.mainPath+File.separator+"channels"+File.separator+ch.getName()+".yml");		
+		File defch = new File(UChat.mainPath+File.separator+"channels"+File.separator+ch.getName().toLowerCase()+".yml");		
 		YamlConfiguration chFile = UCYaml.loadConfiguration(defch);
 		chFile.options().header(""
 				+ "###################################################\n"
 				+ "############## Channel Configuration ##############\n"
 				+ "###################################################\n"
 				+ "\n"
-				+ "This the channel configuration.\n"
+				+ "This is the channel configuration.\n"
 				+ "You can change and copy this file to create as many channels you want.\n"
 				+ "This is the default options:\n"
 				+ "\n"
@@ -324,7 +327,10 @@ public class UCConfig{
 				+ "  enable: true - Enable this execute a command alias?\n"
 				+ "  sendAs: player - Send the command alias as 'player' or 'console'?\n"
 				+ "  cmd: '' - Command to send on every message send by this channel.\n"
-				+ "available-worlds - Worlds and only this world where this chat can be used and messages sent/received.");
+				+ "available-worlds - Worlds and only this world where this chat can be used and messages sent/received.\n"
+				+ "discord:\n"
+				+ "  usedd: false - If enabled and OAuth code set and the channel ID matches with one discord channel, will send messages from this channel to discord channel.\n"
+				+ "  channelID");
 		chFile.set("name", ch.getName());
 		chFile.set("alias", ch.getAlias());
 		chFile.set("across-worlds", ch.crossWorlds());
@@ -341,8 +347,10 @@ public class UCConfig{
 		chFile.set("channelAlias.sendAs", ch.getAliasSender());
 		chFile.set("channelAlias.cmd", ch.getAliasCmd());
 		chFile.set("available-worlds", ch.availableWorlds());		
+		chFile.set("discord.channelID", ch.getDiscordChannelID());
+		chFile.set("discord.useChannel", ch.useDiscordChanel());
 		chFile.save(defch);
-		channels.put(Arrays.asList(ch.getName(), ch.getAlias().toLowerCase()), ch);
+		channels.put(Arrays.asList(ch.getName().toLowerCase(), ch.getAlias().toLowerCase()), ch);
 	}
 	
 	public void unMuteInAllChannels(String player){
@@ -364,7 +372,7 @@ public class UCConfig{
 	public UCChannel getDefChannel(){
 		UCChannel ch = getChannel(getString("general.default-channel"));
 		if (ch == null){
-			UChat.logger.severe("Defalt channel not found with alias '"+getString("general.default-channel")+"'. Fix this setting to a valid channel alias.");
+			UChat.get().getLogger().severe("Defalt channel not found with alias '"+getString("general.default-channel")+"'. Fix this setting to a valid channel alias.");
 		}
 		return getChannel(getString("general.default-channel"));
 	}
@@ -380,6 +388,15 @@ public class UCConfig{
 			aliases.addAll(alias);
 		}
 		return aliases;
+	}
+	
+	public UCChannel getPlayerChannel(Player p){
+		for (UCChannel ch:this.channels.values()){
+			if (ch.isMember(p)){
+				return ch;
+			}
+		}
+		return null;
 	}
 	
 	public List<String> getBroadcastAliases() {
@@ -476,7 +493,7 @@ public class UCConfig{
 			e.printStackTrace();
 		} 
                 			
-        UCYaml tempProts = inputLoader(UChat.plugin.getResource(filename));  
+        UCYaml tempProts = inputLoader(UChat.get().getResource(filename));  
         for (String key:tempProts.getKeys(true)){    
         	Object obj = tempProts.get(key);
         	if (finalyml.get(key) != null){
