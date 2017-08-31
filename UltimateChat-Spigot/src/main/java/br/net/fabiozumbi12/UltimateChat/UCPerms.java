@@ -17,18 +17,22 @@ public class UCPerms {
 	
 	public static boolean channelSendPerm(CommandSender p, UCChannel ch){
 		UCChannel defCh = UChat.get().getUCConfig().getDefChannel();
-		return defCh.equals(ch) || hasPerm(p, "channel."+ch.getName().toLowerCase()+".send");
+		return defCh.equals(ch) || hasPerm(p, "channel."+ch.getName().toLowerCase()+".write");
 	}
 	
 	public static boolean canIgnore(CommandSender sender, Object toignore){
-		if ((sender instanceof ConsoleCommandSender) || sender.isOp() ||  sender.hasPermission("uchat.admin")){
-			return true;
+		if (toignore instanceof CommandSender && isAdmin((CommandSender)toignore)){
+			return false;
 		} else {
 			return !sender.hasPermission("uchat.cant-ignore."+ (toignore instanceof Player?((Player)toignore).getName():((UCChannel)toignore).getName()));
 		}
 	}
 	
 	public static boolean hasPerm(CommandSender p, String perm){
-		return (p instanceof ConsoleCommandSender) || p.isOp() || p.hasPermission("uchat."+perm) || p.hasPermission("uchat.admin");
+		return isAdmin(p) || p.hasPermission("uchat."+perm);
+	}
+	
+	private static boolean isAdmin(CommandSender p){
+		return (p instanceof ConsoleCommandSender) || p.isOp() || p.hasPermission("uchat.admin");
 	}
 }

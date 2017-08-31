@@ -21,10 +21,11 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 
+import br.net.fabiozumbi12.UltimateChat.UCLogger.timingType;
 import br.net.fabiozumbi12.UltimateChat.UCUtil;
 import br.net.fabiozumbi12.UltimateChat.UChat;
-import br.net.fabiozumbi12.UltimateChat.Fanciful.util.ArrayWrapper;
 
+import com.google.common.collect.Iterables;
 import com.google.gson.stream.JsonWriter;
 
 /**
@@ -36,6 +37,8 @@ import com.google.gson.stream.JsonWriter;
  * and a call to {@link #then()} or {@link #then(String)} will append a new editing component to the end of the message,
  * optionally initializing it with text. Further property-setting method calls will affect that editing component.
  * </p>
+ * 
+ * @author mkremins, FabioZumbi12 
  */
 public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<MessagePart>, ConfigurationSerializable {
 
@@ -46,7 +49,6 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 	private List<MessagePart> messageParts;
 	private String jsonString;
 	private boolean dirty;
-	private String lastColor = "";
 	
 	@Override
 	public FancyMessage clone() throws CloneNotSupportedException {
@@ -59,9 +61,10 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 		instance.jsonString = null;
 		return instance;
 	}
-
-	private String fixText(String text){
-		String newstr = "";
+	
+	private ChatColor lastColor = ChatColor.WHITE;
+	
+	private void checkLink(String text){
 		for (String st:text.split(" ")){
 			String regexUrl = "((http:\\/\\/|https:\\/\\/)?(www\\.)?(([a-zA-Z0-9-]){2,}\\.){1,4}([a-zA-Z]){2,6}(\\/([a-zA-Z-_\\/\\.0-9#:?=&;,]*)?)?)";
 			Matcher match = Pattern.compile(regexUrl).matcher(st);
@@ -72,15 +75,10 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 					matchg = "http://"+matchg;
 				}
 				
-				this.text(match.group(1)).link(matchg).tooltip(UChat.get().getUCConfig().getURLTemplate().replace("{url}", match.group(1)));
-				newstr = newstr+lastColor+st+" ";
-				lastColor = ChatColor.getLastColors(newstr);
-				continue;
-			}				
-			newstr = newstr+lastColor+st+" ";
-			lastColor = ChatColor.getLastColors(newstr);
+				this.link(matchg).tooltip(UChat.get().getUCConfig().getURLTemplate().replace("{url}", match.group(1)));				
+				break;
+			}
 		}
-		return newstr;
 	}
 	
 	/**
@@ -88,25 +86,50 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 	 *
 	 * @param firstPartText The existing text in the message.
 	 */
-	public FancyMessage(final String firstPartText) {
+	/*private FancyMessage(final String firstPartText) {
 		this(rawText(firstPartText));
-	}
-	
-	public FancyMessage text(String text, String tag) {		
-		String newstr = "";
+	}*/
+			
+	public FancyMessage text(String text, String tag) {	
 		if (tag.equals("message")){
-			newstr = fixText(text);			
+			for (String part:text.split("(?="+ChatColor.COLOR_CHAR+"[0-9a-fk-or])")){				
+				//set text
+				if (!ChatColor.stripColor(part).isEmpty()){	
+					latest().text = rawText(ChatColor.stripColor(part));
+				}
+				
+				//check if starts with color
+				Matcher match = Pattern.compile("^"+ChatColor.COLOR_CHAR+"([0-9a-fk-or]).*$").matcher(part);
+				if (match.find()){
+					lastColor = ChatColor.getByChar(match.group(1).charAt(0));				
+					if (part.length() == 2) continue;
+				} 
+							
+				//finally setcolors
+				if (lastColor.isColor()){
+					latest().color = lastColor;
+				}	
+				if (lastColor.isFormat()){
+					ArrayList<ChatColor> colors = new ArrayList<ChatColor>();
+					colors.add(lastColor);
+					latest().styles = colors;
+				}	
+				dirty = true;
+			}	
+			
+			//add links if found
+			checkLink(text);
 		} else {
-			newstr = lastColor+text;
-			lastColor = ChatColor.getLastColors(newstr);
-		}
-		MessagePart latest = latest();
-		latest.text = rawText(newstr);
-		dirty = true;
+			String newstr = lastColor+text;
+			lastColor = ChatColor.getByChar(ChatColor.getLastColors(newstr).replace(String.valueOf(ChatColor.COLOR_CHAR), "").charAt(0));
+			latest().text = rawText(newstr);
+			dirty = true;
+		}	
+		
 		return this;
 	}
 
-	public FancyMessage(final TextualComponent firstPartText) {
+	private FancyMessage(final TextualComponent firstPartText) {
 		messageParts = new ArrayList<MessagePart>();
 		messageParts.add(new MessagePart(firstPartText));
 		jsonString = null;
@@ -126,12 +149,12 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 	 * @param text The new text of the current editing component.
 	 * @return This builder instance.
 	 */
-	public FancyMessage text(String text) {	
+	/*private FancyMessage text(String text) {	
 		MessagePart latest = latest();
-		latest.text = rawText(fixText(text));
+		latest.text = rawText(text);
 		dirty = true;
 		return this;
-	}
+	}*/
 
 	/**
 	 * Sets the text of the current editing component to a value.
@@ -139,12 +162,12 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 	 * @param text The new text of the current editing component.
 	 * @return This builder instance.
 	 */
-	public FancyMessage text(TextualComponent text) {
+	/*public FancyMessage text(TextualComponent text) {
 		MessagePart latest = latest();
 		latest.text = text;
 		dirty = true;
 		return this;
-	}
+	}*/
 
 	/**
 	 * Sets the color of the current editing component to a value.
@@ -179,18 +202,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 		dirty = true;
 		return this;
 	}
-
-	/**
-	 * Set the behavior of the current editing component to instruct the client to open a file on the client side filesystem when the currently edited part of the {@code FancyMessage} is clicked.
-	 *
-	 * @param path The path of the file on the client filesystem.
-	 * @return This builder instance.
-	 */
-	public FancyMessage file(final String path) {
-		onClick("open_file", path);
-		return this;
-	}
-
+	
 	/**
 	 * Set the behavior of the current editing component to instruct the client to open a webpage in the client's web browser when the currently edited part of the {@code FancyMessage} is clicked.
 	 *
@@ -271,7 +283,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 	 * @return This builder instance.
 	 */
 	public FancyMessage tooltip(final Iterable<String> lines) {
-		tooltip(ArrayWrapper.toArray(lines, String.class));
+		tooltip(Iterables.toArray(lines, String.class));
 		return this;
 	}
 
@@ -360,64 +372,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 	 * @return This builder instance.
 	 */
 	public FancyMessage formattedTooltip(final Iterable<FancyMessage> lines) {
-		return formattedTooltip(ArrayWrapper.toArray(lines, FancyMessage.class));
-	}
-
-	/**
-	 * If the text is a translatable key, and it has replaceable values, this function can be used to set the replacements that will be used in the message.
-	 *
-	 * @param replacements The replacements, in order, that will be used in the language-specific message.
-	 * @return This builder instance.
-	 */
-	public FancyMessage translationReplacements(final String... replacements) {
-		for (String str : replacements) {
-			latest().translationReplacements.add(new JsonString(str));
-		}
-		dirty = true;
-
-		return this;
-	}
-	/*
-
-	/**
-	 * If the text is a translatable key, and it has replaceable values, this function can be used to set the replacements that will be used in the message.
-	 * @param replacements The replacements, in order, that will be used in the language-specific message.
-	 * @return This builder instance.
-	 */   /* ------------
-	public FancyMessage translationReplacements(final Iterable<? extends CharSequence> replacements){
-		for(CharSequence str : replacements){
-			latest().translationReplacements.add(new JsonString(str));
-		}
-
-		return this;
-	}
-
-	*/
-
-	/**
-	 * If the text is a translatable key, and it has replaceable values, this function can be used to set the replacements that will be used in the message.
-	 *
-	 * @param replacements The replacements, in order, that will be used in the language-specific message.
-	 * @return This builder instance.
-	 */
-	public FancyMessage translationReplacements(final FancyMessage... replacements) {
-		for (FancyMessage str : replacements) {
-			latest().translationReplacements.add(str);
-		}
-
-		dirty = true;
-
-		return this;
-	}
-
-	/**
-	 * If the text is a translatable key, and it has replaceable values, this function can be used to set the replacements that will be used in the message.
-	 *
-	 * @param replacements The replacements, in order, that will be used in the language-specific message.
-	 * @return This builder instance.
-	 */
-	public FancyMessage translationReplacements(final Iterable<FancyMessage> replacements) {
-		return translationReplacements(ArrayWrapper.toArray(replacements, FancyMessage.class));
+		return formattedTooltip(Iterables.toArray(lines, FancyMessage.class));
 	}
 
 	/**
@@ -514,7 +469,15 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 		}
 		Player player = (Player) sender;
 		if (player.isOnline()){
-			UCUtil.performCommand(Bukkit.getConsoleSender(), "tellraw " + player.getName() + " " + jsonString);
+			if (UChat.get().getUCConfig().getBool("general.json-events")){
+				UChat.get().getUCLogger().timings(timingType.END, "FancyMessage#send()|json-events:true|before tellraw");
+				UCUtil.performCommand(Bukkit.getConsoleSender(), "tellraw " + player.getName() + " " + jsonString);
+				UChat.get().getUCLogger().timings(timingType.END, "FancyMessage#send()|json-events:true|after tellraw");
+			} else {				
+				UChat.get().getUCLogger().timings(timingType.END, "FancyMessage#send()|json-events:false|before send");
+				player.sendMessage(toOldMessageFormat());
+				UChat.get().getUCLogger().timings(timingType.END, "FancyMessage#send()|json-events:false|after send");
+			}			
 		}		
 	}
 

@@ -2,7 +2,12 @@ package br.net.fabiozumbi12.UltimateChat.API;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+
+import net.milkbowl.vault.chat.Chat;
+import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.permission.Permission;
 
 import org.bukkit.Bukkit;
 
@@ -68,5 +73,33 @@ public class uChatAPI {
 	 */
 	public static UCChannel getPlayerChannel(String player){
 		return UChat.get().getUCConfig().getPlayerChannel(Bukkit.getPlayer(player));
+	}
+	
+	/**Get all available and loaded channels. 
+	 * @return {@code Collection<UCChannel>} - Available channels or an empty collection.
+	 */
+	public static Collection<UCChannel> getChannels(){
+		return UChat.get().getUCConfig().getChannels();
+	}
+	
+	/**Get Vault chat hook instance from uchat.
+	 * @return {@link Chat} or null if Vault not found.
+	 */
+	public static Chat getVaultChat(){
+		return UChat.get().getVaultChat();
+	}
+	
+	/**Get Vault economy hook instance from uchat.
+	 * @return {@link Economy} or null if Vault not found.
+	 */
+	public static Economy getVaultEco(){
+		return UChat.get().getVaultEco();
+	}
+	
+	/**Get Vault permissions hook instance from uchat.
+	 * @return {@link Permission} or null if Vault not found.
+	 */
+	public static Permission getVaultPerms(){
+		return UChat.get().getVaultPerms();
 	}
 }

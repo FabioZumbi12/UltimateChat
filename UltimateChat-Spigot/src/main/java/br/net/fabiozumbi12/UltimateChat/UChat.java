@@ -42,10 +42,7 @@ import com.lenis0012.bukkit.marriage2.MarriageAPI;
 public class UChat extends JavaPlugin {
 	
     private static boolean Vault = false;	
-	public static String mainPath;
-	static Economy econ;
-	static Chat chat;
-	static Permission perms;
+	public static String mainPath;	
 	static boolean SClans;
 	static ClanManager sc;
 	static boolean MarryReloded;
@@ -59,14 +56,14 @@ public class UChat extends JavaPlugin {
 	private int index = 0;	
 
 	//public static HashMap<String,String> pChannels = new HashMap<String,String>();
-	public static HashMap<String,String> tempChannels = new HashMap<String,String>();
-	public static HashMap<String,String> tellPlayers = new HashMap<String,String>();
-	public static HashMap<String,String> tempTellPlayers = new HashMap<String,String>();
-	public static HashMap<String,String> respondTell = new HashMap<String,String>();
-	public static List<String> command = new ArrayList<String>();
-	public static HashMap<String,List<String>> ignoringPlayer = new HashMap<String,List<String>>();
-	public static List<String> mutes = new ArrayList<String>();
-	public static List<String> isSpy = new ArrayList<String>();
+	public HashMap<String,String> tempChannels = new HashMap<String,String>();
+	public HashMap<String,String> tellPlayers = new HashMap<String,String>();
+	public HashMap<String,String> tempTellPlayers = new HashMap<String,String>();
+	public HashMap<String,String> respondTell = new HashMap<String,String>();
+	public List<String> command = new ArrayList<String>();
+	public HashMap<String,List<String>> ignoringPlayer = new HashMap<String,List<String>>();
+	public List<String> mutes = new ArrayList<String>();
+	public List<String> isSpy = new ArrayList<String>();
 	
 	public FileConfiguration getAMConfig(){
 		return this.amConfig;
@@ -98,6 +95,30 @@ public class UChat extends JavaPlugin {
 		return this.lang;
 	}
 	
+	private Permission perms;
+	public Permission getVaultPerms(){
+		if (Vault && perms != null){
+			return this.perms;
+		}
+		return null;
+	}
+	
+	private Economy econ;
+	public Economy getVaultEco(){
+		if (Vault && econ != null){
+			return this.econ;
+		}
+		return null;
+	}
+	
+	private Chat chat;
+	public Chat getVaultChat(){
+		if (Vault && chat != null){
+			return this.chat;
+		}
+		return null;
+	}
+	
 	public PluginDescriptionFile getPDF(){
 		return this.getDescription();
 	}
@@ -113,7 +134,7 @@ public class UChat extends JavaPlugin {
 	public void onEnable() {
         try {
             uchat = this;
-            logger = new UCLogger();
+            logger = new UCLogger(this);
             serv = getServer();
             mainPath = "plugins" + File.separator + getDescription().getName() + File.separator;
             setConfig();

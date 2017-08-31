@@ -4,7 +4,7 @@
   <artifactId>UltimateChat</artifactId>
   <packaging>pom</packaging>
   <name>UltimateChat</name>
-  <version>1.7.4</version>
+  <version>1.8.0</version>
   <description>Ultimate Chat is an advanced chat hooking into most used plugins to show more info on player chat.</description>
   
   <repositories>

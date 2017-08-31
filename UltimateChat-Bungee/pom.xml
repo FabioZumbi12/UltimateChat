@@ -3,7 +3,7 @@
   <parent>
     <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
     <artifactId>UltimateChat</artifactId>
-    <version>1.7.4</version>
+    <version>1.8.0</version>
   </parent>
   <artifactId>UltimateChat-Bungee</artifactId>
   

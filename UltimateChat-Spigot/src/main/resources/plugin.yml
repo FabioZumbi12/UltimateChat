@@ -47,6 +47,7 @@ permissions:
     children:
       uchat.cmd.ignore.player: true
       uchat.cmd.ignore.channel: true
+      uchat.cant-ignore.local: true
       uchat.cmd.tell: true
       uchat.cmd.clear: true
       uchat.chat.click-urls: true

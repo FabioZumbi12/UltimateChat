@@ -9,7 +9,27 @@ import br.net.fabiozumbi12.UltimateChat.Fanciful.FancyMessage;
 import br.net.fabiozumbi12.UltimateChat.config.TaskChain;
 
 public class UCUtil {
-
+		
+	/*public static FancyMessage formatFancyColors(FancyMessage fancy, String tag, String format, String tooltip){		
+		if (tag.equalsIgnoreCase("message")){
+			for (String st:format.split(" ")){
+				String regexUrl = "((http:\\/\\/|https:\\/\\/)?(www\\.)?(([a-zA-Z0-9-]){2,}\\.){1,4}([a-zA-Z]){2,6}(\\/([a-zA-Z-_\\/\\.0-9#:?=&;,]*)?)?)";
+				Matcher match = Pattern.compile(regexUrl).matcher(st);
+				if (match.find()){
+					String matchg = ChatColor.stripColor(match.group(1));	
+					//sender.sendMessage("Match: "+matchg);
+					if (!matchg.startsWith("http")){
+						matchg = "http://"+matchg;
+					}					
+					fancy.text(match.group(1)).link(matchg).tooltip(UChat.get().getUCConfig().getURLTemplate().replace("{url}", match.group(1)));	
+					fancy.then("");
+					continue;
+				}
+			}
+		}				
+		return fancy;
+	}*/
+	
 	public static String colorize(String msg){
 		return ChatColor.translateAlternateColorCodes('&', msg);
 	}
@@ -115,7 +135,7 @@ public class UCUtil {
 			 Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_GRAY+"> Broadcast: "+ChatColor.RESET+message.toString().substring(1));
 		 }		 
 		 			 
-		 if (UChat.get().getUCConfig().getBool("general.hover-events")){
+		 if (UChat.get().getUCConfig().getBool("general.json-events")){
 			 FancyMessage fanci = new FancyMessage();
 			 fanci.text(message.toString().substring(1), "message");
 			 

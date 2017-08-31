@@ -15,6 +15,7 @@ import org.bukkit.plugin.messaging.PluginMessageListener;
 
 import br.net.fabiozumbi12.UltimateChat.UCChannel;
 import br.net.fabiozumbi12.UltimateChat.UCMessages;
+import br.net.fabiozumbi12.UltimateChat.UCPerms;
 import br.net.fabiozumbi12.UltimateChat.UChat;
 import br.net.fabiozumbi12.UltimateChat.API.SendChannelMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.Fanciful.FancyMessage;
@@ -50,102 +51,66 @@ public class UChatBungee implements PluginMessageListener, Listener {
         String toConsole = "";
 		
         for (Player p:Bukkit.getOnlinePlayers()){
-        	if (p.hasPermission("uchat.channel."+chan.getName())){
+        	if (UCPerms.channelReadPerm(p, chan)){
+        		FancyMessage fanci = new FancyMessage();
         		
-        		if (UChat.get().getUCConfig().getBool("general.hover-events")){
-        			FancyMessage fanci = new FancyMessage();
-            		
-            		String[] defaultBuilder = UChat.get().getUCConfig().getDefBuilder();
-        			if (chan.useOwnBuilder()){
-        				defaultBuilder = chan.getBuilder();
-        			}
-        			
-        			for (String tag:defaultBuilder){
-        				if (UChat.get().getUCConfig().getString("tags."+tag+".format") == null){
-        					fanci.text(tag,tag)
-        			   		   .then(" ");
-        					continue;
-        				}        				
-        				
-        				String format = UChat.get().getUCConfig().getString("tags."+tag+".format");
-        				String execute = UChat.get().getUCConfig().getString("tags."+tag+".click-cmd");
-        				List<String> messages = UChat.get().getUCConfig().getStringList("tags."+tag+".hover-messages");
-        						
-        				
-        				
-        				String tooltip = "";
-        				for (String tp:messages){
-        					tooltip = tooltip+"\n"+tp;
-        				}
-        				if (tooltip.length() > 2){
-        					tooltip = tooltip.substring(1);
-        				}			
-        					
-        				//fix tag not found on bungee
-        				format = format.replace("{world}", ws.split(",")[0]).replace("{server}", ws.split(",")[1]);
-        				execute = execute.replace("{world}", ws.split(",")[0]).replace("{server}", ws.split(",")[1]);
-        				tooltip = tooltip.replace("{world}", ws.split(",")[0]).replace("{server}", ws.split(",")[1]);
-        				
-        				if (execute != null && execute.length() > 0){
-        					fanci.command(UCMessages.formatTags(tag, "/"+execute, sender, p.getName(), msg, chan));
-        				}
-        				
-        				if (UChat.get().getUCConfig().getBool("mention.enable") && tag.equals("message") && !StringUtils.containsIgnoreCase(msg, sender)){
-        					tooltip = UCMessages.formatTags(tag, tooltip, sender, p.getName(), msg, chan);	
-        					format = UCMessages.formatTags(tag, format, sender, p.getName(), msg, chan);
-        					if (UChat.get().getUCConfig().getString("mention.hover-message").length() > 0 && StringUtils.containsIgnoreCase(msg, p.getName())){
-        						tooltip = UCMessages.formatTags(tag, UChat.get().getUCConfig().getString("mention.hover-message"), sender, p.getName(), msg, chan);
-        						fanci.text(format,tag)
-        				   		   .tooltip(tooltip)
-        				   		   .then(" ");
-        					} else if (tooltip.length() > 0){				
-        						fanci.text(format,tag)
-        				   		   .tooltip(tooltip)
-        				   		   .then(" ");
-        					} else {
-        						fanci.text(format,tag)
-        				   		   .then(" ");
-        					}				
-        				} else {
-        					format = UCMessages.formatTags(tag, format, sender, p.getName(), msg, chan);
-        					tooltip = UCMessages.formatTags(tag, tooltip, sender, p.getName(), msg, chan);
-        					if (tooltip.length() > 0){				
-        						fanci.text(format,tag)
-        				   		   .tooltip(tooltip)
-        				   		   .then(" ");
-        					} else {
-        						fanci.text(format,tag)
-        				   		   .then(" ");
-        					}
-        				}
-        			}
-        			fanci.send(p);
-        			toConsole = fanci.toOldMessageFormat();
-        		} else {
-        			StringBuilder msgFinal = new StringBuilder();
-        			
-        			String[] defaultBuilder = UChat.get().getUCConfig().getDefBuilder();
-    				if (chan.useOwnBuilder()){
-    					defaultBuilder = chan.getBuilder();
-    				}
+        		String[] defaultBuilder = UChat.get().getUCConfig().getDefBuilder();
+    			if (chan.useOwnBuilder()){
+    				defaultBuilder = chan.getBuilder();
+    			}
+    			
+    			for (String tag:defaultBuilder){
+    				if (UChat.get().getUCConfig().getString("tags."+tag+".format") == null){
+    					fanci.text(tag,tag).then("");
+    					continue;
+    				}        				
+    				
+    				String format = UChat.get().getUCConfig().getString("tags."+tag+".format");
+    				String execute = UChat.get().getUCConfig().getString("tags."+tag+".click-cmd");
+    				List<String> messages = UChat.get().getUCConfig().getStringList("tags."+tag+".hover-messages");
     						
-    				for (String tag:defaultBuilder){
-    					if (UChat.get().getUCConfig().getString("tags."+tag+".format") == null){
-    						msgFinal.append(tag);
-    						continue;
-    					}
-    					String format = UChat.get().getUCConfig().getString("tags."+tag+".format");
-    					
-    					//fix tag not found on bungee
-        				format = format.replace("{world}", ws.split(",")[0]).replace("{server}", ws.split(",")[1]);
-    					
-    					format = UCMessages.formatTags(tag, format, sender, p.getName(), msg, chan);
-    					
-    					msgFinal.append(format);
+    				
+    				
+    				String tooltip = "";
+    				for (String tp:messages){
+    					tooltip = tooltip+"\n"+tp;
     				}
-    				p.sendMessage(msgFinal.toString());
-    				toConsole = msgFinal.toString();
-        		}        		
+    				if (tooltip.length() > 2){
+    					tooltip = tooltip.substring(1);
+    				}			
+    					
+    				//fix tag not found on bungee
+    				format = format.replace("{world}", ws.split(",")[0]).replace("{server}", ws.split(",")[1]);
+    				execute = execute.replace("{world}", ws.split(",")[0]).replace("{server}", ws.split(",")[1]);
+    				tooltip = tooltip.replace("{world}", ws.split(",")[0]).replace("{server}", ws.split(",")[1]);
+    				
+    				if (execute != null && execute.length() > 0){
+    					fanci.command(UCMessages.formatTags(tag, "/"+execute, sender, p.getName(), msg, chan));
+    				}
+    				
+    				if (UChat.get().getUCConfig().getBool("mention.enable") && tag.equals("message") && !StringUtils.containsIgnoreCase(msg, sender)){
+    					tooltip = UCMessages.formatTags(tag, tooltip, sender, p.getName(), msg, chan);	
+    					format = UCMessages.formatTags(tag, format, sender, p.getName(), msg, chan);
+    					if (UChat.get().getUCConfig().getString("mention.hover-message").length() > 0 && StringUtils.containsIgnoreCase(msg, p.getName())){
+    						tooltip = UCMessages.formatTags(tag, UChat.get().getUCConfig().getString("mention.hover-message"), sender, p.getName(), msg, chan);
+    						fanci.text(format,tag).formattedTooltip(new FancyMessage().text(tooltip, "")).then("");
+    					} else if (tooltip.length() > 0){
+    						fanci.text(format,tag).formattedTooltip(new FancyMessage().text(tooltip, "")).then("");
+    					} else {
+    						fanci.text(format,tag).then("");
+    					}				
+    				} else {
+    					format = UCMessages.formatTags(tag, format, sender, p.getName(), msg, chan);
+    					tooltip = UCMessages.formatTags(tag, tooltip, sender, p.getName(), msg, chan);
+    					if (tooltip.length() > 0){	
+    						fanci.text(format,tag).formattedTooltip(new FancyMessage().text(tooltip, "")).then("");
+    					} else {
+    						fanci.text(format,tag).then("");
+    					}
+    				}
+    			}
+    			fanci.send(p);
+    			toConsole = fanci.toOldMessageFormat();        		
     		}
         }	
 		UChat.get().getServ().getConsoleSender().sendMessage(toConsole);

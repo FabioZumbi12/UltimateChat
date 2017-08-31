@@ -228,9 +228,15 @@ public class UCChannel {
 	public void sendMessage(Player sender, String message){
 		Set<Player> pls = new HashSet<Player>();
 		pls.addAll(Bukkit.getOnlinePlayers());
-		UChat.tempChannels.put(sender.getName(), this.alias);
+		UChat.get().tempChannels.put(sender.getName(), this.alias);
 		AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(false, sender, message, pls);
-		Bukkit.getPluginManager().callEvent(event); 
+		Bukkit.getScheduler().runTaskAsynchronously(UChat.get(), new Runnable(){
+
+			@Override
+			public void run() {
+				UChat.get().getServ().getPluginManager().callEvent(event); 
+			}			
+		});
 	}
 	
 	/** Send a message from a channel as player.
@@ -250,9 +256,15 @@ public class UCChannel {
 		} else {
 			Set<Player> pls = new HashSet<Player>();
 			pls.addAll(Bukkit.getOnlinePlayers());
-			UChat.tempChannels.put(sender.getName(), this.alias);
-			AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(false, sender, message.toOldMessageFormat(), pls);
-			Bukkit.getPluginManager().callEvent(event); 
+			UChat.get().tempChannels.put(sender.getName(), this.alias);
+			AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(true, sender, message.toOldMessageFormat(), pls);
+			Bukkit.getScheduler().runTaskAsynchronously(UChat.get(), new Runnable(){
+
+				@Override
+				public void run() {
+					UChat.get().getServ().getPluginManager().callEvent(event); 
+				}			
+			});
 		}		
 	}
 	
@@ -284,7 +296,7 @@ public class UCChannel {
 		if (UChat.get().getUCConfig().getBool("api.format-console-messages")){
 			UCMessages.sendFancyMessage(new String[0], message, this, sender, null);
 		} else {
-			FancyMessage fmsg = new FancyMessage().text(message);
+			FancyMessage fmsg = new FancyMessage().text(message, "");
 			for (Player p:Bukkit.getOnlinePlayers()){
 				UCChannel chp = UChat.get().getUCConfig().getPlayerChannel(p);
 				if (UCPerms.channelReadPerm(p, this) && !this.isIgnoring(p.getName()) && (this.neeFocus() && chp.equals(this) || !this.neeFocus())){					

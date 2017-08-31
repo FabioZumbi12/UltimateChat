@@ -22,11 +22,11 @@ public class UCPlaceHolders extends EZPlaceholderHook {
 		if (arg.equals("player_channel_color")){
 			text = UChat.get().getUCConfig().getPlayerChannel(p).getColor();
 		}
-		if (arg.equals("player_tell_with") && UChat.tellPlayers.containsKey(p.getName())){
-			text = UChat.tellPlayers.get(p.getName());
+		if (arg.equals("player_tell_with") && UChat.get().tellPlayers.containsKey(p.getName())){
+			text = UChat.get().tellPlayers.get(p.getName());
 		}
-		if (arg.equals("player_ignoring") && UChat.ignoringPlayer.containsKey(p.getName())){
-			text = UChat.ignoringPlayer.get(p.getName()).toArray().toString();
+		if (arg.equals("player_ignoring") && UChat.get().ignoringPlayer.containsKey(p.getName())){
+			text = UChat.get().ignoringPlayer.get(p.getName()).toArray().toString();
 		}
 		if (arg.equals("default_channel")){
 			text = UChat.get().getUCConfig().getDefChannel().getName();
