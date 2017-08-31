@@ -184,27 +184,6 @@
             </executions>
         </plugin>     
         
-        <!-- github releases plugin -->
-            <plugin>
-                <groupId>cy.github</groupId>
-                <artifactId>github-release-plugin</artifactId>
-                <version>0.5.1</version>
-
-                <configuration>
-                    <tagName>${project.artifactId}</tagName>
-                    <preRelease>true</preRelease>
-                </configuration>
-
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>gh-upload</goal>
-                        </goals>
-                        <phase>deploy</phase>
-                    </execution>
-                </executions>
-            </plugin>
-        
     </plugins> 
     
    </build>   
