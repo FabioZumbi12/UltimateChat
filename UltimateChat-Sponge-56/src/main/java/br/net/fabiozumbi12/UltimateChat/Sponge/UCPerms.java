@@ -8,8 +8,9 @@ import org.spongepowered.api.service.permission.Subject;
 
 public interface UCPerms {
 	boolean cmdPerm(CommandSource p, String cmd);
-	boolean channelPerm(CommandSource p, UCChannel ch);
-	boolean channelPerm(CommandSource p, String ch);
+	boolean channelReadPerm(CommandSource p, UCChannel ch);
+	boolean channelWritePerm(CommandSource p, UCChannel ch);
 	boolean hasPerm(CommandSource p, String perm);
+	boolean canIgnore(CommandSource sender, Object toignore);
 	Subject getGroupAndTag(User player) throws InterruptedException, ExecutionException;
 }

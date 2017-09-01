@@ -60,6 +60,7 @@ public class UCChannel {
 		this.availableWorlds = availableWorlds;
 		this.canLock = lock;
 		this.ddchannel = ddchannel;
+		this.usedd = usedd;
 	}
 	
 	public UCChannel(String name, String alias, String color) {
@@ -226,17 +227,7 @@ public class UCChannel {
 	 */
 	@Deprecated
 	public void sendMessage(Player sender, String message){
-		Set<Player> pls = new HashSet<Player>();
-		pls.addAll(Bukkit.getOnlinePlayers());
-		UChat.get().tempChannels.put(sender.getName(), this.alias);
-		AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(false, sender, message, pls);
-		Bukkit.getScheduler().runTaskAsynchronously(UChat.get(), new Runnable(){
-
-			@Override
-			public void run() {
-				UChat.get().getServ().getPluginManager().callEvent(event); 
-			}			
-		});
+		sendMessage(sender, new FancyMessage().text(message, ""), false);
 	}
 	
 	/** Send a message from a channel as player.

@@ -1,5 +1,6 @@
 package br.net.fabiozumbi12.UltimateChat.Sponge;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,8 +25,8 @@ public class ChannelCommandElement extends CommandElement {
 
 	@Override
 	public List<String> complete(CommandSource src, CommandArgs args,
-			CommandContext context) {		
-		return UChat.get().getConfig().getChAliases().stream().filter(key->UChat.get().getPerms().channelPerm(src, key)).sorted().collect(Collectors.toList());
+			CommandContext context) {
+		return UChat.get().getConfig().getChannels().stream().filter(key->UChat.get().getPerms().channelWritePerm(src, key)).sorted(Comparator.comparing(UCChannel::getName)).map(UCChannel::getName).collect(Collectors.toList());
 	}
 	
 	@Override

@@ -9,7 +9,7 @@ import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 
-import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UCChannel;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UChat;
@@ -67,12 +67,12 @@ public class uChatAPI {
 		return UChat.get().getUCConfig().getChannel(chName);
 	}
 		
-	/**Gets the actual player channel 
-	 * @param player - Player name.
+	/**Gets the actual player channel.
+	 * @param player - Player.
 	 * @return {@link UCChannel} - The player channel.
 	 */
-	public static UCChannel getPlayerChannel(String player){
-		return UChat.get().getUCConfig().getPlayerChannel(Bukkit.getPlayer(player));
+	public static UCChannel getPlayerChannel(Player player){
+		return UChat.get().getUCConfig().getPlayerChannel(player);
 	}
 	
 	/**Get all available and loaded channels. 

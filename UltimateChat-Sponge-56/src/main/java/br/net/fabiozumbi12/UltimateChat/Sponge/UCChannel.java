@@ -2,7 +2,6 @@ package br.net.fabiozumbi12.UltimateChat.Sponge;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Optional;
 
 import org.spongepowered.api.Sponge;
@@ -42,8 +41,11 @@ public class UCChannel {
 	private String aliasCmd = "";
 	private List<String> availableWorlds = new ArrayList<String>();
 	private boolean canLock = true;
+	private String ddchannel = new String();
+	private boolean usedd = false;
+	private List<Player> members = new ArrayList<Player>();
 
-	public UCChannel(String name, String alias, boolean worlds, int dist, String color, String builder, boolean focus, boolean receiversMsg, double cost, boolean isbungee, boolean ownBuilder, boolean isAlias, String aliasSender, String aliasCmd, List<String> availableWorlds, boolean lock) {
+	public UCChannel(String name, String alias, boolean worlds, int dist, String color, String builder, boolean focus, boolean receiversMsg, double cost, boolean isbungee, boolean ownBuilder, boolean isAlias, String aliasSender, String aliasCmd, List<String> availableWorlds, String ddchannel, boolean usedd, boolean lock) {
 		this.name = name;
 		this.alias = alias;
 		this.worlds = worlds;
@@ -60,11 +62,44 @@ public class UCChannel {
 		this.aliasSender = aliasSender;
 		this.availableWorlds = availableWorlds;	
 		this.canLock = lock;
+		this.ddchannel = ddchannel;
+		this.usedd = usedd;
 	}
 			
 	UCChannel(String name) {
 		this.name = name;
 		this.alias = name.substring(0, 1).toLowerCase();
+	}
+	
+	public List<Player> getMembers(){
+		return this.members;
+	}
+	
+	public void clearMembers(){
+		this.members.clear();
+	}
+	
+	public boolean addMember(Player p){
+		for (UCChannel ch:UChat.get().getConfig().getChannels()){
+			ch.removeMember(p);
+		}
+		return this.members.add(p);
+	}
+	
+	public boolean removeMember(Player p){
+		return this.members.remove(p);
+	}
+	
+	public boolean isMember(Player p){
+		return this.members.contains(p);
+	}
+	
+	public String getDiscordChannelID(){
+		return this.ddchannel;
+	}
+	
+	public boolean useDiscordChanel(){
+		return this.usedd;
 	}
 	
 	public boolean canLock(){
@@ -200,10 +235,10 @@ public class UCChannel {
 	 */
 	public void sendMessage(Player src, Text message, boolean direct){	
 		if (direct){
-			for (Entry<String, String> chEnt:UChat.get().pChannels.entrySet()){
-				Player p = Sponge.getServer().getPlayer(chEnt.getKey()).get();
-				if (UChat.get().getPerms().channelPerm(p, this) && !this.isIgnoring(chEnt.getKey()) && (this.neeFocus() && chEnt.getValue().equalsIgnoreCase(this.alias) || !this.neeFocus())){
-					p.sendMessage(message);
+			for (Player p:Sponge.getServer().getOnlinePlayers()){
+				UCChannel chp = UChat.get().getConfig().getPlayerChannel(p);
+				if (UChat.get().getPerms().channelReadPerm(p, this) && !this.isIgnoring(p.getName()) && (this.neeFocus() && chp.equals(this) || !this.neeFocus())){
+					p.sendMessage(message);					
 				}
 			}
 			src.sendMessage(message);
@@ -233,10 +268,10 @@ public class UCChannel {
 	 */
 	public void sendMessage(ConsoleSource sender, Text message, boolean direct){
 		if (direct){			
-			for (Entry<String, String> chEnt:UChat.get().pChannels.entrySet()){
-				Player p = Sponge.getServer().getPlayer(chEnt.getKey()).get();
-				if (UChat.get().getPerms().channelPerm(p, this) && !this.isIgnoring(chEnt.getKey()) && (this.neeFocus() && chEnt.getValue().equalsIgnoreCase(this.alias) || !this.neeFocus())){
-					p.sendMessage(message);
+			for (Player p:Sponge.getServer().getOnlinePlayers()){
+				UCChannel chp = UChat.get().getConfig().getPlayerChannel(p);
+				if (UChat.get().getPerms().channelReadPerm(p, this) && !this.isIgnoring(p.getName()) && (this.neeFocus() && chp.equals(this) || !this.neeFocus())){
+					p.sendMessage(message);					
 				}
 			}
 			sender.sendMessage(message);

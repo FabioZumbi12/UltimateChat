@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.spongepowered.api.entity.living.player.Player;
+
 import br.net.fabiozumbi12.UltimateChat.Sponge.UCChannel;
 import br.net.fabiozumbi12.UltimateChat.Sponge.UChat;
 
@@ -48,7 +50,7 @@ public class uChatAPI {
 		if (tagBuilder == null || tagBuilder.equals("")){
 			tagBuilder = UChat.get().getConfig().getString("general","default-tag-builder");			
 		}
-		UCChannel ch = new UCChannel(chName, chAlias, crossWorlds, distance, color, tagBuilder, needFocus, receiverMsg, cost, bungee, false, false, "player", "", new ArrayList<String>(), true);		
+		UCChannel ch = new UCChannel(chName, chAlias, crossWorlds, distance, color, tagBuilder, needFocus, receiverMsg, cost, bungee, false, false, "player", "", new ArrayList<String>(), "", false, true);		
 		UChat.get().getConfig().addChannel(ch);		
 		return true;
 	}	
@@ -61,12 +63,12 @@ public class uChatAPI {
 		return UChat.get().getConfig().getChannel(chName);
 	}
 		
-	/**Gets the actual player channel 
-	 * @param player - Player name.
+	/**Gets the actual player channel.
+	 * @param player - Player.
 	 * @return {@link UCChannel} - The player channel.
 	 */
-	public static UCChannel getPlayerChannel(String player){
-		return UChat.get().getConfig().getChannel(UChat.get().pChannels.get(player));
+	public static UCChannel getPlayerChannel(Player player){
+		return UChat.get().getConfig().getPlayerChannel(player);
 	}
 	
 	/**Gets all available loaded channels.

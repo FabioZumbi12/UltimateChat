@@ -15,7 +15,7 @@ public class UCPerms {
 		return defCh.equals(ch) || hasPerm(p, "channel."+ch.getName().toLowerCase()+".read");
 	}
 	
-	public static boolean channelSendPerm(CommandSender p, UCChannel ch){
+	public static boolean channelWritePerm(CommandSender p, UCChannel ch){
 		UCChannel defCh = UChat.get().getUCConfig().getDefChannel();
 		return defCh.equals(ch) || hasPerm(p, "channel."+ch.getName().toLowerCase()+".write");
 	}

@@ -90,7 +90,7 @@ class UCMessages {
 				return null;
 			}
 			
-			if (!UChat.get().getPerms().channelPerm(sender, ch)){
+			if (!UChat.get().getPerms().channelWritePerm(sender, ch)){
 				UCLang.sendMessage(sender, UCLang.get("channel.nopermission").replace("{channel}", ch.getName()));
 				return null;
 			}
@@ -115,36 +115,44 @@ class UCMessages {
 			
 			if (ch.getDistance() > 0 && sender instanceof Player){			
 				for (Entity ent:((Player)sender).getNearbyEntities(ch.getDistance())){
-					if (ent instanceof Player && UChat.get().getPerms().channelPerm((Player)ent, ch)){	
-						Player p = (Player) ent;				
-						if (((Player)sender).equals(p)){
+					if (ent instanceof Player && UChat.get().getPerms().channelReadPerm((Player)ent, ch)){	
+						Player receiver = (Player) ent;				
+						if (((Player)sender).equals(receiver)){
 							continue;
 						}
-						if (!ch.availableWorlds().isEmpty() && !ch.availableInWorld(p.getWorld())){
+						if (!ch.availableWorlds().isEmpty() && !ch.availableInWorld(receiver.getWorld())){
 							continue;
 						}
-						if (ch.isIgnoring(p.getName()) || isIgnoringPlayers(sender.getName(), p.getName())){
+						if (ch.isIgnoring(receiver.getName())){
 							continue;
 						}
-						if (!((Player)sender).canSee(p)){
+						if (isIgnoringPlayers(receiver.getName(), sender.getName())){
+							noWorldReceived++;
+							continue;
+						}
+						if (!((Player)sender).canSee(receiver)){
 							vanish++;
 						}
-						if ((ch.neeFocus() && UChat.get().pChannels.get(p.getName()).equals(ch.getAlias())) || !ch.neeFocus()){					
-							msgPlayers.put(p, sendMessage(sender, p, srcText, ch, false));
-							receivers.add(p);
-							msgCh.addMember(p);
+						if ((ch.neeFocus() && ch.isMember(receiver)) || !ch.neeFocus()){					
+							msgPlayers.put(receiver, sendMessage(sender, receiver, srcText, ch, false));
+							receivers.add(receiver);
+							msgCh.addMember(receiver);
 						}
 					}				
 				}
 			} else {
 				for (Player receiver:Sponge.getServer().getOnlinePlayers()){	
-					if (receiver.equals(sender) || !UChat.get().getPerms().channelPerm(receiver, ch) || (!ch.crossWorlds() && (sender instanceof Player && !receiver.getWorld().equals(((Player)sender).getWorld())))){				
+					if (receiver.equals(sender) || !UChat.get().getPerms().channelReadPerm(receiver, ch) || (!ch.crossWorlds() && (sender instanceof Player && !receiver.getWorld().equals(((Player)sender).getWorld())))){				
 						continue;
 					}
 					if (!ch.availableWorlds().isEmpty() && !ch.availableInWorld(receiver.getWorld())){
 						continue;
 					}
-					if (ch.isIgnoring(receiver.getName()) || isIgnoringPlayers(sender.getName(), receiver.getName())){
+					if (ch.isIgnoring(receiver.getName())){
+						continue;
+					}
+					if (isIgnoringPlayers(receiver.getName(), sender.getName())){
+						noWorldReceived++;
 						continue;
 					}
 					if (sender instanceof Player && !((Player)sender).canSee(receiver)){
@@ -152,7 +160,7 @@ class UCMessages {
 					} else {
 						noWorldReceived++;
 					}					
-					if ((ch.neeFocus() && UChat.get().pChannels.get(receiver.getName()).equals(ch.getAlias())) || !ch.neeFocus()){
+					if ((ch.neeFocus() && ch.isMember(receiver)) || !ch.neeFocus()){
 						msgPlayers.put(receiver, sendMessage(sender, receiver, srcText, ch, false));
 						receivers.add(receiver);
 						msgCh.addMember(receiver);

@@ -60,7 +60,7 @@ public class UCListener implements CommandExecutor,Listener {
 				 if (args.length == 0){
 					 UCChannel ch = UChat.get().getUCConfig().getChannel(label);
 					 if (ch != null){							
-							if (!UCPerms.channelReadPerm(p, ch) && !UCPerms.channelSendPerm(p, ch)){
+							if (!UCPerms.channelReadPerm(p, ch) && !UCPerms.channelWritePerm(p, ch)){
 								UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.nopermission").replace("{channel}", ch.getName()));
 								return true;
 							}
@@ -89,7 +89,7 @@ public class UCListener implements CommandExecutor,Listener {
 						String msg = msgBuild.toString().substring(1);
 						
 						if (ch != null && msg != null){
-							if (!UCPerms.channelSendPerm(p, ch)){
+							if (!UCPerms.channelWritePerm(p, ch)){
 								UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.nopermission").replace("{channel}", ch.getName()));
 								return true;
 							}					
@@ -119,7 +119,7 @@ public class UCListener implements CommandExecutor,Listener {
 								UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.dontexist").replace("{channel}", args[0]));
 								return true;
 							}
-							if (!UCPerms.channelReadPerm(p, ch) && !UCPerms.channelSendPerm(p, ch)){
+							if (!UCPerms.channelReadPerm(p, ch) && !UCPerms.channelWritePerm(p, ch)){
 								UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.nopermission").replace("{channel}", ch.getName()));
 								return true;
 							}

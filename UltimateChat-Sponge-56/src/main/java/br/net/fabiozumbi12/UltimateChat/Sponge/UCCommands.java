@@ -233,22 +233,22 @@ public class UCCommands {
 				    		if (!args.<UCChannel>getOne("channel").isPresent()){
 				    			StringBuilder channels = new StringBuilder();
 				    			for (UCChannel ch:UChat.get().getConfig().getChannels()){
-				    				if (!(p instanceof Player) || UChat.get().getPerms().channelPerm((Player)p, ch)){
+				    				if (!(p instanceof Player) || UChat.get().getPerms().channelWritePerm((Player)p, ch)){
 				    					channels.append(", "+ch.getName());
 				    				}
 				    			}
 				    			throw new CommandException(UCUtil.toText(UCLang.get("help.channels.available").replace("{channels}", channels.toString().substring(2))));
 				    		}
 				    		UCChannel ch = args.<UCChannel>getOne("channel").get();							
-							if (!UChat.get().getPerms().channelPerm(p, ch)){
+							if (!UChat.get().getPerms().channelReadPerm(p, ch) && !UChat.get().getPerms().channelWritePerm(p, ch)){
 								throw new CommandException(UCUtil.toText(UCLang.get("channel.nopermission").replace("{channel}", ch.getName())));	
 							}
-							if (UChat.get().pChannels.containsKey(p.getName()) && UChat.get().pChannels.get(p.getName()).equals(ch.getAlias())){
+							if (ch.isMember(p)){
 								UCLang.sendMessage(p, UCLang.get("channel.alreadyon").replace("{channel}", ch.getName()));
 								return CommandResult.success();	
 							}
 							
-							UChat.get().pChannels.put(p.getName(), ch.getAlias());
+							ch.addMember(p);
 							UCLang.sendMessage(p, UCLang.get("channel.entered").replace("{channel}", ch.getName()));
 				    	} 
 				    	return CommandResult.success();	
@@ -333,12 +333,12 @@ public class UCCommands {
 				    				UCLang.sendMessage(src, "help.channels.send");
 									return CommandResult.success();
 								}
-					    		if (UChat.get().pChannels.containsKey(src.getName()) && UChat.get().pChannels.get(src.getName()).equalsIgnoreCase(ch.getAlias())){
+					    		if (ch.isMember((Player) src)){
 					    			UChat.tempChannels.put(src.getName(), ch.getAlias());
 					    			UCLang.sendMessage(src, UCLang.get("channel.alreadyon").replace("{channel}", ch.getName()));
 									return CommandResult.success();
 								}
-					    		UChat.get().pChannels.put(src.getName(), ch.getAlias());
+					    		ch.addMember((Player) src);
 					    		UCLang.sendMessage(src, UCLang.get("channel.entered").replace("{channel}", ch.getName()));	
 				    		}
 				    	} else if (args.<String>getOne("message").isPresent()){
@@ -346,7 +346,7 @@ public class UCCommands {
 				    	} else {
 				    		StringBuilder channels = new StringBuilder();
 				    		for (UCChannel chan:UChat.get().getConfig().getChannels()){
-				    			if (!(src instanceof Player) || UChat.get().getPerms().channelPerm((Player)src, chan)){
+				    			if (!(src instanceof Player) || UChat.get().getPerms().channelWritePerm((Player)src, chan)){
 				    				channels.append(", "+chan.getName());
 				    			}
 				    		}
@@ -430,16 +430,20 @@ public class UCCommands {
 					if (src instanceof Player){
 						Player p = (Player) src;
 						//uchat ignore player
-						Player play = args.<Player>getOne("player").get();
-						if (play.equals(p)){
+						Player pi = args.<Player>getOne("player").get();
+						if (pi.equals(p)){
 							throw new CommandException(UCLang.getText("cmd.ignore.self"), true);
 						}
-		    			if (UCMessages.isIgnoringPlayers(p.getName(), play.getName())){
-							UCMessages.unIgnorePlayer(p.getName(), play.getName());
-							UCLang.sendMessage(src, UCLang.get("player.unignoring").replace("{player}", play.getName()));
+						if (!UChat.get().getPerms().canIgnore(p, pi)){
+							UCLang.sendMessage(p, UCLang.get("chat.cantignore"));
+							return CommandResult.success();
+						 }
+		    			if (UCMessages.isIgnoringPlayers(p.getName(), pi.getName())){
+							UCMessages.unIgnorePlayer(p.getName(), pi.getName());
+							UCLang.sendMessage(p, UCLang.get("player.unignoring").replace("{player}", pi.getName()));
 						} else {
-							UCMessages.ignorePlayer(p.getName(), play.getName());
-							UCLang.sendMessage(src, UCLang.get("player.ignoring").replace("{player}", play.getName()));
+							UCMessages.ignorePlayer(p.getName(), pi.getName());
+							UCLang.sendMessage(p, UCLang.get("player.ignoring").replace("{player}", pi.getName()));
 						}
 					}					
 			    	return CommandResult.success();
@@ -454,6 +458,10 @@ public class UCCommands {
 						Player p = (Player) src;
 						//uchat ignore channel
 						UCChannel ch = args.<UCChannel>getOne("channel").get();
+						if (!UChat.get().getPerms().canIgnore(p, ch)){
+							UCLang.sendMessage(p, UCLang.get("chat.cantignore"));
+							 return CommandResult.success();
+						 }
 		    			if (ch.isIgnoring(p.getName())){
 							ch.unIgnoreThis(p.getName());
 							UCLang.sendMessage(src, UCLang.get("channel.notignoring").replace("{channel}", ch.getName()));
@@ -470,7 +478,7 @@ public class UCCommands {
 				.description(Text.of("Mute a player."))
 				.permission("uchat.cmd.mute")
 				.executor((src,args) -> {{
-					//uchat ignore channel
+					//uchat mute player channel
 					Player play = args.<Player>getOne("player").get();
 					if (args.<UCChannel>getOne("channel").isPresent()){
 						UCChannel ch = args.<UCChannel>getOne("channel").get();
@@ -578,7 +586,7 @@ public class UCCommands {
 		}
 		StringBuilder channels = new StringBuilder();
 		for (UCChannel ch:UChat.get().getConfig().getChannels()){
-			if (!(p instanceof Player) || UChat.get().getPerms().channelPerm((Player)p, ch)){
+			if (!(p instanceof Player) || UChat.get().getPerms().channelWritePerm((Player)p, ch)){
 				channels.append(", "+ch.getName());
 			}
 		}

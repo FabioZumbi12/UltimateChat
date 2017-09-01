@@ -14,13 +14,14 @@ import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
-
-import com.google.common.reflect.TypeToken;
 
 import br.net.fabiozumbi12.UltimateChat.Sponge.UCChannel;
 import br.net.fabiozumbi12.UltimateChat.Sponge.UCUtil;
 import br.net.fabiozumbi12.UltimateChat.Sponge.UChat;
+
+import com.google.common.reflect.TypeToken;
 
 public class UCConfig{
 	
@@ -255,6 +256,8 @@ public class UCConfig{
 								channel.getNode("channelAlias","sendAs").getString("player"),
 								channel.getNode("channelAlias","cmd").getString(""),
 								channel.getNode("available-worlds").getList(TypeToken.of(String.class), new ArrayList<String>()),
+								channel.getNode("discord","channelID").getString(""),
+								channel.getNode("discord","useChannel").getBoolean(false),
 								channel.getNode("canLock").getBoolean(true));
 						addChannel(ch);
 					} catch (ObjectMappingException e1) {
@@ -430,7 +433,7 @@ public class UCConfig{
 				+ "color: &b - The color of channel\n"
 				+ "tag-builder: ch-tags,world,clan-tag,marry-tag,group-prefix,nickname,group-suffix,message - Tags of this channel\n"
 				+ "need-focus: false - Player can use the alias or need to use '/ch g' to use this channel?\n"
-				+ "canLock: true - Change if the player can use /<channel> to lock on channel."
+				+ "canLock: true - Change if the player can use /<channel> to lock on channel.\n"
 				+ "receivers-message: true - Send chat messages like if no player near to receive the message?\n"
 				+ "cost: 0.0 - Cost to player use this channel.\n"
 				+ "use-this-builder: false - Use this tag builder or use the 'config.yml' tag-builder?\n"
@@ -455,9 +458,11 @@ public class UCConfig{
 		chFile.getNode("channelAlias","enable").setValue(ch.isCmdAlias());
 		chFile.getNode("channelAlias","sendAs").setValue(ch.getAliasSender());
 		chFile.getNode("channelAlias","cmd").setValue(ch.getAliasCmd());
-		chFile.getNode("available-worlds").setValue(ch.availableWorlds());		
+		chFile.getNode("available-worlds").setValue(ch.availableWorlds());	
+		chFile.getNode("discord","channelID").setValue(ch.getDiscordChannelID());
+		chFile.getNode("discord","useChannel").setValue(ch.useDiscordChanel());
 		channelManager.save(chFile);
-		channels.put(Arrays.asList(ch.getName(), ch.getAlias().toLowerCase()), ch);
+		channels.put(Arrays.asList(ch.getName().toLowerCase(), ch.getAlias().toLowerCase()), ch);
 	}
 	
 	public void unMuteInAllChannels(String player){
@@ -497,6 +502,15 @@ public class UCConfig{
 			aliases.addAll(alias);
 		}
 		return aliases;
+	}
+	
+	public UCChannel getPlayerChannel(Player p){
+		for (UCChannel ch:this.channels.values()){
+			if (ch.isMember(p)){
+				return ch;
+			}
+		}
+		return null;
 	}
 	
 	public List<String> getChCmd(){

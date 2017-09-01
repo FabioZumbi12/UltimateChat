@@ -81,7 +81,7 @@ public class UChat {
 		return uchat;
 	}
 	
-	public HashMap<String,String> pChannels = new HashMap<String,String>();
+	//public HashMap<String,String> pChannels = new HashMap<String,String>();
 	public static HashMap<String,String> tempChannels = new HashMap<String,String>();
 	public static HashMap<String,String> tellPlayers = new HashMap<String,String>();
 	public static HashMap<String,String> tempTellPlayers = new HashMap<String,String>();
@@ -120,8 +120,8 @@ public class UChat {
     		game.getEventManager().registerListeners(plugin, new UCListener());         
                         
             for (Player p:serv.getOnlinePlayers()){
-            	if (!pChannels.containsKey(p.getName())){
-            		pChannels.put(p.getName(), cfgs.getDefChannel().getAlias());
+            	if (cfgs.getPlayerChannel(p) == null){
+            		getConfig().getDefChannel().addMember(p);
             	}
             }
             
@@ -146,9 +146,9 @@ public class UChat {
 		UCLang.init();
 		this.cmds = new UCCommands(this);
 		for (Player p:serv.getOnlinePlayers()){
-			if (cfgs.getChannel(pChannels.get(p.getName())) == null){
-				pChannels.put(p.getName(), cfgs.getDefChannel().getAlias());
-			}					 
+			if (cfgs.getPlayerChannel(p) == null){
+        		getConfig().getDefChannel().addMember(p);
+        	}					 
 		}		
 	}
 	

@@ -88,9 +88,11 @@
         
         <!-- Test discord bridge -->
         <dependency>
-            <groupId>net.dv8tion</groupId>
-            <artifactId>JDA</artifactId>
-            <version>LATEST</version>
+            <groupId>JDALib</groupId>
+            <artifactId>Loader</artifactId>
+            <version>1.0.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/../libs/JDALibLoader-3.2.0-254.jar</systemPath>
         </dependency>      
         
   </dependencies>

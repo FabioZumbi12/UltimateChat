@@ -54,7 +54,7 @@ public class UCMessages {
 				return cancel;
 			}
 			
-			if (!UCPerms.channelSendPerm(sender, ch)){
+			if (!UCPerms.channelWritePerm(sender, ch)){
 				UChat.get().getLang().sendMessage(sender, UChat.get().getLang().get("channel.nopermission").replace("{channel}", ch.getName()));
 				return cancel;
 			}
@@ -83,22 +83,22 @@ public class UCMessages {
 			if (ch.getDistance() > 0 && sender instanceof Player){			
 				for (Entity ent:((Player)sender).getNearbyEntities(ch.getDistance(), ch.getDistance(), ch.getDistance())){
 					if (ent instanceof Player && UCPerms.channelReadPerm((Player)ent, ch)){	
-						Player p = (Player) ent;				
-						if (!ch.availableWorlds().isEmpty() && !ch.availableInWorld(p.getWorld())){
+						Player receiver = (Player) ent;				
+						if (!ch.availableWorlds().isEmpty() && !ch.availableInWorld(receiver.getWorld())){
 							continue;
 						}
-						if (ch.isIgnoring(p.getName())){
+						if (ch.isIgnoring(receiver.getName())){
 							continue;
 						}
-						if (isIgnoringPlayers(p.getName(), sender.getName())){
+						if (isIgnoringPlayers(receiver.getName(), sender.getName())){
 							noWorldReceived++;
 							continue;
 						}
-						if (!((Player)sender).canSee(p)){
+						if (!((Player)sender).canSee(receiver)){
 							vanish++;
 						}
-						if ((ch.neeFocus() && UChat.get().getUCConfig().getPlayerChannel(p).equals(ch)) || !ch.neeFocus()){					
-							msgPlayers.put(p, sendMessage(sender, p, evmsg, ch, false));
+						if ((ch.neeFocus() && ch.isMember(receiver)) || !ch.neeFocus()){					
+							msgPlayers.put(receiver, sendMessage(sender, receiver, evmsg, ch, false));
 							receivers.add((Player)ent);
 						}
 					}				
@@ -123,7 +123,7 @@ public class UCMessages {
 					} else {
 						noWorldReceived++;
 					}					
-					if ((ch.neeFocus() && UChat.get().getUCConfig().getPlayerChannel(receiver).equals(ch)) || !ch.neeFocus()){
+					if ((ch.neeFocus() && ch.isMember(receiver)) || !ch.neeFocus()){
 						msgPlayers.put(receiver, sendMessage(sender, receiver, evmsg, ch, false));
 						receivers.add(receiver);
 					}				

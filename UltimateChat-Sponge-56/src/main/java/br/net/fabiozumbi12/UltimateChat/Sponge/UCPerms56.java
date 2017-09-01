@@ -6,6 +6,7 @@ import java.util.concurrent.ExecutionException;
 
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.source.ConsoleSource;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.service.permission.PermissionService;
 import org.spongepowered.api.service.permission.Subject;
@@ -22,14 +23,22 @@ class UCPerms56 implements UCPerms{
 		return hasPerm(p, "cmd."+cmd);
 	}
 	
-	public boolean channelPerm(CommandSource p, UCChannel ch){
+	public boolean channelReadPerm(CommandSource p, UCChannel ch){
 		UCChannel defCh = UChat.get().getConfig().getDefChannel();
-		return defCh.equals(ch) || hasPerm(p, "channel."+ch.getName().toLowerCase());
+		return defCh.equals(ch) || hasPerm(p, "channel."+ch.getName().toLowerCase()+".read");
 	}
 	
-	public boolean channelPerm(CommandSource p, String ch){
+	public boolean channelWritePerm(CommandSource p, UCChannel ch){
 		UCChannel defCh = UChat.get().getConfig().getDefChannel();
-		return defCh.getName().equals(ch) || defCh.getAlias().equals(ch) || hasPerm(p, "channel."+ch.toLowerCase());
+		return defCh.equals(ch) || hasPerm(p, "channel."+ch.getName().toLowerCase()+".write");
+	}
+	
+	public boolean canIgnore(CommandSource sender, Object toignore){
+		if (toignore instanceof CommandSource && isAdmin((CommandSource)toignore)){
+			return false;
+		} else {
+			return !sender.hasPermission("uchat.cant-ignore."+ (toignore instanceof Player?((Player)toignore).getName():((UCChannel)toignore).getName()));
+		}
 	}
 	
 	public boolean hasPerm(CommandSource p, String perm){
@@ -44,6 +53,10 @@ class UCPerms56 implements UCPerms{
 			}			
 		}
 		return subs.get(Collections.max(subs.keySet()));
+	}
+	
+	private static boolean isAdmin(CommandSource p){
+		return (p instanceof CommandSource) || p.hasPermission("uchat.admin");
 	}
 	
 	private SubjectCollection getGroups(){
