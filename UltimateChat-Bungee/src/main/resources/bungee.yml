@@ -1,0 +1,4 @@
+name: UCProxy
+main: br.net.fabiozumbi12.UltimateChat.Bukkit.Bungee.UCProxy
+version: ${project.version}
+author: FabioZumbi12

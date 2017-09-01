@@ -1,5 +1,5 @@
 name: UltimateChat
-main: br.net.fabiozumbi12.UltimateChat.UChat
+main: br.net.fabiozumbi12.UltimateChat.Bukkit.UChat
 version: ${project.version}
 author: FabioZumbi12
 description: ${project.description}

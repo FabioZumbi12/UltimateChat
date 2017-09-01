@@ -90,7 +90,7 @@
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>3.2.0_248</version>
+            <version>LATEST</version>
         </dependency>      
         
   </dependencies>
@@ -103,8 +103,7 @@
      <repository>
             <id>placeholderapi</id>
             <url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
-     </repository>
-        
+     </repository>        
      <repository>
 	        <id>maven-restlet</id>
 	        <name>Public online Restlet repository</name>
@@ -117,14 +116,12 @@
      <repository>
             <id>vault-repo</id>
             <url>http://nexus.hc.to/content/repositories/pub_releases</url>
-        </repository> 
-        
-        <!-- Test discord bridge -->
-        <repository>
-          <id>jcenter</id>
-          <name>jcenter-bintray</name>
-          <url>http://jcenter.bintray.com</url>
-        </repository>
+     </repository>  
+     <repository>
+            <id>jcenter</id>
+            <name>jcenter-bintray</name>
+            <url>http://jcenter.bintray.com</url>
+     </repository>       
   </repositories>
   
   <properties>

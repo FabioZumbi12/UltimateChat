@@ -10,8 +10,8 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import br.net.fabiozumbi12.UltimateChat.UChat;
-import br.net.fabiozumbi12.UltimateChat.API.uChatAPI;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.UChat;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.API.uChatAPI;
 
 /**
  * Classe apenas para compatibilidade com o LegendChat para setar tags.
