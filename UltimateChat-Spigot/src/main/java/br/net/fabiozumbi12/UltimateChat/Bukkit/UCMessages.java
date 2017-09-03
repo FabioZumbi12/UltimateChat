@@ -27,7 +27,7 @@ public class UCMessages {
 	protected static boolean sendFancyMessage(String[] format, String msg, UCChannel channel, CommandSender sender, CommandSender tellReceiver){
 		//Execute listener:
 		HashMap<String,String> tags = new HashMap<String,String>();
-		for (String str:UChat.get().getUCConfig().getStringList("general.custom-tags")){
+		for (String str:UChat.get().getUCConfig().getStringList("api.legendchat-tags")){
 			tags.put(str, str);
 		}
 		SendChannelMessageEvent event = new SendChannelMessageEvent(tags, format, sender, channel, msg);
@@ -376,11 +376,13 @@ public class UCMessages {
 	
 	public static String formatTags(String tag, String text, Object cmdSender, Object receiver, String msg, UCChannel ch){	
 		if (receiver instanceof CommandSender && tag.equals("message")){			
-			text = text.replace("{message}", mention(cmdSender, (CommandSender)receiver, msg));
+			text = text.replace("{message}", mention(cmdSender, (CommandSender)receiver, msg));						
 		} else {
 			text = text.replace("{message}", msg);
 		}
-		
+		if (tag.equals("message") && !UChat.get().getUCConfig().getBool("general.enable-tags-on-messages")){
+			return text;
+		}
 		text = text.replace("{ch-color}", ch.getColor())
 		.replace("{ch-name}", ch.getName())
 		.replace("{ch-alias}", ch.getAlias());		

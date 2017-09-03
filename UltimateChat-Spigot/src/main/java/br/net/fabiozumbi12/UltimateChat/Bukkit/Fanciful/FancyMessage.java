@@ -91,41 +91,46 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 	}*/
 			
 	public FancyMessage text(String text, String tag) {	
-		if (tag.equals("message")){
-			for (String part:text.split("(?="+ChatColor.COLOR_CHAR+"[0-9a-fk-or])")){				
-				//set text
-				if (!ChatColor.stripColor(part).isEmpty()){	
-					latest().text = rawText(ChatColor.stripColor(part));
-				}
-				
-				//check if starts with color
-				Matcher match = Pattern.compile("^"+ChatColor.COLOR_CHAR+"([0-9a-fk-or]).*$").matcher(part);
-				if (match.find()){
-					lastColor = ChatColor.getByChar(match.group(1).charAt(0));				
-					if (part.length() == 2) continue;
-				} 
-							
-				//finally setcolors
-				if (lastColor.isColor()){
-					latest().color = lastColor;
-				}	
-				if (lastColor.isFormat()){
-					ArrayList<ChatColor> colors = new ArrayList<ChatColor>();
-					colors.add(lastColor);
-					latest().styles = colors;
-				}	
-				dirty = true;
-			}	
+		for (String part:text.split("(?="+ChatColor.COLOR_CHAR+"[0-9a-fk-or])")){	
 			
-			//add links if found
-			checkLink(text);
+			//set text
+			if (latest().hasText()){
+				if (!ChatColor.stripColor(part).isEmpty()){	
+					messageParts.add(new MessagePart(rawText(ChatColor.stripColor(part))));					
+				} 
+			} else {
+				latest().text = rawText(ChatColor.stripColor(part));
+			}			
+			
+			//check if starts with color
+			Matcher match = Pattern.compile("^"+ChatColor.COLOR_CHAR+"([0-9a-fk-or]).*$").matcher(part);
+			if (match.find()){
+				lastColor = ChatColor.getByChar(match.group(1).charAt(0));				
+				if (part.length() == 2) continue;
+			} 
+						
+			//finally setcolors
+			if (lastColor.isColor()){
+				latest().color = lastColor;
+			}	
+			if (lastColor.isFormat()){
+				ArrayList<ChatColor> colors = new ArrayList<ChatColor>();
+				colors.add(lastColor);
+				latest().styles = colors;
+			}	
+			dirty = true;
+		}	
+		
+		//add links if found
+		checkLink(text);
+		/*if (tag.equals("message")){
+			
 		} else {
 			String newstr = lastColor+text;
 			lastColor = ChatColor.getByChar(ChatColor.getLastColors(newstr).replace(String.valueOf(ChatColor.COLOR_CHAR), "").charAt(0));
 			latest().text = rawText(newstr);
 			dirty = true;
-		}	
-		
+		}		*/	
 		return this;
 	}
 

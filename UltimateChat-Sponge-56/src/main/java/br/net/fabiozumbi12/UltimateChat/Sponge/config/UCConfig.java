@@ -77,6 +77,9 @@ public class UCConfig{
 			.setComment("Set the efault channel for new players or when players join on server.");
 			config.getNode("general","spy-format").setValue(config.getNode("general","spy-format").getString("&c[Spy] {output}"))
 			.setComment("Chat spy format.");
+			config.getNode("general","enable-tags-on-messages").setValue(config.getNode("general","enable-tags-on-messages").getBoolean(false))
+			.setComment("Enable to allow parse tags and placeholders on messages.");
+			
 			config.getNode("general","default-tag-builder").setValue(config.getNode("general","default-tag-builder").getString("world,ch-tags,prefix,nickname,suffix,message"))
 			.setComment("This is the main tag builder.\n"
 					+ "Change the order of this tags to change how tag is displayed on chat.\n"

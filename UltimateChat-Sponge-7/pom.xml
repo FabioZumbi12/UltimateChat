@@ -46,8 +46,22 @@
   </dependencies>
   
   <build>
+    <finalName>SpongeAPI7-reference-DONT-DOWNLOAD</finalName>
     <plugins>
         
+        <!-- Ignore Deploy because has no API -->
+       <plugin>
+        <groupId>com.github.github</groupId>
+        <artifactId>site-maven-plugin</artifactId>
+        <version>0.11</version>
+        <executions>
+          <execution>
+            <id>deploying</id>
+            <phase/>
+          </execution>
+        </executions>
+       </plugin>
+       
         <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -75,12 +89,12 @@
                            </filter>                                           
                         </filters>
                         <minimizeJar>true</minimizeJar>   
-                        <outputFile>${project.basedir}/target/UltimateChat-${project.version}-Universal.jar</outputFile>                        
+                        <outputFile>${project.basedir}/target/UltimateChat-${project.version}-All.jar</outputFile>           
                         </configuration>
                     </execution>
                 </executions>
                 <configuration>
-                    <createDependencyReducedPom>false</createDependencyReducedPom>
+                    <createDependencyReducedPom>false</createDependencyReducedPom>                    
                 </configuration>
             </plugin>
     </plugins>

@@ -467,7 +467,9 @@ class UCMessages {
 		} else {
 			text = text.replace("{message}", msg);
 		}
-		
+		if (tag.equals("message") && !UChat.get().getConfig().getBool("general","enable-tags-on-messages")){
+			return text;
+		}
 		text = text.replace("{ch-color}", ch.getColor())
 		.replace("{ch-name}", ch.getName())
 		.replace("{ch-alias}", ch.getAlias());		

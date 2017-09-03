@@ -8,6 +8,7 @@ discord:
   OAuth: ""
 api:
   format-console-messages: false
+  legendchat-tags: []
 mention:
   enable: true
   color-template: '&e@{mentioned-player}{group-suffix}'
@@ -15,7 +16,6 @@ mention:
   hover-message: '&e{playername} mentioned you!'
 general:
   URL-template: 'Click to open &n{url}&r'
-  custom-tags: []
   console-tag: '&6 {console}&3'
   remove-from-chat:
   - '[]' 
@@ -29,6 +29,7 @@ general:
   spy-format: '&c&o[Spy] {output}'
   use-channel-tag-builder: true
   default-tag-builder: world,marry-tag,ch-tags,clan-tag,factions,group-prefix,nickname,group-suffix,message
+  enable-tags-on-messages: false
 tell:
   cmd-aliases: tell,t,w,m,msg,private,priv,r
   prefix: '&6[&c{playername} &6-> &c{receivername}&6]: '
