@@ -30,6 +30,9 @@ general:
   use-channel-tag-builder: true
   default-tag-builder: world,marry-tag,ch-tags,clan-tag,factions,group-prefix,nickname,group-suffix,message
   enable-tags-on-messages: false
+  item-hand:
+    format: '&6[hand]{group-suffix}'
+    placeholder: '@hand'
 tell:
   cmd-aliases: tell,t,w,m,msg,private,priv,r
   prefix: '&6[&c{playername} &6-> &c{receivername}&6]: '

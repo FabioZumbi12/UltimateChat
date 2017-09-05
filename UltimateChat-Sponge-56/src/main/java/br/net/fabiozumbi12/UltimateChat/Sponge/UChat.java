@@ -7,9 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.spongepowered.api.Game;
+import org.spongepowered.api.Platform.Component;
 import org.spongepowered.api.Server;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.Platform.Component;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.GameReloadEvent;
@@ -21,6 +21,7 @@ import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.service.economy.EconomyService;
 
+import br.net.fabiozumbi12.UltimateChat.Sponge.API.uChatAPI;
 import br.net.fabiozumbi12.UltimateChat.Sponge.config.UCConfig;
 import br.net.fabiozumbi12.UltimateChat.Sponge.config.UCLang;
 import br.net.fabiozumbi12.UltimateChat.Sponge.config.VersionData;
@@ -81,6 +82,11 @@ public class UChat {
 		return uchat;
 	}
 	
+	private uChatAPI ucapi;
+	public uChatAPI getAPI(){
+		return this.ucapi;
+	}
+	
 	//public HashMap<String,String> pChannels = new HashMap<String,String>();
 	public static HashMap<String,String> tempChannels = new HashMap<String,String>();
 	public static HashMap<String,String> tellPlayers = new HashMap<String,String>();
@@ -118,7 +124,10 @@ public class UChat {
     		this.cmds = new UCCommands(this);
     		
     		game.getEventManager().registerListeners(plugin, new UCListener());         
-                        
+                     
+    		logger.info("Init API module...");
+            this.ucapi = new uChatAPI();
+            
             for (Player p:serv.getOnlinePlayers()){
             	if (cfgs.getPlayerChannel(p) == null){
             		getConfig().getDefChannel().addMember(p);

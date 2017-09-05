@@ -11,8 +11,6 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
-import br.net.fabiozumbi12.UltimateChat.Bukkit.Fanciful.FancyMessage;
-
 /**Represents a chat channel use by UltimateChat to control from where/to send/receive messages.
  * 
  * @author FabioZumbi12
@@ -227,7 +225,7 @@ public class UCChannel {
 	 */
 	@Deprecated
 	public void sendMessage(Player sender, String message){
-		sendMessage(sender, new FancyMessage().text(message, ""), false);
+		sendMessage(sender, new UltimateFancy(message), false);
 	}
 	
 	/** Send a message from a channel as player.
@@ -235,7 +233,7 @@ public class UCChannel {
 	 * @param message {@code FancyMessage} - Message to send.
 	 * @param direct {@code boolean} - Send message direct to players on channel.
 	 */
-	public void sendMessage(Player sender, FancyMessage message, boolean direct){
+	public void sendMessage(Player sender, UltimateFancy message, boolean direct){
 		if (direct){
 			for (Player p:Bukkit.getOnlinePlayers()){
 				UCChannel chp = UChat.get().getUCConfig().getPlayerChannel(p);
@@ -248,7 +246,7 @@ public class UCChannel {
 			Set<Player> pls = new HashSet<Player>();
 			pls.addAll(Bukkit.getOnlinePlayers());
 			UChat.get().tempChannels.put(sender.getName(), this.alias);
-			AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(true, sender, message.toOldMessageFormat(), pls);
+			AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(true, sender, message.toOldFormat(), pls);
 			Bukkit.getScheduler().runTaskAsynchronously(UChat.get(), new Runnable(){
 
 				@Override
@@ -264,7 +262,7 @@ public class UCChannel {
 	 * @param message {@code FancyMessage} - Message to send.
 	 * @param direct {@code boolean} - Send message direct to players on channel.
 	 */
-	public void sendMessage(ConsoleCommandSender sender, FancyMessage message, boolean direct){	
+	public void sendMessage(ConsoleCommandSender sender, UltimateFancy message, boolean direct){	
 		if (direct){
 			for (Player p:Bukkit.getOnlinePlayers()){
 				UCChannel chp = UChat.get().getUCConfig().getPlayerChannel(p);
@@ -274,7 +272,7 @@ public class UCChannel {
 			}
 			message.send(sender);	
 		} else {			
-			UCMessages.sendFancyMessage(new String[0], message.toOldMessageFormat(), this, sender, null);
+			UCMessages.sendFancyMessage(new String[0], message.toOldFormat(), this, sender, null);
 		}
 	}
 	
@@ -287,7 +285,7 @@ public class UCChannel {
 		if (UChat.get().getUCConfig().getBool("api.format-console-messages")){
 			UCMessages.sendFancyMessage(new String[0], message, this, sender, null);
 		} else {
-			FancyMessage fmsg = new FancyMessage().text(message, "");
+			UltimateFancy fmsg = new UltimateFancy(message);
 			for (Player p:Bukkit.getOnlinePlayers()){
 				UCChannel chp = UChat.get().getUCConfig().getPlayerChannel(p);
 				if (UCPerms.channelReadPerm(p, this) && !this.isIgnoring(p.getName()) && (this.neeFocus() && chp.equals(this) || !this.neeFocus())){					

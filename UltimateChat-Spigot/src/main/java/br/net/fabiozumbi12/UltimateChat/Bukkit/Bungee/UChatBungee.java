@@ -14,11 +14,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UCChannel;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.UltimateFancy;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UCMessages;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UCPerms;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UChat;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.API.SendChannelMessageEvent;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.Fanciful.FancyMessage;
 
 import com.google.common.collect.Iterables;
 import com.google.common.io.ByteArrayDataOutput;
@@ -52,7 +52,7 @@ public class UChatBungee implements PluginMessageListener, Listener {
 		
         for (Player p:Bukkit.getOnlinePlayers()){
         	if (UCPerms.channelReadPerm(p, chan)){
-        		FancyMessage fanci = new FancyMessage();
+        		UltimateFancy fanci = new UltimateFancy();
         		
         		String[] defaultBuilder = UChat.get().getUCConfig().getDefBuilder();
     			if (chan.useOwnBuilder()){
@@ -61,7 +61,7 @@ public class UChatBungee implements PluginMessageListener, Listener {
     			
     			for (String tag:defaultBuilder){
     				if (UChat.get().getUCConfig().getString("tags."+tag+".format") == null){
-    					fanci.text(tag,tag).then("");
+    					fanci.text(tag).next();
     					continue;
     				}        				
     				
@@ -85,7 +85,7 @@ public class UChatBungee implements PluginMessageListener, Listener {
     				tooltip = tooltip.replace("{world}", ws.split(",")[0]).replace("{server}", ws.split(",")[1]);
     				
     				if (execute != null && execute.length() > 0){
-    					fanci.command(UCMessages.formatTags(tag, "/"+execute, sender, p.getName(), msg, chan));
+    					fanci.clickRunCmd(UCMessages.formatTags(tag, "/"+execute, sender, p.getName(), msg, chan));
     				}
     				
     				if (UChat.get().getUCConfig().getBool("mention.enable") && tag.equals("message") && !StringUtils.containsIgnoreCase(msg, sender)){
@@ -93,24 +93,24 @@ public class UChatBungee implements PluginMessageListener, Listener {
     					format = UCMessages.formatTags(tag, format, sender, p.getName(), msg, chan);
     					if (UChat.get().getUCConfig().getString("mention.hover-message").length() > 0 && StringUtils.containsIgnoreCase(msg, p.getName())){
     						tooltip = UCMessages.formatTags(tag, UChat.get().getUCConfig().getString("mention.hover-message"), sender, p.getName(), msg, chan);
-    						fanci.text(format,tag).formattedTooltip(new FancyMessage().text(tooltip, "")).then("");
+    						fanci.text(format).hoverShowText(tooltip).next();
     					} else if (tooltip.length() > 0){
-    						fanci.text(format,tag).formattedTooltip(new FancyMessage().text(tooltip, "")).then("");
+    						fanci.text(format).hoverShowText(tooltip).next();
     					} else {
-    						fanci.text(format,tag).then("");
+    						fanci.text(format).next();
     					}				
     				} else {
     					format = UCMessages.formatTags(tag, format, sender, p.getName(), msg, chan);
     					tooltip = UCMessages.formatTags(tag, tooltip, sender, p.getName(), msg, chan);
     					if (tooltip.length() > 0){	
-    						fanci.text(format,tag).formattedTooltip(new FancyMessage().text(tooltip, "")).then("");
+    						fanci.text(format).hoverShowText(tooltip).next();
     					} else {
-    						fanci.text(format,tag).then("");
+    						fanci.text(format).next();
     					}
     				}
     			}
     			fanci.send(p);
-    			toConsole = fanci.toOldMessageFormat();        		
+    			toConsole = fanci.toOldFormat();        		
     		}
         }	
 		UChat.get().getServ().getConsoleSender().sendMessage(toConsole);

@@ -31,6 +31,7 @@ import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import at.pcgamingfreaks.MarriageMaster.Bukkit.MarriageMaster;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.API.uChatAPI;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.Bungee.UChatBungee;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.config.UCConfig;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.config.UCLang;
@@ -117,6 +118,11 @@ public class UChat extends JavaPlugin {
 			return this.chat;
 		}
 		return null;
+	}
+	
+	private uChatAPI ucapi;
+	public uChatAPI getAPI(){
+		return this.ucapi;
 	}
 	
 	public PluginDescriptionFile getPDF(){
@@ -210,6 +216,9 @@ public class UChat extends JavaPlugin {
                 	logger.info("Vault perms found. Hooked.");                	
                 }
             }
+            
+            logger.info("Init API module...");
+            this.ucapi = new uChatAPI();
             
             for (Player p:serv.getOnlinePlayers()){
             	if (config.getPlayerChannel(p) == null){

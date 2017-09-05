@@ -5,30 +5,22 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import br.net.fabiozumbi12.UltimateChat.Bukkit.Fanciful.FancyMessage;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.config.TaskChain;
 
 public class UCUtil {
 		
-	/*public static FancyMessage formatFancyColors(FancyMessage fancy, String tag, String format, String tooltip){		
-		if (tag.equalsIgnoreCase("message")){
-			for (String st:format.split(" ")){
-				String regexUrl = "((http:\\/\\/|https:\\/\\/)?(www\\.)?(([a-zA-Z0-9-]){2,}\\.){1,4}([a-zA-Z]){2,6}(\\/([a-zA-Z-_\\/\\.0-9#:?=&;,]*)?)?)";
-				Matcher match = Pattern.compile(regexUrl).matcher(st);
-				if (match.find()){
-					String matchg = ChatColor.stripColor(match.group(1));	
-					//sender.sendMessage("Match: "+matchg);
-					if (!matchg.startsWith("http")){
-						matchg = "http://"+matchg;
-					}					
-					fancy.text(match.group(1)).link(matchg).tooltip(UChat.get().getUCConfig().getURLTemplate().replace("{url}", match.group(1)));	
-					fancy.then("");
-					continue;
-				}
-			}
-		}				
-		return fancy;
-	}*/
+	public static String capitalize(String text){
+		StringBuilder cap = new StringBuilder();
+		text = text.replace("_", " ");
+		for (String t:text.split(" ")){
+			if (t.length() > 2){
+				cap.append(t.substring(0, 1).toUpperCase() + t.substring(1)+" ");
+			} else {
+				cap.append(t+" ");
+			}						
+		}
+		return cap.substring(0, cap.length()-1);
+	}
 	
 	public static String colorize(String msg){
 		return ChatColor.translateAlternateColorCodes('&', msg);
@@ -38,10 +30,12 @@ public class UCUtil {
 		return str.replaceAll("(§([a-fk-or0-9]))", "&$2");
 	}
 	
-	public static void performCommand(final CommandSender consoleCommandSender, final String command) {
+	public static void performCommand(final Player to, final CommandSender consoleCommandSender, final String command) {
 	    TaskChain.newChain().add(new TaskChain.GenericTask() {
 	        public void run() {
-	        	UChat.get().getServ().dispatchCommand(consoleCommandSender,command);
+	        	if (to == null || (to != null && to.isOnline())){
+	        		UChat.get().getServ().dispatchCommand(consoleCommandSender,command);
+	        	}	        	
 	        }
 	    }).execute();
 	}
@@ -136,11 +130,11 @@ public class UCUtil {
 		 }		 
 		 			 
 		 if (UChat.get().getUCConfig().getBool("general.json-events")){
-			 FancyMessage fanci = new FancyMessage();
-			 fanci.text(message.toString().substring(1), "message");
+			 UltimateFancy fanci = new UltimateFancy();
+			 fanci.text(message.toString().substring(1));
 			 
 			 if (hover.toString().length() > 1){
-				 fanci.tooltip(hover.toString().substring(1));
+				 fanci.hoverShowText(hover.toString().substring(1));
 				 if (!silent){
 					 Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_GRAY+"> OnHover: "+ChatColor.RESET+hover.toString().substring(1));
 				 }
@@ -151,7 +145,7 @@ public class UCUtil {
 			 }				 
 			 
 			 if (url.toString().length() > 1){
-				 fanci.link(url.toString().substring(1));
+				 fanci.clickOpenURL(url.toString().substring(1));
 				 if (!silent){
 					 Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_GRAY+"> Url: "+ChatColor.RESET+url.toString().substring(1));
 				 }				  
@@ -159,10 +153,10 @@ public class UCUtil {
 			 
 			 for (Player p:Bukkit.getOnlinePlayers()){
 				 if (cmdline.toString().length() > 1){
-					 fanci.command("/"+cmdline.toString().substring(1).replace("{clicked}", p.getName()));						 
+					 fanci.clickRunCmd("/"+cmdline.toString().substring(1).replace("{clicked}", p.getName()));						 
 				 }
 				 if (suggest.toString().length() > 1){
-					 fanci.suggest(suggest.toString().substring(1).replace("{clicked}", p.getName()));						 
+					 fanci.clickRunCmd(suggest.toString().substring(1).replace("{clicked}", p.getName()));						 
 				 }
 				 fanci.send(p);
 			 }

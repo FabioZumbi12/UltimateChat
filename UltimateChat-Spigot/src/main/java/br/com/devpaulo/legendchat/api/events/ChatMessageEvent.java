@@ -11,7 +11,6 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UChat;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.API.uChatAPI;
 
 /**
  * Classe apenas para compatibilidade com o LegendChat para setar tags.
@@ -60,7 +59,7 @@ public class ChatMessageEvent extends Event implements Cancellable {
 	
 	public void addTag(String tagname, String value){
 		tagname = tagname.toLowerCase();
-		uChatAPI.registerNewTag(tagname, tagname, "", new ArrayList<String>());
+		UChat.get().getAPI().registerNewTag(tagname, tagname, "", new ArrayList<String>());
 		tags.put(tagname, (value==null?"":value));
 	}
 		

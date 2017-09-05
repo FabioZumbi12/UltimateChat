@@ -159,7 +159,7 @@ public class UCListener implements CommandExecutor,Listener {
 							 if (!p.isOnline()){
 								 break;
 							 }
-							 UCUtil.performCommand(Bukkit.getConsoleSender(), "tellraw " + p.getName() + " {\"text\":\" \"}");
+							 UCUtil.performCommand(p, Bukkit.getConsoleSender(), "tellraw " + p.getName() + " {\"text\":\" \"}");
 						 }						 
 						 UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("cmd.clear.cleared"));
 						 return true;
@@ -175,7 +175,7 @@ public class UCListener implements CommandExecutor,Listener {
 								 if (!play.isOnline()){
 									 continue;
 								 }
-								 UCUtil.performCommand(Bukkit.getConsoleSender(), "tellraw " + play.getName() + " {\"text\":\" \"}");
+								 UCUtil.performCommand(play, Bukkit.getConsoleSender(), "tellraw " + play.getName() + " {\"text\":\" \"}");
 							 }
 						 }						 						 
 						 UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("cmd.clear.cleared"));
@@ -584,9 +584,9 @@ public class UCListener implements CommandExecutor,Listener {
 					start = start.substring(1);
 				}
 				if (ch.getAliasSender().equalsIgnoreCase("console")){					
-					UCUtil.performCommand(Bukkit.getConsoleSender(), start+" "+e.getMessage());
+					UCUtil.performCommand(null, Bukkit.getConsoleSender(), start+" "+e.getMessage());
 				} else {
-					UCUtil.performCommand(p, start+" "+e.getMessage());
+					UCUtil.performCommand(null, p, start+" "+e.getMessage());
 				}				
 				e.setCancelled(true);
 			} else {

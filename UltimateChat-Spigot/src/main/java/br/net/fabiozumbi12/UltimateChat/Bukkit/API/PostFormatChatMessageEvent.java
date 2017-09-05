@@ -8,7 +8,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UCChannel;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.Fanciful.FancyMessage;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.UltimateFancy;
 
 /**This event listen all fancy messages to be sent to players formated and colored, ready to send to chat.<p>
  * This event includes console. This event will listen to private messages too.<p>
@@ -21,9 +21,9 @@ public class PostFormatChatMessageEvent extends Event implements Cancellable  {
 	private boolean cancelled;
 	private CommandSender sender;
 	private UCChannel channel;
-	private HashMap<CommandSender, FancyMessage> receivers;
+	private HashMap<CommandSender, UltimateFancy> receivers;
 	
-	public PostFormatChatMessageEvent(CommandSender sender, HashMap<CommandSender, FancyMessage> receivers, UCChannel channel){
+	public PostFormatChatMessageEvent(CommandSender sender, HashMap<CommandSender, UltimateFancy> receivers, UCChannel channel){
 		this.sender = sender;
 		this.channel = channel;
 		this.receivers = receivers;
@@ -42,7 +42,7 @@ public class PostFormatChatMessageEvent extends Event implements Cancellable  {
 	 * @param receiver {@CommandSender}
 	 * @return {@code Text} or null if no receivers on this map.
 	 */
-	public FancyMessage getReceiverMessage(CommandSender receiver){
+	public UltimateFancy getReceiverMessage(CommandSender receiver){
 		return this.receivers.getOrDefault(receiver, null);
 	}
 	
@@ -51,7 +51,7 @@ public class PostFormatChatMessageEvent extends Event implements Cancellable  {
 	 * @param receiver {@code @CommandSender}
 	 * @param message {@code Text}
 	 */
-	public void setReceiverMessage(CommandSender receiver, FancyMessage message){		
+	public void setReceiverMessage(CommandSender receiver, UltimateFancy message){		
 		this.receivers.put(receiver, message);
 	}
 	
