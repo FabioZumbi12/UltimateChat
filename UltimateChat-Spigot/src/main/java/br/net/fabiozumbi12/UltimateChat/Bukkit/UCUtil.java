@@ -156,7 +156,7 @@ public class UCUtil {
 					 fanci.clickRunCmd("/"+cmdline.toString().substring(1).replace("{clicked}", p.getName()));						 
 				 }
 				 if (suggest.toString().length() > 1){
-					 fanci.clickRunCmd(suggest.toString().substring(1).replace("{clicked}", p.getName()));						 
+					 fanci.clickSuggestCmd(suggest.toString().substring(1).replace("{clicked}", p.getName()));						 
 				 }
 				 fanci.send(p);
 			 }

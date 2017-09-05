@@ -134,6 +134,7 @@
   </repositories>
   
   <build>
+    <finalName>DONT-DOWNLOAD-Spigot-Reference</finalName>
     <plugins>
          <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -165,7 +166,9 @@
                     <createDependencyReducedPom>false</createDependencyReducedPom>                    
                 </configuration>
             </plugin>
-    </plugins>  
+             
+    </plugins>      
+    
   </build>
   <properties>
   	<mineVersion>1.12.1-R0.1-SNAPSHOT</mineVersion>

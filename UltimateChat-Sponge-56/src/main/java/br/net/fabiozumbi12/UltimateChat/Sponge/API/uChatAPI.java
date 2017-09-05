@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.spongepowered.api.Sponge;
+import org.spongepowered.api.entity.living.player.Player;
 
 import br.net.fabiozumbi12.UltimateChat.Sponge.UCChannel;
 import br.net.fabiozumbi12.UltimateChat.Sponge.UChat;
@@ -39,8 +39,8 @@ public class uChatAPI {
 		return UChat.get().getConfig().getChannel(chName);
 	}
 	
-	protected UCChannel getPlayerChannel(String player){
-		return UChat.get().getConfig().getPlayerChannel(Sponge.getServer().getPlayer(player).get());
+	protected UCChannel getPlayerChannel(Player player){
+		return UChat.get().getConfig().getPlayerChannel(player);
 	}
 	
 	protected Collection<UCChannel> getChannels(){

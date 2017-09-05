@@ -46,22 +46,9 @@
   </dependencies>
   
   <build>
-    <finalName>SpongeAPI7-reference-DONT-DOWNLOAD</finalName>
+    <finalName>DONT-DOWNLOAD-SpongeAPI7-Reference</finalName>
     <plugins>
-        
-        <!-- Ignore Deploy because has no API -->
-       <plugin>
-        <groupId>com.github.github</groupId>
-        <artifactId>site-maven-plugin</artifactId>
-        <version>0.11</version>
-        <executions>
-          <execution>
-            <id>deploying</id>
-            <phase/>
-          </execution>
-        </executions>
-       </plugin>
-       
+               
         <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
