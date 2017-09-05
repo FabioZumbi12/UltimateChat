@@ -158,7 +158,8 @@
                             <shadedPattern>br.net.fabiozumbi12.gson</shadedPattern>
                           </relocation>
                         </relocations>
-                        <minimizeJar>true</minimizeJar>              
+                        <minimizeJar>true</minimizeJar>     
+                        <outputFile>${project.basedir}/target/DONT-DOWNLOAD-Spigot-Shaded.jar</outputFile>          
                         </configuration>
                     </execution>
                 </executions>
