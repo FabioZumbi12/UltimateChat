@@ -2,8 +2,21 @@ name: Local
 alias: l
 across-worlds: false
 distance: 40
-cost: 0
+cost: 0.0
 color: '&e'
 need-focus: false
 receivers-message: true
 tag-builder: ch-tags,group-preffix,nickname,group-suffix,message
+use-this-builder: false
+canLock: true
+bungee: false
+channelAlias:
+  enable: false
+  sendAs: player
+  cmd: ''
+available-worlds: []
+discord:
+  channelID: ''
+  useChannel: false
+  prefix: '{ch-color}[{ch-alias}]&7[&3Discord&7]&b{sender}&r: '
+  on-hover: '&3Discord Channel: &a{dd-channel}'

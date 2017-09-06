@@ -22,7 +22,16 @@ public class PostFormatChatMessageEvent extends Event implements Cancellable  {
 	private CommandSender sender;
 	private UCChannel channel;
 	private HashMap<CommandSender, UltimateFancy> receivers;
+	private String raw;
 	
+	public PostFormatChatMessageEvent(CommandSender sender, HashMap<CommandSender, UltimateFancy> receivers, UCChannel channel, String raw){
+		this.sender = sender;
+		this.channel = channel;
+		this.receivers = receivers;
+		this.raw = raw;
+	}
+	
+	@Deprecated
 	public PostFormatChatMessageEvent(CommandSender sender, HashMap<CommandSender, UltimateFancy> receivers, UCChannel channel){
 		this.sender = sender;
 		this.channel = channel;
@@ -37,6 +46,9 @@ public class PostFormatChatMessageEvent extends Event implements Cancellable  {
 		return this.sender;
 	}
 	
+	public String getRawMessage(){
+		return this.raw;
+	}
 	/**Get the message of a receiver, or {@code null} if the receiver is not on list.
 	 * 
 	 * @param receiver {@CommandSender}

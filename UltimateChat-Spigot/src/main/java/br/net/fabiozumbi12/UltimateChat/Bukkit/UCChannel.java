@@ -7,9 +7,12 @@ import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
+import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+
+import br.net.fabiozumbi12.UltimateChat.Bukkit.UCLogger.timingType;
 
 /**Represents a chat channel use by UltimateChat to control from where/to send/receive messages.
  * 
@@ -37,10 +40,12 @@ public class UCChannel {
 	private List<String> availableWorlds = new ArrayList<String>();
 	private boolean canLock = true;
 	private String ddchannel = new String();
-	private boolean usedd = false;
-	private List<Player> members = new ArrayList<Player>();
+	private String ddmode = "NONE";
+	private List<CommandSender> members = new ArrayList<CommandSender>();
+	private String ddformat = "{ch-color}[{ch-alias}]&7[&3Discord&7]&b{sender}&r: {message}";
+	private String ddhover = "&3Discord Channel: &a{dd-channel}";
 
-	public UCChannel(String name, String alias, boolean worlds, int dist, String color, String builder, boolean focus, boolean receiversMsg, double cost, boolean isbungee, boolean ownBuilder, boolean isAlias, String aliasSender, String aliasCmd, List<String> availableWorlds, String ddchannel, boolean usedd, boolean lock) {
+	public UCChannel(String name, String alias, boolean worlds, int dist, String color, String builder, boolean focus, boolean receiversMsg, double cost, boolean isbungee, boolean ownBuilder, boolean isAlias, String aliasSender, String aliasCmd, List<String> availableWorlds, String ddchannel, String ddmode, String ddformat, String ddhover, boolean lock) {
 		this.name = name;
 		this.alias = alias;
 		this.worlds = worlds;
@@ -58,7 +63,9 @@ public class UCChannel {
 		this.availableWorlds = availableWorlds;
 		this.canLock = lock;
 		this.ddchannel = ddchannel;
-		this.usedd = usedd;
+		this.ddmode = ddmode;
+		this.ddformat = ddformat;
+		this.ddhover = ddhover;
 	}
 	
 	public UCChannel(String name, String alias, String color) {
@@ -71,8 +78,40 @@ public class UCChannel {
 		this.name = name;
 		this.alias = name.substring(0, 1).toLowerCase();
 	}
+
+	public boolean isTell(){
+		return this.name.equals("tell");		
+	}
 	
-	public List<Player> getMembers(){
+	public String getDiscordChannelID(){
+		return this.ddchannel;
+	}
+	
+	public String getDiscordMode(){
+		return this.ddmode;
+	}
+	
+	public boolean matchDiscordID(String id){
+		return this.ddchannel.equals(id);
+	}
+	
+	public boolean isSendingDiscord(){
+		return !ddchannel.isEmpty() && (ddmode.equalsIgnoreCase("both") || ddmode.equalsIgnoreCase("send"));
+	}
+	
+	public boolean isListenDiscord(){
+		return !ddchannel.isEmpty() && (ddmode.equalsIgnoreCase("both") || ddmode.equalsIgnoreCase("listen"));
+	}
+	
+	public String getDiscordHover(){
+		return this.ddhover;
+	}
+	
+	public String getDiscordFormat(){
+		return this.ddformat;
+	}
+	
+	public List<CommandSender> getMembers(){
 		return this.members;
 	}
 	
@@ -80,29 +119,21 @@ public class UCChannel {
 		this.members.clear();
 	}
 	
-	public boolean addMember(Player p){
+	public boolean addMember(CommandSender p){
 		for (UCChannel ch:UChat.get().getUCConfig().getChannels()){
 			ch.removeMember(p);
 		}
 		return this.members.add(p);
 	}
 	
-	public boolean removeMember(Player p){
+	public boolean removeMember(CommandSender p){
 		return this.members.remove(p);
 	}
 	
-	public boolean isMember(Player p){
+	public boolean isMember(CommandSender p){
 		return this.members.contains(p);
 	}
-	
-	public String getDiscordChannelID(){
-		return this.ddchannel;
-	}
-	
-	public boolean useDiscordChanel(){
-		return this.usedd;
-	}
-	
+		
 	public boolean canLock(){
 		return this.canLock;
 	}
@@ -238,6 +269,7 @@ public class UCChannel {
 			for (Player p:Bukkit.getOnlinePlayers()){
 				UCChannel chp = UChat.get().getUCConfig().getPlayerChannel(p);
 				if (UCPerms.channelReadPerm(p, this) && !this.isIgnoring(p.getName()) && (this.neeFocus() && chp.equals(this) || !this.neeFocus())){
+					UChat.get().getUCLogger().timings(timingType.START, "UCChannel#sendMessage()|Direct Message");
 					message.send(p);					
 				}
 			}			
@@ -251,6 +283,7 @@ public class UCChannel {
 
 				@Override
 				public void run() {
+					UChat.get().getUCLogger().timings(timingType.START, "UCChannel#sendMessage()|Fire AsyncPlayerChatEvent");
 					UChat.get().getServ().getPluginManager().callEvent(event); 
 				}			
 			});
@@ -267,6 +300,7 @@ public class UCChannel {
 			for (Player p:Bukkit.getOnlinePlayers()){
 				UCChannel chp = UChat.get().getUCConfig().getPlayerChannel(p);
 				if (UCPerms.channelReadPerm(p, this) && !this.isIgnoring(p.getName()) && (this.neeFocus() && chp.equals(this) || !this.neeFocus())){
+					UChat.get().getUCLogger().timings(timingType.START, "UCChannel#sendMessage()|Direct Message");
 					message.send(p);					
 				}
 			}
@@ -288,7 +322,8 @@ public class UCChannel {
 			UltimateFancy fmsg = new UltimateFancy(message);
 			for (Player p:Bukkit.getOnlinePlayers()){
 				UCChannel chp = UChat.get().getUCConfig().getPlayerChannel(p);
-				if (UCPerms.channelReadPerm(p, this) && !this.isIgnoring(p.getName()) && (this.neeFocus() && chp.equals(this) || !this.neeFocus())){					
+				if (UCPerms.channelReadPerm(p, this) && !this.isIgnoring(p.getName()) && (this.neeFocus() && chp.equals(this) || !this.neeFocus())){	
+					UChat.get().getUCLogger().timings(timingType.START, "UCChannel#sendMessage()|Fire AsyncPlayerChatEvent");
 					fmsg.send(p);					
 				}
 			}

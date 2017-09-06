@@ -128,7 +128,9 @@ public class UltimateFancy {
 				for (ExtraElement element:pendentElements){							
 					obj.add(element.getAction(), element.getJson());
 				}
-				constructor.add(obj);
+				JsonArray jarray = new JsonArray();
+				jarray.add(obj);
+				constructor.add(jarray);
 			}
 		}
 		workingGroup = new ArrayList<JsonObject>();
@@ -163,31 +165,33 @@ public class UltimateFancy {
 	
 	public String toOldFormat(){
 		StringBuilder result = new StringBuilder();
-		for (JsonElement array:constructor){	
-			JsonObject json = array.getAsJsonObject();
-			if (!json.has("text")) continue;	
-			//get format
-			for (ChatColor frmt:ChatColor.values()){
-				if (!frmt.isFormat()) continue;
-				String frmtStr = frmt.name().toLowerCase();
-				if (frmt.equals(ChatColor.MAGIC)){
-					frmtStr = "obfuscated";
+		for (JsonElement baseArray:constructor){	
+			for (JsonElement array:baseArray.getAsJsonArray()){
+				JsonObject json = array.getAsJsonObject();
+				if (!json.has("text")) continue;	
+				//get format
+				for (ChatColor frmt:ChatColor.values()){
+					if (!frmt.isFormat()) continue;
+					String frmtStr = frmt.name().toLowerCase();
+					if (frmt.equals(ChatColor.MAGIC)){
+						frmtStr = "obfuscated";
+					}
+					if (json.has(frmtStr) && json.get(frmtStr).getAsBoolean()){
+						result.append(String.valueOf(frmt));
+					}
 				}
-				if (json.has(frmtStr) && json.get(frmtStr).getAsBoolean()){
-					result.append(String.valueOf(frmt));
+				//get color
+				String colorStr = json.get("color").getAsString();
+				if (ChatColor.valueOf(colorStr.toUpperCase()) != null){				
+					ChatColor color = ChatColor.valueOf(colorStr.toUpperCase());
+					if (color.equals(ChatColor.WHITE)){
+						result.append(String.valueOf(ChatColor.RESET));
+					} else {
+						result.append(String.valueOf(color));
+					}
 				}
-			}
-			//get color
-			String colorStr = json.get("color").getAsString();
-			if (ChatColor.valueOf(colorStr.toUpperCase()) != null){				
-				ChatColor color = ChatColor.valueOf(colorStr.toUpperCase());
-				if (color.equals(ChatColor.WHITE)){
-					result.append(String.valueOf(ChatColor.RESET));
-				} else {
-					result.append(String.valueOf(color));
-				}
-			}
-			result.append(json.get("text").getAsString());	
+				result.append(json.get("text").getAsString());
+			}				
 		}
 		return result.toString();
 	}

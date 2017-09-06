@@ -27,14 +27,14 @@ public class uChatAPI{
 		return false;
 	}
 	
-	public boolean registerNewChannel(String chName, String chAlias, boolean crossWorlds, int distance, String color, String tagBuilder, boolean needFocus, boolean receiverMsg, double cost, boolean bungee) throws IOException{
+	public boolean registerNewChannel(String chName, String chAlias, boolean crossWorlds, int distance, String color, String tagBuilder, boolean needFocus, boolean receiverMsg, double cost, String ddmode, String ddformat, String ddhover, boolean bungee) throws IOException{
 		if (UChat.get().getUCConfig().getChannel(chName) != null){
 			return false;
 		}
 		if (tagBuilder == null || tagBuilder.equals("")){
 			tagBuilder = UChat.get().getUCConfig().getString("general.default-tag-builder");			
 		}
-		UCChannel ch = new UCChannel(chName, chAlias, crossWorlds, distance, color, tagBuilder, needFocus, receiverMsg, cost, bungee, false, false, "player", "", new ArrayList<String>(), new String(), false, true);		
+		UCChannel ch = new UCChannel(chName, chAlias, crossWorlds, distance, color, tagBuilder, needFocus, receiverMsg, cost, bungee, false, false, "player", "", new ArrayList<String>(), new String(), ddmode, ddformat, ddhover, true);		
 		UChat.get().getUCConfig().addChannel(ch);		
 		return true;
 	}	

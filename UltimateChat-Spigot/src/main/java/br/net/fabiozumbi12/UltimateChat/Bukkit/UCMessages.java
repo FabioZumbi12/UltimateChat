@@ -182,16 +182,19 @@ public class UCMessages {
 		}
 		
 		//fire post event
-		PostFormatChatMessageEvent postEvent = new PostFormatChatMessageEvent(sender, msgPlayers, channel);
+		PostFormatChatMessageEvent postEvent = new PostFormatChatMessageEvent(sender, msgPlayers, channel, msg);
 		Bukkit.getPluginManager().callEvent(postEvent); 
 		if (postEvent.isCancelled()){
 			return cancel;
 		}
 		
 		msgPlayers.forEach((send,text)->{			
-			text.send(send);			
+			text.send(send);
 		});	
 		
+		if (channel != null && !channel.isTell() && UChat.get().getUCJDA() != null){
+			UChat.get().getUCJDA().sendToDsicord(sender, msg, channel);
+		}
 		
 		return cancel;
 	}
@@ -321,7 +324,7 @@ public class UCMessages {
 						fanci.text(format).next();
 					}
 				}
-			}
+			}			
 		} else {
 			//if tell
 			String prefix = UChat.get().getUCConfig().getString("tell.prefix");
@@ -346,7 +349,7 @@ public class UCMessages {
 			} else {
 				fanci.text(prefix).next();
 			}			
-			fanci.text(UCUtil.stripColor(format)).next();				
+			fanci.text(UCUtil.stripColor(format)).next();			
 		}	
 		return fanci;
 	}

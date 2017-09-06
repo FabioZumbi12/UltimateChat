@@ -15,7 +15,7 @@ public class UCLogger{
 	}
 
 	public void logClear(String s) {
-		uchat.getServ().getConsoleSender().sendMessage("UltimateChat: ["+s+"&r]");
+		uchat.getServ().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&',s));
     }
 	
 	public void sucess(String s) {

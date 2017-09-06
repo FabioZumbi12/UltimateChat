@@ -47,6 +47,7 @@ public class UCListener implements CommandExecutor,Listener {
 						 UChat.get().getUCConfig().getDefChannel().addMember(p);
 					 }					 
 				 }
+				 UChat.get().registerJDA();
 				 UChat.get().initAutomessage();
 				 UChat.get().getLang().sendMessage(sender, "plugin.reloaded");
 				 return true;

@@ -16,7 +16,7 @@ public class UCLogger{
 	}
 	 
 	public void logClear(String s) {
-    	console.sendMessage(UCUtil.toText("UltimateChat: ["+s+"&r]"));
+    	console.sendMessage(UCUtil.toText(s));
     }
 	
 	public void sucess(String s) {

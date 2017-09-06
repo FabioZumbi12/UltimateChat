@@ -92,7 +92,7 @@
             <artifactId>Loader</artifactId>
             <version>1.0.0</version>
 			<scope>system</scope>
-			<systemPath>${project.basedir}/../libs/JDALibLoader-3.2.0-254.jar</systemPath>
+			<systemPath>${project.basedir}/../UltimateChat-JDA/target/UltimateChat-JDA.jar</systemPath>
         </dependency>   
         
         <!-- Google JSON lib -->

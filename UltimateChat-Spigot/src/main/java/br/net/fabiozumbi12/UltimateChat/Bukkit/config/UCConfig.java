@@ -13,8 +13,8 @@ import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UCChannel;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UChat;
@@ -63,25 +63,6 @@ public class UCConfig{
     	            
     	            configs = updateFile(config, "config.yml"); 
     	            
-                    //--------------------------------------------------------------------------//
-                    
-    	            plugin.getUCLogger().info("Server version: " + plugin.getServ().getBukkitVersion());
-                    
-                    /*
-                    // check if can enable json support
-                    if (getBool("general.hover-events")){                    	
-                    	try {
-                    		Class.forName("com.google.gson.JsonParser");
-                          	if (plugin.serv.getBukkitVersion().contains("1.7")){
-                          		configs.set("general.hover-events", false);
-                          		UChat.logger.warning("Your server version do not support Hover features, only 1.8.+");
-                          	}                           	
-                       	} catch(ClassNotFoundException e ) {
-                       		configs.set("general.hover-events", false);
-                       		UChat.logger.warning("Your server version do not support JSON events, disabling Hover and Clicking features.");
-                       	}
-                    }     */      
-                    
                     //--------------------------------------- Load Aliases -----------------------------------//
                                         
                     channels = new HashMap<List<String>,UCChannel>();
@@ -105,7 +86,9 @@ public class UCConfig{
 									channel.getString("channelAlias.cmd", ""),
 									channel.getStringList("available-worlds"),
 									channel.getString("discord.channelID", new String()),
-									channel.getBoolean("discord.useChannel", false),									
+									channel.getString("discord.mode", "none"),		
+									channel.getString("discord.format", "{ch-color}[{ch-alias}]&7[&3Discord&7]&b{sender}&r: "),	
+									channel.getString("discord.hover", "&3Discord Channel: &a{dd-channel}"),	
 									channel.getBoolean("canLock", true));
             				try {
 								addChannel(ch);
@@ -339,8 +322,10 @@ public class UCConfig{
 				+ "  cmd: '' - Command to send on every message send by this channel.\n"
 				+ "available-worlds - Worlds and only this world where this chat can be used and messages sent/received.\n"
 				+ "discord:\n"
-				+ "  usedd: false - If enabled and OAuth code set and the channel ID matches with one discord channel, will send messages from this channel to discord channel.\n"
-				+ "  channelID");
+				+ "  mode: NONE - The options are NONE, SEND, LISTEN, BOTH. If enabled and OAuth code set and the channel ID matches with one discord channel, will react acoording the choosen mode.\n"
+				+ "  hover: &3Discord Channel: &a{dd-channel}\n"
+				+ "  format: {ch-color}[{ch-alias}]&7[&3Discord&7]&b{sender}&r: \n"
+				+ "  channelID: '' - The ID of your Discord Channel. Enable debug on your discord to get the channel ID.\n");
 		chFile.set("name", ch.getName());
 		chFile.set("alias", ch.getAlias());
 		chFile.set("across-worlds", ch.crossWorlds());
@@ -358,7 +343,9 @@ public class UCConfig{
 		chFile.set("channelAlias.cmd", ch.getAliasCmd());
 		chFile.set("available-worlds", ch.availableWorlds());		
 		chFile.set("discord.channelID", ch.getDiscordChannelID());
-		chFile.set("discord.useChannel", ch.useDiscordChanel());
+		chFile.set("discord.mode", ch.getDiscordMode());
+		chFile.set("discord.hover", ch.getDiscordHover());
+		chFile.set("discord.format", ch.getDiscordFormat());
 		chFile.save(defch);
 		channels.put(Arrays.asList(ch.getName().toLowerCase(), ch.getAlias().toLowerCase()), ch);
 	}
@@ -400,7 +387,7 @@ public class UCConfig{
 		return aliases;
 	}
 	
-	public UCChannel getPlayerChannel(Player p){
+	public UCChannel getPlayerChannel(CommandSender p){
 		for (UCChannel ch:this.channels.values()){
 			if (ch.isMember(p)){
 				return ch;

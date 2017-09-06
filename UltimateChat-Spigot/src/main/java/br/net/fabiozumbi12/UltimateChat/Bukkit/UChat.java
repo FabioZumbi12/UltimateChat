@@ -90,8 +90,12 @@ public class UChat extends JavaPlugin {
 		return this.config;
 	}
 	
-	private UCLang lang;
-	private UCDiscord UCJDA;	
+	private UCDiscord UCJDA;
+	public UCDiscord getUCJDA(){
+		return this.UCJDA;
+	}
+	
+	private UCLang lang;		
 	public UCLang getLang(){
 		return this.lang;
 	}
@@ -230,7 +234,16 @@ public class UChat extends JavaPlugin {
             registerJDA();            
             initAutomessage();
             
-            getUCLogger().sucess(getDescription().getFullName()+" enabled!");
+            getUCLogger().info("Server Version: "+serv.getBukkitVersion());
+            getUCLogger().logClear("\n"
+            		+ "&b  _    _ _ _   _                 _        _____ _           _  \n"
+            		+ " | |  | | | | (_)               | |      / ____| |         | |  \n"
+            		+ " | |  | | | |_ _ _ __ ___   __ _| |_ ___| |    | |__   __ _| |_ \n"
+            		+ " | |  | | | __| | '_ ` _ \\ / _` | __/ _ \\ |    | '_ \\ / _` | __|\n"
+            		+ " | |__| | | |_| | | | | | | (_| | ||  __/ |____| | | | (_| | |_ \n"
+            		+ "  \\____/|_|\\__|_|_| |_| |_|\\__,_|\\__\\___|\\_____|_| |_|\\__,_|\\__|\n"
+            		+ "                                                                \n"
+            		+ "&a"+getDescription().getFullName()+" enabled!\n");
             
         } catch (Exception e){
         	e.printStackTrace();
@@ -238,11 +251,14 @@ public class UChat extends JavaPlugin {
         }
 	}
 	
-	private void registerJDA(){
-		if (!config.getBool("discord.use")){
-			return;
+	protected void registerJDA(){
+		if (this.UCJDA != null){			
+			this.UCJDA.shutdown();
+			this.UCJDA = null;
+		}
+		if (config.getBool("discord.use")){
+			this.UCJDA = new UCDiscord(this);
 		}		
-		this.UCJDA = new UCDiscord();
 	}
 	
 	public void initAutomessage(){
@@ -338,7 +354,7 @@ public class UChat extends JavaPlugin {
 	
 	public void onDisable() {
 		if (this.UCJDA != null){
-			this.UCJDA.getJDA().shutdown();
+			this.UCJDA.shutdown();
 		}
 		getUCLogger().severe(getDescription().getFullName()+" disabled!");
 	}

@@ -134,8 +134,16 @@ public class UChat {
             	}
             }
             
-            get().getLogger().info("Sponge version "+this.game.getPlatform().getContainer(Component.API).getVersion().get());
-            get().getLogger().sucess(plugin.getName()+" "+plugin.getVersion().get()+" enabled!");
+            getLogger().info("Sponge version "+this.game.getPlatform().getContainer(Component.API).getVersion().get());
+            getLogger().logClear("\n"
+            		+ "&b  _    _ _ _   _                 _        _____ _           _  \n"
+            		+ " | |  | | | | (_)               | |      / ____| |         | |  \n"
+            		+ " | |  | | | |_ _ _ __ ___   __ _| |_ ___| |    | |__   __ _| |_ \n"
+            		+ " | |  | | | __| | '_ ` _ \\ / _` | __/ _ \\ |    | '_ \\ / _` | __|\n"
+            		+ " | |__| | | |_| | | | | | | (_| | ||  __/ |____| | | | (_| | |_ \n"
+            		+ "  \\____/|_|\\__|_|_| |_| |_|\\__,_|\\__\\___|\\_____|_| |_|\\__,_|\\__|\n"
+            		+ "                                                                \n"
+            		+ "&a"+plugin.getName()+" "+plugin.getVersion().get()+" enabled!\n");
             
         } catch (Exception e){
         	e.printStackTrace();
