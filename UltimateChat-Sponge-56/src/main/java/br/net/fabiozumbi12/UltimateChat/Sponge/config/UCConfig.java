@@ -50,7 +50,8 @@ public class UCConfig{
 			config = configManager.load();
 			
 			config.getNode("_config-version").setValue(config.getNode("_config-version").getDouble(1.0));
-			config.getNode("debug-messages").setValue(config.getNode("debug-messages").getBoolean(false));
+			config.getNode("debug","messages").setValue(config.getNode("debug","messages").getBoolean(false));
+			config.getNode("debug","timings").setValue(config.getNode("debug","timings").getBoolean(false));
 			config.getNode("language").setValue(config.getNode("language").getString("EN-US"));
 			
 			config.getNode("mention").setComment("Use mentions on chat to change the player name color and play a sound on mention.");
@@ -78,7 +79,13 @@ public class UCConfig{
 			config.getNode("general","spy-format").setValue(config.getNode("general","spy-format").getString("&c[Spy] {output}"))
 			.setComment("Chat spy format.");
 			config.getNode("general","enable-tags-on-messages").setValue(config.getNode("general","enable-tags-on-messages").getBoolean(false))
-			.setComment("Enable to allow parse tags and placeholders on messages.");
+			.setComment("Enable to allow parse tags and placeholders on messages.");			
+			config.getNode("general","item-hand","enable").setValue(config.getNode("general","item-hand","enable").getBoolean(true))
+			.setComment("Enable chat item hand.");
+			config.getNode("general","item-hand","format").setValue(config.getNode("general","item-hand","format").getString("&6[hand]{group-suffix}"))
+			.setComment("Text to show on chat on hover the tag.");
+			config.getNode("general","item-hand","placeholder").setValue(config.getNode("general","item-hand","placeholder").getString("@hand"))
+			.setComment("Placeholder to use on chat by players to show your item in hand.");
 			
 			config.getNode("general","default-tag-builder").setValue(config.getNode("general","default-tag-builder").getString("world,ch-tags,prefix,nickname,suffix,message"))
 			.setComment("This is the main tag builder.\n"

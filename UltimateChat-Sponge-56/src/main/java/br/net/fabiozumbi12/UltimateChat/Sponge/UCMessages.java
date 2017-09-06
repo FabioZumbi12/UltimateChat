@@ -16,11 +16,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.effect.sound.SoundType;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
+import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.service.economy.account.UniqueAccount;
 import org.spongepowered.api.service.permission.Subject;
 import org.spongepowered.api.text.Text;
@@ -30,6 +32,7 @@ import org.spongepowered.api.text.channel.MessageChannel;
 import org.spongepowered.api.text.channel.MutableMessageChannel;
 import org.spongepowered.api.text.serializer.TextSerializers;
 
+import br.net.fabiozumbi12.UltimateChat.Sponge.UCLogger.timingType;
 import br.net.fabiozumbi12.UltimateChat.Sponge.API.PostFormatChatMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.Sponge.API.SendChannelMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.Sponge.config.UCLang;
@@ -222,7 +225,9 @@ class UCMessages {
 		}
 		
 		msgPlayers.forEach((send,text)->{
+			UChat.get().getLogger().timings(timingType.END, "UCMessages#send()|before send");
 			send.sendMessage(text);
+			UChat.get().getLogger().timings(timingType.END, "UCMessages#send()|after send");
 		});		
 		
 		return msgCh;
@@ -349,20 +354,26 @@ class UCMessages {
 							
 				msgBuilder = tagBuilder;
 				
-				if (tag.equals("message") && !msg.equals(mention(sender, receiver, msg))){
+				if (tag.equals("message") && (!msg.equals(mention(sender, receiver, msg)) || msg.contains(UChat.get().getConfig().getString("general","item-hand","placeholder")))){
 					tooltip = formatTags("", tooltip, sender, receiver, msg, ch);	
 					format = formatTags(tag, format, sender, receiver, msg, ch);
 					
 					lastColor = getLastColor(format);
 					
-					//msg = mention(sender, receiver, msg);									
-					if (UChat.get().getConfig().getString("mention","hover-message").length() > 0 && StringUtils.containsIgnoreCase(msg, receiver.getName())){
+					if (UChat.get().getConfig().getBool("general","item-hand","enable") && msg.contains(UChat.get().getConfig().getString("general","item-hand","placeholder")) && sender instanceof Player){						
+						ItemStack hand = ItemStack.empty();
+						if (((Player)sender).getItemInHand(HandTypes.MAIN_HAND).isPresent()){	
+							hand = ((Player)sender).getItemInHand(HandTypes.MAIN_HAND).get();
+						} else if(((Player)sender).getItemInHand(HandTypes.OFF_HAND).isPresent()){
+							hand = ((Player)sender).getItemInHand(HandTypes.OFF_HAND).get();							
+						}
+						msgBuilder.append(UCUtil.toText(format)).onHover(TextActions.showItem(hand.createSnapshot()));
+					}
+					else if (UChat.get().getConfig().getString("mention","hover-message").length() > 0 && StringUtils.containsIgnoreCase(msg, receiver.getName())){
 						tooltip = formatTags("", UChat.get().getConfig().getString("mention","hover-message"), sender, receiver, msg, ch);						
-						msgBuilder.append(UCUtil.toText(format))
-				   		   .onHover(TextActions.showText(UCUtil.toText(tooltip)));
+						msgBuilder.append(UCUtil.toText(format)).onHover(TextActions.showText(UCUtil.toText(tooltip)));
 					} else if (tooltip.length() > 0){				
-						msgBuilder.append(UCUtil.toText(format))
-							.onHover(TextActions.showText(UCUtil.toText(tooltip)));
+						msgBuilder.append(UCUtil.toText(format)).onHover(TextActions.showText(UCUtil.toText(tooltip)));
 					} else {
 						msgBuilder.append(UCUtil.toText(format));
 					}		
@@ -464,6 +475,9 @@ class UCMessages {
 	static String formatTags(String tag, String text, Object cmdSender, Object receiver, String msg, UCChannel ch){	
 		if (receiver instanceof CommandSource && tag.equals("message")){			
 			text = text.replace("{message}", mention(cmdSender, (CommandSource)receiver, msg));
+			if (UChat.get().getConfig().getBool("general","item-hand","enable")){
+				text = text.replace(UChat.get().getConfig().getString("general","item-hand","placeholder"), formatTags("",UCUtil.toColor(UChat.get().getConfig().getString("general","item-hand","format")),cmdSender, receiver, msg, ch));
+			}			
 		} else {
 			text = text.replace("{message}", msg);
 		}

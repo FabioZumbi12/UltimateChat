@@ -35,5 +35,8 @@
 	</dependency>
 	
   </dependencies>
+  <build>
+    <finalName>DONT-DOWNLOAD-SpongeAPI56-Reference</finalName>
+  </build>
   
 </project>
