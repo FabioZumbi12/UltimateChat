@@ -15,7 +15,7 @@ public class UCLogger{
 	}
 
 	public void logClear(String s) {
-		uchat.getServ().getConsoleSender().sendMessage("UltimateChat: ["+s+"]");
+		uchat.getServ().getConsoleSender().sendMessage("UltimateChat: ["+s+"&r]");
     }
 	
 	public void sucess(String s) {
@@ -23,7 +23,7 @@ public class UCLogger{
     }
 	
     public void info(String s) {
-    	uchat.getServ().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "UltimateChat: ["+s+"]"));
+    	uchat.getServ().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "UltimateChat: ["+s+"&r]"));
     }
     
     public void warning(String s) {
@@ -35,7 +35,7 @@ public class UCLogger{
     }
     
     public void log(String s) {
-    	uchat.getServ().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "UltimateChat: ["+s+"]"));
+    	uchat.getServ().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "UltimateChat: ["+s+"&r]"));
     }
     
     public void debug(String s) {
@@ -54,10 +54,10 @@ public class UCLogger{
         			diff = System.currentTimeMillis()-start;
         		}        		
         		start = System.currentTimeMillis();
-        		uchat.getServ().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3UC Timings - "+type+": "+diff+"ms ("+message+"&3)"));
+        		uchat.getServ().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3UC Timings - "+type+": "+diff+"ms ("+message+"&3)&r"));
         		break;
 			case END:
-				uchat.getServ().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3UC Timings - "+type+": "+(System.currentTimeMillis()-start)+"ms ("+message+"&3)"));
+				uchat.getServ().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3UC Timings - "+type+": "+(System.currentTimeMillis()-start)+"ms ("+message+"&3)&r"));
 				break;
 			default:
 				break;        		

@@ -84,8 +84,12 @@ public class UltimateFancy {
 			obj.addProperty(format.getKey(), format.getValue());
 		}
 		if (lastColor.isFormat()){
-			lastformats.put(lastColor.name().toLowerCase(), true);
-			obj.addProperty(lastColor.name().toLowerCase(), true);
+			String formatStr = lastColor.name().toLowerCase();
+			if (lastColor.equals(ChatColor.MAGIC)){
+				formatStr = "obfuscated";
+			}
+			lastformats.put(formatStr, true);
+			obj.addProperty(formatStr, true);
 		}			
 		if (lastColor.isColor()){
 			obj.addProperty("color", lastColor.name().toLowerCase());
@@ -104,18 +108,18 @@ public class UltimateFancy {
 		next();
 		if (to instanceof Player){
 			if (UChat.get().getUCConfig().getBool("general.json-events")){
-				UChat.get().getUCLogger().timings(timingType.END, "FancyMessage#send()|json-events:true|before tellraw");
+				UChat.get().getUCLogger().timings(timingType.END, "UltimateFancy#send()|json-events:true|before tellraw");
 				UCUtil.performCommand((Player)to, Bukkit.getConsoleSender(), "tellraw " + to.getName() + " " + constructor.toString());
-				UChat.get().getUCLogger().timings(timingType.END, "FancyMessage#send()|json-events:true|after tellraw");
+				UChat.get().getUCLogger().timings(timingType.END, "UltimateFancy#send()|json-events:true|after tellraw");
 			} else {
-				UChat.get().getUCLogger().timings(timingType.END, "FancyMessage#send()|json-events:false|before send");
+				UChat.get().getUCLogger().timings(timingType.END, "UltimateFancy#send()|json-events:false|before send");
 				to.sendMessage(toOldFormat());
-				UChat.get().getUCLogger().timings(timingType.END, "FancyMessage#send()|json-events:false|after send");
+				UChat.get().getUCLogger().timings(timingType.END, "UltimateFancy#send()|json-events:false|after send");
 			}			
 		} else {
 			to.sendMessage(toOldFormat());
 		}		
-		UChat.get().getUCLogger().severe("JSON: "+constructor.toString());
+		UChat.get().getUCLogger().debug("JSON: "+constructor.toString());
 	}
 	
 	public UltimateFancy next(){
@@ -165,7 +169,11 @@ public class UltimateFancy {
 			//get format
 			for (ChatColor frmt:ChatColor.values()){
 				if (!frmt.isFormat()) continue;
-				if (json.has(frmt.name().toLowerCase()) && json.get(frmt.name().toLowerCase()).getAsBoolean()){
+				String frmtStr = frmt.name().toLowerCase();
+				if (frmt.equals(ChatColor.MAGIC)){
+					frmtStr = "obfuscated";
+				}
+				if (json.has(frmtStr) && json.get(frmtStr).getAsBoolean()){
 					result.append(String.valueOf(frmt));
 				}
 			}
@@ -201,41 +209,6 @@ public class UltimateFancy {
 		obj.addProperty("value", value);
 		return obj;
 	}
-	/*
-	private String parseHoverItemString(ItemStack item){	
-		StringBuilder itemBuild = new StringBuilder();
-		if (item.hasItemMeta()){
-			ItemMeta itemMeta = item.getItemMeta();
-			if (itemMeta.hasDisplayName()){
-				itemBuild.append(itemMeta.getDisplayName()+"\n");
-			} else if (itemMeta.hasLocalizedName()){
-				itemBuild.append(itemMeta.getLocalizedName()+"\n");
-			} else {
-				itemBuild.append(capitalize(item.getType().name())+"\n");
-			}			
-			if (itemMeta.hasEnchants()){
-				for (Entry<Enchantment, Integer> ench:itemMeta.getEnchants().entrySet()){					
-					itemBuild.append("&7"+capitalize(ench.getKey().getName().replace("_", " "))+" "+ench.getValue()+"\n");
-				}
-			}
-			if (itemMeta.hasLore()){
-				for (String lore:itemMeta.getLore()){
-					itemBuild.append("&5&o"+lore+"\n");
-				}
-			}
-		} else {
-			itemBuild.append(capitalize(item.getType().name())+"\n");
-		}
-		return ChatColor.translateAlternateColorCodes('&', itemBuild.toString());
-	}
-	
-	private String capitalize(String text){
-		StringBuilder cap = new StringBuilder();
-		for (String t:text.split(" ")){
-			cap.append(t.substring(0, 1).toUpperCase() + t.substring(1)+" ");			
-		}
-		return cap.substring(0, cap.length()-1);
-	}*/
 	
 	@SuppressWarnings("deprecation")
 	private JsonObject parseHoverItem(ItemStack item){		
@@ -299,7 +272,11 @@ public class UltimateFancy {
 				objExtraTxt.addProperty("color", "white");								
 			}		
 			if (color.isFormat()){
-				objExtraTxt.addProperty(color.name().toLowerCase(), true);
+				if (color.equals(ChatColor.MAGIC)){
+					objExtraTxt.addProperty("obfuscated", true);
+				} else {
+					objExtraTxt.addProperty(color.name().toLowerCase(), true);
+				}				
 			}
 			extraArr.add(objExtraTxt);
 		}		

@@ -31,6 +31,7 @@ general:
   default-tag-builder: world,marry-tag,ch-tags,clan-tag,factions,group-prefix,nickname,group-suffix,message
   enable-tags-on-messages: false
   item-hand:
+    enable: true
     format: '&6[hand]{group-suffix}'
     placeholder: '@hand'
 tell:

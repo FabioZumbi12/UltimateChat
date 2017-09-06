@@ -36,6 +36,7 @@
      
      <!-- Ignore Deploy because has no API -->
      <build>
+       <finalName>DONT-DOWNLOAD-Bungee-Reference</finalName>
      <plugins>
        <plugin>
         <groupId>com.github.github</groupId>
