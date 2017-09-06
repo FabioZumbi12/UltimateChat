@@ -3,7 +3,7 @@ main: br.net.fabiozumbi12.UltimateChat.Bukkit.UChat
 version: ${project.version}
 author: FabioZumbi12
 description: ${project.description}
-softdepend: [mcMMO, SkillAPI, Essentials, SimpleClans, Vault, MarriageMaster, Marriage, PlaceholderAPI, Factions]
+softdepend: [mcMMO, SkillAPI, Essentials, SimpleClans, Vault, MarriageMaster, Marriage, PlaceholderAPI, Factions, JDALibLoader]
 commands:
   uchat:
     description: "Main command for ${project.name}."

@@ -252,13 +252,15 @@ public class UChat extends JavaPlugin {
 	}
 	
 	protected void registerJDA(){
-		if (this.UCJDA != null){			
-			this.UCJDA.shutdown();
-			this.UCJDA = null;
-		}
-		if (config.getBool("discord.use")){
-			this.UCJDA = new UCDiscord(this);
-		}		
+		if (checkJDA()){
+			if (this.UCJDA != null){			
+				this.UCJDA.shutdown();
+				this.UCJDA = null;
+			}
+			if (config.getBool("discord.use")){
+				this.UCJDA = new UCDiscord(this);
+			}	
+		}			
 	}
 	
 	public void initAutomessage(){
@@ -389,6 +391,14 @@ public class UChat extends JavaPlugin {
 			}			
 		}        
     }	
+	
+	private boolean checkJDA(){
+    	Plugin p = Bukkit.getPluginManager().getPlugin("JDALibLoader");
+    	if (p != null && p.isEnabled()){
+    		return true;
+    	}
+    	return false;
+    }
 	
 	//check if plugin Vault is installed
     private boolean checkVault(){

@@ -76,7 +76,7 @@
   </distributionManagement>
   
   <build>
-    <finalName>${project.name}-${buildNumber}</finalName>
+    <finalName>${project.name}-${project.version}</finalName>
     <resources>
         <resource>
             <targetPath>.</targetPath>
@@ -125,7 +125,7 @@
                </execution>
             </executions>
       </plugin>
-      
+      <!-- 
     <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>buildnumber-maven-plugin</artifactId>
@@ -145,7 +145,7 @@
           </items>
         </configuration>
       </plugin>
-      
+       -->
       <!-- Deploy to github for maven repo -->
       <plugin>
         <artifactId>maven-deploy-plugin</artifactId>
