@@ -97,7 +97,7 @@
                            </filter>                                           
                         </filters>
                         <minimizeJar>true</minimizeJar>   
-                        <outputFile>${project.basedir}/target/UltimateChat-${project.version}-All.jar</outputFile>           
+                        <outputFile>${project.basedir}/target/UltimateChat-${project.version}-b${BUILD_NUMBER}-All.jar</outputFile>           
                         </configuration>
                     </execution>
                 </executions>
