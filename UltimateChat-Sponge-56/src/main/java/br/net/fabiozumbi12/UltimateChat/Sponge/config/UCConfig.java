@@ -203,7 +203,6 @@ public class UCConfig{
 			prots.getNode("chat-protection","censor","enable").setValue(prots.getNode("chat-protection","censor","enable").getBoolean(true));
 			prots.getNode("chat-protection","censor","replace-by-symbol").setValue(prots.getNode("chat-protection","censor","replace-by-symbol").getBoolean(true));
 			prots.getNode("chat-protection","censor","by-symbol").setValue(prots.getNode("chat-protection","censor","by-symbol").getString("*"));
-			prots.getNode("chat-protection","censor","by-word").setValue(prots.getNode("chat-protection","censor","by-word").getString("censored"));
 			prots.getNode("chat-protection","censor","replace-partial-word").setValue(prots.getNode("chat-protection","censor","replace-partial-word").getBoolean(false));
 			prots.getNode("chat-protection","censor","action","cmd").setValue(prots.getNode("chat-protection","censor","action","cmd").getString(""));
 			prots.getNode("chat-protection","censor","action","only-on-channels").setValue(prots.getNode("chat-protection","censor","action","only-on-channels").getList(TypeToken.of(String.class), Arrays.asList("global")));
