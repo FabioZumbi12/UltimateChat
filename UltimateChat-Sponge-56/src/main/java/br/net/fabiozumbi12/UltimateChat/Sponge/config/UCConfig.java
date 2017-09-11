@@ -244,16 +244,41 @@ public class UCConfig{
             
             channels = new HashMap<List<String>,UCChannel>();
             File[] listOfFiles = chfolder.listFiles();
-            if (listOfFiles.length == 0){
-            	UChat.get().instance().getAsset("global.conf").get().copyToDirectory(chfolder.toPath());
-            	UChat.get().instance().getAsset("local.conf").get().copyToDirectory(chfolder.toPath());
-            	UChat.get().instance().getAsset("admin.conf").get().copyToDirectory(chfolder.toPath());
-            	listOfFiles = chfolder.listFiles();
-            }
-            
+                        
             CommentedConfigurationNode channel;	
         	ConfigurationLoader<CommentedConfigurationNode> channelManager;
             
+        	if (listOfFiles.length == 0){
+        		//create default channels
+            	File g = new File(chfolder, "global.conf"); 
+            	channelManager = HoconConfigurationLoader.builder().setFile(g).build();	
+				channel = channelManager.load();
+				channel.getNode("name").setValue("Global");
+				channel.getNode("alias").setValue("g");
+				channel.getNode("color").setValue("&2");
+				channelManager.save(channel);
+            	
+            	File l = new File(chfolder, "local.conf");
+            	channelManager = HoconConfigurationLoader.builder().setFile(l).build();	
+				channel = channelManager.load();
+				channel.getNode("name").setValue("Local");
+				channel.getNode("alias").setValue("l");
+				channel.getNode("across-worlds").setValue(false);
+				channel.getNode("distance").setValue(40);
+				channel.getNode("color").setValue("&e");
+				channelManager.save(channel);
+            	
+            	File ad = new File(chfolder, "admin.conf");
+            	channelManager = HoconConfigurationLoader.builder().setFile(ad).build();	
+				channel = channelManager.load();
+				channel.getNode("name").setValue("Admin");
+				channel.getNode("alias").setValue("ad");
+				channel.getNode("color").setValue("&b");
+				channelManager.save(channel);
+				
+            	listOfFiles = chfolder.listFiles();
+            }
+        	
     		for (File file:listOfFiles){
     			if (file.getName().endsWith(".conf")){
     				channelManager = HoconConfigurationLoader.builder().setFile(file).build();	
@@ -479,6 +504,7 @@ public class UCConfig{
 				+ "  mode: NONE - The options are NONE, SEND, LISTEN, BOTH. If enabled and OAuth code set and the channel ID matches with one discord channel, will react acoording the choosen mode.\n"
 				+ "  hover: &3Discord Channel: &a{dd-channel}\n"
 				+ "  format: {ch-color}[{ch-alias}]&7[&3Discord&7]&b{sender}&r: \n"
+				+ "  allow-server-cmds: false - Use this channel to send commands from discord > minecraft.\n"
 				+ "  channelID: '' - The ID of your Discord Channel. Enable debug on your discord to get the channel ID.\n");
 		chFile.getNode("name").setValue(ch.getName());
 		chFile.getNode("alias").setValue(ch.getAlias());
@@ -495,8 +521,7 @@ public class UCConfig{
 		chFile.getNode("channelAlias","enable").setValue(ch.isCmdAlias());
 		chFile.getNode("channelAlias","sendAs").setValue(ch.getAliasSender());
 		chFile.getNode("channelAlias","cmd").setValue(ch.getAliasCmd());
-		chFile.getNode("available-worlds").setValue(ch.availableWorlds());	
-		
+		chFile.getNode("available-worlds").setValue(ch.availableWorlds());
 		chFile.getNode("discord","channelID").setValue(ch.getDiscordChannelID());
 		chFile.getNode("discord","mode").setValue(ch.getDiscordMode());
 		chFile.getNode("discord","hover").setValue(ch.getDiscordHover());

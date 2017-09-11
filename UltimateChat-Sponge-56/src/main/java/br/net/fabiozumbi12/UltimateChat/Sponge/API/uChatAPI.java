@@ -12,7 +12,7 @@ import br.net.fabiozumbi12.UltimateChat.Sponge.UChat;
 
 public class uChatAPI {
 	
-	protected boolean registerNewTag(String tagName, String format, String clickCmd, List<String> hoverMessages){
+	public boolean registerNewTag(String tagName, String format, String clickCmd, List<String> hoverMessages){
 		if (UChat.get().getConfig().getString("tags",tagName,"format") == null){
 			UChat.get().getConfig().setConfig("tags",tagName,"format", format);
 			UChat.get().getConfig().setConfig("tags",tagName,"click-cmd", clickCmd);
@@ -35,15 +35,15 @@ public class uChatAPI {
 		return true;
 	}	
 	
-	protected UCChannel getChannel(String chName){
+	public UCChannel getChannel(String chName){
 		return UChat.get().getConfig().getChannel(chName);
 	}
 	
-	protected UCChannel getPlayerChannel(Player player){
+	public UCChannel getPlayerChannel(Player player){
 		return UChat.get().getConfig().getPlayerChannel(player);
 	}
 	
-	protected Collection<UCChannel> getChannels(){
+	public Collection<UCChannel> getChannels(){
 		return UChat.get().getConfig().getChannels();
 	}
 }

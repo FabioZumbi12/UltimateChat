@@ -306,14 +306,14 @@ public class UCListener implements CommandExecutor,Listener {
 			 }
 		 }
 		 
-		 if (cmd.getName().equalsIgnoreCase("ubroadcast") && sender.hasPermission("uchat.broadcast")){
+		 if (cmd.getName().equalsIgnoreCase("ubroadcast") && UCPerms.cmdPerm(sender, "broadcast")){
 			 if (!UCUtil.sendBroadcast(sender, args, false)){
 				 sendHelp(sender);
 			 }
 			 return true;
 		 }
 		 
-		 if (cmd.getName().equalsIgnoreCase("umsg") && sender.hasPermission("uchat.cmd.umsg")){
+		 if (cmd.getName().equalsIgnoreCase("umsg") && UCPerms.cmdPerm(sender, "umsg")){
 			 UCUtil.sendUmsg(sender, args);
 			 return true;
 		 }

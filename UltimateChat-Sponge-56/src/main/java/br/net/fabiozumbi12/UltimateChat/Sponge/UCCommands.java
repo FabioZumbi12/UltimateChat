@@ -261,7 +261,7 @@ public class UCCommands {
 			unregisterCmd(msga);
 			Sponge.getCommandManager().register(UChat.get().instance(), CommandSpec.builder()
 					.arguments(GenericArguments.player(Text.of("player")), GenericArguments.remainingJoinedStrings(Text.of("message")))
-					.permission("uchat.cmd.message")
+					.permission("uchat.cmd.umsg")
 				    .description(Text.of("Send a message directly to a player."))
 				    .executor((src, args) -> { {
 				    	Player receiver = args.<Player>getOne("player").get();

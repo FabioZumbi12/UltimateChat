@@ -251,7 +251,11 @@ public class UChat extends JavaPlugin {
 	
 	protected void reload(){
 		this.getServ().getScheduler().cancelTasks(UChat.get());
-		this.config = new UCConfig(this);
+		try {
+			this.config = new UCConfig(this);
+		} catch (IOException | InvalidConfigurationException e) {
+			e.printStackTrace();
+		}
 		this.lang = new UCLang();
 		this.registerAliases();
 		for (Player p:Bukkit.getOnlinePlayers()){

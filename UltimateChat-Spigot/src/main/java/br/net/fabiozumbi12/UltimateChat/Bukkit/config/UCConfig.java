@@ -13,6 +13,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UCChannel;
@@ -26,11 +27,10 @@ public class UCConfig{
 	static YamlConfiguration Prots = new YamlConfiguration();
 	private HashMap<List<String>,UCChannel> channels = null;
 	
-	public UCConfig(UChat plugin) {
+	public UCConfig(UChat plugin) throws IOException, InvalidConfigurationException {
 		            File main = UChat.get().getDataFolder();
     	            File config = new File(UChat.get().getDataFolder()+File.separator+"config.yml");
     	            File chfolder = new File(UChat.get().getDataFolder()+File.separator+"channels");
-    	            File defch = new File(UChat.get().getDataFolder()+File.separator+"channels"+File.separator+"global.yml");
     	            File protections = new File(UChat.get().getDataFolder()+File.separator+"protections.yml");
     	            
     	            if (!main.exists()) {
@@ -42,18 +42,16 @@ public class UCConfig{
     	            	chfolder.mkdir();
     	            	plugin.getUCLogger().info("Created folder: " +chfolder.getPath());
     	            }    	            
-
+    	            
+    	            /*
     	            if (!config.exists() && !defch.exists()) {
     	            	UCUtil.saveResource("/assets/ultimatechat/global.yml", new File(UChat.get().getDataFolder(),"channels"+File.separator+"global.yml"));
     	            	UCUtil.saveResource("/assets/ultimatechat/local.yml", new File(UChat.get().getDataFolder(),"channels"+File.separator+"local.yml"));
     	            	UCUtil.saveResource("/assets/ultimatechat/admin.yml", new File(UChat.get().getDataFolder(),"channels"+File.separator+"admin.yml"));
     	            	UCUtil.saveResource("/assets/ultimatechat/bungee.yml", new File(UChat.get().getDataFolder(),"channels"+File.separator+"bungee.yml"));
-    	            	/*
-    	            	plugin.saveResource("channels/global.yml", false);//create config file    	 
-    	            	plugin.saveResource("channels/local.yml", false);//create config file  
-    	            	*/
+    	            	
     	            	plugin.getUCLogger().info("Created channels file...");
-    	            } 
+    	            } */
     	            
     	            if (!config.exists()) {
     	            	UCUtil.saveResource("/assets/ultimatechat/config.yml", new File(UChat.get().getDataFolder(),"config.yml"));
@@ -75,9 +73,40 @@ public class UCConfig{
                                         
                     channels = new HashMap<List<String>,UCChannel>();
                     File[] listOfFiles = chfolder.listFiles();
+                    
+                    YamlConfiguration channel = new YamlConfiguration();
+                    
+                    if (listOfFiles.length == 0){
+                    	//create default channels
+                    	File g = new File(chfolder, "global.yml"); 
+                    	channel = YamlConfiguration.loadConfiguration(g);
+                    	channel.set("name", "Global");
+                    	channel.set("alias", "g");
+                    	channel.set("color", "&2");
+                    	channel.save(g);
+                    	
+                    	File l = new File(chfolder, "local.yml");
+                    	channel = YamlConfiguration.loadConfiguration(l);
+                    	channel.set("name", "Local");
+                    	channel.set("alias", "l");
+                    	channel.set("color", "&e");
+                    	channel.set("across-worlds", false);
+                    	channel.set("distance", 40);
+                    	channel.save(l);
+                    	
+                    	File ad = new File(chfolder, "admin.yml");
+                    	channel = YamlConfiguration.loadConfiguration(ad);
+                    	channel.set("name", "Admin");
+                    	channel.set("alias", "ad");
+                    	channel.set("color", "&b");
+                    	channel.save(ad);
+                    	
+                    	listOfFiles = chfolder.listFiles();
+                    }
+                    
             		for (File file:listOfFiles){
             			if (file.getName().endsWith(".yml")){
-            				YamlConfiguration channel = YamlConfiguration.loadConfiguration(file);
+            				channel = YamlConfiguration.loadConfiguration(file);
 							UCChannel ch = new UCChannel(channel.getString("name"), 
 									channel.getString("alias"), 
 									channel.getBoolean("across-worlds", true),
@@ -334,6 +363,7 @@ public class UCConfig{
 				+ "  mode: NONE - The options are NONE, SEND, LISTEN, BOTH. If enabled and OAuth code set and the channel ID matches with one discord channel, will react acoording the choosen mode.\n"
 				+ "  hover: &3Discord Channel: &a{dd-channel}\n"
 				+ "  format: {ch-color}[{ch-alias}]&7[&3Discord&7]&b{sender}&r: \n"
+				+ "  allow-server-cmds: false - Use this channel to send commands from discord > minecraft.\n"
 				+ "  channelID: '' - The ID of your Discord Channel. Enable debug on your discord to get the channel ID.\n");
 		chFile.set("name", ch.getName());
 		chFile.set("alias", ch.getAlias());
