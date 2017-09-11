@@ -3,7 +3,7 @@ main: br.net.fabiozumbi12.UltimateChat.Bukkit.UChat
 version: ${project.version}
 author: FabioZumbi12
 description: ${project.description}
-softdepend: [mcMMO, SkillAPI, Essentials, SimpleClans, Vault, MarriageMaster, Marriage, PlaceholderAPI, Factions, JDALibLoader]
+softdepend: [mcMMO, SkillAPI, Essentials, SimpleClans, Vault, MarriageMaster, Marriage, PlaceholderAPI, Factions, JDALibLoaderBukkit]
 commands:
   uchat:
     description: "Main command for ${project.name}."
@@ -41,6 +41,7 @@ permissions:
       uchat.cant-ignore.admin: true
       uchat.broadcast: true      
       uchat.bypass-protections: true
+      uchat.discord.mention: true
   uchat.player:
     description: "All player commands."
     default: true

@@ -193,7 +193,7 @@ public class UCMessages {
 		});	
 		
 		if (channel != null && !channel.isTell() && UChat.get().getUCJDA() != null){
-			UChat.get().getUCJDA().sendToDsicord(sender, msg, channel);
+			UChat.get().getUCJDA().sendToDiscord(sender, msg, channel);
 		}
 		
 		return cancel;
@@ -349,7 +349,7 @@ public class UCMessages {
 			} else {
 				fanci.text(prefix).next();
 			}			
-			fanci.text(UCUtil.stripColor(format)).next();			
+			fanci.text(ChatColor.stripColor(format)).next();			
 		}	
 		return fanci;
 	}

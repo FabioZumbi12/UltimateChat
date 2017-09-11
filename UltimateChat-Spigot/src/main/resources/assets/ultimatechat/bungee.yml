@@ -1,15 +1,15 @@
-name: Global
-alias: g
+name: Bungee
+alias: b
 across-worlds: true
 cost: 0.0
 distance: 0
-color: '&2'
+color: '&5'
 need-focus: false
 receivers-message: true
 tag-builder: ch-tags,world,group-preffix,nickname,group-suffix,message
 use-this-builder: false
 canLock: true
-bungee: false
+bungee: true
 channelAlias:
   enable: false
   sendAs: player
@@ -17,5 +17,6 @@ channelAlias:
 available-worlds: []
 discord:
   channelID: ''
-  prefix: '{ch-color}[{ch-alias}]&7[&3Discord&7]&b{sender}&r: '
-  on-hover: '&3Discord Channel: &a{dd-channel}'
+  mode: none
+  hover: '&3Discord Channel: &a{dd-channel}'
+  format: '{ch-color}[{ch-alias}]&7[&3Discord&7]&b{sender}&r: '

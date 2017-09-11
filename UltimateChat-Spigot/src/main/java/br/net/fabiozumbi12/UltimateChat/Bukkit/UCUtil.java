@@ -1,11 +1,15 @@
 package br.net.fabiozumbi12.UltimateChat.Bukkit;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import br.net.fabiozumbi12.UltimateChat.Bukkit.config.TaskChain;
 
 public class UCUtil {
 		
@@ -26,18 +30,31 @@ public class UCUtil {
 		return ChatColor.translateAlternateColorCodes('&', msg);
 	}
 	
-	public static String stripColor(String str) {
-		return str.replaceAll("(§([a-fk-or0-9]))", "&$2");
+	public static void saveResource(String name, File saveTo){
+		try {
+			InputStream isReader = UChat.class.getResourceAsStream(name);
+			FileOutputStream fos = new FileOutputStream(saveTo);
+			while (isReader.available() > 0) {  // write contents of 'is' to 'fos'
+		        fos.write(isReader.read());
+		    }
+		    fos.close();
+		    isReader.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
-	public static void performCommand(final Player to, final CommandSender consoleCommandSender, final String command) {
-	    TaskChain.newChain().add(new TaskChain.GenericTask() {
-	        public void run() {
-	        	if (to == null || (to != null && to.isOnline())){
-	        		UChat.get().getServ().dispatchCommand(consoleCommandSender,command);
-	        	}	        	
-	        }
-	    }).execute();
+	public static void performCommand(final Player to, final CommandSender sender, final String command) {
+		Bukkit.getScheduler().runTask(UChat.get(), new Runnable(){
+			@Override
+			public void run() {
+				if (to == null || (to != null && to.isOnline())){
+	        		UChat.get().getServ().dispatchCommand(sender, command);
+	        	}
+			}			
+		});
 	}
 	
 	public static void sendUmsg(CommandSender sender, String[] args){

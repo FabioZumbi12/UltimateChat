@@ -17,5 +17,6 @@ channelAlias:
 available-worlds: []
 discord:
   channelID: ''
-  prefix: '{ch-color}[{ch-alias}]&7[&3Discord&7]&b{sender}&r: '
-  on-hover: '&3Discord Channel: &a{dd-channel}'
+  mode: none
+  hover: '&3Discord Channel: &a{dd-channel}'
+  format: '{ch-color}[{ch-alias}]&7[&3Discord&7]&b{sender}&r: '

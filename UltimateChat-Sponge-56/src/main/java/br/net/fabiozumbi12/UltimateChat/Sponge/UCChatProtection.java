@@ -3,8 +3,11 @@ package br.net.fabiozumbi12.UltimateChat.Sponge;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
+
+import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 
 import org.apache.commons.lang3.StringUtils;
 import org.spongepowered.api.Sponge;
@@ -41,7 +44,7 @@ class UCChatProtection {
 			//check spam messages
 			if (!chatSpam.containsKey(p)){
 				chatSpam.put(p, msg);				
-				Sponge.getScheduler().createSyncExecutor(UChat.plugin).schedule(new Runnable() { 
+				Sponge.getScheduler().createSyncExecutor(UChat.get().instance()).schedule(new Runnable() { 
 					public void run() {
 						if (chatSpam.containsKey(p)){
 							chatSpam.remove(p);
@@ -57,7 +60,7 @@ class UCChatProtection {
 			if (!msgSpam.containsKey(msg)){
 				msgSpam.put(msg, 1);
 				final String nmsg = msg;
-				Sponge.getScheduler().createSyncExecutor(UChat.plugin).schedule(new Runnable() { 
+				Sponge.getScheduler().createSyncExecutor(UChat.get().instance()).schedule(new Runnable() { 
 					public void run() {
 						if (msgSpam.containsKey(nmsg)){
 							msgSpam.remove(nmsg);
@@ -80,17 +83,18 @@ class UCChatProtection {
 		//censor
 		if (UChat.get().getConfig().getProtBool("chat-protection","censor","enable") && !p.hasPermission("uchat.bypass-censor")){
 			int act = 0;
-			for (String word:UChat.get().getConfig().getProtStringList("chat-protection","censor","replace-words")){
-				if (!StringUtils.containsIgnoreCase(msg, word)){
+			for (Entry<Object, ? extends CommentedConfigurationNode> word:UChat.get().getConfig().getProtReplecements().getChildrenMap().entrySet()){				
+				if (!StringUtils.containsIgnoreCase(msg, word.toString())){
 					continue;
 				} 				
-				String replaceby = UChat.get().getConfig().getProtString("chat-protection","censor","by-word");
+				
+				String replaceby = word.getValue().getString();
 				if (UChat.get().getConfig().getProtBool("chat-protection","censor","replace-by-symbol")){
-					replaceby = word.replaceAll("(?s).", UChat.get().getConfig().getProtString("chat-protection","censor","by-symbol"));
+					replaceby = word.toString().replaceAll("(?s).", UChat.get().getConfig().getProtString("chat-protection","censor","by-symbol"));
 				}
 				
 				if (!UChat.get().getConfig().getProtBool("chat-protection","censor","replace-partial-word")){
-					msg = msg.replaceAll("(?i)"+"\\b"+Pattern.quote(word)+"\\b", replaceby);
+					msg = msg.replaceAll("(?i)"+"\\b"+Pattern.quote(word.toString())+"\\b", replaceby);
 					if (UChat.get().getConfig().getProtBool("chat-protection","censor","action","partial-words")){
 						act++;
 					}
@@ -206,7 +210,7 @@ class UCChatProtection {
 					if (UChat.get().getConfig().getProtString("chat-protection","anti-ip","punish","mute-or-cmd").equalsIgnoreCase("mute")){
 						muted.add(p.getName());
 						p.sendMessage(UChat.get().getConfig().getProtMsg("chat-protection","anti-ip","punish","mute-msg"));
-						Sponge.getScheduler().createSyncExecutor(UChat.plugin).schedule(new Runnable() { 
+						Sponge.getScheduler().createSyncExecutor(UChat.get().instance()).schedule(new Runnable() { 
 							public void run() {
 								if (muted.contains(p.getName())){						
 									muted.remove(p.getName());

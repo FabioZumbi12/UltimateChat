@@ -86,23 +86,23 @@ class UCChatProtection implements Listener{
 		//censor
 		if (UChat.get().getUCConfig().getProtBool("chat-protection.censor.enabled") && !p.hasPermission("uchat.bypass-censor")){
 			int act = 0;
-			for (String word:UChat.get().getUCConfig().getProtStringList("chat-protection.censor.replace-words")){
+			for (String word:UChat.get().getUCConfig().getProtReplecements().getKeys(false)){
 				if (!StringUtils.containsIgnoreCase(msg, word)){
 					continue;
 				} 				
-				String replaceby = UChat.get().getUCConfig().getProtString("chat-protection.censor.by-word");
+				String replaceby = UChat.get().getUCConfig().getProtString(word);
 				if (UChat.get().getUCConfig().getProtBool("chat-protection.censor.replace-by-symbol")){
 					replaceby = word.replaceAll("(?s).", UChat.get().getUCConfig().getProtString("chat-protection.censor.by-symbol"));
 				}
 				
 				if (!UChat.get().getUCConfig().getProtBool("chat-protection.censor.replace-partial-word")){
 					msg = msg.replaceAll("(?i)"+"\\b"+Pattern.quote(word)+"\\b", replaceby);
-					act++;
-				} else {
-					msg = msg.replaceAll("(?i)"+word, replaceby);		
 					if (UChat.get().getUCConfig().getProtBool("chat-protection.censor.action.partial-words")){
 						act++;
 					}
+				} else {
+					msg = msg.replaceAll("(?i)"+word, replaceby);		
+					act++;
 				}				
 			}
 			if (act > 0){

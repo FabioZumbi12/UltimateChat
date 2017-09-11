@@ -1,0 +1,22 @@
+name: Global
+alias: g
+across-worlds: true
+cost: 0.0
+distance: 0
+color: '&2'
+need-focus: false
+receivers-message: true
+tag-builder: ch-tags,world,group-preffix,nickname,group-suffix,message
+use-this-builder: false
+canLock: true
+bungee: false
+channelAlias:
+  enable: false
+  sendAs: player
+  cmd: ''
+available-worlds: []
+discord:
+  channelID: ''
+  mode: none
+  hover: '&3Discord Channel: &a{dd-channel}'
+  format: '{ch-color}[{ch-alias}]&7[&3Discord&7]&b{sender}&r: '

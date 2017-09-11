@@ -21,8 +21,8 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 
 import br.com.devpaulo.legendchat.api.events.ChatMessageEvent;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.API.SendChannelMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UCLogger.timingType;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.API.SendChannelMessageEvent;
 
 public class UCListener implements CommandExecutor,Listener {
 	
@@ -38,17 +38,7 @@ public class UCListener implements CommandExecutor,Listener {
 			 }
 					 
 			 if (args[0].equalsIgnoreCase("reload") && sender.hasPermission("uchat.cmd.reload")){
-				 UChat.get().getServ().getScheduler().cancelTasks(UChat.get());
-				 UChat.get().setConfig();
-				 UChat.get().setLang();
-				 UChat.get().registerAliases();
-				 for (Player p:Bukkit.getOnlinePlayers()){
-					 if (UChat.get().getUCConfig().getPlayerChannel(p) == null){
-						 UChat.get().getUCConfig().getDefChannel().addMember(p);
-					 }					 
-				 }
-				 UChat.get().registerJDA();
-				 UChat.get().initAutomessage();
+				 UChat.get().reload();
 				 UChat.get().getLang().sendMessage(sender, "plugin.reloaded");
 				 return true;
 			 }			 
@@ -603,6 +593,9 @@ public class UCListener implements CommandExecutor,Listener {
 	public void onJoin(PlayerJoinEvent e){
 		Player p = e.getPlayer();		
 		UChat.get().getUCConfig().getDefChannel().addMember(p);
+		if (UChat.get().getUCJDA() != null){
+			UChat.get().getUCJDA().sendRawToDiscord(UChat.get().getLang().get("discord.join").replace("{player}", p.getName()));
+		}
 	}
 	
 	@EventHandler(priority = EventPriority.LOW)
@@ -646,6 +639,9 @@ public class UCListener implements CommandExecutor,Listener {
 		}
 		if (UChat.get().command.contains(p.getName())){
 			UChat.get().command.remove(p.getName());
+		}
+		if (UChat.get().getUCJDA() != null){
+			UChat.get().getUCJDA().sendRawToDiscord(UChat.get().getLang().get("discord.leave").replace("{player}", p.getName()));
 		}
 	}
 		

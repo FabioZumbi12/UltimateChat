@@ -44,8 +44,9 @@ public class UCChannel {
 	private List<CommandSender> members = new ArrayList<CommandSender>();
 	private String ddformat = "{ch-color}[{ch-alias}]&7[&3Discord&7]&b{sender}&r: {message}";
 	private String ddhover = "&3Discord Channel: &a{dd-channel}";
+	private boolean ddallowcmds = false;
 
-	public UCChannel(String name, String alias, boolean worlds, int dist, String color, String builder, boolean focus, boolean receiversMsg, double cost, boolean isbungee, boolean ownBuilder, boolean isAlias, String aliasSender, String aliasCmd, List<String> availableWorlds, String ddchannel, String ddmode, String ddformat, String ddhover, boolean lock) {
+	public UCChannel(String name, String alias, boolean worlds, int dist, String color, String builder, boolean focus, boolean receiversMsg, double cost, boolean isbungee, boolean ownBuilder, boolean isAlias, String aliasSender, String aliasCmd, List<String> availableWorlds, String ddchannel, String ddmode, String ddformat, String ddhover, boolean ddallowcmds, boolean lock) {
 		this.name = name;
 		this.alias = alias;
 		this.worlds = worlds;
@@ -66,6 +67,7 @@ public class UCChannel {
 		this.ddmode = ddmode;
 		this.ddformat = ddformat;
 		this.ddhover = ddhover;
+		this.ddallowcmds = ddallowcmds;
 	}
 	
 	public UCChannel(String name, String alias, String color) {
@@ -79,6 +81,10 @@ public class UCChannel {
 		this.alias = name.substring(0, 1).toLowerCase();
 	}
 
+	public boolean getDiscordAllowCmds(){
+		return this.ddallowcmds;
+	}
+	
 	public boolean isTell(){
 		return this.name.equals("tell");		
 	}
@@ -306,6 +312,7 @@ public class UCChannel {
 			}
 			message.send(sender);	
 		} else {			
+			UChat.get().getUCLogger().timings(timingType.START, "UCChannel#sendMessage()|Fire MessageChannelEvent");
 			UCMessages.sendFancyMessage(new String[0], message.toOldFormat(), this, sender, null);
 		}
 	}

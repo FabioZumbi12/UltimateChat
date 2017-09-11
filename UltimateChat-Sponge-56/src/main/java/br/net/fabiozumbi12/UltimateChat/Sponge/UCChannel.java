@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.source.ConsoleSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.SpongeEventFactory;
@@ -15,6 +16,8 @@ import org.spongepowered.api.event.message.MessageEvent;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.world.World;
+
+import br.net.fabiozumbi12.UltimateChat.Sponge.UCLogger.timingType;
 
 /**Represents a chat channel use by UltimateChat to control from where/to send/receive messages.
  * 
@@ -42,10 +45,13 @@ public class UCChannel {
 	private List<String> availableWorlds = new ArrayList<String>();
 	private boolean canLock = true;
 	private String ddchannel = new String();
-	private boolean usedd = false;
-	private List<Player> members = new ArrayList<Player>();
+	private String ddmode = "NONE";
+	private List<CommandSource> members = new ArrayList<CommandSource>();
+	private String ddformat = "{ch-color}[{ch-alias}]&7[&3Discord&7]&b{sender}&r: {message}";
+	private String ddhover = "&3Discord Channel: &a{dd-channel}";
+	private boolean ddallowcmds = false;
 
-	public UCChannel(String name, String alias, boolean worlds, int dist, String color, String builder, boolean focus, boolean receiversMsg, double cost, boolean isbungee, boolean ownBuilder, boolean isAlias, String aliasSender, String aliasCmd, List<String> availableWorlds, String ddchannel, boolean usedd, boolean lock) {
+	public UCChannel(String name, String alias, boolean worlds, int dist, String color, String builder, boolean focus, boolean receiversMsg, double cost, boolean isbungee, boolean ownBuilder, boolean isAlias, String aliasSender, String aliasCmd, List<String> availableWorlds, String ddchannel, String ddmode, String ddformat, String ddhover, boolean ddallowcmds, boolean lock) {
 		this.name = name;
 		this.alias = alias;
 		this.worlds = worlds;
@@ -60,10 +66,13 @@ public class UCChannel {
 		this.isAlias = isAlias;
 		this.aliasCmd  = aliasCmd;
 		this.aliasSender = aliasSender;
-		this.availableWorlds = availableWorlds;	
+		this.availableWorlds = availableWorlds;
 		this.canLock = lock;
 		this.ddchannel = ddchannel;
-		this.usedd = usedd;
+		this.ddmode = ddmode;
+		this.ddformat = ddformat;
+		this.ddhover = ddhover;
+		this.ddallowcmds = ddallowcmds;
 	}
 			
 	UCChannel(String name) {
@@ -71,7 +80,43 @@ public class UCChannel {
 		this.alias = name.substring(0, 1).toLowerCase();
 	}
 	
-	public List<Player> getMembers(){
+	public boolean getDiscordAllowCmds(){
+		return this.ddallowcmds;
+	}
+
+	public boolean isTell(){
+		return this.name.equals("tell");		
+	}
+	
+	public String getDiscordChannelID(){
+		return this.ddchannel;
+	}
+	
+	public String getDiscordMode(){
+		return this.ddmode;
+	}
+	
+	public boolean matchDiscordID(String id){
+		return this.ddchannel.equals(id);
+	}
+	
+	public boolean isSendingDiscord(){
+		return !ddchannel.isEmpty() && (ddmode.equalsIgnoreCase("both") || ddmode.equalsIgnoreCase("send"));
+	}
+	
+	public boolean isListenDiscord(){
+		return !ddchannel.isEmpty() && (ddmode.equalsIgnoreCase("both") || ddmode.equalsIgnoreCase("listen"));
+	}
+	
+	public String getDiscordHover(){
+		return this.ddhover;
+	}
+	
+	public String getDiscordFormat(){
+		return this.ddformat;
+	}
+	
+	public List<CommandSource> getMembers(){
 		return this.members;
 	}
 	
@@ -79,27 +124,19 @@ public class UCChannel {
 		this.members.clear();
 	}
 	
-	public boolean addMember(Player p){
+	public boolean addMember(CommandSource p){
 		for (UCChannel ch:UChat.get().getConfig().getChannels()){
 			ch.removeMember(p);
 		}
 		return this.members.add(p);
 	}
 	
-	public boolean removeMember(Player p){
+	public boolean removeMember(CommandSource p){
 		return this.members.remove(p);
 	}
 	
 	public boolean isMember(Player p){
 		return this.members.contains(p);
-	}
-	
-	public String getDiscordChannelID(){
-		return this.ddchannel;
-	}
-	
-	public boolean useDiscordChanel(){
-		return this.usedd;
 	}
 	
 	public boolean canLock(){
@@ -238,6 +275,7 @@ public class UCChannel {
 			for (Player p:Sponge.getServer().getOnlinePlayers()){
 				UCChannel chp = UChat.get().getConfig().getPlayerChannel(p);
 				if (UChat.get().getPerms().channelReadPerm(p, this) && !this.isIgnoring(p.getName()) && (this.neeFocus() && chp.equals(this) || !this.neeFocus())){
+					UChat.get().getLogger().timings(timingType.START, "UCChannel#sendMessage()|Direct Message");
 					p.sendMessage(message);					
 				}
 			}
@@ -253,6 +291,7 @@ public class UCChannel {
 							.build(), message),
 							message,  
 					false);
+			UChat.get().getLogger().timings(timingType.START, "UCChannel#sendMessage()|Fire MessageChannelEvent");
 			if (!Sponge.getEventManager().post(event)){
 				UChat.tempChannels.put(src.getName(), this.alias);
 			}
@@ -271,11 +310,13 @@ public class UCChannel {
 			for (Player p:Sponge.getServer().getOnlinePlayers()){
 				UCChannel chp = UChat.get().getConfig().getPlayerChannel(p);
 				if (UChat.get().getPerms().channelReadPerm(p, this) && !this.isIgnoring(p.getName()) && (this.neeFocus() && chp.equals(this) || !this.neeFocus())){
+					UChat.get().getLogger().timings(timingType.START, "UCChannel#sendMessage()|Direct Message");
 					p.sendMessage(message);					
 				}
 			}
 			sender.sendMessage(message);
 		} else {
+			UChat.get().getLogger().timings(timingType.START, "UCChannel#sendMessage()|Fire MessageChannelEvent");
 			UCMessages.sendFancyMessage(new String[0], message, this, sender, null);
 		}
 	}

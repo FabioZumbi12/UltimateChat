@@ -35,36 +35,34 @@ import br.net.fabiozumbi12.UltimateChat.Bukkit.API.uChatAPI;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.Bungee.UChatBungee;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.config.UCConfig;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.config.UCLang;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.util.Discord.UCDiscord;
 
 import com.lenis0012.bukkit.marriage2.Marriage;
 import com.lenis0012.bukkit.marriage2.MarriageAPI;
 
 public class UChat extends JavaPlugin {
 	
-    private static boolean Vault = false;	
-	public static String mainPath;	
-	static boolean SClans;
-	static ClanManager sc;
-	static boolean MarryReloded;
-	static boolean MarryMaster;
+    private static boolean Vault = false;	    
+    protected static boolean SClans;
+    protected static ClanManager sc;
+    protected static boolean MarryReloded;
+    protected static boolean MarryMaster;
 	private static boolean ProtocolLib;
-	static MarriageMaster mm;
-	static Marriage mapi;
-	static boolean PlaceHolderAPI;
-	static boolean Factions;
+	protected static MarriageMaster mm;
+	protected static Marriage mapi;
+	protected static boolean PlaceHolderAPI;
+	protected static boolean Factions;
 	private FileConfiguration amConfig;
 	private int index = 0;	
 
 	//public static HashMap<String,String> pChannels = new HashMap<String,String>();
-	public HashMap<String,String> tempChannels = new HashMap<String,String>();
-	public HashMap<String,String> tellPlayers = new HashMap<String,String>();
-	public HashMap<String,String> tempTellPlayers = new HashMap<String,String>();
-	public HashMap<String,String> respondTell = new HashMap<String,String>();
-	public List<String> command = new ArrayList<String>();
-	public HashMap<String,List<String>> ignoringPlayer = new HashMap<String,List<String>>();
-	public List<String> mutes = new ArrayList<String>();
-	public List<String> isSpy = new ArrayList<String>();
+	protected HashMap<String,String> tempChannels = new HashMap<String,String>();
+	protected HashMap<String,String> tellPlayers = new HashMap<String,String>();
+	protected HashMap<String,String> tempTellPlayers = new HashMap<String,String>();
+	protected HashMap<String,String> respondTell = new HashMap<String,String>();
+	protected List<String> command = new ArrayList<String>();
+	protected HashMap<String,List<String>> ignoringPlayer = new HashMap<String,List<String>>();
+	protected List<String> mutes = new ArrayList<String>();
+	protected List<String> isSpy = new ArrayList<String>();
 	
 	public FileConfiguration getAMConfig(){
 		return this.amConfig;
@@ -132,23 +130,20 @@ public class UChat extends JavaPlugin {
 	public PluginDescriptionFile getPDF(){
 		return this.getDescription();
 	}
-	
-	public void setConfig(){
-		this.config = new UCConfig(this, mainPath);
+	/*
+	private String mainPath;	
+	public String configDir(){
+		return this.mainPath;
 	}
-	
-	public void setLang(){
-		this.lang = new UCLang(this, logger, mainPath, config);
-	}
-	
+	*/
 	public void onEnable() {
         try {
             uchat = this;
             logger = new UCLogger(this);
             serv = getServer();
-            mainPath = "plugins" + File.separator + getDescription().getName() + File.separator;
-            setConfig();
-            setLang();
+            //mainPath = this.getDataFolder().getPath();
+            config = new UCConfig(this);
+            lang = new UCLang();
             amConfig = new YamlConfiguration();
             //check hooks
             Vault = checkVault();            
@@ -245,10 +240,27 @@ public class UChat extends JavaPlugin {
             		+ "                                                                \n"
             		+ "&a"+getDescription().getFullName()+" enabled!\n");
             
+            if (this.UCJDA != null){
+            	this.UCJDA.sendRawToDiscord(lang.get("discord.start"));
+    		} 
         } catch (Exception e){
         	e.printStackTrace();
         	super.setEnabled(false);
         }
+	}
+	
+	protected void reload(){
+		this.getServ().getScheduler().cancelTasks(UChat.get());
+		this.config = new UCConfig(this);
+		this.lang = new UCLang();
+		this.registerAliases();
+		for (Player p:Bukkit.getOnlinePlayers()){
+			if (this.getUCConfig().getPlayerChannel(p) == null){
+				this.getUCConfig().getDefChannel().addMember(p);
+			}
+		}
+		this.registerJDA();
+		this.initAutomessage();
 	}
 	
 	protected void registerJDA(){
@@ -263,8 +275,8 @@ public class UChat extends JavaPlugin {
 		}			
 	}
 	
-	public void initAutomessage(){
-		File am = new File(mainPath+"automessages.yml");
+	private void initAutomessage(){
+		File am = new File(getDataFolder(),"automessages.yml");
 		try {
 			if (!am.exists()){
 				am.createNewFile();
@@ -356,12 +368,13 @@ public class UChat extends JavaPlugin {
 	
 	public void onDisable() {
 		if (this.UCJDA != null){
+			this.UCJDA.sendRawToDiscord(lang.get("discord.stop"));
 			this.UCJDA.shutdown();
 		}
 		getUCLogger().severe(getDescription().getFullName()+" disabled!");
 	}
 	
-	public void registerAliases(){
+	private void registerAliases(){
 		registerAliases("channel",config.getChAliases());
         registerAliases("tell",config.getTellAliases());
         registerAliases("umsg",config.getMsgAliases());

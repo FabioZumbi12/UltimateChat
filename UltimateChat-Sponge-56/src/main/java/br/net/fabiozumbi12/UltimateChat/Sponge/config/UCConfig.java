@@ -54,6 +54,15 @@ public class UCConfig{
 			config.getNode("debug","timings").setValue(config.getNode("debug","timings").getBoolean(false));
 			config.getNode("language").setValue(config.getNode("language").getString("EN-US"));
 			
+			config.getNode("discord").setComment("Enable the two way chat into discord and minecraft.\nGenerate your bot token following this instructions: https://goo.gl/utfRRv");
+			config.getNode("discord","use").setValue(config.getNode("discord","use").getBoolean(false));
+			config.getNode("discord","token").setValue(config.getNode("discord","token").getString(new String()));
+			config.getNode("discord","log-channel-id").setComment("Channel id to send server start/stop and player join/leave messages");
+			config.getNode("discord","log-channel-id").setValue(config.getNode("discord","log-channel-id").getString(new String()));
+			config.getNode("discord","server-commands","alias").setValue(config.getNode("discord","server-commands","alias").getString("!cmd"));
+			config.getNode("discord","server-commands","whitelist").setValue(config.getNode("discord","server-commands","whitelist").getList(TypeToken.of(String.class), new ArrayList<String>()));
+			config.getNode("discord","server-commands","blacklist").setValue(config.getNode("discord","server-commands","blacklist").getList(TypeToken.of(String.class), Arrays.asList("stop","whitelist")));
+			
 			config.getNode("mention").setComment("Use mentions on chat to change the player name color and play a sound on mention.");
 			config.getNode("mention","enable").setValue(config.getNode("mention","enable").getBoolean(true));
 			config.getNode("mention","color-template").setValue(config.getNode("mention","color-template").getString("&e@{mentioned-player}&r"));
@@ -199,9 +208,10 @@ public class UCConfig{
 			prots.getNode("chat-protection","censor","action","cmd").setValue(prots.getNode("chat-protection","censor","action","cmd").getString(""));
 			prots.getNode("chat-protection","censor","action","only-on-channels").setValue(prots.getNode("chat-protection","censor","action","only-on-channels").getList(TypeToken.of(String.class), Arrays.asList("global")));
 			prots.getNode("chat-protection","censor","action","partial-words").setValue(prots.getNode("chat-protection","censor","action","partial-words").getBoolean(false));
-			prots.getNode("chat-protection","censor","replace-words")
-			.setValue(prots.getNode("chat-protection","censor","replace-words").getList(TypeToken.of(String.class), Arrays.asList("world")));
-			
+			if (!prots.getNode("chat-protection","censor","replace-words").hasMapChildren()){
+				prots.getNode("chat-protection","censor","replace-words","fuck").setValue(prots.getNode("chat-protection","censor","replace-words","fuck").getString("*flower*"));
+				prots.getNode("chat-protection","censor","replace-words","ass").setValue(prots.getNode("chat-protection","censor","replace-words","ass").getString("*finger*"));
+			}			
 			prots.getNode("chat-protection","anti-ip","enable").setValue(prots.getNode("chat-protection","anti-ip","enable").getBoolean(true));
 			prots.getNode("chat-protection","anti-ip","custom-ip-regex").setValue(prots.getNode("chat-protection","anti-ip","custom-ip-regex").getString("^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"));
 			prots.getNode("chat-protection","anti-ip","custom-url-regex").setValue(prots.getNode("chat-protection","anti-ip","custom-url-regex").getString("((http:\\/\\/|https:\\/\\/)?(www.)?(([a-zA-Z0-9-]){2,}\\.){1,4}([a-zA-Z]){2,6}(\\/([a-zA-Z-_\\/\\.0-9#:?=&;,]*)?)?)"));
@@ -236,9 +246,9 @@ public class UCConfig{
             channels = new HashMap<List<String>,UCChannel>();
             File[] listOfFiles = chfolder.listFiles();
             if (listOfFiles.length == 0){
-            	UCUtil.saveResource("global.conf", new File(chfolder+File.separator+"global.conf"));
-            	UCUtil.saveResource("local.conf", new File(chfolder+File.separator+"local.conf"));
-            	UCUtil.saveResource("admin.conf", new File(chfolder+File.separator+"admin.conf"));
+            	UChat.get().instance().getAsset("global.conf").get().copyToDirectory(chfolder.toPath());
+            	UChat.get().instance().getAsset("local.conf").get().copyToDirectory(chfolder.toPath());
+            	UChat.get().instance().getAsset("admin.conf").get().copyToDirectory(chfolder.toPath());
             	listOfFiles = chfolder.listFiles();
             }
             
@@ -266,8 +276,11 @@ public class UCConfig{
 								channel.getNode("channelAlias","sendAs").getString("player"),
 								channel.getNode("channelAlias","cmd").getString(""),
 								channel.getNode("available-worlds").getList(TypeToken.of(String.class), new ArrayList<String>()),
-								channel.getNode("discord","channelID").getString(""),
-								channel.getNode("discord","useChannel").getBoolean(false),
+								channel.getNode("discord","channelID").getString(new String()),
+								channel.getNode("discord","mode").getString("none"),
+								channel.getNode("discord","format").getString("{ch-color}[{ch-alias}]&7[&3Discord&7]&b{sender}&r: "),
+								channel.getNode("discord","hover").getString("&3Discord Channel: &a{dd-channel}"),
+								channel.getNode("discord","allow-server-cmds").getBoolean(false),
 								channel.getNode("canLock").getBoolean(true));
 						addChannel(ch);
 					} catch (ObjectMappingException e1) {
@@ -432,7 +445,7 @@ public class UCConfig{
 		
 		CommentedConfigurationNode chFile;	
     	ConfigurationLoader<CommentedConfigurationNode> channelManager;		
-		File defch = new File(UChat.get().configDir()+File.separator+"channels"+File.separator+ch.getName()+".conf");	
+		File defch = new File(UChat.get().configDir()+File.separator+"channels"+File.separator+ch.getName().toLowerCase()+".conf");	
 		
 		channelManager = HoconConfigurationLoader.builder().setFile(defch).build();	
 		chFile = channelManager.load();
@@ -462,7 +475,12 @@ public class UCConfig{
 				+ "  enable: true - Enable this execute a command alias?\n"
 				+ "  sendAs: player - Send the command alias as 'player' or 'console'?\n"
 				+ "  cmd: '' - Command to send on every message send by this channel.\n"
-				+ "available-worlds - Worlds and only this world where this chat can be used and messages sent/received.\n");
+				+ "available-worlds - Worlds and only this world where this chat can be used and messages sent/received.\n"
+				+ "discord:\n"
+				+ "  mode: NONE - The options are NONE, SEND, LISTEN, BOTH. If enabled and OAuth code set and the channel ID matches with one discord channel, will react acoording the choosen mode.\n"
+				+ "  hover: &3Discord Channel: &a{dd-channel}\n"
+				+ "  format: {ch-color}[{ch-alias}]&7[&3Discord&7]&b{sender}&r: \n"
+				+ "  channelID: '' - The ID of your Discord Channel. Enable debug on your discord to get the channel ID.\n");
 		chFile.getNode("name").setValue(ch.getName());
 		chFile.getNode("alias").setValue(ch.getAlias());
 		chFile.getNode("across-worlds").setValue(ch.crossWorlds());
@@ -479,8 +497,12 @@ public class UCConfig{
 		chFile.getNode("channelAlias","sendAs").setValue(ch.getAliasSender());
 		chFile.getNode("channelAlias","cmd").setValue(ch.getAliasCmd());
 		chFile.getNode("available-worlds").setValue(ch.availableWorlds());	
+		
 		chFile.getNode("discord","channelID").setValue(ch.getDiscordChannelID());
-		chFile.getNode("discord","useChannel").setValue(ch.useDiscordChanel());
+		chFile.getNode("discord","mode").setValue(ch.getDiscordMode());
+		chFile.getNode("discord","hover").setValue(ch.getDiscordHover());
+		chFile.getNode("discord","format").setValue(ch.getDiscordFormat());
+		chFile.getNode("discord","allow-server-cmds").setValue(ch.getDiscordAllowCmds());
 		channelManager.save(chFile);
 		channels.put(Arrays.asList(ch.getName().toLowerCase(), ch.getAlias().toLowerCase()), ch);
 	}
@@ -577,11 +599,7 @@ public class UCConfig{
 		}
 		return new ArrayList<String>();
 	}
-    /*
-    public ItemType getMaterial(String key){
-    	return Material.getMaterial(configs.getString(key));
-    }
-    */
+    
     public void save(){
     	try {
     		configManager.save(config);
@@ -592,6 +610,10 @@ public class UCConfig{
     }
     
     //protection methods
+    public CommentedConfigurationNode getProtReplecements(){
+		return prots.getNode("chat-protection","censor","replace-words").getAppendedNode();
+	}
+    
 	public int getProtInt(Object... key){
 		return prots.getNode(key).getInt();
 	}

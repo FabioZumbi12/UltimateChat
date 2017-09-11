@@ -36,6 +36,7 @@
           <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
           <artifactId>UltimateChat-Sponge-5.0-6.0</artifactId>
           <version>LATEST</version>
+          <scope>compile</scope>
         </dependency>   
         <dependency>
           <groupId>br.net.fabiozumbi12.UltimateChat</groupId>

@@ -1,10 +1,5 @@
 package br.net.fabiozumbi12.UltimateChat.Sponge;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -23,14 +18,14 @@ public class UCUtil {
     	return TextSerializers.FORMATTING_CODE.deserialize(str);
     }
 
-	static String toColor(String str){
+	public static String toColor(String str){
     	return str.replaceAll("(&([a-fk-or0-9]))", "\u00A7$2"); 
     }
 	
-	static String stripColor(String str) {
+	public static String stripColor(String str) {
 		return str.replaceAll("(&([a-fk-or0-9]))", "");
 	}
-	
+	/*
 	public static void saveResource(String name, File saveTo){
 		try {
 			InputStream isReader = UChat.class.getResourceAsStream(name);
@@ -45,7 +40,7 @@ public class UCUtil {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
+	}*/
 		
 	static boolean sendBroadcast(CommandSource sender, String[] args, boolean silent){
 		StringBuilder message = new StringBuilder();

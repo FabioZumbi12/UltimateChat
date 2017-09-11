@@ -16,15 +16,13 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.channel.MutableMessageChannel;
 import org.spongepowered.api.text.serializer.TextSerializers;
 
-import br.net.fabiozumbi12.UltimateChat.Sponge.config.UCLang;
-
 public class UCListener {
 	
 	private void sendTell(CommandSource sender, Optional<CommandSource> receiver, Text msg){
 		if (!receiver.isPresent() || (receiver.get() instanceof Player && (!((Player)receiver.get()).isOnline() 
 				|| (sender instanceof Player && receiver.get() instanceof Player && !((Player)sender).canSee((Player)receiver.get()))))
 				){
-			UCLang.sendMessage(sender, "listener.invalidplayer");
+			UChat.get().getLang().sendMessage(sender, "listener.invalidplayer");
 			return;
 		}		
 		UChat.respondTell.put(receiver.get().getName(),sender.getName());
@@ -79,7 +77,7 @@ public class UCListener {
 			}
 			
 			if (UChat.mutes.contains(p.getName()) || ch.isMuted(p.getName())){
-				UCLang.sendMessage(p, "channel.muted");
+				UChat.get().getLang().sendMessage(p, "channel.muted");
 				e.setMessageCancelled(true);
 				return;
 			}			
@@ -121,6 +119,9 @@ public class UCListener {
 	public void onJoin(ClientConnectionEvent.Join e){
 		Player p = e.getTargetEntity();		
 		UChat.get().getConfig().getDefChannel().addMember(p);
+		if (UChat.get().getUCJDA() != null){
+			UChat.get().getUCJDA().sendRawToDiscord(UChat.get().getLang().get("discord.join").replace("{player}", p.getName()));
+		}
 	}
 		
 	@Listener
@@ -148,6 +149,8 @@ public class UCListener {
 		if (UChat.tempChannels.containsKey(p.getName())){
 			UChat.tempChannels.remove(p.getName());
 		}
-	}
-			
+		if (UChat.get().getUCJDA() != null){
+			UChat.get().getUCJDA().sendRawToDiscord(UChat.get().getLang().get("discord.leave").replace("{player}", p.getName()));
+		}
+	}			
 }

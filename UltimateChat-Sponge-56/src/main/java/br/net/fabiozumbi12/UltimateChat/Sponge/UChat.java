@@ -14,6 +14,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.GameReloadEvent;
 import org.spongepowered.api.event.game.state.GamePostInitializationEvent;
+import org.spongepowered.api.event.game.state.GameStoppedServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 import org.spongepowered.api.event.service.ChangeServiceProviderEvent;
 import org.spongepowered.api.plugin.Dependency;
@@ -33,7 +34,8 @@ name = "UltimateChat",
 version = VersionData.VERSION,
 authors="FabioZumbi12", 
 description="Complete and advanced chat plugin",
-dependencies=@Dependency(id = "nucleus", optional = true))
+dependencies={
+		@Dependency(id = "jdalibraryloader", optional = true)})
 public class UChat {
 	
 	private UCLogger logger;
@@ -51,29 +53,30 @@ public class UChat {
 		return this.game;
 	}
 	
-	public static PluginContainer plugin;	
+	private PluginContainer plugin;	
+	public PluginContainer instance(){
+		return this.plugin;
+	}
 	
-	private UCConfig cfgs;
+	private UCConfig config;
 	public UCConfig getConfig(){
-		return this.cfgs;
+		return this.config;
 	}
 	
 	private UCCommands cmds;
-
 	private Server serv;
-
 	private EconomyService econ;
 
 	private UCPerms perms;
-	public UCPerms getPerms(){
+	protected UCPerms getPerms(){
 		return this.perms;
 	}
 	
-	public EconomyService getEco(){
+	protected EconomyService getEco(){
 		return this.econ;
 	}
 	
-	public UCCommands getCmds(){
+	protected UCCommands getCmds(){
 		return this.cmds;
 	}
 	
@@ -87,15 +90,25 @@ public class UChat {
 		return this.ucapi;
 	}
 	
+	private UCDiscord UCJDA;	
+	public UCDiscord getUCJDA(){
+		return this.UCJDA;
+	}
+	
+	private UCLang lang;
+	public UCLang getLang(){
+		return this.lang;
+	}
+	
 	//public HashMap<String,String> pChannels = new HashMap<String,String>();
-	public static HashMap<String,String> tempChannels = new HashMap<String,String>();
-	public static HashMap<String,String> tellPlayers = new HashMap<String,String>();
-	public static HashMap<String,String> tempTellPlayers = new HashMap<String,String>();
-	public static HashMap<String,String> respondTell = new HashMap<String,String>();
-	public static HashMap<String,List<String>> ignoringPlayer = new HashMap<String,List<String>>();
-	public static List<String> mutes = new ArrayList<String>();
-	public static List<String> isSpy = new ArrayList<String>();	
-	public static List<String> command = new ArrayList<String>();
+	protected static HashMap<String,String> tempChannels = new HashMap<String,String>();
+	protected static HashMap<String,String> tellPlayers = new HashMap<String,String>();
+	protected static HashMap<String,String> tempTellPlayers = new HashMap<String,String>();
+	protected static HashMap<String,String> respondTell = new HashMap<String,String>();
+	protected static HashMap<String,List<String>> ignoringPlayer = new HashMap<String,List<String>>();
+	protected static List<String> mutes = new ArrayList<String>();
+	protected static List<String> isSpy = new ArrayList<String>();	
+	protected static List<String> command = new ArrayList<String>();
 		
 	@Listener
     public void onServerStart(GamePostInitializationEvent event) {	
@@ -108,9 +121,9 @@ public class UChat {
         	//init logger
         	this.logger = new UCLogger(this.serv);
         	//init config
-        	this.cfgs = new UCConfig(this);
+        	this.config = new UCConfig(this);
     		//init lang
-            UCLang.init();
+        	this.lang = new UCLang();
             //init perms
             String v = this.game.getPlatform().getContainer(Component.API).getVersion().get();
             if (v.startsWith("5") || v.startsWith("6")){
@@ -125,11 +138,14 @@ public class UChat {
     		
     		game.getEventManager().registerListeners(plugin, new UCListener());         
                      
+    		//init other features
+    		registerJDA();  
+    		
     		logger.info("Init API module...");
             this.ucapi = new uChatAPI();
             
             for (Player p:serv.getOnlinePlayers()){
-            	if (cfgs.getPlayerChannel(p) == null){
+            	if (config.getPlayerChannel(p) == null){
             		getConfig().getDefChannel().addMember(p);
             	}
             }
@@ -145,30 +161,51 @@ public class UChat {
             		+ "                                                                \n"
             		+ "&a"+plugin.getName()+" "+plugin.getVersion().get()+" enabled!\n");
             
+            if (this.UCJDA != null){
+            	this.UCJDA.sendRawToDiscord(lang.get("discord.start"));
+    		}            
         } catch (Exception e){
         	e.printStackTrace();
         }
 	}
 	
+	protected void reload() throws IOException{
+		this.cmds.removeCmds();
+		this.config = new UCConfig(this);
+		this.lang = new UCLang();
+		this.cmds = new UCCommands(this);
+		for (Player p:serv.getOnlinePlayers()){
+			if (config.getPlayerChannel(p) == null){
+        		getConfig().getDefChannel().addMember(p);
+        	}					 
+		}		
+		registerJDA();
+	}
+	
+	protected void registerJDA(){
+		if (checkJDA()){
+			if (this.UCJDA != null){			
+				this.UCJDA.shutdown();
+				this.UCJDA = null;
+			}
+			if (config.getBool("discord","use")){
+				this.UCJDA = new UCDiscord(this);
+			}	
+		}			
+	}
+	
+	private boolean checkJDA() {
+		this.logger.info("JDA LibLoader is present...");
+		return this.game.getPluginManager().getPlugin("jdalibraryloader").isPresent();
+	}
+
 	@Listener
 	public void onChangeServiceProvider(ChangeServiceProviderEvent event) {
 		if (event.getService().equals(EconomyService.class)) {
             econ = (EconomyService) event.getNewProviderRegistration().getProvider();
 		}
 	}
-	
-	public void reload() throws IOException{
-		this.cmds.removeCmds();
-		this.cfgs = new UCConfig(this);
-		UCLang.init();
-		this.cmds = new UCCommands(this);
-		for (Player p:serv.getOnlinePlayers()){
-			if (cfgs.getPlayerChannel(p) == null){
-        		getConfig().getDefChannel().addMember(p);
-        	}					 
-		}		
-	}
-	
+		
 	@Listener
     public void onReloadPlugins(GameReloadEvent event) {
 		try {
@@ -180,6 +217,16 @@ public class UChat {
 	
 	@Listener
 	public void onStopServer(GameStoppingServerEvent e) {
-		get().getLogger().severe(plugin.getName()+" disabled!");
+		if (this.UCJDA != null){
+        	this.UCJDA.sendRawToDiscord(lang.get("discord.stop"));
+		}		
 	}		
+	
+	@Listener
+	public void onStopServer(GameStoppedServerEvent e) {
+		if (this.UCJDA != null){
+        	this.UCJDA.shutdown();
+		}		
+		get().getLogger().severe(plugin.getName()+" disabled!");
+	}
 }

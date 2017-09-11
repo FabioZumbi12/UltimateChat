@@ -43,15 +43,16 @@ chat-protection:
     # Replace whole word by this symbal base on length of word.
     by-symbol: '*'
 
-    # Replace the word by this unique string.
+    # Replace the word by this unique string if a replacement is not set.
     by-word: censored
     # Replace only whole word or partial string inside words.
     # If true, consider censor word 'ass', this will replace 'kickass' by 'kick***'.
     # If false, consider censor word 'ass', will replace only 'ass' by '***' and not 'kick***'.
     replace-partial-word: false
-    # List of words (case insensitive).
+    # List of words to replace (case insensitive).
     replace-words:
-    - word1
+      fuck: '*flower*'
+      ass: '*finger*'
     # Actions. Add a command to execute when a player write some of this words.
     action:
       # Action to use when replace a word. Use {player} on command to get the player name or '' to disable.

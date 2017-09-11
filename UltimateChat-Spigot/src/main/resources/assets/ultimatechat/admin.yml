@@ -1,0 +1,22 @@
+name: Admin
+alias: ad
+across-worlds: true
+cost: 0
+distance: 0
+color: '&b'
+need-focus: false
+tag-builder: admin-chat,message
+receivers-message: true
+use-this-builder: false
+canLock: true
+bungee: true
+channelAlias:
+  enable: false
+  sendAs: player
+  cmd: ''
+available-worlds: []
+discord:
+  channelID: ''
+  mode: none
+  hover: '&3Discord Channel: &a{dd-channel}'
+  format: '{ch-color}[{ch-alias}]&7[&3Discord&7]&b{sender}&r: '

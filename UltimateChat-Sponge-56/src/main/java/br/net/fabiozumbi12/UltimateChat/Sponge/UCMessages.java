@@ -35,24 +35,12 @@ import org.spongepowered.api.text.serializer.TextSerializers;
 import br.net.fabiozumbi12.UltimateChat.Sponge.UCLogger.timingType;
 import br.net.fabiozumbi12.UltimateChat.Sponge.API.PostFormatChatMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.Sponge.API.SendChannelMessageEvent;
-import br.net.fabiozumbi12.UltimateChat.Sponge.config.UCLang;
 
 class UCMessages {
 
 	private static HashMap<String, String> registeredReplacers = new HashMap<String,String>();
 	private static String[] defFormat = new String[0];	
-	
-	/**This will return the Object[] in this order:
-	 * <p>
-	 * [0] = MessageChannel, [1] = Builder Format, [2] = Builder Player Name, [3] = Builder Message
-	 * 
-	 * @param format
-	 * @param msg
-	 * @param channel
-	 * @param sender
-	 * @param tellReceiver
-	 * @return Object[]
-	 */
+		
 	protected static MutableMessageChannel sendFancyMessage(String[] format, Text msg, UCChannel channel, CommandSource sender, CommandSource tellReceiver){
 		//Execute listener:
 		HashMap<String,String> tags = new HashMap<String,String>();
@@ -65,7 +53,6 @@ class UCMessages {
 			return null;
 		}
 		
-		//Builder[] toConsole = new Builder[0];
 		registeredReplacers = event.getResgisteredTags();
 		defFormat = event.getDefFormat();
 		
@@ -89,22 +76,22 @@ class UCMessages {
 			UCChannel ch = event.getChannel();
 			
 			if (sender instanceof Player && !ch.availableWorlds().isEmpty() && !ch.availableInWorld(((Player)sender).getWorld())){
-				UCLang.sendMessage(sender, UCLang.get("channel.notavailable").replace("{channel}", ch.getName()));
+				UChat.get().getLang().sendMessage(sender, UChat.get().getLang().get("channel.notavailable").replace("{channel}", ch.getName()));
 				return null;
 			}
 			
 			if (!UChat.get().getPerms().channelWritePerm(sender, ch)){
-				UCLang.sendMessage(sender, UCLang.get("channel.nopermission").replace("{channel}", ch.getName()));
+				UChat.get().getLang().sendMessage(sender, UChat.get().getLang().get("channel.nopermission").replace("{channel}", ch.getName()));
 				return null;
 			}
 			
 			if (!UChat.get().getPerms().hasPerm(sender, "bypass.cost") && UChat.get().getEco() != null && sender instanceof Player && ch.getCost() > 0){
 				UniqueAccount acc = UChat.get().getEco().getOrCreateAccount(((Player)sender).getUniqueId()).get();
 				if (acc.getBalance(UChat.get().getEco().getDefaultCurrency()).doubleValue() < ch.getCost()){
-					sender.sendMessage(UCUtil.toText(UCLang.get("channel.cost").replace("{value}", ""+ch.getCost())));
+					sender.sendMessage(UCUtil.toText(UChat.get().getLang().get("channel.cost").replace("{value}", ""+ch.getCost())));
 					return null;
 				} else {
-					acc.withdraw(UChat.get().getEco().getDefaultCurrency(), BigDecimal.valueOf(ch.getCost()), Cause.of(NamedCause.owner(UChat.plugin)));
+					acc.withdraw(UChat.get().getEco().getDefaultCurrency(), BigDecimal.valueOf(ch.getCost()), Cause.of(NamedCause.owner(UChat.get().instance())));
 				}
 			}
 				
@@ -181,12 +168,12 @@ class UCMessages {
 			}
 			if (ch.getDistance() == 0 && noWorldReceived <= 0){
 				if (ch.getReceiversMsg()){
-					UCLang.sendMessage(sender, "channel.noplayer.world");
+					UChat.get().getLang().sendMessage(sender, "channel.noplayer.world");
 				}
 			}		
 			if ((receivers.size()-vanish) <= 0){
 				if (ch.getReceiversMsg()){
-					UCLang.sendMessage(sender, "channel.noplayer.near");	
+					UChat.get().getLang().sendMessage(sender, "channel.noplayer.near");	
 				}
 			}
 			
@@ -199,7 +186,7 @@ class UCMessages {
 				if (!receiver.equals(tellReceiver) && !receiver.equals(sender) && UChat.isSpy.contains(receiver.getName())){
 					String spyformat = UChat.get().getConfig().getString("general","spy-format");
 					if (isIgnoringPlayers(tellReceiver.getName(), sender.getName())){
-						spyformat = UCLang.get("chat.ignored")+spyformat;
+						spyformat = UChat.get().getLang().get("chat.ignored")+spyformat;
 					}
 					spyformat = spyformat.replace("{output}", UCUtil.stripColor(sendMessage(sender, tellReceiver, srcText, fakech, true).toPlain()));					
 					receiver.sendMessage(UCUtil.toText(spyformat));					
@@ -209,7 +196,7 @@ class UCMessages {
 			msgPlayers.put(tellReceiver, to);
 			msgPlayers.put(sender, to);
 			if (isIgnoringPlayers(tellReceiver.getName(), sender.getName())){
-				to = Text.of(UCUtil.toText(UCLang.get("chat.ignored")),to);
+				to = Text.of(UCUtil.toText(UChat.get().getLang().get("chat.ignored")),to);
 			}
 			
 			msgPlayers.put(Sponge.getServer().getConsole(), to);
@@ -229,6 +216,10 @@ class UCMessages {
 			send.sendMessage(text);
 			UChat.get().getLogger().timings(timingType.END, "UCMessages#send()|after send");
 		});		
+		
+		if (channel != null && !channel.isTell() && UChat.get().getUCJDA() != null){
+			UChat.get().getUCJDA().sendToDiscord(sender, msg.toPlain(), channel);
+		}
 		
 		return msgCh;
 	}
@@ -616,7 +607,7 @@ class UCMessages {
 	
 	private static String checkEmpty(String tag){
 		if (tag.length() <= 0){
-			return UCLang.get("tag.notset");
+			return UChat.get().getLang().get("tag.notset");
 		}
 		return tag;
 	}

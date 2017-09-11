@@ -34,6 +34,15 @@
 		<systemPath>${project.basedir}/libs/MCClans-API-1.2.jar</systemPath>
 	</dependency>
 	
+	<!-- Discord bridge -->
+        <dependency>
+            <groupId>JDALib</groupId>
+            <artifactId>Loader</artifactId>
+            <version>1.0.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/../UltimateChat-JDA/target/UltimateChat-JDA.jar</systemPath>
+        </dependency>  
+	
   </dependencies>
   <build>
     <finalName>DONT-DOWNLOAD-SpongeAPI56-Reference</finalName>

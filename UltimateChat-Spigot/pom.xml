@@ -86,7 +86,7 @@
             <version>LATEST</version>
         </dependency>        
         
-        <!-- Test discord bridge -->
+        <!-- Discord bridge -->
         <dependency>
             <groupId>JDALib</groupId>
             <artifactId>Loader</artifactId>
