@@ -410,7 +410,7 @@ public class UChat extends JavaPlugin {
     }	
 	
 	private boolean checkJDA(){
-    	Plugin p = Bukkit.getPluginManager().getPlugin("JDALibLoader");
+    	Plugin p = Bukkit.getPluginManager().getPlugin("JDALibLoaderBukkit");
     	if (p != null && p.isEnabled()){
     		return true;
     	}
