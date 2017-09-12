@@ -43,25 +43,13 @@ public class UCConfig{
     	            	plugin.getUCLogger().info("Created folder: " +chfolder.getPath());
     	            }    	            
     	            
-    	            /*
-    	            if (!config.exists() && !defch.exists()) {
-    	            	UCUtil.saveResource("/assets/ultimatechat/global.yml", new File(UChat.get().getDataFolder(),"channels"+File.separator+"global.yml"));
-    	            	UCUtil.saveResource("/assets/ultimatechat/local.yml", new File(UChat.get().getDataFolder(),"channels"+File.separator+"local.yml"));
-    	            	UCUtil.saveResource("/assets/ultimatechat/admin.yml", new File(UChat.get().getDataFolder(),"channels"+File.separator+"admin.yml"));
-    	            	UCUtil.saveResource("/assets/ultimatechat/bungee.yml", new File(UChat.get().getDataFolder(),"channels"+File.separator+"bungee.yml"));
-    	            	
-    	            	plugin.getUCLogger().info("Created channels file...");
-    	            } */
-    	            
     	            if (!config.exists()) {
     	            	UCUtil.saveResource("/assets/ultimatechat/config.yml", new File(UChat.get().getDataFolder(),"config.yml"));
-    	            	//plugin.saveResource("config.yml", false);//create config file    	            	
     	            	plugin.getUCLogger().info("Created config file: " + config.getPath());
     	            } 
     	            
     	            if (!protections.exists()) {
     	            	UCUtil.saveResource("/assets/ultimatechat/protections.yml", new File(UChat.get().getDataFolder(),"protections.yml"));
-    	            	//plugin.saveResource("protections.yml", false);//create protections file    	            	
     	            	plugin.getUCLogger().info("Created protections file: " + protections.getPath());
     	            }
     	                	            
@@ -124,8 +112,8 @@ public class UCConfig{
 									channel.getStringList("available-worlds"),
 									channel.getString("discord.channelID", new String()),
 									channel.getString("discord.mode", "none"),		
-									channel.getString("discord.format", "{ch-color}[{ch-alias}]&7[&3Discord&7]&b{sender}&r: "),	
-									channel.getString("discord.hover", "&3Discord Channel: &a{dd-channel}"),	
+									channel.getString("discord.format", "{ch-color}[{ch-alias}]&b{dd-rolecolor}[{dd-rolename}]{sender}&r: "),	
+									channel.getString("discord.hover", "&3Discord Channel: &a{dd-channel}\n&3Role Name: {dd-rolecolor}{dd-rolename}"),	
 									channel.getBoolean("discord.allow-server-cmds", false),	
 									channel.getBoolean("canLock", true));
             				try {
@@ -362,7 +350,7 @@ public class UCConfig{
 				+ "discord:\n"
 				+ "  mode: NONE - The options are NONE, SEND, LISTEN, BOTH. If enabled and OAuth code set and the channel ID matches with one discord channel, will react acoording the choosen mode.\n"
 				+ "  hover: &3Discord Channel: &a{dd-channel}\n"
-				+ "  format: {ch-color}[{ch-alias}]&7[&3Discord&7]&b{sender}&r: \n"
+				+ "  format: {ch-color}[{ch-alias}]&b{dd-rolecolor}[{dd-rolename}]{sender}&r: \n"
 				+ "  allow-server-cmds: false - Use this channel to send commands from discord > minecraft.\n"
 				+ "  channelID: '' - The ID of your Discord Channel. Enable debug on your discord to get the channel ID.\n");
 		chFile.set("name", ch.getName());

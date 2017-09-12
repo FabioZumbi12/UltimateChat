@@ -13,7 +13,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.PotionData;
 
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UCLogger.timingType;
 
@@ -109,7 +112,7 @@ public class UltimateFancy {
 		if (to instanceof Player){
 			if (UChat.get().getUCConfig().getBool("general.json-events")){
 				UChat.get().getUCLogger().timings(timingType.END, "UltimateFancy#send()|json-events:true|before tellraw");
-				UCUtil.performCommand((Player)to, Bukkit.getConsoleSender(), "tellraw " + to.getName() + " " + constructor.toString());
+				UCUtil.performCommand((Player)to, Bukkit.getConsoleSender(), "tellraw " + to.getName() + " " + toJson());
 				UChat.get().getUCLogger().timings(timingType.END, "UltimateFancy#send()|json-events:true|after tellraw");
 			} else {
 				UChat.get().getUCLogger().timings(timingType.END, "UltimateFancy#send()|json-events:false|before send");
@@ -119,7 +122,11 @@ public class UltimateFancy {
 		} else {
 			to.sendMessage(toOldFormat());
 		}		
-		UChat.get().getUCLogger().debug("JSON: "+constructor.toString());
+		UChat.get().getUCLogger().debug("JSON: "+toJson());
+	}
+	
+	private String toJson(){
+		return "[\"\","+constructor.toString().substring(1);
 	}
 	
 	public UltimateFancy next(){
@@ -128,9 +135,9 @@ public class UltimateFancy {
 				for (ExtraElement element:pendentElements){							
 					obj.add(element.getAction(), element.getJson());
 				}
-				JsonArray jarray = new JsonArray();
-				jarray.add(obj);
-				constructor.add(jarray);
+				/*JsonArray jarray = new JsonArray();
+				jarray.add(obj);*/
+				constructor.add(obj);
 			}
 		}
 		workingGroup = new ArrayList<JsonObject>();
@@ -166,32 +173,30 @@ public class UltimateFancy {
 	public String toOldFormat(){
 		StringBuilder result = new StringBuilder();
 		for (JsonElement baseArray:constructor){	
-			for (JsonElement array:baseArray.getAsJsonArray()){
-				JsonObject json = array.getAsJsonObject();
-				if (!json.has("text")) continue;	
-				//get format
-				for (ChatColor frmt:ChatColor.values()){
-					if (!frmt.isFormat()) continue;
-					String frmtStr = frmt.name().toLowerCase();
-					if (frmt.equals(ChatColor.MAGIC)){
-						frmtStr = "obfuscated";
-					}
-					if (json.has(frmtStr) && json.get(frmtStr).getAsBoolean()){
-						result.append(String.valueOf(frmt));
-					}
+			JsonObject json = baseArray.getAsJsonObject();
+			if (!json.has("text")) continue;	
+			//get format
+			for (ChatColor frmt:ChatColor.values()){
+				if (!frmt.isFormat()) continue;
+				String frmtStr = frmt.name().toLowerCase();
+				if (frmt.equals(ChatColor.MAGIC)){
+					frmtStr = "obfuscated";
 				}
-				//get color
-				String colorStr = json.get("color").getAsString();
-				if (ChatColor.valueOf(colorStr.toUpperCase()) != null){				
-					ChatColor color = ChatColor.valueOf(colorStr.toUpperCase());
-					if (color.equals(ChatColor.WHITE)){
-						result.append(String.valueOf(ChatColor.RESET));
-					} else {
-						result.append(String.valueOf(color));
-					}
+				if (json.has(frmtStr) && json.get(frmtStr).getAsBoolean()){
+					result.append(String.valueOf(frmt));
 				}
-				result.append(json.get("text").getAsString());
-			}				
+			}
+			//get color
+			String colorStr = json.get("color").getAsString();
+			if (ChatColor.valueOf(colorStr.toUpperCase()) != null){				
+				ChatColor color = ChatColor.valueOf(colorStr.toUpperCase());
+				if (color.equals(ChatColor.WHITE)){
+					result.append(String.valueOf(ChatColor.RESET));
+				} else {
+					result.append(String.valueOf(color));
+				}
+			}
+			result.append(json.get("text").getAsString());				
 		}
 		return result.toString();
 	}
@@ -221,7 +226,8 @@ public class UltimateFancy {
 		//serialize itemstack
 		String itemType = item.getType().toString()
 				.replace("_ITEM", "")
-				.replace("_SPADE", "_SHOVEL");		
+				.replace("_SPADE", "_SHOVEL")
+				.replace("GOLD_", "GOLDEN_");		
 		itemBuild.append("id:"+itemType+",Count:"+1+",Damage:"+item.getDurability()+",");		
 		if (item.hasItemMeta()){
 			ItemMeta meta = item.getItemMeta();
@@ -240,14 +246,29 @@ public class UltimateFancy {
 				}
 				itemTag.append("display:{Name:"+meta.getDisplayName()+",Lore:["+lore.toString().substring(0, lore.length()-1)+"]},");
 			}
-			if (meta.hasEnchants()){
+			
+			//enchants
+			if (meta instanceof PotionMeta){
+				StringBuilder itemEnch = new StringBuilder();
+				itemEnch.append("CustomPotionEffects:[");
+				PotionData pot = ((PotionMeta)meta).getBasePotionData();
+				itemEnch.append("{Id:"+pot.getType().getEffectType().getId()+",Duration:"+pot.getType().getEffectType().getDurationModifier()+",Ambient:true,},");
+				itemTag.append(itemEnch.toString().substring(0, itemEnch.length()-1)+"],");						
+			} else if (meta instanceof EnchantmentStorageMeta){
+				StringBuilder itemEnch = new StringBuilder();
+				itemEnch.append("ench:[");
+				for (Entry<Enchantment, Integer> ench:((EnchantmentStorageMeta)meta).getStoredEnchants().entrySet()){
+					itemEnch.append("{id:"+ench.getKey().getId()+",lvl:"+ench.getValue()+"},");
+				}
+				itemTag.append(itemEnch.toString().substring(0, itemEnch.length()-1)+"],");				
+			} else if (meta.hasEnchants()){
 				StringBuilder itemEnch = new StringBuilder();
 				itemEnch.append("ench:[");
 				for (Entry<Enchantment, Integer> ench:meta.getEnchants().entrySet()){
 					itemEnch.append("{id:"+ench.getKey().getId()+",lvl:"+ench.getValue()+"},");
 				}
 				itemTag.append(itemEnch.toString().substring(0, itemEnch.length()-1)+"],");
-			}
+			}			
 		}		
 		if (itemTag.length() > 0){
 			itemBuild.append("tag:{"+itemTag.toString().substring(0, itemTag.length()-1)+"},");

@@ -5,7 +5,14 @@ debug:
 language: EN-US
 discord:
   use: false
-  OAuth: ""
+  token: ""
+  log-channel-id: ''
+  server-commands:
+    alias: '!cmds'
+    whitelist: []
+    blacklist:
+    - stop
+    - whitelist    
 api:
   format-console-messages: false
   legendchat-tags: []

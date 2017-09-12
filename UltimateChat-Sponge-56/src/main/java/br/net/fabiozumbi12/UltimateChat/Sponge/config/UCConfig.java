@@ -302,8 +302,8 @@ public class UCConfig{
 								channel.getNode("available-worlds").getList(TypeToken.of(String.class), new ArrayList<String>()),
 								channel.getNode("discord","channelID").getString(new String()),
 								channel.getNode("discord","mode").getString("none"),
-								channel.getNode("discord","format").getString("{ch-color}[{ch-alias}]&7[&3Discord&7]&b{sender}&r: "),
-								channel.getNode("discord","hover").getString("&3Discord Channel: &a{dd-channel}"),
+								channel.getNode("discord","format").getString("{ch-color}[{ch-alias}]&b{dd-rolecolor}[{dd-rolename}]{sender}&r: "),
+								channel.getNode("discord","hover").getString("&3Discord Channel: &a{dd-channel}\n&3Role Name: {dd-rolecolor}{dd-rolename}"),
 								channel.getNode("discord","allow-server-cmds").getBoolean(false),
 								channel.getNode("canLock").getBoolean(true));
 						addChannel(ch);
@@ -503,7 +503,7 @@ public class UCConfig{
 				+ "discord:\n"
 				+ "  mode: NONE - The options are NONE, SEND, LISTEN, BOTH. If enabled and OAuth code set and the channel ID matches with one discord channel, will react acoording the choosen mode.\n"
 				+ "  hover: &3Discord Channel: &a{dd-channel}\n"
-				+ "  format: {ch-color}[{ch-alias}]&7[&3Discord&7]&b{sender}&r: \n"
+				+ "  format: {ch-color}[{ch-alias}]&b{dd-rolecolor}[{dd-rolename}]{sender}&r: \n"
 				+ "  allow-server-cmds: false - Use this channel to send commands from discord > minecraft.\n"
 				+ "  channelID: '' - The ID of your Discord Channel. Enable debug on your discord to get the channel ID.\n");
 		chFile.getNode("name").setValue(ch.getName());

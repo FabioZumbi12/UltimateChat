@@ -25,23 +25,7 @@ public class UCUtil {
 	public static String stripColor(String str) {
 		return str.replaceAll("(&([a-fk-or0-9]))", "");
 	}
-	/*
-	public static void saveResource(String name, File saveTo){
-		try {
-			InputStream isReader = UChat.class.getResourceAsStream(name);
-			FileOutputStream fos = new FileOutputStream(saveTo);
-			while (isReader.available() > 0) {  // write contents of 'is' to 'fos'
-		        fos.write(isReader.read());
-		    }
-		    fos.close();
-		    isReader.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}*/
-		
+	
 	static boolean sendBroadcast(CommandSource sender, String[] args, boolean silent){
 		StringBuilder message = new StringBuilder();
 		 StringBuilder hover = new StringBuilder();
