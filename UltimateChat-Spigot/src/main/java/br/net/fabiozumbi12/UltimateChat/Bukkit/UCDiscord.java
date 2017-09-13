@@ -9,8 +9,11 @@ import javax.security.auth.login.LoginException;
 import jdalib.jda.core.AccountType;
 import jdalib.jda.core.JDA;
 import jdalib.jda.core.JDABuilder;
+import jdalib.jda.core.entities.Game;
 import jdalib.jda.core.entities.Role;
+import jdalib.jda.core.entities.TextChannel;
 import jdalib.jda.core.events.message.MessageReceivedEvent;
+import jdalib.jda.core.exceptions.PermissionException;
 import jdalib.jda.core.exceptions.RateLimitedException;
 import jdalib.jda.core.hooks.ListenerAdapter;
 
@@ -30,6 +33,9 @@ public class UCDiscord extends ListenerAdapter {
 		try {
 			jda = new JDABuilder(AccountType.BOT).setToken(this.uchat.getUCConfig().getString("discord.token")).buildBlocking();
 			jda.addEventListener(this);
+			if (plugin.getUCConfig().getBool("discord.update-status")){
+				jda.getPresence().setGame(Game.of(plugin.getLang().get("discord.game").replace("{online}", String.valueOf(plugin.getServ().getOnlinePlayers().size()))));
+			}			
 		} catch (LoginException e) {
 			uchat.getLogger().severe("The TOKEN is wrong or empty! Check you config and your token.");
 		} catch (IllegalArgumentException e) {
@@ -68,10 +74,10 @@ public class UCDiscord extends ListenerAdapter {
 					UltimateFancy fancy = new UltimateFancy();
 					
 					//format prefixes tags
-					String formated = formatTags(ch.getDiscordFormat(), ch, e);
+					String formated = formatTags(ch.getDiscordtoMCFormat(), ch, e, "", "");
 					
 					//add dd channel name to hover
-					String hovered = formatTags(ch.getDiscordHover(), ch, e);
+					String hovered = formatTags(ch.getDiscordHover(), ch, e, "", "");
 					fancy.text(formated);
 					if (!hovered.isEmpty()){
 						fancy.hoverShowText(hovered);	
@@ -98,7 +104,7 @@ public class UCDiscord extends ListenerAdapter {
 	
 	public void sendRawToDiscord(String text){
 		if (!uchat.getUCConfig().getString("discord.log-channel-id").isEmpty()){
-			jda.getTextChannelById(uchat.getUCConfig().getString("discord.log-channel-id")).sendMessage(text).queue();
+			sendToChannel(uchat.getUCConfig().getString("discord.log-channel-id"), text);
 		}			
 	}
 	
@@ -108,34 +114,51 @@ public class UCDiscord extends ListenerAdapter {
 				text = text.replace("@everyone", "everyone")
 						.replace("@here", "here");
 			}
-			jda.getTextChannelById(ch.getDiscordChannelID()).sendMessage(":thought_balloon: **"+sender.getName()+"**: "+text).queue();
+			text = text.replaceAll("([&"+ChatColor.COLOR_CHAR+"]([a-fk-or0-9]))", "");
+			text = formatTags(ch.getMCtoDiscordFormat(), ch, null, sender.getName(), text);
+					
+			sendToChannel(ch.getDiscordChannelID(), text);
 		}		
 	}
 	
-	private String formatTags(String text, UCChannel ch, MessageReceivedEvent e){
-		text = text.replace("{ch-color}", ch.getColor())
+	private void sendToChannel(String id, String text){
+		TextChannel ch = jda.getTextChannelById(id);
+		try {
+			ch.sendMessage(text).queue();
+        } catch (PermissionException e) {
+        	uchat.getUCLogger().severe("JDA: No permission to send messages to channel "+ch.getName()+".");
+        }
+	}
+	
+	private String formatTags(String format, UCChannel ch, MessageReceivedEvent e, String sender, String message){
+		format = format.replace("{ch-color}", ch.getColor())
 				.replace("{ch-alias}", ch.getAlias())
-				.replace("{ch-name}", ch.getName())
-				.replace("{sender}", e.getMember().getEffectiveName())				
-				.replace("{dd-channel}", e.getChannel().getName())				
-				.replace("{message}", e.getMessage().getRawContent());
-		if (!e.getMember().getRoles().isEmpty()){
-			Role role = e.getMember().getRoles().get(0);
-			if (role.getColor() != null){
-				text = text.replace("{dd-rolecolor}", fromRGB(
-						role.getColor().getRed(),
-						role.getColor().getGreen(),
-						role.getColor().getBlue()).toString());
+				.replace("{ch-name}", ch.getName());				
+		if (e != null){
+			format = format.replace("{sender}", e.getMember().getEffectiveName())				
+					.replace("{dd-channel}", e.getChannel().getName())				
+					.replace("{message}", e.getMessage().getRawContent());
+			if (!e.getMember().getRoles().isEmpty()){
+				Role role = e.getMember().getRoles().get(0);
+				if (role.getColor() != null){
+					format = format.replace("{dd-rolecolor}", fromRGB(
+							role.getColor().getRed(),
+							role.getColor().getGreen(),
+							role.getColor().getBlue()).toString());
+				}
+				format = format.replace("{dd-rolename}", role.getName());			
 			}
-			text = text.replace("{dd-rolename}", role.getName());			
-		}
-		if (e.getMember().getNickname() != null){
-			text = text.replace("{nickname}", e.getMember().getNickname());
+			if (e.getMember().getNickname() != null){
+				format = format.replace("{nickname}", e.getMember().getNickname());
+			}
 		}		
-		text = text.replaceAll("\\{.*\\}", "");	
-		return ChatColor.translateAlternateColorCodes('&', text);
-	}
-	
+		//if not filtered 
+		format = format
+				.replace("{sender}", sender)
+				.replace("{message}", message);		
+		format = format.replaceAll("\\{.*\\}", "");	
+		return ChatColor.translateAlternateColorCodes('&', format);
+	}	
 
 	public void shutdown(){
 		this.uchat.getUCLogger().info("Shutdown JDA...");

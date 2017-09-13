@@ -56,6 +56,7 @@ public class UCConfig{
 			
 			config.getNode("discord").setComment("Enable the two way chat into discord and minecraft.\nGenerate your bot token following this instructions: https://goo.gl/utfRRv");
 			config.getNode("discord","use").setValue(config.getNode("discord","use").getBoolean(false));
+			config.getNode("discord","update-status").setValue(config.getNode("discord","update-status").getBoolean(true));
 			config.getNode("discord","token").setValue(config.getNode("discord","token").getString(new String()));
 			config.getNode("discord","log-channel-id").setComment("Channel id to send server start/stop and player join/leave messages");
 			config.getNode("discord","log-channel-id").setValue(config.getNode("discord","log-channel-id").getString(new String()));
@@ -302,7 +303,8 @@ public class UCConfig{
 								channel.getNode("available-worlds").getList(TypeToken.of(String.class), new ArrayList<String>()),
 								channel.getNode("discord","channelID").getString(new String()),
 								channel.getNode("discord","mode").getString("none"),
-								channel.getNode("discord","format").getString("{ch-color}[{ch-alias}]&b{dd-rolecolor}[{dd-rolename}]{sender}&r: "),
+								channel.getNode("discord","format-to-mc").getString("{ch-color}[{ch-alias}]&b{dd-rolecolor}[{dd-rolename}]{sender}&r: "),
+								channel.getNode("discord","format-to-dd").getString("{ch-color}[{ch-alias}]&b{dd-rolecolor}[{dd-rolename}]{sender}&r: "),
 								channel.getNode("discord","hover").getString("&3Discord Channel: &a{dd-channel}\n&3Role Name: {dd-rolecolor}{dd-rolename}"),
 								channel.getNode("discord","allow-server-cmds").getBoolean(false),
 								channel.getNode("canLock").getBoolean(true));
@@ -501,9 +503,10 @@ public class UCConfig{
 				+ "  cmd: '' - Command to send on every message send by this channel.\n"
 				+ "available-worlds - Worlds and only this world where this chat can be used and messages sent/received.\n"
 				+ "discord:\n"
-				+ "  mode: NONE - The options are NONE, SEND, LISTEN, BOTH. If enabled and OAuth code set and the channel ID matches with one discord channel, will react acoording the choosen mode.\n"
+				+ "  mode: NONE - The options are NONE, SEND, LISTEN, BOTH. If enabled and token code set and the channel ID matches with one discord channel, will react according the choosen mode.\n"
 				+ "  hover: &3Discord Channel: &a{dd-channel}\n"
-				+ "  format: {ch-color}[{ch-alias}]&b{dd-rolecolor}[{dd-rolename}]{sender}&r: \n"
+				+ "  format-to-mc: {ch-color}[{ch-alias}]&b{dd-rolecolor}[{dd-rolename}]{sender}&r: \n"
+				+ "  format-to-dd: :thought_balloon: **{sender}**: {message} \n"
 				+ "  allow-server-cmds: false - Use this channel to send commands from discord > minecraft.\n"
 				+ "  channelID: '' - The ID of your Discord Channel. Enable debug on your discord to get the channel ID.\n");
 		chFile.getNode("name").setValue(ch.getName());
@@ -525,7 +528,8 @@ public class UCConfig{
 		chFile.getNode("discord","channelID").setValue(ch.getDiscordChannelID());
 		chFile.getNode("discord","mode").setValue(ch.getDiscordMode());
 		chFile.getNode("discord","hover").setValue(ch.getDiscordHover());
-		chFile.getNode("discord","format").setValue(ch.getDiscordFormat());
+		chFile.getNode("discord","format-to-mc").setValue(ch.getDiscordtoMCFormat());
+		chFile.getNode("discord","format-to-dd").setValue(ch.getMCtoDiscordFormat());
 		chFile.getNode("discord","allow-server-cmds").setValue(ch.getDiscordAllowCmds());
 		channelManager.save(chFile);
 		channels.put(Arrays.asList(ch.getName().toLowerCase(), ch.getAlias().toLowerCase()), ch);

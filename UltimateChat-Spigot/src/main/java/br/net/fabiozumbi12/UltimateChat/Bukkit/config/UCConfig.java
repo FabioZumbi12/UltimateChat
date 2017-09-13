@@ -112,7 +112,8 @@ public class UCConfig{
 									channel.getStringList("available-worlds"),
 									channel.getString("discord.channelID", new String()),
 									channel.getString("discord.mode", "none"),		
-									channel.getString("discord.format", "{ch-color}[{ch-alias}]&b{dd-rolecolor}[{dd-rolename}]{sender}&r: "),	
+									channel.getString("discord.format-to-mc", "{ch-color}[{ch-alias}]&b{dd-rolecolor}[{dd-rolename}]{sender}&r: "),	
+									channel.getString("discord.format-to-dd", ":thought_balloon: **{sender}**: {message}"),	
 									channel.getString("discord.hover", "&3Discord Channel: &a{dd-channel}\n&3Role Name: {dd-rolecolor}{dd-rolename}"),	
 									channel.getBoolean("discord.allow-server-cmds", false),	
 									channel.getBoolean("canLock", true));
@@ -348,9 +349,10 @@ public class UCConfig{
 				+ "  cmd: '' - Command to send on every message send by this channel.\n"
 				+ "available-worlds - Worlds and only this world where this chat can be used and messages sent/received.\n"
 				+ "discord:\n"
-				+ "  mode: NONE - The options are NONE, SEND, LISTEN, BOTH. If enabled and OAuth code set and the channel ID matches with one discord channel, will react acoording the choosen mode.\n"
-				+ "  hover: &3Discord Channel: &a{dd-channel}\n"
-				+ "  format: {ch-color}[{ch-alias}]&b{dd-rolecolor}[{dd-rolename}]{sender}&r: \n"
+				+ "  mode: NONE - The options are NONE, SEND, LISTEN, BOTH. If enabled and token code set and the channel ID matches with one discord channel, will react according the choosen mode.\n"
+				+ "  hover: &3Discord Channel: &a{dd-channel}\\n&3Role Name: {dd-rolecolor}{dd-rolename}\n"
+				+ "  format-to-mc: {ch-color}[{ch-alias}]&b{dd-rolecolor}[{dd-rolename}]{sender}&r: \n"
+				+ "  format-to-dd: :thought_balloon: **{sender}**: {message} \n"
 				+ "  allow-server-cmds: false - Use this channel to send commands from discord > minecraft.\n"
 				+ "  channelID: '' - The ID of your Discord Channel. Enable debug on your discord to get the channel ID.\n");
 		chFile.set("name", ch.getName());
@@ -372,7 +374,8 @@ public class UCConfig{
 		chFile.set("discord.channelID", ch.getDiscordChannelID());
 		chFile.set("discord.mode", ch.getDiscordMode());
 		chFile.set("discord.hover", ch.getDiscordHover());
-		chFile.set("discord.format", ch.getDiscordFormat());
+		chFile.set("discord.format-to-mc", ch.getDiscordtoMCFormat());
+		chFile.set("discord.format-to-dd", ch.getMCtoDiscordFormat());
 		chFile.set("discord.allow-server-cmds", ch.getDiscordAllowCmds());
 		chFile.save(defch);
 		channels.put(Arrays.asList(ch.getName().toLowerCase(), ch.getAlias().toLowerCase()), ch);
@@ -397,7 +400,7 @@ public class UCConfig{
 	public UCChannel getDefChannel(){
 		UCChannel ch = getChannel(getString("general.default-channel"));
 		if (ch == null){
-			UChat.get().getLogger().severe("Defalt channel not found with alias '"+getString("general.default-channel")+"'. Fix this setting to a valid channel alias.");
+			UChat.get().getLogger().severe("Default channel not found with alias '"+getString("general.default-channel")+"'. Fix this setting to a valid channel alias.");
 		}
 		return getChannel(getString("general.default-channel"));
 	}

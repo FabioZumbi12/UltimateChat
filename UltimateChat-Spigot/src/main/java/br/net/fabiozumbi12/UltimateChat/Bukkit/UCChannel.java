@@ -42,11 +42,12 @@ public class UCChannel {
 	private String ddchannel = new String();
 	private String ddmode = "NONE";
 	private List<CommandSender> members = new ArrayList<CommandSender>();
-	private String ddformat = "{ch-color}[{ch-alias}]&7[&3Discord&7]&b{sender}&r: {message}";
-	private String ddhover = "&3Discord Channel: &a{dd-channel}";
+	private String ddmcformat = "{ch-color}[{ch-alias}]&b{dd-rolecolor}[{dd-rolename}]{sender}&r:";
+	private String mcddformat = ":thought_balloon: **{sender}**: {message}";
+	private String ddhover = "&3Discord Channel: &a{dd-channel}\n&3Role Name: {dd-rolecolor}{dd-rolename}";
 	private boolean ddallowcmds = false;
 
-	public UCChannel(String name, String alias, boolean worlds, int dist, String color, String builder, boolean focus, boolean receiversMsg, double cost, boolean isbungee, boolean ownBuilder, boolean isAlias, String aliasSender, String aliasCmd, List<String> availableWorlds, String ddchannel, String ddmode, String ddformat, String ddhover, boolean ddallowcmds, boolean lock) {
+	public UCChannel(String name, String alias, boolean worlds, int dist, String color, String builder, boolean focus, boolean receiversMsg, double cost, boolean isbungee, boolean ownBuilder, boolean isAlias, String aliasSender, String aliasCmd, List<String> availableWorlds, String ddchannel, String ddmode, String ddmcformat, String mcddformat, String ddhover, boolean ddallowcmds, boolean lock) {
 		this.name = name;
 		this.alias = alias;
 		this.worlds = worlds;
@@ -65,7 +66,8 @@ public class UCChannel {
 		this.canLock = lock;
 		this.ddchannel = ddchannel;
 		this.ddmode = ddmode;
-		this.ddformat = ddformat;
+		this.ddmcformat = ddmcformat;
+		this.mcddformat = mcddformat;
 		this.ddhover = ddhover;
 		this.ddallowcmds = ddallowcmds;
 	}
@@ -113,8 +115,12 @@ public class UCChannel {
 		return this.ddhover;
 	}
 	
-	public String getDiscordFormat(){
-		return this.ddformat;
+	public String getDiscordtoMCFormat(){
+		return this.ddmcformat;
+	}
+	
+	public String getMCtoDiscordFormat(){
+		return this.mcddformat;
 	}
 	
 	public List<CommandSender> getMembers(){

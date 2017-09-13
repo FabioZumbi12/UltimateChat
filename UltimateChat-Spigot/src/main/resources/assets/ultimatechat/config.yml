@@ -5,10 +5,11 @@ debug:
 language: EN-US
 discord:
   use: false
+  update-status: true
   token: ""
   log-channel-id: ''
   server-commands:
-    alias: '!cmds'
+    alias: '!cmd'
     whitelist: []
     blacklist:
     - stop

@@ -269,6 +269,7 @@ public class UChat extends JavaPlugin {
 	
 	protected void registerJDA(){
 		if (checkJDA()){
+			this.logger.info("JDA LibLoader is present...");
 			if (this.UCJDA != null){			
 				this.UCJDA.shutdown();
 				this.UCJDA = null;

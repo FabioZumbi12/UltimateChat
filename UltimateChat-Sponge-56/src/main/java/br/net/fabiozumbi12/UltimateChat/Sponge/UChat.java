@@ -184,6 +184,7 @@ public class UChat {
 	
 	protected void registerJDA(){
 		if (checkJDA()){
+			this.logger.info("JDA LibLoader is present...");
 			if (this.UCJDA != null){			
 				this.UCJDA.shutdown();
 				this.UCJDA = null;
@@ -194,8 +195,7 @@ public class UChat {
 		}			
 	}
 	
-	private boolean checkJDA() {
-		this.logger.info("JDA LibLoader is present...");
+	private boolean checkJDA() {		
 		return this.game.getPluginManager().getPlugin("jdalibraryloader").isPresent();
 	}
 
