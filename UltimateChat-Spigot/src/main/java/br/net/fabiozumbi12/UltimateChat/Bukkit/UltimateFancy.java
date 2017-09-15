@@ -253,10 +253,10 @@ public class UltimateFancy {
 				StringBuilder itemEnch = new StringBuilder();
 				itemEnch.append("CustomPotionEffects:[");
 				if (UCUtil.getBukkitVersion() >= 190){
-					Potion pot = Potion.fromItemStack(item);
-					itemEnch.append("{Id:"+pot.getType().getEffectType().getId()+",Duration:"+pot.getType().getEffectType().getDurationModifier()+",Ambient:true,},");
-				} else {
 					PotionData pot = ((PotionMeta)meta).getBasePotionData();
+					itemEnch.append("{Id:"+pot.getType().getEffectType().getId()+",Duration:"+pot.getType().getEffectType().getDurationModifier()+",Ambient:true,},");					
+				} else {
+					Potion pot = Potion.fromItemStack(item);
 					itemEnch.append("{Id:"+pot.getType().getEffectType().getId()+",Duration:"+pot.getType().getEffectType().getDurationModifier()+",Ambient:true,},");
 				}
 				itemTag.append(itemEnch.toString().substring(0, itemEnch.length()-1)+"],");						
