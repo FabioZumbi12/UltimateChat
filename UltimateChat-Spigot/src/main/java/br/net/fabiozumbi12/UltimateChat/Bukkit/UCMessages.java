@@ -438,7 +438,7 @@ public class UCMessages {
 				text = text.replace("{hand-durability}", String.valueOf(item.getDurability()));
 				if (item.hasItemMeta()){
 					ItemMeta meta = item.getItemMeta();
-					if (meta.hasLocalizedName()){
+					if (UCUtil.getBukkitVersion() >= 1112 && meta.hasLocalizedName()){
 						text = text.replace("{hand-name}", item.getItemMeta().getLocalizedName());
 					}	
 					else if (meta.hasDisplayName()){

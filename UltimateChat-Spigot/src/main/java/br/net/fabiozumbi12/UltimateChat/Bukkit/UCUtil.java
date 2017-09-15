@@ -13,6 +13,19 @@ import org.bukkit.entity.Player;
 
 public class UCUtil {
 		
+	public static int getBukkitVersion(){
+    	String name = Bukkit.getServer().getClass().getPackage().getName();
+		String v = name.substring(name.lastIndexOf('.') + 1) + ".";
+    	String[] version = v.replace('_', '.').split("\\.");
+		
+		int lesserVersion = 0;
+		try {
+			lesserVersion = Integer.parseInt(version[2]);
+		} catch (NumberFormatException ex){				
+		}
+		return Integer.parseInt((version[0]+version[1]).substring(1)+lesserVersion);
+    }
+	
 	public static String capitalize(String text){
 		StringBuilder cap = new StringBuilder();
 		text = text.replace("_", " ");

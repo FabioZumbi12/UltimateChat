@@ -16,6 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionData;
 
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UCLogger.timingType;
@@ -28,6 +29,7 @@ import com.google.gson.JsonObject;
  * @author FabioZumbi12
  *
  */
+@SuppressWarnings("deprecation")
 public class UltimateFancy {
 
 	private ChatColor lastColor = ChatColor.WHITE;
@@ -219,7 +221,6 @@ public class UltimateFancy {
 		return obj;
 	}
 	
-	@SuppressWarnings("deprecation")
 	private JsonObject parseHoverItem(ItemStack item){		
 		StringBuilder itemBuild = new StringBuilder();
 		StringBuilder itemTag = new StringBuilder();		
@@ -251,8 +252,13 @@ public class UltimateFancy {
 			if (meta instanceof PotionMeta){
 				StringBuilder itemEnch = new StringBuilder();
 				itemEnch.append("CustomPotionEffects:[");
-				PotionData pot = ((PotionMeta)meta).getBasePotionData();
-				itemEnch.append("{Id:"+pot.getType().getEffectType().getId()+",Duration:"+pot.getType().getEffectType().getDurationModifier()+",Ambient:true,},");
+				if (UCUtil.getBukkitVersion() >= 190){
+					Potion pot = Potion.fromItemStack(item);
+					itemEnch.append("{Id:"+pot.getType().getEffectType().getId()+",Duration:"+pot.getType().getEffectType().getDurationModifier()+",Ambient:true,},");
+				} else {
+					PotionData pot = ((PotionMeta)meta).getBasePotionData();
+					itemEnch.append("{Id:"+pot.getType().getEffectType().getId()+",Duration:"+pot.getType().getEffectType().getDurationModifier()+",Ambient:true,},");
+				}
 				itemTag.append(itemEnch.toString().substring(0, itemEnch.length()-1)+"],");						
 			} else if (meta instanceof EnchantmentStorageMeta){
 				StringBuilder itemEnch = new StringBuilder();

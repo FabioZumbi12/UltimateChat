@@ -34,22 +34,4 @@
      	<mineVersion>1.12-SNAPSHOT</mineVersion>
      </properties>
      
-     <!-- Ignore Deploy because has no API -->
-     <build>
-       <finalName>DONT-DOWNLOAD-Bungee-Reference</finalName>
-     <plugins>
-       <plugin>
-        <groupId>com.github.github</groupId>
-        <artifactId>site-maven-plugin</artifactId>
-        <version>0.11</version>
-        <executions>
-          <execution>
-            <id>deploying</id>
-            <phase/>
-          </execution>
-        </executions>
-       </plugin>
-     </plugins>
-       
-     </build>
 </project>
