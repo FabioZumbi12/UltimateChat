@@ -31,10 +31,10 @@ public class UCDiscord extends ListenerAdapter {
 	public UCDiscord(UChat plugin){
 		this.uchat = plugin;
 		try {
-			jda = new JDABuilder(AccountType.BOT).setToken(this.uchat.getUCConfig().getString("discord.token")).buildBlocking();
+			jda = new JDABuilder(AccountType.BOT).setToken(this.uchat.getConfig().getString("discord.token")).buildBlocking();
 			jda.addEventListener(this);
-			if (plugin.getUCConfig().getBool("discord.update-status")){
-				jda.getPresence().setGame(Game.of(plugin.getLang().get("discord.game").replace("{online}", String.valueOf(plugin.getServ().getOnlinePlayers().size()))));
+			if (plugin.getConfig().getBool("discord.update-status")){
+				jda.getPresence().setGame(Game.of(plugin.getLang().get("discord.game").replace("{online}", String.valueOf(plugin.getServer().getOnlinePlayers().size()))));
 			}			
 		} catch (LoginException e) {
 			uchat.getLogger().severe("The TOKEN is wrong or empty! Check you config and your token.");
@@ -51,21 +51,21 @@ public class UCDiscord extends ListenerAdapter {
     public void onMessageReceived(MessageReceivedEvent e) {
 		if (e.getAuthor().getId().equals(e.getJDA().getSelfUser().getId()) || e.getMember().getUser().isFake())return;
 		
-		for (UCChannel ch:this.uchat.getUCConfig().getChannels()){
+		for (UCChannel ch:this.uchat.getConfig().getChannels()){
 			if (ch.isListenDiscord() && ch.matchDiscordID(e.getChannel().getId())){
 				String message = e.getMessage().getRawContent();
 				
-				if (message.startsWith(this.uchat.getUCConfig().getString("discord.server-commands.alias")) && ch.getDiscordAllowCmds()){
-					message = message.replace(this.uchat.getUCConfig().getString("discord.server-commands.alias")+" ", "");
-					if (!this.uchat.getUCConfig().getStringList("discord.server-commands.whitelist").isEmpty()){
+				if (message.startsWith(this.uchat.getConfig().getString("discord.server-commands.alias")) && ch.getDiscordAllowCmds()){
+					message = message.replace(this.uchat.getConfig().getString("discord.server-commands.alias")+" ", "");
+					if (!this.uchat.getConfig().getStringList("discord.server-commands.whitelist").isEmpty()){
 						int count = 0;
-						for (String cmd:this.uchat.getUCConfig().getStringList("discord.server-commands.whitelist")){
+						for (String cmd:this.uchat.getConfig().getStringList("discord.server-commands.whitelist")){
 							if (message.startsWith(cmd)) count++;
 						}
 						if (count == 0)return;
 					}
-					if (!this.uchat.getUCConfig().getStringList("discord.server-commands.blacklist").isEmpty()){
-						for (String cmd:this.uchat.getUCConfig().getStringList("discord.server-commands.blacklist")){
+					if (!this.uchat.getConfig().getStringList("discord.server-commands.blacklist").isEmpty()){
+						for (String cmd:this.uchat.getConfig().getStringList("discord.server-commands.blacklist")){
 							if (message.startsWith(cmd)) return;
 						}
 					}
@@ -96,15 +96,22 @@ public class UCDiscord extends ListenerAdapter {
 					} else {
 						fancy.text(message);	
 					}
-					ch.sendMessage(uchat.getServ().getConsoleSender(), fancy, true);	
+					ch.sendMessage(uchat.getServer().getConsoleSender(), fancy, true);	
 				}										
 			}
 		}
 	}
 	
+	public void sendTellToDiscord(String text){
+		if (!uchat.getConfig().getString("discord.tell-channel-id").isEmpty()){
+			text = text.replaceAll("([&"+ChatColor.COLOR_CHAR+"]([a-fk-or0-9]))", "");
+			sendToChannel(uchat.getConfig().getString("discord.tell-channel-id"), text);
+		}
+	}
+	
 	public void sendRawToDiscord(String text){
-		if (!uchat.getUCConfig().getString("discord.log-channel-id").isEmpty()){
-			sendToChannel(uchat.getUCConfig().getString("discord.log-channel-id"), text);
+		if (!uchat.getConfig().getString("discord.log-channel-id").isEmpty()){
+			sendToChannel(uchat.getConfig().getString("discord.log-channel-id"), text);
 		}			
 	}
 	

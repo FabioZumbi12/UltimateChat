@@ -15,7 +15,6 @@ import net.sacredlabyrinth.phaed.simpleclans.SimpleClans;
 import net.sacredlabyrinth.phaed.simpleclans.managers.ClanManager;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.PluginCommand;
@@ -78,13 +77,10 @@ public class UChat extends JavaPlugin {
 		return this.logger;
 	}
 	
-	private Server serv;
-	public Server getServ(){
-		return this.serv;
-	}
-	
 	private UCConfig config;
-	public UCConfig getUCConfig(){
+	
+	@Override
+	public UCConfig getConfig(){
 		return this.config;
 	}
 	
@@ -140,7 +136,6 @@ public class UChat extends JavaPlugin {
         try {
             uchat = this;
             logger = new UCLogger(this);
-            serv = getServer();
             //mainPath = this.getDataFolder().getPath();
             config = new UCConfig(this);
             lang = new UCLang();
@@ -154,13 +149,13 @@ public class UChat extends JavaPlugin {
             PlaceHolderAPI = checkPHAPI();
             Factions = checkFac();
             
-            serv.getPluginCommand("uchat").setExecutor(new UCListener());
-            serv.getPluginManager().registerEvents(new UCListener(), this);
-            serv.getPluginManager().registerEvents(new UCChatProtection(), this);
-            serv.getPluginManager().registerEvents(new UChatBungee(), this);
+            getServer().getPluginCommand("uchat").setExecutor(new UCListener());
+            getServer().getPluginManager().registerEvents(new UCListener(), this);
+            getServer().getPluginManager().registerEvents(new UCChatProtection(), this);
+            getServer().getPluginManager().registerEvents(new UChatBungee(), this);
             
-            serv.getMessenger().registerOutgoingPluginChannel(this, "uChat");
-            serv.getMessenger().registerIncomingPluginChannel(this, "uChat", new UChatBungee());
+            getServer().getMessenger().registerOutgoingPluginChannel(this, "uChat");
+            getServer().getMessenger().registerIncomingPluginChannel(this, "uChat", new UChatBungee());
             
             //register aliases
             registerAliases();
@@ -219,9 +214,9 @@ public class UChat extends JavaPlugin {
             logger.info("Init API module...");
             this.ucapi = new uChatAPI();
             
-            for (Player p:serv.getOnlinePlayers()){
+            for (Player p:getServer().getOnlinePlayers()){
             	if (config.getPlayerChannel(p) == null){
-            		getUCConfig().getDefChannel().addMember(p);
+            		getConfig().getDefChannel().addMember(p);
             	}
             }
             
@@ -229,7 +224,7 @@ public class UChat extends JavaPlugin {
             registerJDA();            
             initAutomessage();
             
-            getUCLogger().info("Server Version: "+serv.getBukkitVersion());
+            getUCLogger().info("Server Version: "+getServer().getBukkitVersion());
             getUCLogger().logClear("\n"
             		+ "&b  _    _ _ _   _                 _        _____ _           _  \n"
             		+ " | |  | | | | (_)               | |      / ____| |         | |  \n"
@@ -250,7 +245,7 @@ public class UChat extends JavaPlugin {
 	}
 	
 	protected void reload(){
-		this.getServ().getScheduler().cancelTasks(UChat.get());
+		this.getServer().getScheduler().cancelTasks(UChat.get());
 		try {
 			this.config = new UCConfig(this);
 		} catch (IOException | InvalidConfigurationException e) {
@@ -259,8 +254,8 @@ public class UChat extends JavaPlugin {
 		this.lang = new UCLang();
 		this.registerAliases();
 		for (Player p:Bukkit.getOnlinePlayers()){
-			if (this.getUCConfig().getPlayerChannel(p) == null){
-				this.getUCConfig().getDefChannel().addMember(p);
+			if (this.getConfig().getPlayerChannel(p) == null){
+				this.getConfig().getDefChannel().addMember(p);
 			}
 		}
 		this.registerJDA();
@@ -347,19 +342,19 @@ public class UChat extends JavaPlugin {
 					
 					String cmd = text;
 					if (hover.length() > 1){
-						cmd = cmd+" "+getUCConfig().getString("broadcast.on-hover")+hover;
+						cmd = cmd+" "+getConfig().getString("broadcast.on-hover")+hover;
 					}
 					if (onclick.length() > 1){
-						cmd = cmd+" "+getUCConfig().getString("broadcast.on-click")+onclick;
+						cmd = cmd+" "+getConfig().getString("broadcast.on-click")+onclick;
 					}
 					if (suggest.length() > 1){
-						cmd = cmd+" "+getUCConfig().getString("broadcast.suggest")+suggest;
+						cmd = cmd+" "+getConfig().getString("broadcast.suggest")+suggest;
 					}
 					if (url.length() > 1){
-						cmd = cmd+" "+getUCConfig().getString("broadcast.url")+url;
+						cmd = cmd+" "+getConfig().getString("broadcast.url")+url;
 					}
-					if (plays == 0 || serv.getOnlinePlayers().size() >= plays){						
-						UCUtil.sendBroadcast(serv.getConsoleSender(), cmd.split(" "), silent);
+					if (plays == 0 || getServer().getOnlinePlayers().size() >= plays){						
+						UCUtil.sendBroadcast(getServer().getConsoleSender(), cmd.split(" "), silent);
 					}
 				}	
 				if (index+1 >= total){
@@ -399,7 +394,7 @@ public class UChat extends JavaPlugin {
 				try {		        			        	
 		        	Field field = SimplePluginManager.class.getDeclaredField("commandMap");
 		            field.setAccessible(true);
-		            CommandMap commandMap = (CommandMap)(field.get(serv.getPluginManager()));		            
+		            CommandMap commandMap = (CommandMap)(field.get(getServer().getPluginManager()));		            
 		            Method register = commandMap.getClass().getMethod("register", String.class, Command.class);
 		            register.invoke(commandMap, cmd.getName(),cmd);
 		            ((PluginCommand) cmd).setExecutor(new UCListener());

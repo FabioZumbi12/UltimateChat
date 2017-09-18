@@ -112,7 +112,7 @@ public class UltimateFancy {
 	public void send(CommandSender to){
 		next();
 		if (to instanceof Player){
-			if (UChat.get().getUCConfig().getBool("general.json-events")){
+			if (UChat.get().getConfig().getBool("general.json-events")){
 				UChat.get().getUCLogger().timings(timingType.END, "UltimateFancy#send()|json-events:true|before tellraw");
 				UCUtil.performCommand((Player)to, Bukkit.getConsoleSender(), "tellraw " + to.getName() + " " + toJson());
 				UChat.get().getUCLogger().timings(timingType.END, "UltimateFancy#send()|json-events:true|after tellraw");
@@ -132,16 +132,18 @@ public class UltimateFancy {
 	}
 	
 	public UltimateFancy next(){
-		for (JsonObject obj:workingGroup){
-			if (obj.has("text") && obj.get("text").toString().length() > 0){					
-				for (ExtraElement element:pendentElements){							
-					obj.add(element.getAction(), element.getJson());
+		if (workingGroup.size() > 0){
+			for (JsonObject obj:workingGroup){
+				if (obj.has("text") && obj.get("text").toString().length() > 0){					
+					for (ExtraElement element:pendentElements){							
+						obj.add(element.getAction(), element.getJson());
+					}
+					/*JsonArray jarray = new JsonArray();
+					jarray.add(obj);*/
+					constructor.add(obj);
 				}
-				/*JsonArray jarray = new JsonArray();
-				jarray.add(obj);*/
-				constructor.add(obj);
 			}
-		}
+		}		
 		workingGroup = new ArrayList<JsonObject>();
 		pendentElements = new ArrayList<ExtraElement>();		
 		return this;
@@ -184,7 +186,7 @@ public class UltimateFancy {
 				if (frmt.equals(ChatColor.MAGIC)){
 					frmtStr = "obfuscated";
 				}
-				if (json.has(frmtStr) && json.get(frmtStr).getAsBoolean()){
+				if (json.has(frmtStr) && json.get(frmtStr).getAsJsonPrimitive().getAsBoolean()){
 					result.append(String.valueOf(frmt));
 				}
 			}

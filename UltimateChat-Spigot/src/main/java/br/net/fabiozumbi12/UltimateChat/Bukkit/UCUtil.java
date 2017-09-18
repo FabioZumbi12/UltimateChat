@@ -31,7 +31,7 @@ public class UCUtil {
 		text = text.replace("_", " ");
 		for (String t:text.split(" ")){
 			if (t.length() > 2){
-				cap.append(t.substring(0, 1).toUpperCase() + t.substring(1)+" ");
+				cap.append(t.substring(0, 1).toUpperCase() + t.substring(1).toLowerCase()+" ");
 			} else {
 				cap.append(t+" ");
 			}						
@@ -64,7 +64,7 @@ public class UCUtil {
 			@Override
 			public void run() {
 				if (to == null || (to != null && to.isOnline())){
-	        		UChat.get().getServ().dispatchCommand(sender, command);
+	        		UChat.get().getServer().dispatchCommand(sender, command);
 	        	}
 			}			
 		});
@@ -102,32 +102,32 @@ public class UCUtil {
 		 boolean isUrl = false;
 		 boolean isSug = false;
 		 for (String arg:args){
-			 if (arg.contains(UChat.get().getUCConfig().getString("broadcast.on-hover"))){
-				 hover.append(" "+ChatColor.translateAlternateColorCodes('&', arg.replace(UChat.get().getUCConfig().getString("broadcast.on-hover"), "")));
+			 if (arg.contains(UChat.get().getConfig().getString("broadcast.on-hover"))){
+				 hover.append(" "+ChatColor.translateAlternateColorCodes('&', arg.replace(UChat.get().getConfig().getString("broadcast.on-hover"), "")));
 				 isHover = true;
 				 isCmd = false;
 				 isUrl = false;
 				 isSug = false;
 				 continue;
 			 }
-			 if (arg.contains(UChat.get().getUCConfig().getString("broadcast.on-click"))){
-				 cmdline.append(" "+ChatColor.translateAlternateColorCodes('&', arg.replace(UChat.get().getUCConfig().getString("broadcast.on-click"), "")));
+			 if (arg.contains(UChat.get().getConfig().getString("broadcast.on-click"))){
+				 cmdline.append(" "+ChatColor.translateAlternateColorCodes('&', arg.replace(UChat.get().getConfig().getString("broadcast.on-click"), "")));
 				 isCmd = true;
 				 isHover = false;
 				 isUrl = false;
 				 isSug = false;
 				 continue;
 			 }
-			 if (arg.contains(UChat.get().getUCConfig().getString("broadcast.url"))){
-				 url.append(" "+ChatColor.translateAlternateColorCodes('&', arg.replace(UChat.get().getUCConfig().getString("broadcast.url"), "")));
+			 if (arg.contains(UChat.get().getConfig().getString("broadcast.url"))){
+				 url.append(" "+ChatColor.translateAlternateColorCodes('&', arg.replace(UChat.get().getConfig().getString("broadcast.url"), "")));
 				 isCmd = false;
 				 isHover = false;
 				 isUrl = true;
 				 isSug = false;
 				 continue;
 			 }
-			 if (arg.contains(UChat.get().getUCConfig().getString("broadcast.suggest"))){
-				 suggest.append(" "+ChatColor.translateAlternateColorCodes('&', arg.replace(UChat.get().getUCConfig().getString("broadcast.suggest"), "")));
+			 if (arg.contains(UChat.get().getConfig().getString("broadcast.suggest"))){
+				 suggest.append(" "+ChatColor.translateAlternateColorCodes('&', arg.replace(UChat.get().getConfig().getString("broadcast.suggest"), "")));
 				 isCmd = false;
 				 isHover = false;
 				 isUrl = false;
@@ -159,7 +159,7 @@ public class UCUtil {
 			 Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_GRAY+"> Broadcast: "+ChatColor.RESET+message.toString().substring(1));
 		 }		 
 		 			 
-		 if (UChat.get().getUCConfig().getBool("general.json-events")){
+		 if (UChat.get().getConfig().getBool("general.json-events")){
 			 UltimateFancy fanci = new UltimateFancy();
 			 fanci.text(message.toString().substring(1));
 			 

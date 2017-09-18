@@ -8,6 +8,7 @@ discord:
   update-status: true
   token: ""
   log-channel-id: ''
+  tell-channel-id: ''
   server-commands:
     alias: '!cmd'
     whitelist: []
@@ -40,7 +41,7 @@ general:
   enable-tags-on-messages: false
   item-hand:
     enable: true
-    format: '&6[hand]{group-suffix}'
+    format: '&6[{hand-amount} {hand-type}]{group-suffix}'
     placeholder: '@hand'
 tell:
   cmd-aliases: tell,t,w,m,msg,private,priv,r

@@ -68,7 +68,7 @@ public class ChatMessageEvent extends Event implements Cancellable {
 	}
 	
 	public List<String> getTags(){
-		return UChat.get().getUCConfig().getTagList();
+		return UChat.get().getConfig().getTagList();
 	}
 	
 	@Override

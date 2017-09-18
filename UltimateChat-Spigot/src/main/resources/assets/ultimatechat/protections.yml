@@ -56,7 +56,7 @@ chat-protection:
       # Action to use when replace a word. Use {player} on command to get the player name or '' to disable.
       cmd: ''
       # Use this action on partial words too or only on complete words replacement?
-      partial-words: false
+      on-partial-words: false
       # Action only on this channels or [] to action on all channels.
       only-on-channels:
       - global

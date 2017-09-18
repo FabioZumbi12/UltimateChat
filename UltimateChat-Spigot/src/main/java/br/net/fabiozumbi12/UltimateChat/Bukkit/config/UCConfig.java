@@ -14,13 +14,14 @@ import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UCChannel;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UCUtil;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UChat;
 
-public class UCConfig{
+public class UCConfig extends FileConfiguration {
 	
 	static YamlConfiguration defConfigs = new YamlConfiguration();
 	static YamlConfiguration configs = new YamlConfiguration();
@@ -154,6 +155,7 @@ public class UCConfig{
             					+ " - {ch-color}: Channel color;\n"
             					+ " - {hand-type}: Item type;\n"
             					+ " - {hand-name}: Item name;\n"
+            					+ " - {hand-amount}: Item quantity;\n"
             					+ " - {hand-lore}: Item description (lore);\n"
             					+ " - {hand-durability}: Item durability;\n"
             					+ " - {hand-enchants}: Item enchantments;\n"
@@ -216,6 +218,7 @@ public class UCConfig{
             					+ " - {ch-color}: Cor do canal;\n"
             					+ " - {hand-type}: Tipo do item;\n"
             					+ " - {hand-name}: Nome do item;\n"
+            					+ " - {hand-amount}: Quantidade do item;\n"
             					+ " - {hand-lore}: Descrição do item(lore);\n"
             					+ " - {hand-durability}: Durabilidade do item;\n"
             					+ " - {hand-enchants}: Encantamentos do item;\n"
@@ -451,7 +454,7 @@ public class UCConfig{
 		return configs.getString(key);
 	}
     
-    public Integer getInt(String key){		
+    public int getInt(String key){		
 		return configs.getInt(key);
 	}
     
@@ -501,7 +504,7 @@ public class UCConfig{
 		return ChatColor.translateAlternateColorCodes('&',Prots.getString(key));
 	}
 	
-	public String getColor(String key){
+	public String getColorStr(String key){
 		return ChatColor.translateAlternateColorCodes('&',configs.getString(key));
 	}
 	
@@ -528,6 +531,25 @@ public class UCConfig{
 
 	public String getURLTemplate() {
 		return ChatColor.translateAlternateColorCodes('&', configs.getString("general.URL-template"));
+	}
+
+	@Override
+	public String saveToString() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void loadFromString(String contents)
+			throws InvalidConfigurationException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected String buildHeader() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
    
