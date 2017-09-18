@@ -60,6 +60,8 @@ public class UCConfig{
 			config.getNode("discord","token").setValue(config.getNode("discord","token").getString(new String()));
 			config.getNode("discord","log-channel-id").setComment("Channel id to send server start/stop and player join/leave messages");
 			config.getNode("discord","log-channel-id").setValue(config.getNode("discord","log-channel-id").getString(new String()));
+			config.getNode("discord","tell-channel-id").setComment("Channel id to spy private messages");
+			config.getNode("discord","tell-channel-id").setValue(config.getNode("discord","tell-channel-id").getString(new String()));
 			config.getNode("discord","server-commands","alias").setValue(config.getNode("discord","server-commands","alias").getString("!cmd"));
 			config.getNode("discord","server-commands","whitelist").setValue(config.getNode("discord","server-commands","whitelist").getList(TypeToken.of(String.class), new ArrayList<String>()));
 			config.getNode("discord","server-commands","blacklist").setValue(config.getNode("discord","server-commands","blacklist").getList(TypeToken.of(String.class), Arrays.asList("stop","whitelist")));
@@ -92,7 +94,7 @@ public class UCConfig{
 			.setComment("Enable to allow parse tags and placeholders on messages.");			
 			config.getNode("general","item-hand","enable").setValue(config.getNode("general","item-hand","enable").getBoolean(true))
 			.setComment("Enable chat item hand.");
-			config.getNode("general","item-hand","format").setValue(config.getNode("general","item-hand","format").getString("&6[hand]{group-suffix}"))
+			config.getNode("general","item-hand","format").setValue(config.getNode("general","item-hand","format").getString("&6[{hand-amount} {hand-type}]{group-suffix}"))
 			.setComment("Text to show on chat on hover the tag.");
 			config.getNode("general","item-hand","placeholder").setValue(config.getNode("general","item-hand","placeholder").getString("@hand"))
 			.setComment("Placeholder to use on chat by players to show your item in hand.");
@@ -207,7 +209,7 @@ public class UCConfig{
 			prots.getNode("chat-protection","censor","replace-partial-word").setValue(prots.getNode("chat-protection","censor","replace-partial-word").getBoolean(false));
 			prots.getNode("chat-protection","censor","action","cmd").setValue(prots.getNode("chat-protection","censor","action","cmd").getString(""));
 			prots.getNode("chat-protection","censor","action","only-on-channels").setValue(prots.getNode("chat-protection","censor","action","only-on-channels").getList(TypeToken.of(String.class), Arrays.asList("global")));
-			prots.getNode("chat-protection","censor","action","partial-words").setValue(prots.getNode("chat-protection","censor","action","partial-words").getBoolean(false));
+			prots.getNode("chat-protection","censor","action","on-partial-words").setValue(prots.getNode("chat-protection","censor","action","on-partial-words").getBoolean(false));
 			if (!prots.getNode("chat-protection","censor","replace-words").hasMapChildren()){
 				prots.getNode("chat-protection","censor","replace-words","fuck").setValue(prots.getNode("chat-protection","censor","replace-words","fuck").getString("*flower*"));
 				prots.getNode("chat-protection","censor","replace-words","ass").setValue(prots.getNode("chat-protection","censor","replace-words","ass").getString("*finger*"));
@@ -304,7 +306,7 @@ public class UCConfig{
 								channel.getNode("discord","channelID").getString(new String()),
 								channel.getNode("discord","mode").getString("none"),
 								channel.getNode("discord","format-to-mc").getString("{ch-color}[{ch-alias}]&b{dd-rolecolor}[{dd-rolename}]{sender}&r: "),
-								channel.getNode("discord","format-to-dd").getString("{ch-color}[{ch-alias}]&b{dd-rolecolor}[{dd-rolename}]{sender}&r: "),
+								channel.getNode("discord","format-to-dd").getString(":thought_balloon: **{sender}**: {message}"),
 								channel.getNode("discord","hover").getString("&3Discord Channel: &a{dd-channel}\n&3Role Name: {dd-rolecolor}{dd-rolename}"),
 								channel.getNode("discord","allow-server-cmds").getBoolean(false),
 								channel.getNode("canLock").getBoolean(true));
@@ -344,6 +346,7 @@ public class UCConfig{
     					+ " - {balance}: Get the sender money;\n"
     					+ " - {hand-type}: Item type;\n"
     					+ " - {hand-name}: Item name;\n"
+    					+ " - {hand-amount}: Item quantity;\n"
     					+ " - {hand-lore}: Item description (lore);\n"
     					+ " - {hand-durability}: Item durability;\n"
     					+ " - {hand-enchants}: Item enchantments;\n"
@@ -403,6 +406,7 @@ public class UCConfig{
     					+ " - {balance}: Dinheiro do player;\n"
     					+ " - {hand-type}: Tipo do item;\n"
     					+ " - {hand-name}: Nome do item;\n"
+    					+ " - {hand-amount}: Quantidade do item;\n"
     					+ " - {hand-lore}: Descrição do item(lore);\n"
     					+ " - {hand-durability}: Durabilidade do item;\n"
     					+ " - {hand-enchants}: Encantamentos do item;\n"
@@ -639,7 +643,7 @@ public class UCConfig{
     
     //protection methods
     public CommentedConfigurationNode getProtReplecements(){
-		return prots.getNode("chat-protection","censor","replace-words").getAppendedNode();
+		return prots.getNode("chat-protection","censor","replace-words");
 	}
     
 	public int getProtInt(Object... key){

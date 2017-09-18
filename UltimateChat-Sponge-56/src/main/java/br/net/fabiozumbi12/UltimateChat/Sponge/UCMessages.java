@@ -16,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.data.meta.ItemEnchantment;
 import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.effect.sound.SoundType;
 import org.spongepowered.api.entity.Entity;
@@ -56,20 +57,20 @@ class UCMessages {
 		registeredReplacers = event.getResgisteredTags();
 		defFormat = event.getDefFormat();
 		
-		String tempStr = event.getMessage().toPlain();
+		String evmsg = event.getMessage().toPlain();
 		
 		//send to event
 		MutableMessageChannel msgCh = MessageChannel.TO_CONSOLE.asMutable();
 				
-		tempStr = UCChatProtection.filterChatMessage(sender, tempStr, event.getChannel());
-		if (tempStr == null){
+		evmsg = UCChatProtection.filterChatMessage(sender, evmsg, event.getChannel());
+		if (evmsg == null){
 			return null;
 		}
 		
 		HashMap<CommandSource, Text> msgPlayers = new HashMap<CommandSource, Text>();
-		tempStr = composeColor(sender,tempStr);
+		evmsg = composeColor(sender,evmsg);
 		
-		Text srcText = Text.builder(event.getMessage(), tempStr).build();
+		Text srcText = Text.builder(event.getMessage(), evmsg).build();
 						
 		if (event.getChannel() != null){					
 			
@@ -179,7 +180,7 @@ class UCMessages {
 			
 		} else {						
 			//send tell
-			UCChannel fakech = new UCChannel("tell");
+			channel = new UCChannel("tell");
 			
 			//send spy			
 			for (Player receiver:Sponge.getServer().getOnlinePlayers()){			
@@ -188,11 +189,11 @@ class UCMessages {
 					if (isIgnoringPlayers(tellReceiver.getName(), sender.getName())){
 						spyformat = UChat.get().getLang().get("chat.ignored")+spyformat;
 					}
-					spyformat = spyformat.replace("{output}", UCUtil.stripColor(sendMessage(sender, tellReceiver, srcText, fakech, true).toPlain()));					
+					spyformat = spyformat.replace("{output}", UCUtil.stripColor(sendMessage(sender, tellReceiver, srcText, channel, true).toPlain()));					
 					receiver.sendMessage(UCUtil.toText(spyformat));					
 				}
 			}
-			Text to = sendMessage(sender, tellReceiver, srcText, fakech, false);
+			Text to = sendMessage(sender, tellReceiver, srcText, channel, false);
 			msgPlayers.put(tellReceiver, to);
 			msgPlayers.put(sender, to);
 			if (isIgnoringPlayers(tellReceiver.getName(), sender.getName())){
@@ -217,8 +218,12 @@ class UCMessages {
 			UChat.get().getLogger().timings(timingType.END, "UCMessages#send()|after send");
 		});		
 		
-		if (channel != null && !channel.isTell() && UChat.get().getUCJDA() != null){
-			UChat.get().getUCJDA().sendToDiscord(sender, msg.toPlain(), channel);
+		if (channel != null && UChat.get().getUCJDA() != null){
+			if (channel.isTell()){
+				UChat.get().getUCJDA().sendTellToDiscord(msgPlayers.get(sender).toPlain());
+			} else {
+				UChat.get().getUCJDA().sendToDiscord(sender, evmsg, channel);
+			}			
 		}
 		
 		return msgCh;
@@ -516,6 +521,46 @@ class UCMessages {
 					text = text.replace("{nickname}", nick);
 				}
 			}				
+			
+			//replace item hand	
+			text = text.replace(UChat.get().getConfig().getString("general","item-hand","placeholder"), UCUtil.toColor(UChat.get().getConfig().getString("general","item-hand","format")));			
+			ItemStack item = null;
+			
+			if (sender.getItemInHand(HandTypes.MAIN_HAND).isPresent()){
+				item = sender.getItemInHand(HandTypes.MAIN_HAND).get();				
+			} else if (sender.getItemInHand(HandTypes.OFF_HAND).isPresent()){
+				item = sender.getItemInHand(HandTypes.OFF_HAND).get();		
+			}
+			
+			if (item != null){
+				text = text
+						.replace("{hand-durability}", item.get(Keys.ITEM_DURABILITY).isPresent() ? String.valueOf(item.get(Keys.ITEM_DURABILITY).get()) : "")
+						.replace("{hand-name}", item.getItem().getTranslation().get());
+				if(item.get(Keys.ITEM_LORE).isPresent()){
+					StringBuilder lorestr = new StringBuilder();
+					for (Text line:item.get(Keys.ITEM_LORE).get()){
+						lorestr.append("\n "+line.toPlain());
+					}		
+					if (lorestr.length() >= 2){
+						text = text.replace("{hand-lore}", lorestr.toString().substring(0, lorestr.length()-1));
+					}
+				}
+				if (item.get(Keys.ITEM_ENCHANTMENTS).isPresent()){
+					StringBuilder str = new StringBuilder();
+					for (ItemEnchantment enchant:item.get(Keys.ITEM_ENCHANTMENTS).get()){
+						str.append("\n "+enchant.getEnchantment().getTranslation().get()+": "+enchant.getLevel());
+					}
+					if (str.length() >= 2){
+						text = text.replace("{hand-enchants}", str.toString().substring(0, str.length()-1));
+					}
+				}
+				text = text.replace("{hand-amount}", String.valueOf(item.getQuantity()));
+				text = text.replace("{hand-name}", item.getItem().getName());
+				text = text.replace("{hand-type}", item.getItem().getTranslation().get());
+			} else {
+				text = text.replace("{hand-name}", UChat.get().getLang().get("chat.emptyslot"));
+				text = text.replace("{hand-type}", "Air");
+			}
 			
 			text = text.replace("{world}", sender.getWorld().getName());
 			

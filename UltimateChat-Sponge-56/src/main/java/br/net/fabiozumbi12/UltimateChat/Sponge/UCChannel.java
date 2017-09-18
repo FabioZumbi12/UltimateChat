@@ -47,7 +47,7 @@ public class UCChannel {
 	private String ddchannel = new String();
 	private String ddmode = "NONE";
 	private List<CommandSource> members = new ArrayList<CommandSource>();
-	private String ddmcformat = "{ch-color}[{ch-alias}]&b{dd-rolecolor}[{dd-rolename}]{sender}&r:";
+	private String ddmcformat = "{ch-color}[{ch-alias}]&b{dd-rolecolor}[{dd-rolename}]{sender}&r: ";
 	private String mcddformat = ":thought_balloon: **{sender}**: {message}";
 	private String ddhover = "&3Discord Channel: &a{dd-channel}\n&3Role Name: {dd-rolecolor}{dd-rolename}";
 	private boolean ddallowcmds = false;

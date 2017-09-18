@@ -31,6 +31,7 @@
           <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
           <artifactId>UltimateChat-Spigot</artifactId>
           <version>LATEST</version>
+          <scope>compile</scope>
         </dependency>  
         <dependency>
           <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
@@ -42,6 +43,7 @@
           <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
           <artifactId>UltimateChat-Bungee</artifactId>
           <version>LATEST</version>
+          <scope>compile</scope>
     </dependency>  
     
     <!-- Google JSON lib -->

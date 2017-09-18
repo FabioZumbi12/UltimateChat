@@ -83,23 +83,23 @@ class UCChatProtection {
 		//censor
 		if (UChat.get().getConfig().getProtBool("chat-protection","censor","enable") && !p.hasPermission("uchat.bypass-censor")){
 			int act = 0;
-			for (Entry<Object, ? extends CommentedConfigurationNode> word:UChat.get().getConfig().getProtReplecements().getChildrenMap().entrySet()){				
-				if (!StringUtils.containsIgnoreCase(msg, word.toString())){
+			for (Entry<Object, ? extends CommentedConfigurationNode> word:UChat.get().getConfig().getProtReplecements().getChildrenMap().entrySet()){
+				if (!StringUtils.containsIgnoreCase(msg, word.getKey().toString())){
 					continue;
 				} 				
 				
 				String replaceby = word.getValue().getString();
 				if (UChat.get().getConfig().getProtBool("chat-protection","censor","replace-by-symbol")){
-					replaceby = word.toString().replaceAll("(?s).", UChat.get().getConfig().getProtString("chat-protection","censor","by-symbol"));
+					replaceby = word.getKey().toString().replaceAll("(?s).", UChat.get().getConfig().getProtString("chat-protection","censor","by-symbol"));
 				}
 				
 				if (!UChat.get().getConfig().getProtBool("chat-protection","censor","replace-partial-word")){
-					msg = msg.replaceAll("(?i)"+"\\b"+Pattern.quote(word.toString())+"\\b", replaceby);
-					if (UChat.get().getConfig().getProtBool("chat-protection","censor","action","partial-words")){
+					msg = msg.replaceAll("(?i)"+"\\b"+Pattern.quote(word.getKey().toString())+"\\b", replaceby);
+					if (UChat.get().getConfig().getProtBool("chat-protection","censor","action","on-partial-words")){
 						act++;
 					}
 				} else {
-					msg = msg.replaceAll("(?i)"+word, replaceby);
+					msg = msg.replaceAll("(?i)"+word.getKey().toString(), replaceby);
 					act++;
 				}				
 			}

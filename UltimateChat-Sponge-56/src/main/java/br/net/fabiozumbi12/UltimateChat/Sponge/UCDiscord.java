@@ -108,6 +108,12 @@ public class UCDiscord extends ListenerAdapter {
 		}
 	}
 	
+	public void sendTellToDiscord(String text){
+		if (!uchat.getConfig().getString("discord","tell-channel-id").isEmpty()){
+			sendToChannel(uchat.getConfig().getString("discord","tell-channel-id"), text);
+		}
+	}
+	
 	public void sendRawToDiscord(String text){
 		if (!uchat.getConfig().getString("discord","log-channel-id").isEmpty()){
 			sendToChannel(uchat.getConfig().getString("discord","log-channel-id"), text);

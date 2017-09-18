@@ -161,6 +161,11 @@ public class UCCommands {
 						    		//lock tell
 						    		else if (recObj instanceof Player ){
 					    				Player receiver = (Player) recObj;
+					    				
+					    				if (!receiver.isOnline() || !p.canSee(receiver)){
+											throw new CommandException(UChat.get().getLang().getText("listener.invalidplayer"), true);
+										}
+					    				
 					    				if (receiver.equals(p)){
 											throw new CommandException(UChat.get().getLang().getText("cmd.tell.self"), true);
 										}
