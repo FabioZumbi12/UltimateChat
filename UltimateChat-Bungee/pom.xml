@@ -34,4 +34,8 @@
      	<mineVersion>1.12-SNAPSHOT</mineVersion>
      </properties>
      
+     <build>
+       <finalName>DONT-DOWNLOAD-BungeeCoord-reference</finalName>
+     </build>
+     
 </project>
