@@ -5,8 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import jdalib.jda.core.entities.Game;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -598,7 +596,7 @@ public class UCListener implements CommandExecutor,Listener {
 		if (UChat.get().getUCJDA() != null){
 			UChat.get().getUCJDA().sendRawToDiscord(UChat.get().getLang().get("discord.join").replace("{player}", p.getName()));
 			if (UChat.get().getConfig().getBool("discord.update-status")){
-				UChat.get().getUCJDA().getJDA().getPresence().setGame(Game.of(UChat.get().getLang().get("discord.game").replace("{online}", String.valueOf(UChat.get().getServer().getOnlinePlayers().size()))));
+				UChat.get().getUCJDA().updateGame(UChat.get().getLang().get("discord.game").replace("{online}", String.valueOf(UChat.get().getServer().getOnlinePlayers().size())));
 			}
 		}
 	}
@@ -648,7 +646,7 @@ public class UCListener implements CommandExecutor,Listener {
 		if (UChat.get().getUCJDA() != null){
 			UChat.get().getUCJDA().sendRawToDiscord(UChat.get().getLang().get("discord.leave").replace("{player}", p.getName()));
 			if (UChat.get().getConfig().getBool("discord.update-status")){
-				UChat.get().getUCJDA().getJDA().getPresence().setGame(Game.of(UChat.get().getLang().get("discord.game").replace("{online}", String.valueOf(UChat.get().getServer().getOnlinePlayers().size()-1))));
+				UChat.get().getUCJDA().updateGame(UChat.get().getLang().get("discord.game").replace("{online}", String.valueOf(UChat.get().getServer().getOnlinePlayers().size()-1)));
 			}
 		}
 	}

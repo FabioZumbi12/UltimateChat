@@ -90,8 +90,8 @@ public class UChat {
 		return this.ucapi;
 	}
 	
-	private UCDiscord UCJDA;	
-	public UCDiscord getUCJDA(){
+	private UCDInterface UCJDA;	
+	public UCDInterface getUCJDA(){
 		return this.UCJDA;
 	}
 	

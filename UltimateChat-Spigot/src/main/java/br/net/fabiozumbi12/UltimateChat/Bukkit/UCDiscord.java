@@ -21,12 +21,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
-public class UCDiscord extends ListenerAdapter {	
+public class UCDiscord extends ListenerAdapter implements UCDInterface{	
 	private JDA jda;
 	private UChat uchat;
-	public JDA getJDA(){
-		return this.jda;
-	}
 	
 	public UCDiscord(UChat plugin){
 		this.uchat = plugin;
@@ -100,6 +97,10 @@ public class UCDiscord extends ListenerAdapter {
 				}										
 			}
 		}
+	}
+	
+	public void updateGame(String text){
+		this.jda.getPresence().setGame(Game.of(text));
 	}
 	
 	public void sendTellToDiscord(String text){

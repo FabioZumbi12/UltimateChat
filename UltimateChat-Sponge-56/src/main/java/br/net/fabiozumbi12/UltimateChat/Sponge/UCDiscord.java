@@ -25,12 +25,9 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.Text.Builder;
 import org.spongepowered.api.text.action.TextActions;
 
-public class UCDiscord extends ListenerAdapter {	
+public class UCDiscord extends ListenerAdapter implements UCDInterface {	
 	private JDA jda;
 	private UChat uchat;
-	public JDA getJDA(){
-		return this.jda;
-	}
 	
 	public UCDiscord(UChat plugin){
 		this.uchat = plugin;
@@ -108,6 +105,10 @@ public class UCDiscord extends ListenerAdapter {
 		}
 	}
 	
+	public void updateGame(String text){
+		this.jda.getPresence().setGame(Game.of(text));
+	}
+	
 	public void sendTellToDiscord(String text){
 		if (!uchat.getConfig().getString("discord","tell-channel-id").isEmpty()){
 			sendToChannel(uchat.getConfig().getString("discord","tell-channel-id"), text);
@@ -179,7 +180,7 @@ public class UCDiscord extends ListenerAdapter {
 	}
 	
 	/*   ------ color util --------   */
-	public static String fromRGB(int r, int g, int b) {
+	private static String fromRGB(int r, int g, int b) {
 		TreeMap<Integer, String> closest = new TreeMap<Integer, String>();		
 		colorMap.forEach((color, set) -> {
 			int red = Math.abs(r - set.getRed());
