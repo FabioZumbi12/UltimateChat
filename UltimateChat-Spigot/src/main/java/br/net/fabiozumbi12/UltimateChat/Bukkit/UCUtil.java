@@ -47,7 +47,7 @@ public class UCUtil {
 		try {
 			InputStream isReader = UChat.class.getResourceAsStream(name);
 			FileOutputStream fos = new FileOutputStream(saveTo);
-			while (isReader.available() > 0) {  // write contents of 'is' to 'fos'
+			while (isReader.available() > 0) {
 		        fos.write(isReader.read());
 		    }
 		    fos.close();

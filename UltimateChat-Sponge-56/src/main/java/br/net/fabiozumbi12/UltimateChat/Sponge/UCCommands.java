@@ -1,6 +1,7 @@
 package br.net.fabiozumbi12.UltimateChat.Sponge;
 
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandCallable;
@@ -488,21 +489,66 @@ public class UCCommands {
 						if (ch.isMuted(play.getName())){
 							ch.unMuteThis(play.getName());
 							UChat.get().getLang().sendMessage(src, UChat.get().getLang().get("channel.unmuted.this").replace("{player}", play.getName()).replace("{channel}", ch.getName()));
+							if (play.isOnline()){
+								 UChat.get().getLang().sendMessage(play, UChat.get().getLang().get("channel.player.unmuted.this").replace("{channel}", ch.getName()));
+							}
 						} else {
 							ch.muteThis(play.getName());
 							UChat.get().getLang().sendMessage(src, UChat.get().getLang().get("channel.muted.this").replace("{player}", play.getName()).replace("{channel}", ch.getName()));
+							if (play.isOnline()){
+								UChat.get().getLang().sendMessage(play, UChat.get().getLang().get("channel.player.muted.this").replace("{channel}", ch.getName()));
+							}
 						}
 					} else {
 						if (UChat.mutes.contains(play.getName())){
 							 UChat.mutes.remove(play.getName());
 							 UChat.get().getConfig().unMuteInAllChannels(play.getName());
 							 UChat.get().getLang().sendMessage(src, UChat.get().getLang().get("channel.unmuted.all").replace("{player}", play.getName()));
+							 if (play.isOnline()){
+								 UChat.get().getLang().sendMessage(play, "channel.player.unmuted.all");
+							 }
 						 } else {
 							 UChat.mutes.add(play.getName());
 							 UChat.get().getConfig().muteInAllChannels(play.getName());
 							 UChat.get().getLang().sendMessage(src, UChat.get().getLang().get("channel.muted.all").replace("{player}", play.getName()));
+							 if (play.isOnline()){
+								 UChat.get().getLang().sendMessage(play, "channel.player.muted.all");
+							 }
 						 }
 					}										
+			    	return CommandResult.success();
+				}}).build();
+		
+		CommandSpec tempmute = CommandSpec.builder()
+				.arguments(GenericArguments.integer(Text.of("time")), GenericArguments.player(Text.of("player")))
+				.description(Text.of("Temporary mute a player."))
+				.permission("uchat.cmd.tempmute")
+				.executor((src,args) -> {{
+					//uchat tempmute time player
+					Player play = args.<Player>getOne("player").get();
+					int time = args.<Integer>getOne("time").get();
+					if (UChat.mutes.contains(play.getName())){
+						UChat.get().getLang().sendMessage(src, "channel.already.muted");
+					} else {
+						UChat.mutes.add(play.getName());
+						UChat.get().getConfig().muteInAllChannels(play.getName());
+						UChat.get().getLang().sendMessage(src, UChat.get().getLang().get("channel.tempmuted.all").replace("{player}", play.getName()).replace("{time}", String.valueOf(time)));
+						if (play.isOnline()){
+							UChat.get().getLang().sendMessage(play, UChat.get().getLang().get("channel.player.tempmuted.all").replace("{time}", String.valueOf(time)));
+						}
+						Sponge.getScheduler().createSyncExecutor(UChat.get().instance()).schedule(new Runnable(){
+							@Override
+							public void run() {
+								if (UChat.mutes.contains(play.getName())){
+									UChat.mutes.remove(play.getName());
+									UChat.get().getConfig().unMuteInAllChannels(play.getName());
+									if (play.isOnline()){
+										UChat.get().getLang().sendMessage(play, "channel.player.unmuted.all");
+								    }
+								}
+							}							
+						}, time, TimeUnit.MINUTES);
+					}									
 			    	return CommandResult.success();
 				}}).build();
 		
@@ -535,22 +581,12 @@ public class UCCommands {
 			    		.child(ignoreChannel, "channel")
 			    		.build(), "ignore")
 			    .child(mute, "mute")
+			    .child(tempmute, "tempmute")
 			    .build();
 		
 		return uchat;
 	}
     
-	/*
-	private void sendTell(Player p, Optional<Player> receiver, String msg){		
-		if (!receiver.isPresent() || !receiver.get().isOnline() || !p.canSee(receiver.get())){
-			UChat.get().getLang().sendMessage(p, "listener.invalidplayer");
-			return;
-		}	
-		Player tellreceiver = receiver.get();	
-		UChat.respondTell.put(tellreceiver.getName(),p.getName());
-		UCMessages.sendFancyMessage(new String[0], msg, null, p, tellreceiver);			
-	}
-	*/
 	private void sendHelp(CommandSource p){		
 		p.sendMessage(UCUtil.toText("&7--------------- "+UChat.get().getLang().get("_UChat.prefix")+" Help &7---------------"));		
 		p.sendMessage(UChat.get().getLang().getText("help.channels.enter"));
@@ -560,7 +596,7 @@ public class UCCommands {
 			p.sendMessage(UChat.get().getLang().getText("help.tell.send"));
 			p.sendMessage(UChat.get().getLang().getText("help.tell.respond"));
 		}
-		if (p.hasPermission("uchat.broadcast")){
+		if (p.hasPermission("uchat.cmd.broadcast")){
 			p.sendMessage(UChat.get().getLang().getText("help.cmd.broadcast"));
 		}
 		if (p.hasPermission("uchat.cmd.umsg")){
@@ -577,6 +613,9 @@ public class UCCommands {
 		}
 		if (p.hasPermission("uchat.cmd.mute")){
 			p.sendMessage(UChat.get().getLang().getText("help.cmd.mute"));
+		}
+		if (p.hasPermission("uchat.cmd.tempmute")){
+			p.sendMessage(UChat.get().getLang().getText("help.cmd.tempmute"));
 		}
 		if (p.hasPermission("uchat.cmd.ignore.player")){
 			p.sendMessage(UChat.get().getLang().getText("help.cmd.ignore.player"));

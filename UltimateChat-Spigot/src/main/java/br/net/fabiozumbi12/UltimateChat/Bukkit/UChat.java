@@ -12,7 +12,6 @@ import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import net.sacredlabyrinth.phaed.simpleclans.SimpleClans;
-import net.sacredlabyrinth.phaed.simpleclans.managers.ClanManager;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -42,7 +41,7 @@ public class UChat extends JavaPlugin {
 	
     private static boolean Vault = false;	    
     protected static boolean SClans;
-    protected static ClanManager sc;
+    protected static SimpleClans sc;
     protected static boolean MarryReloded;
     protected static boolean MarryMaster;
 	private static boolean ProtocolLib;
@@ -180,7 +179,7 @@ public class UChat extends JavaPlugin {
             }
             
             if (SClans){
-            	sc = SimpleClans.getInstance().getClanManager();
+            	sc = SimpleClans.getInstance();
             	logger.info("SimpleClans found. Hooked.");
             }
             

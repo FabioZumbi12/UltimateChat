@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
+import net.sacredlabyrinth.phaed.simpleclans.managers.SettingsManager;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -515,10 +516,22 @@ public class UCMessages {
 						
 			}
 			if (UChat.SClans){		
-				ClanPlayer cp = UChat.sc.getClanPlayer(sender.getUniqueId());
+				ClanPlayer cp = UChat.sc.getClanManager().getClanPlayer(sender.getUniqueId());
+				SettingsManager scm = UChat.sc.getSettingsManager();
 				if (cp != null){
+					String fulltag = 
+							scm.getTagBracketColor()
+							+scm.getTagBracketLeft()
+							+scm.getTagDefaultColor()
+							+cp.getClan().getColorTag()
+							+scm.getTagBracketColor()
+							+scm.getTagBracketRight()
+							+scm.getTagSeparatorColor()
+							+scm.getTagSeparator();
+					
 					text = text
 							.replace("{clan-tag}", cp.getTag())
+							.replace("{clan-fulltag}", fulltag)
 							.replace("{clan-name}", checkEmpty(cp.getClan().getName()))
 							.replace("{clan-kdr}", ""+cp.getKDR())
 							.replace("{clan-rank}", checkEmpty(cp.getRank()))

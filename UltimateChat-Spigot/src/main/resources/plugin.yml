@@ -30,6 +30,7 @@ permissions:
       uchat.cmd.reload: true
       uchat.cmd.spy: true
       uchat.cmd.mute: true
+      uchat.cmd.tempmute: true
       uchat.cmd.umsg: true
       uchat.chat.mention: true
       uchat.chat.color: true
