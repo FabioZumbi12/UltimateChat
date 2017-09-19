@@ -3,7 +3,7 @@
   <parent>
     <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
     <artifactId>UltimateChat</artifactId>
-    <version>1.8.1</version>
+    <version>1.8.2</version>
   </parent>
   <artifactId>UltimateChat-Spigot</artifactId>
   
@@ -52,34 +52,29 @@
 			<version>v1</version>
 			<scope>system</scope>
 			<systemPath>${project.basedir}/../libs/Factions.jar</systemPath>
-		</dependency>		
-		<dependency>
-			<groupId>Marriage</groupId>
-			<artifactId>Marriage</artifactId>
-			<version>v1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/../libs/Marriage.jar</systemPath>
-		</dependency>		
+		</dependency>	
 		<dependency>
 			<groupId>MarriageMaster</groupId>
 			<artifactId>MarriageMaster</artifactId>
 			<version>v1</version>
 			<scope>system</scope>
 			<systemPath>${project.basedir}/../libs/MarriageMaster.jar</systemPath>
-		</dependency>		
+		</dependency>				
+		<dependency>
+			<groupId>com.lenis0012.bukkit</groupId>
+			<artifactId>marriage2</artifactId>
+			<version>2.0.17-SNAPSHOT</version>
+		</dependency>	
 		<dependency>
            <groupId>net.milkbowl.vault</groupId>
            <artifactId>VaultAPI</artifactId>            
            <version>LATEST</version>
-           <scope>provided</scope>
         </dependency>
 		<dependency>
             <groupId>net.ess3</groupId>
-            <artifactId>EssentialsX</artifactId>
-            <version>2.0.1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/../libs/EssentialsX-2.0.1.jar</systemPath>
-        </dependency> 
+            <artifactId>Essentials</artifactId>
+            <version>2.14-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <groupId>com.comphenix.protocol</groupId>
             <artifactId>ProtocolLib-API</artifactId>
@@ -172,6 +167,6 @@
     
   </build>
   <properties>
-  	<mineVersion>1.12.1-R0.1-SNAPSHOT</mineVersion>
+  	<mineVersion>1.12.2-R0.1-SNAPSHOT</mineVersion>
   </properties>
 </project>

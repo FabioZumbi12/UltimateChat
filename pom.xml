@@ -4,7 +4,7 @@
   <artifactId>UltimateChat</artifactId>
   <packaging>pom</packaging>
   <name>UltimateChat</name>
-  <version>1.8.1</version>
+  <version>1.8.2</version>
   <description>Ultimate Chat is an advanced chat hooking into most used plugins to show more info on player chat.</description>
   
   <repositories>
@@ -44,12 +44,25 @@
             <id>bungeecord-repo</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
      </repository>    
+     
      <!-- JDA repo -->
      <repository>
             <id>jcenter</id>
             <name>jcenter-bintray</name>
             <url>http://jcenter.bintray.com</url>
      </repository>     
+     
+     <!-- Essentials repo -->
+     <repository>
+            <id>EssentialsX</id>
+            <url>http://repo.ess3.net/content/groups/essentials</url>
+     </repository> 
+     
+     <!-- Marriage repo -->
+     <repository>
+            <id>Marriage</id>
+            <url>http://ci.lenis0012.com/plugin/repository/everything</url>
+     </repository> 
   </repositories>
   
     <pluginRepositories>
@@ -125,27 +138,7 @@
                </execution>
             </executions>
       </plugin>
-      <!-- 
-    <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>buildnumber-maven-plugin</artifactId>
-        <version>1.4</version>
-        <executions>
-          <execution>
-            <phase>validate</phase>
-            <goals>
-              <goal>create</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <format>${project.version}-b{0,number}</format>
-          <items>
-            <item>buildNumber0</item>
-          </items>
-        </configuration>
-      </plugin>
-       -->
+      
       <!-- Deploy to github for maven repo -->
       <plugin>
         <artifactId>maven-deploy-plugin</artifactId>
