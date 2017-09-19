@@ -60,12 +60,14 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface{
 						for (String cmd:this.uchat.getConfig().getStringList("discord.server-commands.whitelist")){
 							if (message.startsWith(cmd)) count++;
 						}
-						if (count == 0)return;
+						if (count == 0)continue;
 					}
 					if (!this.uchat.getConfig().getStringList("discord.server-commands.blacklist").isEmpty()){
+						int count = 0;
 						for (String cmd:this.uchat.getConfig().getStringList("discord.server-commands.blacklist")){
-							if (message.startsWith(cmd)) return;
+							if (message.startsWith(cmd)) count++;
 						}
+						if (count > 0) continue;
 					}
 					UCUtil.performCommand(null, Bukkit.getServer().getConsoleSender(), message);
 				} else {
