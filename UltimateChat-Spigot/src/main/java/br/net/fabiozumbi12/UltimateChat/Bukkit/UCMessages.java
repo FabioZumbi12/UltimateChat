@@ -440,7 +440,7 @@ public class UCMessages {
 			
 			//replace item hand			
 			text = text.replace(UChat.get().getConfig().getString("general.item-hand.placeholder"), ChatColor.translateAlternateColorCodes('&', UChat.get().getConfig().getString("general.item-hand.format")));
-			if (!sender.getItemInHand().getType().equals(Material.AIR)){
+			if (text.contains("{hand-") && !sender.getItemInHand().getType().equals(Material.AIR)){
 				ItemStack item = sender.getItemInHand();
 				
 				text = text.replace("{hand-durability}", String.valueOf(item.getDurability()));
@@ -515,7 +515,7 @@ public class UCMessages {
 						.replace("{prim-group}", UChat.get().getVaultPerms().getPrimaryGroup(sender.getWorld().getName(),sender));
 						
 			}
-			if (UChat.SClans){		
+			if (text.contains("{clan-") && UChat.SClans){		
 				ClanPlayer cp = UChat.sc.getClanManager().getClanPlayer(sender.getUniqueId());
 				SettingsManager scm = UChat.sc.getSettingsManager();
 				if (cp != null){
@@ -545,34 +545,36 @@ public class UCMessages {
 			if (UChat.Factions){		
 				text = UCFactionsHook.formatFac(text, sender, receiver);
 			}
-			if (UChat.MarryReloded && sender.hasMetadata("marriedTo")){
-				String partner = sender.getMetadata("marriedTo").get(0).asString();		
-				String prefix = UChat.mapi.getBukkitConfig("config.yml").getString("chat.status-format");
-				UChat.mapi.getMPlayer(sender.getUniqueId()).getGender().getChatPrefix();
-				prefix = prefix
-						.replace("{icon:male}", "♂")
-						.replace("{icon:female}", "♀")
-						.replace("{icon:genderless}", "⚤")
-						.replace("{icon:heart}", "❤");
-				String gender = UChat.mapi.getMPlayer(sender.getUniqueId()).getGender().getChatPrefix();
-				gender = gender
-						.replace("{icon:male}", "♂")
-						.replace("{icon:female}", "♀")
-						.replace("{icon:genderless}", "⚤")
-						.replace("{icon:heart}", "❤");
-				text = text
-						.replace("{marry-partner}", partner)
-						.replace("{marry-prefix}", prefix)
-						.replace("{marry-suffix}", gender);
-			}
-			if (UChat.MarryMaster){			
-				if (UChat.mm.HasPartner(sender)){
+			if (text.contains("{marry-")){
+				if (UChat.MarryReloded && sender.hasMetadata("marriedTo")){
+					String partner = sender.getMetadata("marriedTo").get(0).asString();		
+					String prefix = UChat.mapi.getBukkitConfig("config.yml").getString("chat.status-format");
+					UChat.mapi.getMPlayer(sender.getUniqueId()).getGender().getChatPrefix();
+					prefix = prefix
+							.replace("{icon:male}", "♂")
+							.replace("{icon:female}", "♀")
+							.replace("{icon:genderless}", "⚤")
+							.replace("{icon:heart}", "❤");
+					String gender = UChat.mapi.getMPlayer(sender.getUniqueId()).getGender().getChatPrefix();
+					gender = gender
+							.replace("{icon:male}", "♂")
+							.replace("{icon:female}", "♀")
+							.replace("{icon:genderless}", "⚤")
+							.replace("{icon:heart}", "❤");
 					text = text
-							.replace("{marry-partner}", UChat.mm.DB.GetPartner(sender))
-							.replace("{marry-prefix}", UChat.mm.config.GetPrefix().replace("<heart>", ChatColor.RED + "❤" + ChatColor.WHITE))
-							.replace("{marry-suffix}", UChat.mm.config.GetSuffix().replace("<heart>", ChatColor.RED + "❤" + ChatColor.WHITE));
+							.replace("{marry-partner}", partner)
+							.replace("{marry-prefix}", prefix)
+							.replace("{marry-suffix}", gender);
 				}
-			}			
+				if (UChat.MarryMaster){			
+					if (UChat.mm.HasPartner(sender)){
+						text = text
+								.replace("{marry-partner}", UChat.mm.DB.GetPartner(sender))
+								.replace("{marry-prefix}", UChat.mm.config.GetPrefix().replace("<heart>", ChatColor.RED + "❤" + ChatColor.WHITE))
+								.replace("{marry-suffix}", UChat.mm.config.GetSuffix().replace("<heart>", ChatColor.RED + "❤" + ChatColor.WHITE));
+					}
+				}	
+			}					
 			if (UChat.PlaceHolderAPI){
 				text = PlaceholderAPI.setPlaceholders(sender, text);
 				if (tag.equals("message")){					

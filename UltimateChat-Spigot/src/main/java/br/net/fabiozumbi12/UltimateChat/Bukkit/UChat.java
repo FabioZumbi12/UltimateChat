@@ -14,6 +14,7 @@ import net.milkbowl.vault.permission.Permission;
 import net.sacredlabyrinth.phaed.simpleclans.SimpleClans;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.PluginCommand;
@@ -224,7 +225,7 @@ public class UChat extends JavaPlugin {
             initAutomessage();
             
             getUCLogger().info("Server Version: "+getServer().getBukkitVersion());
-            getUCLogger().logClear("\n"
+            getUCLogger().logClear(ChatColor.translateAlternateColorCodes('&',"\n"
             		+ "&b  _    _ _ _   _                 _        _____ _           _  \n"
             		+ " | |  | | | | (_)               | |      / ____| |         | |  \n"
             		+ " | |  | | | |_ _ _ __ ___   __ _| |_ ___| |    | |__   __ _| |_ \n"
@@ -232,7 +233,7 @@ public class UChat extends JavaPlugin {
             		+ " | |__| | | |_| | | | | | | (_| | ||  __/ |____| | | | (_| | |_ \n"
             		+ "  \\____/|_|\\__|_|_| |_| |_|\\__,_|\\__\\___|\\_____|_| |_|\\__,_|\\__|\n"
             		+ "                                                                \n"
-            		+ "&a"+getDescription().getFullName()+" enabled!\n");
+            		+ "&a"+getDescription().getFullName()+" enabled!\n"));
             
             if (this.UCJDA != null){
             	this.UCJDA.sendRawToDiscord(lang.get("discord.start"));
