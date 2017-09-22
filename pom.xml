@@ -38,6 +38,10 @@
             <id>placeholderapi</id>
             <url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
      </repository>
+     <repository>
+            <id>dmulloy2-repo</id>
+            <url>http://repo.dmulloy2.net/content/groups/public/</url>
+     </repository>  
      
      <!-- Bungee repo -->
      <repository>
@@ -64,13 +68,6 @@
             <url>http://ci.lenis0012.com/plugin/repository/everything</url>
      </repository> 
   </repositories>
-  
-    <pluginRepositories>
-        <pluginRepository>
-            <id>kitteh-repo</id>
-            <url>http://repo.kitteh.org/content/groups/public</url>
-        </pluginRepository>
-  </pluginRepositories>
   
   <scm>
      <connection>scm:git:git@github.com:FabioZumbi12/UltimateChat.git</connection>
@@ -171,10 +168,8 @@
                 <phase>deploy</phase>
               </execution>
             </executions>
-        </plugin>      
-        
-    </plugins> 
-    
+        </plugin>
+    </plugins>
    </build>   
    <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

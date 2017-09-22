@@ -100,6 +100,11 @@ public class UChat {
 		return this.lang;
 	}
 	
+	private UCVHelper helper;
+	public UCVHelper getVHelper(){
+		return this.helper;
+	}
+	
 	//public HashMap<String,String> pChannels = new HashMap<String,String>();
 	protected static HashMap<String,String> tempChannels = new HashMap<String,String>();
 	protected static HashMap<String,String> tellPlayers = new HashMap<String,String>();
@@ -128,9 +133,11 @@ public class UChat {
             String v = this.game.getPlatform().getContainer(Component.API).getVersion().get();
             if (v.startsWith("5") || v.startsWith("6")){
             	this.perms = (UCPerms)Class.forName("br.net.fabiozumbi12.UltimateChat.Sponge.UCPerms56").newInstance();
+            	this.helper = (UCVHelper)Class.forName("br.net.fabiozumbi12.UltimateChat.Sponge.UCVHelper56").newInstance();
             }
             if (v.startsWith("7")){
             	this.perms = (UCPerms)Class.forName("br.net.fabiozumbi12.UltimateChat.Sponge.UCPerms7").newInstance();
+            	this.helper = (UCVHelper)Class.forName("br.net.fabiozumbi12.UltimateChat.Sponge.UCVHelper7").newInstance();
             }
             
             logger.info("Init commands module...");

@@ -6,10 +6,10 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.event.Cancellable;
 import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.text.Text;
 
 import br.net.fabiozumbi12.UltimateChat.Sponge.UCChannel;
+import br.net.fabiozumbi12.UltimateChat.Sponge.UChat;
 
 /**This event listen all text to be sent to players formated and colored, ready to send to chat.<p>
  * This event includes console. This event will listen to private messages too.<p>
@@ -58,7 +58,7 @@ public class PostFormatChatMessageEvent implements Cancellable, Event  {
 	
 	@Override
 	public Cause getCause() {
-		return Cause.of(NamedCause.simulated(this.sender));
+		return UChat.get().getVHelper().getCause(this.sender);
 	}
 
 	@Override

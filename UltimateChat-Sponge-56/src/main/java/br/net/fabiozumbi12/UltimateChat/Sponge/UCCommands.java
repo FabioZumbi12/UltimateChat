@@ -14,8 +14,6 @@ import org.spongepowered.api.command.source.ConsoleSource;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.SpongeEventFactory;
-import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.event.message.MessageChannelEvent;
 import org.spongepowered.api.event.message.MessageEvent;
 import org.spongepowered.api.text.Text;
@@ -212,7 +210,7 @@ public class UCCommands {
 			src = receiver;
 		} 
 		MessageChannelEvent.Chat event = SpongeEventFactory.createMessageChannelEventChat(
-				Cause.source(src).named(NamedCause.notifier(src)).build(), 
+				UChat.get().getVHelper().getCause(src), 
 				src.getMessageChannel(), 
 				Optional.of(src.getMessageChannel()), 				    							
 				new MessageEvent.MessageFormatter(Text.builder("<" + src.getName() + "> ")
@@ -322,7 +320,7 @@ public class UCCommands {
 				    			
 				    			Text msg = Text.of(args.<String>getOne("message").get());				    			
 				    			MessageChannelEvent.Chat event = SpongeEventFactory.createMessageChannelEventChat(
-		    							Cause.source(src).named(NamedCause.notifier(src)).build(), 
+				    					UChat.get().getVHelper().getCause(src), 
 		    							src.getMessageChannel(), 
 		    							Optional.of(src.getMessageChannel()), 				    							
 		    							new MessageEvent.MessageFormatter(Text.builder("<" + src.getName() + "> ")

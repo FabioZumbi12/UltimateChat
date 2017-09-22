@@ -6,7 +6,6 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.event.Cancellable;
 import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.text.Text;
 
 import br.net.fabiozumbi12.UltimateChat.Sponge.UCChannel;
@@ -170,7 +169,7 @@ public class SendChannelMessageEvent implements Cancellable, Event  {
 
 	@Override
 	public Cause getCause() {
-		return Cause.of(NamedCause.simulated(this.sender));
+		return UChat.get().getVHelper().getCause(this.sender);
 	}
 
 	public boolean getCancelIncomingChat() {		

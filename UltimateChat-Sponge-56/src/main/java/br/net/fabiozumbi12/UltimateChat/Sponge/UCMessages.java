@@ -21,8 +21,6 @@ import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.effect.sound.SoundType;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.service.economy.account.UniqueAccount;
 import org.spongepowered.api.service.permission.Subject;
@@ -92,7 +90,7 @@ class UCMessages {
 					sender.sendMessage(UCUtil.toText(UChat.get().getLang().get("channel.cost").replace("{value}", ""+ch.getCost())));
 					return null;
 				} else {
-					acc.withdraw(UChat.get().getEco().getDefaultCurrency(), BigDecimal.valueOf(ch.getCost()), Cause.of(NamedCause.owner(UChat.get().instance())));
+					acc.withdraw(UChat.get().getEco().getDefaultCurrency(), BigDecimal.valueOf(ch.getCost()), UChat.get().getVHelper().getCause(UChat.get().instance()));
 				}
 			}
 				
@@ -508,18 +506,20 @@ class UCMessages {
 		if (cmdSender instanceof Player){
 			Player sender = (Player)cmdSender;
 			
-			if (sender.get(Keys.DISPLAY_NAME).isPresent()){
+			if (text.contains("{nickname}") && sender.get(Keys.DISPLAY_NAME).isPresent()){
 				String nick = sender.get(Keys.DISPLAY_NAME).get().toPlain();	
-				String nuNick = new String();
-				if (defFormat.length == 3){
-					String[] nuNickStr = defFormat[0].split(" ");
-					nuNick = nuNickStr[nuNickStr.length-1].replace(":", "");
-				}
-				if (!nuNick.isEmpty() && !nuNick.equals(sender.getName())){					
-					text = text.replace("{nickname}", nuNick);
-				} else {
+				if (!nick.equals(sender.getName())){
 					text = text.replace("{nickname}", nick);
-				}
+				} else {
+					String nuNick = new String();
+					if (defFormat.length == 3){
+						String[] nuNickStr = defFormat[0].split(" ");
+						nuNick = nuNickStr[nuNickStr.length-1].replace(":", "");
+					}
+					if (!nuNick.isEmpty() && !nuNick.equals(sender.getName())){					
+						text = text.replace("{nickname}", nuNick);
+					}
+				}							
 			}				
 			
 			//replace item hand	
@@ -532,7 +532,7 @@ class UCMessages {
 				item = sender.getItemInHand(HandTypes.OFF_HAND).get();		
 			}
 			
-			if (item != null){
+			if (text.contains("{hand-") && item != null){
 				text = text
 						.replace("{hand-durability}", item.get(Keys.ITEM_DURABILITY).isPresent() ? String.valueOf(item.get(Keys.ITEM_DURABILITY).get()) : "")
 						.replace("{hand-name}", item.getItem().getTranslation().get());
@@ -564,7 +564,7 @@ class UCMessages {
 			
 			text = text.replace("{world}", sender.getWorld().getName());
 			
-			if (UChat.get().getEco() != null){
+			if (text.contains("{balance}") && UChat.get().getEco() != null){
 				UniqueAccount acc = UChat.get().getEco().getOrCreateAccount(sender.getUniqueId()).get();
 				text = text
 						.replace("{balance}", ""+acc.getBalance(UChat.get().getEco().getDefaultCurrency()).intValue());
@@ -609,7 +609,7 @@ class UCMessages {
 				e.printStackTrace();
 			}		
 						
-			if (UChat.get().getConfig().getBool("hooks","MCClans","enable")){
+			if (text.contains("{clan_") && UChat.get().getConfig().getBool("hooks","MCClans","enable")){
 				Optional<ClanService> clanServiceOpt = Sponge.getServiceManager().provide(ClanService.class);
                 if (clanServiceOpt.isPresent()) {
 					ClanService clan = clanServiceOpt.get();
