@@ -156,8 +156,6 @@ public class UltimateFancy {
 					for (ExtraElement element:pendentElements){							
 						obj.put(element.getAction(), element.getJson());
 					}
-					/*JsonArray jarray = new JsonArray();
-					jarray.add(obj);*/
 					constructor.add(obj);
 				}
 			}
@@ -234,7 +232,6 @@ public class UltimateFancy {
 			
 			//get format
 			for (ChatColor frmt:ChatColor.values()){
-				UChat.get().getUCLogger().logClear("Color: "+frmt+"".replace("§", "&"));
 				if (frmt.isColor()) continue;
 				String frmtStr = frmt.name().toLowerCase();
 				if (frmt.equals(ChatColor.MAGIC)){
@@ -243,15 +240,12 @@ public class UltimateFancy {
 				if (frmt.equals(ChatColor.UNDERLINE)){
 					frmtStr = "underlined";
 				}
-				UChat.get().getUCLogger().logClear("ColorName: "+frmtStr.replace("§", "&"));
 				if (json.containsKey(frmtStr)){
-					UChat.get().getUCLogger().logClear("ColorResult: "+String.valueOf(frmt).replace("§", "&"));
 					result.append(String.valueOf(frmt));
 				}
 			}
 			result.append(json.get("text").toString());				
 		}
-		UChat.get().getUCLogger().logClear("Raw Output: "+result.toString().replace("§", "&"));
 		return result.toString();
 	}
 	
