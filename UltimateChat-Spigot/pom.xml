@@ -90,82 +90,20 @@
 			<systemPath>${project.basedir}/../UltimateChat-JDA/target/UltimateChat-JDA.jar</systemPath>
         </dependency>   
         
-        <!-- Google JSON lib -->
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.8.1</version>
-        </dependency>   
-        
   </dependencies>
   
   <repositories>  
      <repository>
-            <id>dmulloy2-repo</id>
-            <url>http://repo.dmulloy2.net/content/groups/public/</url>
-     </repository>          
-     <repository>
-            <id>placeholderapi</id>
-            <url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
-     </repository>        
-     <repository>
 	        <id>maven-restlet</id>
 	        <name>Public online Restlet repository</name>
 	        <url>http://maven.restlet.com</url>
-	</repository>
-     <repository>
-            <id>spigot-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
-     </repository>
-     <repository>
-            <id>vault-repo</id>
-            <url>http://nexus.hc.to/content/repositories/pub_releases</url>
-     </repository>  
-     <repository>
-            <id>jcenter</id>
-            <name>jcenter-bintray</name>
-            <url>http://jcenter.bintray.com</url>
-     </repository>       
+	</repository>      
   </repositories>
   
   <build>
-    <finalName>DONT-DOWNLOAD-Spigot-Reference</finalName>
-    <plugins>
-         <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>2.4.3</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                        <artifactSet>                          
-                          <includes>
-                            <include>com.google.code.gson:gson</include> 	                        
-                          </includes>                          
-                        </artifactSet>
-                        <relocations>
-                          <relocation>
-                            <pattern>com.google.gson</pattern>
-                            <shadedPattern>br.net.fabiozumbi12.gson</shadedPattern>
-                          </relocation>
-                        </relocations>
-                        <minimizeJar>true</minimizeJar>     
-                        <outputFile>${project.basedir}/target/DONT-DOWNLOAD-Spigot-Shaded.jar</outputFile>          
-                        </configuration>
-                    </execution>
-                </executions>
-                <configuration>
-                    <createDependencyReducedPom>false</createDependencyReducedPom>                    
-                </configuration>
-            </plugin>
-             
-    </plugins>      
-    
+    <finalName>DONT-DOWNLOAD-Spigot-Reference</finalName>    
   </build>
+  
   <properties>
   	<mineVersion>1.12.2-R0.1-SNAPSHOT</mineVersion>
   </properties>

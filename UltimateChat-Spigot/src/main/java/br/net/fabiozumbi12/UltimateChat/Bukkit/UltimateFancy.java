@@ -18,44 +18,53 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionData;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UCLogger.timingType;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 
 /**Class to generate JSON elements to use with UltimateChat.
  * @author FabioZumbi12
  *
  */
-@SuppressWarnings("deprecation")
+
+@SuppressWarnings({"deprecation","unchecked"})
 public class UltimateFancy {
 
 	private ChatColor lastColor = ChatColor.WHITE;
-	private JsonArray constructor;
+	private JSONArray constructor;
 	private HashMap<String, Boolean> lastformats;
-	private List<JsonObject> workingGroup;
+	private List<JSONObject> workingGroup;
 	private List<ExtraElement> pendentElements;
 	
+	/**
+	 * Creates a new instance of UltimateFancy.
+	 */
 	public UltimateFancy(){
-		constructor = new JsonArray();
-		workingGroup = new ArrayList<JsonObject>();
+		constructor = new JSONArray();
+		workingGroup = new ArrayList<JSONObject>();
 		lastformats = new HashMap<String, Boolean>();
 		pendentElements = new ArrayList<ExtraElement>();
 	}
 	
+	/**Creates a new instance of UltimateFancy with an initial text.
+	 * @param text {@code String}
+	 */
 	public UltimateFancy(String text){
-		constructor = new JsonArray();
-		workingGroup = new ArrayList<JsonObject>();
+		constructor = new JSONArray();
+		workingGroup = new ArrayList<JSONObject>();
 		lastformats = new HashMap<String, Boolean>();
 		pendentElements = new ArrayList<ExtraElement>();
 		text(text);
 	}
-
+	
+	/**
+	 * @param text
+	 * @return instance of same {@link UltimateFancy}.
+	 */
 	public UltimateFancy text(String text){
 		for (String part:text.split("(?="+ChatColor.COLOR_CHAR+")")){
-			JsonObject workingText = new JsonObject();	
+			JSONObject workingText = new JSONObject();	
 			
 			//fix colors before
 			filterColors(workingText);
@@ -71,44 +80,50 @@ public class UltimateFancy {
 			if (ChatColor.stripColor(part).isEmpty()){
 				continue;
 			}
-			workingText.addProperty("text", ChatColor.stripColor(part));
+			workingText.put("text", ChatColor.stripColor(part));
 						
 			//fix colors after
 			filterColors(workingText);
 			
-			if (!workingText.has("color")){
-				workingText.addProperty("color", "white");
+			if (!workingText.containsKey("color")){
+				workingText.put("color", "white");
 			}
 			workingGroup.add(workingText);
 		}			
 		return this;
 	}
 	
-	private JsonObject filterColors(JsonObject obj){
+	private JSONObject filterColors(JSONObject obj){
 		for (Entry<String, Boolean> format:lastformats.entrySet()){
-			obj.addProperty(format.getKey(), format.getValue());
+			obj.put(format.getKey(), format.getValue());
 		}
 		if (lastColor.isFormat()){
 			String formatStr = lastColor.name().toLowerCase();
 			if (lastColor.equals(ChatColor.MAGIC)){
 				formatStr = "obfuscated";
 			}
+			if (lastColor.equals(ChatColor.UNDERLINE)){
+				formatStr = "underlined";
+			}
 			lastformats.put(formatStr, true);
-			obj.addProperty(formatStr, true);
+			obj.put(formatStr, true);
 		}			
 		if (lastColor.isColor()){
-			obj.addProperty("color", lastColor.name().toLowerCase());
+			obj.put("color", lastColor.name().toLowerCase());
 		}
 		if (lastColor.equals(ChatColor.RESET)){
-			obj.addProperty("color", "white");
+			obj.put("color", "white");
 			for (String format:lastformats.keySet()){
 				lastformats.put(format, false);
-				obj.addProperty(format, false);
+				obj.put(format, false);
 			}
 		}
 		return obj;
 	}
 	
+	/**Send the JSON message to a {@link CommandSender} via {@code tellraw}.
+	 * @param to {@link CommandSender}
+	 */
 	public void send(CommandSender to){
 		next();
 		if (to instanceof Player){
@@ -128,15 +143,18 @@ public class UltimateFancy {
 	}
 	
 	private String toJson(){
-		return "[\"\","+constructor.toString().substring(1);
+		return "[\"\","+constructor.toJSONString().substring(1);
 	}
 	
+	/**Close the last text properties and start a new text block.
+	 * @return instance of same {@link UltimateFancy}.
+	 */
 	public UltimateFancy next(){
 		if (workingGroup.size() > 0){
-			for (JsonObject obj:workingGroup){
-				if (obj.has("text") && obj.get("text").toString().length() > 0){					
+			for (JSONObject obj:workingGroup){
+				if (obj.containsKey("text") && obj.get("text").toString().length() > 0){					
 					for (ExtraElement element:pendentElements){							
-						obj.add(element.getAction(), element.getJson());
+						obj.put(element.getAction(), element.getJson());
 					}
 					/*JsonArray jarray = new JsonArray();
 					jarray.add(obj);*/
@@ -144,54 +162,67 @@ public class UltimateFancy {
 				}
 			}
 		}		
-		workingGroup = new ArrayList<JsonObject>();
+		workingGroup = new ArrayList<JSONObject>();
 		pendentElements = new ArrayList<ExtraElement>();		
 		return this;
 	}
 	
+	/**Add a command to execute on click the text.
+	 * @param cmd {@link String}
+	 * @return instance of same {@link UltimateFancy}.
+	 */
 	public UltimateFancy clickRunCmd(String cmd){
 		pendentElements.add(new ExtraElement("clickEvent",parseJson("run_command", cmd)));
 		return this;
 	}
 	
+	/**
+	 * @param cmd {@link String}
+	 * @return instance of same {@link UltimateFancy}.
+	 */
 	public UltimateFancy clickSuggestCmd(String cmd){
 		pendentElements.add(new ExtraElement("clickEvent",parseJson("suggest_command", cmd)));
 		return this;
 	}
 	
+	/**URL to open on external browser when click this text.
+	 * @param url {@link String}
+	 * @return instance of same {@link UltimateFancy}.
+	 */
 	public UltimateFancy clickOpenURL(String url){
 		pendentElements.add(new ExtraElement("clickEvent",parseJson("open_url", url)));
 		return this;
 	}
 	
+	/**Text to show on hover the mouse under this text.
+	 * @param text {@link String}
+	 * @return instance of same {@link UltimateFancy}.
+	 */
 	public UltimateFancy hoverShowText(String text){
 		pendentElements.add(new ExtraElement("hoverEvent",parseHoverText(text)));
 		return this;
 	}
 	
+	/**Item to show on chat message under this text.
+	 * @param item {@link ItemStack}
+	 * @return instance of same {@link UltimateFancy}.
+	 */
 	public UltimateFancy hoverShowItem(ItemStack item){
 		pendentElements.add(new ExtraElement("hoverEvent",parseHoverItem(item)));
 		return this;
 	}
 	
+	/**Convert JSON string to Minecraft string.
+	 * @return {@code String} with traditional Minecraft colors.
+	 */
 	public String toOldFormat(){
 		StringBuilder result = new StringBuilder();
-		for (JsonElement baseArray:constructor){	
-			JsonObject json = baseArray.getAsJsonObject();
-			if (!json.has("text")) continue;	
-			//get format
-			for (ChatColor frmt:ChatColor.values()){
-				if (!frmt.isFormat()) continue;
-				String frmtStr = frmt.name().toLowerCase();
-				if (frmt.equals(ChatColor.MAGIC)){
-					frmtStr = "obfuscated";
-				}
-				if (json.has(frmtStr) && json.get(frmtStr).getAsJsonPrimitive().getAsBoolean()){
-					result.append(String.valueOf(frmt));
-				}
-			}
+		for (Object mjson:constructor){	
+			JSONObject json = (JSONObject)mjson;
+			if (!json.containsKey("text")) continue;	
+			
 			//get color
-			String colorStr = json.get("color").getAsString();
+			String colorStr = json.get("color").toString();
 			if (ChatColor.valueOf(colorStr.toUpperCase()) != null){				
 				ChatColor color = ChatColor.valueOf(colorStr.toUpperCase());
 				if (color.equals(ChatColor.WHITE)){
@@ -200,30 +231,49 @@ public class UltimateFancy {
 					result.append(String.valueOf(color));
 				}
 			}
-			result.append(json.get("text").getAsString());				
+			
+			//get format
+			for (ChatColor frmt:ChatColor.values()){
+				UChat.get().getUCLogger().logClear("Color: "+frmt+"".replace("§", "&"));
+				if (frmt.isColor()) continue;
+				String frmtStr = frmt.name().toLowerCase();
+				if (frmt.equals(ChatColor.MAGIC)){
+					frmtStr = "obfuscated";
+				}
+				if (frmt.equals(ChatColor.UNDERLINE)){
+					frmtStr = "underlined";
+				}
+				UChat.get().getUCLogger().logClear("ColorName: "+frmtStr.replace("§", "&"));
+				if (json.containsKey(frmtStr)){
+					UChat.get().getUCLogger().logClear("ColorResult: "+String.valueOf(frmt).replace("§", "&"));
+					result.append(String.valueOf(frmt));
+				}
+			}
+			result.append(json.get("text").toString());				
 		}
+		UChat.get().getUCLogger().logClear("Raw Output: "+result.toString().replace("§", "&"));
 		return result.toString();
 	}
 	
-	private JsonObject parseHoverText(String text){
-		JsonArray extraArr = addColorToArray(text);		
-		JsonObject objExtra = new JsonObject();
-		objExtra.addProperty("text", "");
-		objExtra.add("extra", extraArr);
-		JsonObject obj = new JsonObject();
-		obj.addProperty("action", "show_text");	
-		obj.add("value", objExtra);	
+	private JSONObject parseHoverText(String text){
+		JSONArray extraArr = addColorToArray(text);		
+		JSONObject objExtra = new JSONObject();
+		objExtra.put("text", "");
+		objExtra.put("extra", extraArr);
+		JSONObject obj = new JSONObject();
+		obj.put("action", "show_text");	
+		obj.put("value", objExtra);	
 		return obj;
 	}
 	
-	private JsonObject parseJson(String action, String value){
-		JsonObject obj = new JsonObject();
-		obj.addProperty("action", action);
-		obj.addProperty("value", value);
+	private JSONObject parseJson(String action, String value){
+		JSONObject obj = new JSONObject();
+		obj.put("action", action);
+		obj.put("value", value);
 		return obj;
 	}
 	
-	private JsonObject parseHoverItem(ItemStack item){		
+	private JSONObject parseHoverItem(ItemStack item){		
 		StringBuilder itemBuild = new StringBuilder();
 		StringBuilder itemTag = new StringBuilder();		
 		//serialize itemstack
@@ -281,34 +331,34 @@ public class UltimateFancy {
 		if (itemTag.length() > 0){
 			itemBuild.append("tag:{"+itemTag.toString().substring(0, itemTag.length()-1)+"},");
 		}		
-		JsonObject obj = new JsonObject();
-		obj.addProperty("action", "show_item");	
-		obj.addProperty("value", ChatColor.stripColor("{"+itemBuild.toString().substring(0, itemBuild.length()-1).replace(" ", "_")+"}"));
+		JSONObject obj = new JSONObject();
+		obj.put("action", "show_item");	
+		obj.put("value", ChatColor.stripColor("{"+itemBuild.toString().substring(0, itemBuild.length()-1).replace(" ", "_")+"}"));
 		return obj;
 	}
 		
-	private JsonArray addColorToArray(String text){
-		JsonArray extraArr = new JsonArray();
+	private JSONArray addColorToArray(String text){
+		JSONArray extraArr = new JSONArray();
 		ChatColor color = ChatColor.WHITE;
 		for (String part:text.split("(?="+ChatColor.COLOR_CHAR+"[0-9a-fk-or])")){	
-			JsonObject objExtraTxt = new JsonObject();
+			JSONObject objExtraTxt = new JSONObject();
 			Matcher match = Pattern.compile("^"+ChatColor.COLOR_CHAR+"([0-9a-fk-or]).*$").matcher(part);			
 			if (match.find()){
 				color = ChatColor.getByChar(match.group(1).charAt(0));
 				if (part.length() == 2) continue;
 			} 		
-			objExtraTxt.addProperty("text", ChatColor.stripColor(part));
+			objExtraTxt.put("text", ChatColor.stripColor(part));
 			if (color.isColor()){	
-				objExtraTxt.addProperty("color", color.name().toLowerCase());			
+				objExtraTxt.put("color", color.name().toLowerCase());			
 			}
 			if (color.equals(ChatColor.RESET)){
-				objExtraTxt.addProperty("color", "white");								
+				objExtraTxt.put("color", "white");								
 			}		
 			if (color.isFormat()){
 				if (color.equals(ChatColor.MAGIC)){
-					objExtraTxt.addProperty("obfuscated", true);
+					objExtraTxt.put("obfuscated", true);
 				} else {
-					objExtraTxt.addProperty(color.name().toLowerCase(), true);
+					objExtraTxt.put(color.name().toLowerCase(), true);
 				}				
 			}
 			extraArr.add(objExtraTxt);
@@ -316,18 +366,22 @@ public class UltimateFancy {
 		return extraArr;
 	}
 	
-	private class ExtraElement{
+	/**An imutable pair of actions and {@link JSONObject} values.
+	 * @author FabioZumbi12
+	 *
+	 */
+	public class ExtraElement{
 		private String action;
-		private JsonObject json;
+		private JSONObject json;
 		
-		public ExtraElement(String action, JsonObject json){
+		public ExtraElement(String action, JSONObject json){
 			this.action = action;
 			this.json = json;
 		}		
 		public String getAction(){
 			return this.action;
 		}
-		public JsonObject getJson(){
+		public JSONObject getJson(){
 			return this.json;
 		}
 	}
