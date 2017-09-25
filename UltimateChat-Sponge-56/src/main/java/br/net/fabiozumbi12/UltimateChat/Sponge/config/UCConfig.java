@@ -35,7 +35,7 @@ public class UCConfig{
 	private CommentedConfigurationNode prots;	
 	private ConfigurationLoader<CommentedConfigurationNode> protsManager;
 	
-	public UCConfig(UChat plugin) throws IOException {
+	public UCConfig() throws IOException {
 		
 		UChat.get().getLogger().info("-> Config module");
 		try {

@@ -30,9 +30,9 @@ public class UCConfig extends FileConfiguration {
 	
 	public UCConfig(UChat plugin) throws IOException, InvalidConfigurationException {
 		            File main = UChat.get().getDataFolder();
-    	            File config = new File(UChat.get().getDataFolder()+File.separator+"config.yml");
-    	            File chfolder = new File(UChat.get().getDataFolder()+File.separator+"channels");
-    	            File protections = new File(UChat.get().getDataFolder()+File.separator+"protections.yml");
+    	            File config = new File(UChat.get().getDataFolder(),"config.yml");
+    	            File chfolder = new File(UChat.get().getDataFolder(),"channels");
+    	            File protections = new File(UChat.get().getDataFolder(),"protections.yml");
     	            
     	            if (!main.exists()) {
     	                main.mkdir();

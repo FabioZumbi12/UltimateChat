@@ -2,6 +2,7 @@ package br.net.fabiozumbi12.UltimateChat.Sponge;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.concurrent.ExecutionException;
 
 import org.spongepowered.api.command.CommandSource;
@@ -11,12 +12,22 @@ import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.service.permission.PermissionService;
 import org.spongepowered.api.service.permission.Subject;
 import org.spongepowered.api.service.permission.SubjectCollection;
+import org.spongepowered.api.util.Tristate;
 
 class UCPerms56 implements UCPerms{
 	private PermissionService permissionService;
 
 	UCPerms56(){
 		this.permissionService = UChat.get().getGame().getServiceManager().getRegistration(PermissionService.class).get().getProvider();
+		this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "uchat.channel.local.read", Tristate.TRUE);
+		this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "uchat.channel.local.write", Tristate.TRUE);
+		this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "uchat.channel.global.read", Tristate.TRUE);
+		this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "uchat.channel.global.write", Tristate.TRUE);
+		this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "uchat.cmd.tell", Tristate.TRUE);
+		this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "uchat.cant-ignore.local", Tristate.TRUE);
+		this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "uchat.cmd.ignore.channel", Tristate.TRUE);
+		this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "uchat.cmd.ignore.player", Tristate.TRUE);
+		this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "uchat.cmd.clear", Tristate.TRUE);
 	}
 	
 	public boolean cmdPerm(CommandSource p, String cmd){

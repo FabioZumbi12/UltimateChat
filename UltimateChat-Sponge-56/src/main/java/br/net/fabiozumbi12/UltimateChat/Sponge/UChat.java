@@ -126,7 +126,7 @@ public class UChat {
         	//init logger
         	this.logger = new UCLogger(this.serv);
         	//init config
-        	this.config = new UCConfig(this);
+        	this.config = new UCConfig();
     		//init lang
         	this.lang = new UCLang();
             //init perms
@@ -178,7 +178,7 @@ public class UChat {
 	
 	protected void reload() throws IOException{
 		this.cmds.removeCmds();
-		this.config = new UCConfig(this);
+		this.config = new UCConfig();
 		this.lang = new UCLang();
 		this.cmds = new UCCommands(this);
 		for (Player p:serv.getOnlinePlayers()){
