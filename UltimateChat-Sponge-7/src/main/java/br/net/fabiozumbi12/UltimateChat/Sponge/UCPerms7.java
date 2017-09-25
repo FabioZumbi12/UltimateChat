@@ -65,7 +65,7 @@ class UCPerms7 implements UCPerms {
 				subs.put(subj.getParents().size(), subj);				
 			}			
 		}
-		return subs.get(Collections.max(subs.keySet()));
+		return subs.isEmpty() ? null : subs.get(Collections.max(subs.keySet()));
 	}
 	
 	private static boolean isAdmin(CommandSource p){
