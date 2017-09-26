@@ -6,6 +6,7 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.event.Cancellable;
 import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.impl.AbstractEvent;
 import org.spongepowered.api.text.Text;
 
 import br.net.fabiozumbi12.UltimateChat.Sponge.UCChannel;
@@ -15,7 +16,7 @@ import br.net.fabiozumbi12.UltimateChat.Sponge.UChat;
  * @author FabioZumbi12
  *
  */
-public class SendChannelMessageEvent implements Cancellable, Event  {
+public class SendChannelMessageEvent extends AbstractEvent implements Cancellable, Event {
 	
 	private boolean cancelled;
 	private CommandSource sender;

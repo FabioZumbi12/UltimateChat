@@ -21,6 +21,7 @@ import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.effect.sound.SoundType;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.service.economy.account.UniqueAccount;
 import org.spongepowered.api.service.permission.Subject;
@@ -355,7 +356,7 @@ class UCMessages {
 					lastColor = getLastColor(format);
 					
 					if (UChat.get().getConfig().getBool("general","item-hand","enable") && msg.contains(UChat.get().getConfig().getString("general","item-hand","placeholder")) && sender instanceof Player){						
-						ItemStack hand = ItemStack.empty();
+						ItemStack hand = ItemStack.of(ItemTypes.NONE, 1);
 						if (((Player)sender).getItemInHand(HandTypes.MAIN_HAND).isPresent()){	
 							hand = ((Player)sender).getItemInHand(HandTypes.MAIN_HAND).get();
 						} else if(((Player)sender).getItemInHand(HandTypes.OFF_HAND).isPresent()){
