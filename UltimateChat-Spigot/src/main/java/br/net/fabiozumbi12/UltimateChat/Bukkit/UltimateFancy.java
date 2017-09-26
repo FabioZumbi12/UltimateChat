@@ -58,11 +58,38 @@ public class UltimateFancy {
 		text(text);
 	}
 	
-	/**
+	/**Root text to show with the colors parsed, close the last text properties and start a new text block.
 	 * @param text
 	 * @return instance of same {@link UltimateFancy}.
 	 */
-	public UltimateFancy text(String text){
+	public UltimateFancy coloredTextAndNext(String text){
+		text = ChatColor.translateAlternateColorCodes('&', text);
+		return this.textAndNext(text);
+	}
+	
+	/**Root text to show and close the last text properties and start a new text block.
+	 * @param text
+	 * @return instance of same {@link UltimateFancy}.
+	 */
+	public UltimateFancy textAndNext(String text){	
+		this.text(text);
+		return next();
+	}
+	
+	/**Root text to show with the colors parsed.
+	 * @param text
+	 * @return instance of same {@link UltimateFancy}.
+	 */
+	public UltimateFancy coloredText(String text){
+		text = ChatColor.translateAlternateColorCodes('&', text);
+		return this.text(text);
+	}
+	
+	/**Root text to show on chat.
+	 * @param text
+	 * @return instance of same {@link UltimateFancy}.
+	 */
+	public UltimateFancy text(String text){		
 		for (String part:text.split("(?="+ChatColor.COLOR_CHAR+")")){
 			JSONObject workingText = new JSONObject();	
 			
@@ -87,7 +114,7 @@ public class UltimateFancy {
 			
 			if (!workingText.containsKey("color")){
 				workingText.put("color", "white");
-			}
+			}					
 			workingGroup.add(workingText);
 		}			
 		return this;
@@ -107,7 +134,7 @@ public class UltimateFancy {
 			}
 			lastformats.put(formatStr, true);
 			obj.put(formatStr, true);
-		}			
+		} 
 		if (lastColor.isColor()){
 			obj.put("color", lastColor.name().toLowerCase());
 		}
@@ -250,7 +277,7 @@ public class UltimateFancy {
 	}
 	
 	private JSONObject parseHoverText(String text){
-		JSONArray extraArr = addColorToArray(text);		
+		JSONArray extraArr = addColorToArray(ChatColor.translateAlternateColorCodes('&', text));		
 		JSONObject objExtra = new JSONObject();
 		objExtra.put("text", "");
 		objExtra.put("extra", extraArr);

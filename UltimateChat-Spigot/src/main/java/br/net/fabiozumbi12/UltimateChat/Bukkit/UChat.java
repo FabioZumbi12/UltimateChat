@@ -126,17 +126,11 @@ public class UChat extends JavaPlugin {
 	public PluginDescriptionFile getPDF(){
 		return this.getDescription();
 	}
-	/*
-	private String mainPath;	
-	public String configDir(){
-		return this.mainPath;
-	}
-	*/
+		
 	public void onEnable() {
         try {
             uchat = this;
             logger = new UCLogger(this);
-            //mainPath = this.getDataFolder().getPath();
             config = new UCConfig(this);
             lang = new UCLang();
             amConfig = new YamlConfiguration();
@@ -216,7 +210,7 @@ public class UChat extends JavaPlugin {
             
             for (Player p:getServer().getOnlinePlayers()){
             	if (config.getPlayerChannel(p) == null){
-            		getConfig().getDefChannel().addMember(p);
+            		config.getDefChannel().addMember(p);
             	}
             }
             
@@ -254,8 +248,8 @@ public class UChat extends JavaPlugin {
 		this.lang = new UCLang();
 		this.registerAliases();
 		for (Player p:Bukkit.getOnlinePlayers()){
-			if (this.getConfig().getPlayerChannel(p) == null){
-				this.getConfig().getDefChannel().addMember(p);
+			if (config.getPlayerChannel(p) == null){
+				config.getDefChannel().addMember(p);
 			}
 		}
 		this.registerJDA();
@@ -404,7 +398,7 @@ public class UChat extends JavaPlugin {
 			}			
 		}        
     }	
-	
+		
 	private boolean checkJDA(){
     	Plugin p = Bukkit.getPluginManager().getPlugin("JDALibLoaderBukkit");
     	if (p != null && p.isEnabled()){

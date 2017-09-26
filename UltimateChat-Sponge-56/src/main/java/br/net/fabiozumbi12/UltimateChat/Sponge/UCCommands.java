@@ -3,6 +3,7 @@ package br.net.fabiozumbi12.UltimateChat.Sponge;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
@@ -17,6 +18,7 @@ import org.spongepowered.api.event.SpongeEventFactory;
 import org.spongepowered.api.event.message.MessageChannelEvent;
 import org.spongepowered.api.event.message.MessageEvent;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.Text.Builder;
 import org.spongepowered.api.text.action.TextActions;
 
 public class UCCommands {
@@ -361,6 +363,25 @@ public class UCCommands {
 	}
 	
 	private CommandCallable uchat() {
+		CommandSpec chconfig = CommandSpec.builder()
+				.arguments(new ChannelCommandElement(Text.of("channel")),
+						GenericArguments.string(Text.of("key")),
+						GenericArguments.string(Text.of("value")))
+				.description(Text.of("Edit the config of a channel."))
+				.permission("uchat.cmd.chconfig")
+				.executor((src,args) -> {{
+					//uchat chconfig <channel> <key> <value>
+					UCChannel ch = args.<UCChannel>getOne("channel").get();
+					String key = args.<String>getOne("key").get();
+					String value = args.<String>getOne("value").get();
+					if (!ch.getProperties().containsKey(key)){
+						 throw new CommandException(UChat.get().getLang().getText("cmd.chconfig.invalidkey"), true);
+					}
+					ch.setProperty(key, ObjectUtils.clone((Object)value));
+					UChat.get().getLang().sendMessage(src, "cmd.chconfig.success");
+			    	return CommandResult.success();
+				}}).build();
+		
 		CommandSpec reload = CommandSpec.builder()
 				.description(Text.of("Command to reload uchat."))
 				.permission("uchat.cmd.reload")
@@ -570,6 +591,7 @@ public class UCCommands {
 			    	return CommandResult.success();	
 			    }})
 			    .child(help, "?")
+			    .child(chconfig, "chconfig")
 			    .child(reload, "reload")
 			    .child(clear, "clear")
 			    .child(clearAll, "clear-all")
@@ -585,54 +607,70 @@ public class UCCommands {
 		return uchat;
 	}
     
-	private void sendHelp(CommandSource p){		
-		p.sendMessage(UCUtil.toText("&7--------------- "+UChat.get().getLang().get("_UChat.prefix")+" Help &7---------------"));		
-		p.sendMessage(UChat.get().getLang().getText("help.channels.enter"));
-		p.sendMessage(UChat.get().getLang().getText("help.channels.send"));
+	private void sendHelp(CommandSource p){	
+		Builder fancy = Text.builder();
+		
+		fancy.append(UCUtil.toText("\n&7--------------- "+UChat.get().getLang().get("_UChat.prefix")+" Help &7---------------\n"));		
+		fancy.append(UChat.get().getLang().getText("help.channels.enter","\n"));
+		fancy.append(UChat.get().getLang().getText("help.channels.send","\n"));
 		if (p.hasPermission("uchat.cmd.tell")){
-			p.sendMessage(UChat.get().getLang().getText("help.tell.lock"));
-			p.sendMessage(UChat.get().getLang().getText("help.tell.send"));
-			p.sendMessage(UChat.get().getLang().getText("help.tell.respond"));
+			fancy.append(UChat.get().getLang().getText("help.tell.lock","\n"));
+			fancy.append(UChat.get().getLang().getText("help.tell.send","\n"));
+			fancy.append(UChat.get().getLang().getText("help.tell.respond","\n"));
 		}
 		if (p.hasPermission("uchat.cmd.broadcast")){
-			p.sendMessage(UChat.get().getLang().getText("help.cmd.broadcast"));
+			fancy.append(UChat.get().getLang().getText("help.cmd.broadcast","\n"));
 		}
 		if (p.hasPermission("uchat.cmd.umsg")){
-			p.sendMessage(UChat.get().getLang().getText("help.cmd.umsg"));
+			fancy.append(UChat.get().getLang().getText("help.cmd.umsg","\n"));
 		}
 		if (p.hasPermission("uchat.cmd.clear")){
-			p.sendMessage(UChat.get().getLang().getText("help.cmd.clear"));
+			fancy.append(UChat.get().getLang().getText("help.cmd.clear","\n"));
 		}
 		if (p.hasPermission("uchat.cmd.clear-all")){
-			p.sendMessage(UChat.get().getLang().getText("help.cmd.clear-all"));
+			fancy.append(UChat.get().getLang().getText("help.cmd.clear-all","\n"));
 		}
 		if (p.hasPermission("uchat.cmd.spy")){
-			p.sendMessage(UChat.get().getLang().getText("help.cmd.spy"));
+			fancy.append(UChat.get().getLang().getText("help.cmd.spy","\n"));
 		}
 		if (p.hasPermission("uchat.cmd.mute")){
-			p.sendMessage(UChat.get().getLang().getText("help.cmd.mute"));
+			fancy.append(UChat.get().getLang().getText("help.cmd.mute","\n"));
 		}
 		if (p.hasPermission("uchat.cmd.tempmute")){
-			p.sendMessage(UChat.get().getLang().getText("help.cmd.tempmute"));
+			fancy.append(UChat.get().getLang().getText("help.cmd.tempmute","\n"));
 		}
 		if (p.hasPermission("uchat.cmd.ignore.player")){
-			p.sendMessage(UChat.get().getLang().getText("help.cmd.ignore.player"));
+			fancy.append(UChat.get().getLang().getText("help.cmd.ignore.player","\n"));
 		}
 		if (p.hasPermission("uchat.cmd.ignore.channel")){
-			p.sendMessage(UChat.get().getLang().getText("help.cmd.ignore.channel"));
+			fancy.append(UChat.get().getLang().getText("help.cmd.ignore.channel","\n"));
+		}
+		if (p.hasPermission("uchat.cmd.chconfig")){
+			fancy.append(UChat.get().getLang().getText("help.cmd.chconfig","\n"));
 		}
 		if (p.hasPermission("uchat.cmd.reload")){
-			p.sendMessage(UChat.get().getLang().getText("help.cmd.reload"));
+			fancy.append(UChat.get().getLang().getText("help.cmd.reload","\n"));
 		}
-		StringBuilder channels = new StringBuilder();
+		fancy.append(UCUtil.toText("&7------------------------------------------\n"));
+		fancy.append(UCUtil.toText(UChat.get().getLang().get("help.channels.available").replace("{channels}", "")));
+		
+		boolean first = true;
 		for (UCChannel ch:UChat.get().getConfig().getChannels()){
 			if (!(p instanceof Player) || UChat.get().getPerms().channelWritePerm((Player)p, ch)){
-				channels.append(", "+ch.getName());
+				Builder fancych = Text.builder();
+				if (first){
+					fancych.append(UCUtil.toText(ch.getColor()+ch.getName()+"&a"));
+					first = false;
+				} else {
+					fancych.append(UCUtil.toText(", "+ch.getColor()+ch.getName()+"&a"));					
+				}
+				fancych.onHover(TextActions.showText(UCUtil.toText(ch.getColor()+"Alias: "+ch.getAlias())));
+				fancych.onClick(TextActions.runCommand("/"+ch.getAlias()));
+				fancych.applyTo(fancy);
 			}
 		}
-		p.sendMessage(UCUtil.toText("&7------------------------------------------ "));
-		p.sendMessage(UCUtil.toText(UChat.get().getLang().get("help.channels.available").replace("{channels}", channels.toString().substring(2))));
-		p.sendMessage(UCUtil.toText("&7------------------------------------------ "));
+		fancy.append(UCUtil.toText("\n&7------------------------------------------ "));
+		p.sendMessage(fancy.build());
 	}
 	
 	private void sendTellHelp(CommandSource p) {

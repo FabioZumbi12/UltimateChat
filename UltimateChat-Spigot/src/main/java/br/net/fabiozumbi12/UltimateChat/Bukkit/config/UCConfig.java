@@ -30,19 +30,13 @@ public class UCConfig extends FileConfiguration {
 	
 	public UCConfig(UChat plugin) throws IOException, InvalidConfigurationException {
 		            File main = UChat.get().getDataFolder();
-    	            File config = new File(UChat.get().getDataFolder(),"config.yml");
-    	            File chfolder = new File(UChat.get().getDataFolder(),"channels");
+    	            File config = new File(UChat.get().getDataFolder(),"config.yml");    	            
     	            File protections = new File(UChat.get().getDataFolder(),"protections.yml");
     	            
     	            if (!main.exists()) {
     	                main.mkdir();
     	                plugin.getUCLogger().info("Created folder: " +UChat.get().getDataFolder());
     	            }
-    	            
-    	            if (!chfolder.exists()) {
-    	            	chfolder.mkdir();
-    	            	plugin.getUCLogger().info("Created folder: " +chfolder.getPath());
-    	            }    	            
     	            
     	            if (!config.exists()) {
     	            	UCUtil.saveResource("/assets/ultimatechat/config.yml", new File(UChat.get().getDataFolder(),"config.yml"));
@@ -58,74 +52,6 @@ public class UCConfig extends FileConfiguration {
     	            
     	            configs = updateFile(config, "assets/ultimatechat/config.yml"); 
     	            
-                    //--------------------------------------- Load Aliases -----------------------------------//
-                                        
-                    channels = new HashMap<List<String>,UCChannel>();
-                    File[] listOfFiles = chfolder.listFiles();
-                    
-                    YamlConfiguration channel = new YamlConfiguration();
-                    
-                    if (listOfFiles.length == 0){
-                    	//create default channels
-                    	File g = new File(chfolder, "global.yml"); 
-                    	channel = YamlConfiguration.loadConfiguration(g);
-                    	channel.set("name", "Global");
-                    	channel.set("alias", "g");
-                    	channel.set("color", "&2");
-                    	channel.save(g);
-                    	
-                    	File l = new File(chfolder, "local.yml");
-                    	channel = YamlConfiguration.loadConfiguration(l);
-                    	channel.set("name", "Local");
-                    	channel.set("alias", "l");
-                    	channel.set("color", "&e");
-                    	channel.set("across-worlds", false);
-                    	channel.set("distance", 40);
-                    	channel.save(l);
-                    	
-                    	File ad = new File(chfolder, "admin.yml");
-                    	channel = YamlConfiguration.loadConfiguration(ad);
-                    	channel.set("name", "Admin");
-                    	channel.set("alias", "ad");
-                    	channel.set("color", "&b");
-                    	channel.save(ad);
-                    	
-                    	listOfFiles = chfolder.listFiles();
-                    }
-                    
-            		for (File file:listOfFiles){
-            			if (file.getName().endsWith(".yml")){
-            				channel = YamlConfiguration.loadConfiguration(file);
-							UCChannel ch = new UCChannel(channel.getString("name"), 
-									channel.getString("alias"), 
-									channel.getBoolean("across-worlds", true),
-									channel.getInt("distance", 0),
-									channel.getString("color", "&b"),
-									channel.getString("tag-builder", getString("general.default-tag-builder")),
-									channel.getBoolean("need-focus", false),
-									channel.getBoolean("receivers-message", true),
-									channel.getDouble("cost", 0.0),
-									channel.getBoolean("bungee", false),
-									channel.getBoolean("use-this-builder", false),
-									channel.getBoolean("channelAlias.enable", false),
-									channel.getString("channelAlias.sendAs", "player"),
-									channel.getString("channelAlias.cmd", ""),
-									channel.getStringList("available-worlds"),
-									channel.getString("discord.channelID", new String()),
-									channel.getString("discord.mode", "none"),		
-									channel.getString("discord.format-to-mc", "{ch-color}[{ch-alias}]&b{dd-rolecolor}[{dd-rolename}]{sender}&r: "),	
-									channel.getString("discord.format-to-dd", ":thought_balloon: **{sender}**: {message}"),	
-									channel.getString("discord.hover", "&3Discord Channel: &a{dd-channel}\n&3Role Name: {dd-rolecolor}{dd-rolename}"),	
-									channel.getBoolean("discord.allow-server-cmds", false),	
-									channel.getBoolean("canLock", true));
-            				try {
-								addChannel(ch);
-							} catch (IOException e) {
-								e.printStackTrace();
-							}
-            			}
-            		}
-                    
                     //-------------------------------- Change config Header ----------------------------------//
                     
             		String lang = configs.getString("language");
@@ -260,7 +186,7 @@ public class UCConfig extends FileConfiguration {
             		}
             		
             		/*------------------------------------------------------------------------------------*/
-            		
+            		            		
             		//add new config on update
             		if (configs.getDouble("config-version") < 1.2){
             			configs.set("config-version", 1.2);
@@ -291,41 +217,74 @@ public class UCConfig extends FileConfiguration {
         			
         			//load protections file
         			Prots = updateFile(protections, "assets/ultimatechat/protections.yml");
-                    
+
+            		/* Load Channels */
+            		loadChannels();
+            		
         			/*------------------------------------------------------------------------------------*/
         			
             		//----------------------------------------------------------------------------------------//
         			save();        			
-    	            plugin.getLogger().info("All configurations loaded!");
+    	            plugin.getUCLogger().info("All configurations loaded!");
 	}
     
-	public List<String> getTagList(){
-		List<String> tags = new ArrayList<String>();
-		for (String key:configs.getKeys(true)){
-			if (key.startsWith("tags.") && key.split("\\.").length == 2){
-				tags.add(key.replace("tags.", ""));
-			}			
-		}
-		for (String str:getStringList("general.custom-tags")){
-			tags.add(str);
-		}
-		return tags;
-	}
-	
-	public UCChannel getChannel(String alias){		
-		for (List<String> aliases:channels.keySet()){
-			if (aliases.contains(alias.toLowerCase())){				
-				return channels.get(aliases);
+	/* Channels */
+	private void loadChannels() throws IOException{
+		File chfolder = new File(UChat.get().getDataFolder(),"channels");
+		
+		if (!chfolder.exists()) {
+        	chfolder.mkdir();
+        	UChat.get().getUCLogger().info("Created folder: " +chfolder.getPath());
+        } 
+		
+        channels = new HashMap<List<String>,UCChannel>();
+        File[] listOfFiles = chfolder.listFiles();
+        
+        YamlConfiguration channel = new YamlConfiguration();
+        
+        if (listOfFiles.length == 0){
+        	//create default channels
+        	File g = new File(chfolder, "global.yml"); 
+        	channel = YamlConfiguration.loadConfiguration(g);
+        	channel.set("name", "Global");
+        	channel.set("alias", "g");
+        	channel.set("color", "&2");
+        	channel.save(g);
+        	
+        	File l = new File(chfolder, "local.yml");
+        	channel = YamlConfiguration.loadConfiguration(l);
+        	channel.set("name", "Local");
+        	channel.set("alias", "l");
+        	channel.set("color", "&e");
+        	channel.set("across-worlds", false);
+        	channel.set("distance", 40);
+        	channel.save(l);
+        	
+        	File ad = new File(chfolder, "admin.yml");
+        	channel = YamlConfiguration.loadConfiguration(ad);
+        	channel.set("name", "Admin");
+        	channel.set("alias", "ad");
+        	channel.set("color", "&b");
+        	channel.save(ad);
+        	
+        	listOfFiles = chfolder.listFiles();
+        }
+        
+		for (File file:listOfFiles){
+			if (file.getName().endsWith(".yml")){
+				channel = YamlConfiguration.loadConfiguration(file);            				
+				UCChannel ch = new UCChannel(channel.getValues(true));
+				
+				try {
+					addChannel(ch);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
-		return null;
 	}
 	
-	public Collection<UCChannel> getChannels(){
-		return this.channels.values();
-	}
-	
-	public void addChannel(UCChannel ch) throws IOException{
+	public void addChannel(UCChannel ch) throws IOException{		
 		File defch = new File(UChat.get().getDataFolder()+File.separator+"channels"+File.separator+ch.getName().toLowerCase()+".yml");		
 		YamlConfiguration chFile = YamlConfiguration.loadConfiguration(defch);
 		chFile.options().header(""
@@ -360,32 +319,46 @@ public class UCConfig extends FileConfiguration {
 				+ "  format-to-dd: :thought_balloon: **{sender}**: {message} \n"
 				+ "  allow-server-cmds: false - Use this channel to send commands from discord > minecraft.\n"
 				+ "  channelID: '' - The ID of your Discord Channel. Enable debug on your discord to get the channel ID.\n");
-		chFile.set("name", ch.getName());
-		chFile.set("alias", ch.getAlias());
-		chFile.set("across-worlds", ch.crossWorlds());
-		chFile.set("distance", ch.getDistance());
-		chFile.set("color", ch.getColor());
-		chFile.set("use-this-builder", ch.useOwnBuilder());
-		chFile.set("tag-builder", ch.getRawBuilder());
-		chFile.set("need-focus", ch.neeFocus());
-		chFile.set("canLock", ch.canLock());
-		chFile.set("receivers-message", ch.getReceiversMsg());
-		chFile.set("cost", ch.getCost());
-		chFile.set("bungee", ch.isBungee());
-		chFile.set("channelAlias.enable", ch.isCmdAlias());
-		chFile.set("channelAlias.sendAs", ch.getAliasSender());
-		chFile.set("channelAlias.cmd", ch.getAliasCmd());
-		chFile.set("available-worlds", ch.availableWorlds());		
-		chFile.set("discord.channelID", ch.getDiscordChannelID());
-		chFile.set("discord.mode", ch.getDiscordMode());
-		chFile.set("discord.hover", ch.getDiscordHover());
-		chFile.set("discord.format-to-mc", ch.getDiscordtoMCFormat());
-		chFile.set("discord.format-to-dd", ch.getMCtoDiscordFormat());
-		chFile.set("discord.allow-server-cmds", ch.getDiscordAllowCmds());
-		chFile.save(defch);
+		
+		ch.getProperties().entrySet().forEach((map)->{
+			chFile.set(map.getKey(), map.getValue());			
+		});
+		chFile.save(defch);		
 		channels.put(Arrays.asList(ch.getName().toLowerCase(), ch.getAlias().toLowerCase()), ch);
 	}
 	
+	public UCChannel getChannel(String alias){		
+		for (List<String> aliases:channels.keySet()){
+			if (aliases.contains(alias.toLowerCase())){				
+				return channels.get(aliases);
+			}
+		}
+		return null;
+	}
+	
+	public Collection<UCChannel> getChannels(){
+		return channels.values();
+	}
+
+	public List<String> getChAliases(){
+		List<String> aliases = new ArrayList<String>();
+		aliases.addAll(Arrays.asList(getString("general.channel-cmd-aliases").replace(" ", "").split(",")));
+		for (List<String> alias:channels.keySet()){
+			aliases.addAll(alias);
+		}
+		return aliases;
+	}
+	
+	public UCChannel getPlayerChannel(CommandSender p){
+		for (UCChannel ch:channels.values()){
+			if (ch.isMember(p)){
+				return ch;
+			}
+		}
+		return null;
+	}
+	
+
 	public void unMuteInAllChannels(String player){
 		for (UCChannel ch:channels.values()){
 			if (ch.isMuted(player)){				
@@ -410,28 +383,23 @@ public class UCConfig extends FileConfiguration {
 		return getChannel(getString("general.default-channel"));
 	}
 	
+	public List<String> getTagList(){
+		List<String> tags = new ArrayList<String>();
+		for (String key:configs.getKeys(true)){
+			if (key.startsWith("tags.") && key.split("\\.").length == 2){
+				tags.add(key.replace("tags.", ""));
+			}			
+		}
+		for (String str:getStringList("general.custom-tags")){
+			tags.add(str);
+		}
+		return tags;
+	}
+		
 	public String[] getDefBuilder(){
 		return getString("general.default-tag-builder").replace(" ", "").split(",");
 	}
-	
-	public List<String> getChAliases(){
-		List<String> aliases = new ArrayList<String>();
-		aliases.addAll(Arrays.asList(configs.getString("general.channel-cmd-aliases").replace(" ", "").split(",")));
-		for (List<String> alias:channels.keySet()){
-			aliases.addAll(alias);
-		}
-		return aliases;
-	}
-	
-	public UCChannel getPlayerChannel(CommandSender p){
-		for (UCChannel ch:this.channels.values()){
-			if (ch.isMember(p)){
-				return ch;
-			}
-		}
-		return null;
-	}
-	
+		
 	public List<String> getBroadcastAliases() {
 		return Arrays.asList(configs.getString("broadcast.aliases").replace(" ", "").split(","));
 	}

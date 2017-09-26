@@ -109,6 +109,18 @@ public class UCLang {
 		return FMsg;
 	}
 	
+	public Text getText(String key, String additional){	
+		String FMsg = "";
+
+		if (Lang.get(key) == null){
+			FMsg = "&c&oMissing language string for &4"+ key;
+		} else {
+			FMsg = Lang.get(key).toString();
+		}
+		
+		return UCUtil.toText(FMsg+additional);
+	}
+	
 	public Text getText(String key){		
 		String FMsg = "";
 

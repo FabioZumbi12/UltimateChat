@@ -1,8 +1,11 @@
 package br.net.fabiozumbi12.UltimateChat.Bukkit;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
@@ -11,6 +14,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UCLogger.timingType;
 
@@ -20,107 +25,129 @@ import br.net.fabiozumbi12.UltimateChat.Bukkit.UCLogger.timingType;
  *
  */
 public class UCChannel {
-
-	private String name;
-	private String alias;
-	private boolean worlds = true;
-	private int dist = 0;
-	private String color = "&a";
-	private String builder = "";
-	private boolean focus = false;
-	private boolean receiversMsg = false;
 	private List<String> ignoring = new ArrayList<String>();
 	private List<String> mutes = new ArrayList<String>();
-	private double cost = 0.0;
-	private boolean bungee = false;
-	private boolean ownBuilder = false;
-	private boolean isAlias = false;
-	private String aliasSender = "";
-	private String aliasCmd = "";
-	private List<String> availableWorlds = new ArrayList<String>();
-	private boolean canLock = true;
-	private String ddchannel = new String();
-	private String ddmode = "NONE";
 	private List<CommandSender> members = new ArrayList<CommandSender>();
-	private String ddmcformat = "{ch-color}[{ch-alias}]&b{dd-rolecolor}[{dd-rolename}]{sender}&r:";
-	private String mcddformat = ":thought_balloon: **{sender}**: {message}";
-	private String ddhover = "&3Discord Channel: &a{dd-channel}\n&3Role Name: {dd-rolecolor}{dd-rolename}";
-	private boolean ddallowcmds = false;
-
+	private Map<String, Object> properties = new HashMap<String, Object>();
+	
+	private void addDefaults(){
+		properties.put("name", "");
+		properties.put("alias", "");
+		properties.put("color", "&b");
+		properties.put("across-worlds", true);
+		properties.put("distance", 0);
+		properties.put("use-this-builder", false);
+		properties.put("tag-builder", "world,marry-tag,ch-tags,clan-tag,factions,group-prefix,nickname,group-suffix,message");
+		properties.put("need-focus", false);
+		properties.put("canLock", true);
+		properties.put("receivers-message", true);
+		properties.put("cost", 0.0);
+		properties.put("bungee", false);
+		properties.put("channelAlias.enable", false);
+		properties.put("channelAlias.sendAs", "player");
+		properties.put("channelAlias.cmd", "");
+		properties.put("available-worlds", new ArrayList<String>());
+		properties.put("discord.channelID", "");
+		properties.put("discord.mode", "none");
+		properties.put("discord.hover", "&3Discord Channel: &a{dd-channel}\n&3Role Name: {dd-rolecolor}{dd-rolename}");
+		properties.put("discord.allow-server-cmds", false);
+		properties.put("discord.format-to-mc", "{ch-color}[{ch-alias}]&b{dd-rolecolor}[{dd-rolename}]{sender}&r: ");
+		properties.put("discord.format-to-dd", ":regional_indicator_g: **{sender}**: {message}");
+	}
+	
+	@Deprecated()
 	public UCChannel(String name, String alias, boolean worlds, int dist, String color, String builder, boolean focus, boolean receiversMsg, double cost, boolean isbungee, boolean ownBuilder, boolean isAlias, String aliasSender, String aliasCmd, List<String> availableWorlds, String ddchannel, String ddmode, String ddmcformat, String mcddformat, String ddhover, boolean ddallowcmds, boolean lock) {
-		this.name = name;
-		this.alias = alias;
-		this.worlds = worlds;
-		this.dist = dist;
-		this.color = color;
-		this.builder = builder;
-		this.focus = focus;
-		this.receiversMsg = receiversMsg;
-		this.cost = cost;
-		this.bungee = isbungee;
-		this.ownBuilder  = ownBuilder;
-		this.isAlias = isAlias;
-		this.aliasCmd  = aliasCmd;
-		this.aliasSender = aliasSender;
-		this.availableWorlds = availableWorlds;
-		this.canLock = lock;
-		this.ddchannel = ddchannel;
-		this.ddmode = ddmode;
-		this.ddmcformat = ddmcformat;
-		this.mcddformat = mcddformat;
-		this.ddhover = ddhover;
-		this.ddallowcmds = ddallowcmds;
+		addDefaults();
+		properties.put("name", name);
+		properties.put("alias", alias);
+		properties.put("color", color);
+		properties.put("across-worlds", worlds);
+		properties.put("distance", dist);
+		properties.put("use-this-builder", ownBuilder);
+		properties.put("tag-builder", builder);
+		properties.put("need-focus", focus);
+		properties.put("canLock", lock);
+		properties.put("receivers-message", receiversMsg);
+		properties.put("cost", cost);
+		properties.put("bungee", isbungee);
+		properties.put("channelAlias.enable", isAlias);
+		properties.put("channelAlias.sendAs", aliasSender);
+		properties.put("channelAlias.cmd", aliasCmd);
+		properties.put("available-worlds", availableWorlds);
+		properties.put("discord.channelID", ddchannel);
+		properties.put("discord.mode", ddmode);
+		properties.put("discord.hover", ddhover);
+		properties.put("discord.allow-server-cmds", ddallowcmds);
+		properties.put("discord.format-to-mc", ddmcformat);
+		properties.put("discord.format-to-dd", mcddformat);
 	}
 	
 	public UCChannel(String name, String alias, String color) {
-		this.name = name;
-		this.alias = alias;
-		this.color = color;
+		addDefaults();
+		properties.put("name", name);
+		properties.put("alias", alias);
+		properties.put("color", color);
 	}
 	
 	public UCChannel(String name) {
-		this.name = name;
-		this.alias = name.substring(0, 1).toLowerCase();
+		addDefaults();
+		properties.put("name", name);
+		properties.put("alias", name.substring(0, 1).toLowerCase());
+	}
+	
+	public UCChannel(Map<String, Object> props) {
+		addDefaults();
+		properties.keySet().stream().filter((key)->props.containsKey(key)).forEach((nkey)->{
+			properties.put(nkey, props.get(nkey));
+		});
 	}
 
-	public boolean getDiscordAllowCmds(){
-		return this.ddallowcmds;
+	public Map<String, Object> getProperties(){
+		return properties;
+	}
+	
+	public void setProperty(String key, Object value){
+		properties.put(key, value);
+	}
+	
+	public boolean getDiscordAllowCmds(){		
+		return (boolean) properties.get("discord.allow-server-cmds");
 	}
 	
 	public boolean isTell(){
-		return this.name.equals("tell");		
+		return properties.get("name").toString().equals("tell");		
 	}
 	
 	public String getDiscordChannelID(){
-		return this.ddchannel;
+		return properties.get("discord.channelID").toString();
 	}
 	
 	public String getDiscordMode(){
-		return this.ddmode;
+		return properties.get("discord.mode").toString();
 	}
 	
 	public boolean matchDiscordID(String id){
-		return this.ddchannel.equals(id);
+		return getDiscordChannelID().equals(id);
 	}
 	
 	public boolean isSendingDiscord(){
-		return !ddchannel.isEmpty() && (ddmode.equalsIgnoreCase("both") || ddmode.equalsIgnoreCase("send"));
+		return !getDiscordChannelID().isEmpty() && (getDiscordMode().equalsIgnoreCase("both") || getDiscordMode().equalsIgnoreCase("send"));
 	}
 	
 	public boolean isListenDiscord(){
-		return !ddchannel.isEmpty() && (ddmode.equalsIgnoreCase("both") || ddmode.equalsIgnoreCase("listen"));
+		return !getDiscordChannelID().isEmpty() && (getDiscordMode().equalsIgnoreCase("both") || getDiscordMode().equalsIgnoreCase("listen"));
 	}
 	
 	public String getDiscordHover(){
-		return this.ddhover;
+		return properties.get("discord.hover").toString();
 	}
 	
 	public String getDiscordtoMCFormat(){
-		return this.ddmcformat;
+		return properties.get("discord.format-to-mc").toString();
 	}
 	
 	public String getMCtoDiscordFormat(){
-		return this.mcddformat;
+		return properties.get("discord.format-to-dd").toString();
 	}
 	
 	public List<CommandSender> getMembers(){
@@ -147,47 +174,49 @@ public class UCChannel {
 	}
 		
 	public boolean canLock(){
-		return this.canLock;
+		return (boolean) properties.get("canLock");
 	}
 	
+	@SuppressWarnings("unchecked")
 	public boolean availableInWorld(World w){
-		return this.availableWorlds.contains(w.getName());
+		return ((List<String>)properties.get("available-worlds")).contains(w.getName());
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<String> availableWorlds(){
-		return this.availableWorlds;
+		return ((List<String>)properties.get("available-worlds"));
 	}
 	
 	public String getAliasCmd(){
-		return this.aliasCmd;
+		return properties.get("channelAlias.cmd").toString();
 	}
 	
 	public String getAliasSender(){		
-		return this.aliasSender;
+		return properties.get("channelAlias.sendAs").toString();
 	}
 	
 	public boolean isCmdAlias(){
-		return this.isAlias;
+		return (boolean) properties.get("channelAlias.enable");
 	}
 	
 	public boolean useOwnBuilder(){
-		return this.ownBuilder;
+		return (boolean) properties.get("use-this-builder");
 	}
 	
 	public double getCost(){
-		return this.cost;
+		return (double) properties.get("cost");
 	}
 	
 	public void setCost(double cost){
-		this.cost = cost;
+		properties.put("cost", cost);
 	}
 	
 	public void setReceiversMsg(boolean show){
-		this.receiversMsg = show;
+		properties.put("cost", show);
 	}
 	
 	public boolean getReceiversMsg(){
-		return this.receiversMsg;
+		return (boolean) properties.get("receivers-message");
 	}
 	
 	public void muteThis(String player){
@@ -223,43 +252,43 @@ public class UCChannel {
 	}
 	
 	public String[] getBuilder(){
-		return this.builder.split(",");
+		return properties.get("tag-builder").toString().split(",");
 	}
 	
 	public String getRawBuilder(){
-		return this.builder;
+		return properties.get("tag-builder").toString();
 	}
 	
 	public boolean crossWorlds(){
-		return this.worlds;
+		return (boolean) properties.get("across-worlds");
 	}
 	
 	public int getDistance(){
-		return this.dist;
+		return (int) properties.get("distance");
 	}
 	
 	public String getColor(){
-		return this.color;
+		return properties.get("color").toString();
 	}
 	
 	public String getName(){
-		return this.name;
+		return properties.get("name").toString();
 	}
 	
 	public String getAlias(){
-		return this.alias;
+		return properties.get("alias").toString();
 	}
 
 	public boolean neeFocus() {
-		return this.focus;
+		return (boolean) properties.get("need-focus");
 	}
 	
 	public boolean matchChannel(String aliasOrName){
-		return this.alias.equalsIgnoreCase(aliasOrName) || this.name.equalsIgnoreCase(aliasOrName);
+		return properties.get("alias").toString().equalsIgnoreCase(aliasOrName) || properties.get("name").toString().equalsIgnoreCase(aliasOrName);
 	}
 
 	public boolean isBungee() {		
-		return this.bungee ;
+		return (boolean) properties.get("bungee");
 	}
 	
 	/** Send a message from a channel as player.
@@ -289,7 +318,7 @@ public class UCChannel {
 		} else {
 			Set<Player> pls = new HashSet<Player>();
 			pls.addAll(Bukkit.getOnlinePlayers());
-			UChat.get().tempChannels.put(sender.getName(), this.alias);
+			UChat.get().tempChannels.put(sender.getName(), this.getAlias());
 			AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(true, sender, message.toOldFormat(), pls);
 			Bukkit.getScheduler().runTaskAsynchronously(UChat.get(), new Runnable(){
 
@@ -342,5 +371,17 @@ public class UCChannel {
 			}
 			fmsg.send(sender);
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public String toString(){
+		JSONArray array = new JSONArray();
+		for (Entry<String, Object> prop:properties.entrySet()){
+			JSONObject json = new JSONObject();
+			json.put(prop.getKey(),prop.getValue());
+			array.add(json);
+		}
+		return array.toJSONString();		
 	}
 }

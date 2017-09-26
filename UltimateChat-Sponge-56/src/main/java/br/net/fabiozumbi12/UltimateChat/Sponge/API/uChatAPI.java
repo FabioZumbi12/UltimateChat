@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.spongepowered.api.entity.living.player.Player;
 
@@ -23,6 +24,13 @@ public class uChatAPI {
 		return false;
 	}
 	
+	public boolean registerNewChannel(Map<String, Object> properties) throws IOException{
+		UCChannel ch = new UCChannel(properties);	
+		UChat.get().getConfig().addChannel(ch);		
+		return true;
+	}
+	
+	@Deprecated
 	public boolean registerNewChannel(String chName, String chAlias, boolean crossWorlds, int distance, String color, String tagBuilder, boolean needFocus, boolean receiverMsg, double cost, String ddmode, String ddmcformat, String mcddformat, String ddhover, boolean ddallowcmds, boolean bungee) throws IOException{
 		if (UChat.get().getConfig().getChannel(chName) != null){
 			return false;

@@ -8,6 +8,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
@@ -235,88 +237,10 @@ public class UCConfig{
 		} catch (IOException | ObjectMappingException e) {
 			e.printStackTrace();
 		}
-				
-    	    File chfolder = new File(UChat.get().configDir()+File.separator+"channels");
-    	            
-    	    if (!chfolder.exists()) {
-            	chfolder.mkdir();
-                UChat.get().getLogger().info("Created folder: " +chfolder.getPath());
-            }    	            
-    	            
-    	  //--------------------------------------- Load Aliases -----------------------------------//
-            
-            channels = new HashMap<List<String>,UCChannel>();
-            File[] listOfFiles = chfolder.listFiles();
-                        
-            CommentedConfigurationNode channel;	
-        	ConfigurationLoader<CommentedConfigurationNode> channelManager;
-            
-        	if (listOfFiles.length == 0){
-        		//create default channels
-            	File g = new File(chfolder, "global.conf"); 
-            	channelManager = HoconConfigurationLoader.builder().setFile(g).build();	
-				channel = channelManager.load();
-				channel.getNode("name").setValue("Global");
-				channel.getNode("alias").setValue("g");
-				channel.getNode("color").setValue("&2");
-				channelManager.save(channel);
-            	
-            	File l = new File(chfolder, "local.conf");
-            	channelManager = HoconConfigurationLoader.builder().setFile(l).build();	
-				channel = channelManager.load();
-				channel.getNode("name").setValue("Local");
-				channel.getNode("alias").setValue("l");
-				channel.getNode("across-worlds").setValue(false);
-				channel.getNode("distance").setValue(40);
-				channel.getNode("color").setValue("&e");
-				channelManager.save(channel);
-            	
-            	File ad = new File(chfolder, "admin.conf");
-            	channelManager = HoconConfigurationLoader.builder().setFile(ad).build();	
-				channel = channelManager.load();
-				channel.getNode("name").setValue("Admin");
-				channel.getNode("alias").setValue("ad");
-				channel.getNode("color").setValue("&b");
-				channelManager.save(channel);
-				
-            	listOfFiles = chfolder.listFiles();
-            }
-        	
-    		for (File file:listOfFiles){
-    			if (file.getName().endsWith(".conf")){
-    				channelManager = HoconConfigurationLoader.builder().setFile(file).build();	
-    				channel = channelManager.load();
-    				
-					try {
-						UCChannel ch = new UCChannel(channel.getNode("name").getString(), 
-								channel.getNode("alias").getString(), 
-								channel.getNode("across-worlds").getBoolean(true),
-								channel.getNode("distance").getInt(0),
-								channel.getNode("color").getString("&b"),
-								channel.getNode("tag-builder").getString(config.getNode("general","default-tag-builder").getString()),
-								channel.getNode("need-focus").getBoolean(false),
-								channel.getNode("receivers-message").getBoolean(true),
-								channel.getNode("cost").getDouble(0.0),
-								channel.getNode("bungee").getBoolean(false),
-								channel.getNode("use-this-builder").getBoolean(false),
-								channel.getNode("channelAlias","enable").getBoolean(false),
-								channel.getNode("channelAlias","sendAs").getString("player"),
-								channel.getNode("channelAlias","cmd").getString(""),
-								channel.getNode("available-worlds").getList(TypeToken.of(String.class), new ArrayList<String>()),
-								channel.getNode("discord","channelID").getString(new String()),
-								channel.getNode("discord","mode").getString("none"),
-								channel.getNode("discord","format-to-mc").getString("{ch-color}[{ch-alias}]&b{dd-rolecolor}[{dd-rolename}]{sender}&r: "),
-								channel.getNode("discord","format-to-dd").getString(":thought_balloon: **{sender}**: {message}"),
-								channel.getNode("discord","hover").getString("&3Discord Channel: &a{dd-channel}\n&3Role Name: {dd-rolecolor}{dd-rolename}"),
-								channel.getNode("discord","allow-server-cmds").getBoolean(false),
-								channel.getNode("canLock").getBoolean(true));
-						addChannel(ch);
-					} catch (ObjectMappingException e1) {
-						e1.printStackTrace();
-					}
-    			}
-    		}
-                    
+				    
+		    /* Load Channels */
+		    loadChannels();
+		    
     		//-------------------------------- Change config Header ----------------------------------//
             
     		String lang = config.getNode("language").getString("EN-US");
@@ -443,6 +367,81 @@ public class UCConfig{
             UChat.get().getLogger().info("All configurations loaded!");
 	}
     
+	private void loadChannels() throws IOException {
+		File chfolder = new File(UChat.get().configDir(),"channels");
+        
+	    if (!chfolder.exists()) {
+        	chfolder.mkdir();
+            UChat.get().getLogger().info("Created folder: " +chfolder.getPath());
+        }    	            
+	            
+	    //--------------------------------------- Load Aliases -----------------------------------//
+        
+        channels = new HashMap<List<String>,UCChannel>();
+        File[] listOfFiles = chfolder.listFiles();
+                    
+        CommentedConfigurationNode channel;	
+    	ConfigurationLoader<CommentedConfigurationNode> channelManager;
+        
+    	if (listOfFiles.length == 0){
+    		//create default channels
+        	File g = new File(chfolder, "global.conf"); 
+        	channelManager = HoconConfigurationLoader.builder().setFile(g).build();	
+			channel = channelManager.load();
+			channel.getNode("name").setValue("Global");
+			channel.getNode("alias").setValue("g");
+			channel.getNode("color").setValue("&2");
+			channelManager.save(channel);
+        	
+        	File l = new File(chfolder, "local.conf");
+        	channelManager = HoconConfigurationLoader.builder().setFile(l).build();	
+			channel = channelManager.load();
+			channel.getNode("name").setValue("Local");
+			channel.getNode("alias").setValue("l");
+			channel.getNode("across-worlds").setValue(false);
+			channel.getNode("distance").setValue(40);
+			channel.getNode("color").setValue("&e");
+			channelManager.save(channel);
+        	
+        	File ad = new File(chfolder, "admin.conf");
+        	channelManager = HoconConfigurationLoader.builder().setFile(ad).build();	
+			channel = channelManager.load();
+			channel.getNode("name").setValue("Admin");
+			channel.getNode("alias").setValue("ad");
+			channel.getNode("color").setValue("&b");
+			channelManager.save(channel);
+			
+        	listOfFiles = chfolder.listFiles();
+        }
+    	
+		for (File file:listOfFiles){
+			if (file.getName().endsWith(".conf")){
+				channelManager = HoconConfigurationLoader.builder().setFile(file).build();	
+				channel = channelManager.load();
+				    				
+				Map<String, Object> chProps = new HashMap<String, Object>();
+				channel.getChildrenMap().forEach((key,value)->{
+					StringBuilder rkey = new StringBuilder();
+					Object obj = null;
+					if (value.hasMapChildren()){
+						rkey.append(key.toString());
+						for (Entry<Object, ? extends CommentedConfigurationNode> vl:value.getChildrenMap().entrySet()){
+							rkey.append("."+vl.getKey().toString());
+							obj = vl.getValue().getValue();
+						}											
+					} else {
+						rkey.append(key.toString());
+						obj = value.getValue();
+					}		
+					chProps.put(rkey.toString(), obj);
+				});
+				
+				UCChannel ch = new UCChannel(chProps);
+				addChannel(ch);
+			}
+		}
+	}
+	
 	public List<String> getTagList(){
 		List<String> tags = new ArrayList<String>();
 		config.getChildrenMap().keySet().forEach(key -> {
@@ -513,28 +512,10 @@ public class UCConfig{
 				+ "  format-to-dd: :thought_balloon: **{sender}**: {message} \n"
 				+ "  allow-server-cmds: false - Use this channel to send commands from discord > minecraft.\n"
 				+ "  channelID: '' - The ID of your Discord Channel. Enable debug on your discord to get the channel ID.\n");
-		chFile.getNode("name").setValue(ch.getName());
-		chFile.getNode("alias").setValue(ch.getAlias());
-		chFile.getNode("across-worlds").setValue(ch.crossWorlds());
-		chFile.getNode("distance").setValue(ch.getDistance());
-		chFile.getNode("color").setValue(ch.getColor());
-		chFile.getNode("use-this-builder").setValue(ch.useOwnBuilder());
-		chFile.getNode("tag-builder").setValue(ch.getRawBuilder());
-		chFile.getNode("need-focus").setValue(ch.neeFocus());
-		chFile.getNode("canLock").setValue(ch.canLock());
-		chFile.getNode("receivers-message").setValue(ch.getReceiversMsg());
-		chFile.getNode("cost").setValue(ch.getCost());
-		chFile.getNode("bungee").setValue(ch.isBungee());
-		chFile.getNode("channelAlias","enable").setValue(ch.isCmdAlias());
-		chFile.getNode("channelAlias","sendAs").setValue(ch.getAliasSender());
-		chFile.getNode("channelAlias","cmd").setValue(ch.getAliasCmd());
-		chFile.getNode("available-worlds").setValue(ch.availableWorlds());
-		chFile.getNode("discord","channelID").setValue(ch.getDiscordChannelID());
-		chFile.getNode("discord","mode").setValue(ch.getDiscordMode());
-		chFile.getNode("discord","hover").setValue(ch.getDiscordHover());
-		chFile.getNode("discord","format-to-mc").setValue(ch.getDiscordtoMCFormat());
-		chFile.getNode("discord","format-to-dd").setValue(ch.getMCtoDiscordFormat());
-		chFile.getNode("discord","allow-server-cmds").setValue(ch.getDiscordAllowCmds());
+		
+		ch.getProperties().forEach((key,value)->{
+			chFile.getNode((Object[])key.toString().split("\\.")).setValue(value);
+		});
 		channelManager.save(chFile);
 		channels.put(Arrays.asList(ch.getName().toLowerCase(), ch.getAlias().toLowerCase()), ch);
 	}

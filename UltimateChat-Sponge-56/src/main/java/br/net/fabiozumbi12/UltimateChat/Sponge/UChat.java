@@ -105,7 +105,6 @@ public class UChat {
 		return this.helper;
 	}
 	
-	//public HashMap<String,String> pChannels = new HashMap<String,String>();
 	protected static HashMap<String,String> tempChannels = new HashMap<String,String>();
 	protected static HashMap<String,String> tellPlayers = new HashMap<String,String>();
 	protected static HashMap<String,String> tempTellPlayers = new HashMap<String,String>();
