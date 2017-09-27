@@ -110,8 +110,16 @@ public class UCChannel {
 		return properties;
 	}
 	
-	public void setProperty(String key, Object value){
-		properties.put(key, value);
+	public void setProperty(String key, String value){
+		if (value.equals("true") || value.equals("false")){
+			properties.put(key, Boolean.getBoolean(value));
+		} else {
+			try {
+				properties.put(key, Double.parseDouble(value));
+			} catch (Exception ex){
+				properties.put(key, value);
+			}	
+		}
 	}
 	
 	public boolean getDiscordAllowCmds(){		

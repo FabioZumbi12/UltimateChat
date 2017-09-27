@@ -470,11 +470,27 @@ public class UCConfig{
 		return chs;
 	}
 	
-	public void addChannel(UCChannel ch) throws IOException{
-		
+	public void delChannel(UCChannel ch){
+		UChat.get().getCmds().unregisterCmd(ch.getAlias());
+		UChat.get().getCmds().unregisterCmd(ch.getName());
+		for (Entry<List<String>, UCChannel> ch0:channels.entrySet()){
+			if (ch0.getValue().equals(ch)){
+				channels.remove(ch0.getKey());
+				break;
+			}
+		}
+		File defch = new File(UChat.get().configDir(),"channels"+File.separator+ch.getName().toLowerCase()+".conf");	
+		if (defch.exists()){
+			defch.delete();
+		}
+	}
+	
+	public void addChannel(UCChannel ch) throws IOException{	
+		UChat.get().getCmds().registerChannelAlias(ch.getAlias().toLowerCase());
+		UChat.get().getCmds().registerChannelAlias(ch.getName().toLowerCase());
 		CommentedConfigurationNode chFile;	
     	ConfigurationLoader<CommentedConfigurationNode> channelManager;		
-		File defch = new File(UChat.get().configDir()+File.separator+"channels"+File.separator+ch.getName().toLowerCase()+".conf");	
+		File defch = new File(UChat.get().configDir(),"channels"+File.separator+ch.getName().toLowerCase()+".conf");	
 		
 		channelManager = HoconConfigurationLoader.builder().setFile(defch).build();	
 		chFile = channelManager.load();

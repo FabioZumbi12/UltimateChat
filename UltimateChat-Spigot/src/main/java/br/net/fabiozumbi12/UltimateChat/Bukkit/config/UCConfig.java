@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -284,8 +285,21 @@ public class UCConfig extends FileConfiguration {
 		}
 	}
 	
+	public void delChannel(UCChannel ch) {
+		for (Entry<List<String>, UCChannel> ch0:channels.entrySet()){
+			if (ch0.getValue().equals(ch)){
+				channels.remove(ch0.getKey());
+				break;
+			}
+		}
+		File defch = new File(UChat.get().getDataFolder(),"channels"+File.separator+ch.getName().toLowerCase()+".yml");	
+		if (defch.exists()){
+			defch.delete();
+		}
+	}
+	
 	public void addChannel(UCChannel ch) throws IOException{		
-		File defch = new File(UChat.get().getDataFolder()+File.separator+"channels"+File.separator+ch.getName().toLowerCase()+".yml");		
+		File defch = new File(UChat.get().getDataFolder(),"channels"+File.separator+ch.getName().toLowerCase()+".yml");		
 		YamlConfiguration chFile = YamlConfiguration.loadConfiguration(defch);
 		chFile.options().header(""
 				+ "###################################################\n"

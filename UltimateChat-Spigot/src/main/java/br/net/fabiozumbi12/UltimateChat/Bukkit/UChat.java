@@ -368,7 +368,10 @@ public class UChat extends JavaPlugin {
 		getUCLogger().severe(getDescription().getFullName()+" disabled!");
 	}
 	
-	private void registerAliases(){
+	/** Needed to be called after register or unregister channels.
+	 * 
+	 */
+	public void registerAliases(){
 		registerAliases("channel",config.getChAliases());
         registerAliases("tell",config.getTellAliases());
         registerAliases("umsg",config.getMsgAliases());

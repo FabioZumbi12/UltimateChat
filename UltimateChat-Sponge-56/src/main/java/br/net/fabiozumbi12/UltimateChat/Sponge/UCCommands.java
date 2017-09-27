@@ -1,9 +1,10 @@
 package br.net.fabiozumbi12.UltimateChat.Sponge;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.lang3.ObjectUtils;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
@@ -36,8 +37,7 @@ public class UCCommands {
 		registerChannelAliases();		
 		registerUmsgAliases();
 		registerChAliases();			
-	}
-	
+	}	
 
 	void removeCmds(){
 		Sponge.getCommandManager().removeMapping(Sponge.getCommandManager().get("ultimatechat").get());
@@ -65,7 +65,7 @@ public class UCCommands {
 		}
 	}
 		
-	private void unregisterCmd(String cmd){
+	public void unregisterCmd(String cmd){
 		if (Sponge.getCommandManager().get(cmd).isPresent()){
 			Sponge.getCommandManager().removeMapping(Sponge.getCommandManager().get(cmd).get());
 		}
@@ -241,7 +241,7 @@ public class UCCommands {
 				    					channels.append(", "+ch.getName());
 				    				}
 				    			}
-				    			throw new CommandException(UCUtil.toText(UChat.get().getLang().get("help.channels.available").replace("{channels}", channels.toString().substring(2))));
+				    			throw new CommandException(getHelpChannel(src).build());
 				    		}
 				    		UCChannel ch = args.<UCChannel>getOne("channel").get();							
 							if (!UChat.get().getPerms().channelReadPerm(p, ch) && !UChat.get().getPerms().channelWritePerm(p, ch)){
@@ -297,87 +297,153 @@ public class UCCommands {
 				    .build(), brod);
 		}
 	}
-
-	private void registerChannelAliases() {
+	
+	public void registerChannelAlias(String cha){
+		unregisterCmd(cha);
+		UCChannel ch = UChat.get().getConfig().getChannel(cha);
+		if (ch == null){
+			return;
+		}
+		Sponge.getCommandManager().register(UChat.get().instance(), CommandSpec.builder()
+				.arguments(GenericArguments.optional(GenericArguments.remainingJoinedStrings(Text.of("message"))))
+				.permission("uchat.channel."+ch.getName())
+			    .description(Text.of("Command to use channel "+ch.getName()+"."))
+			    .executor((src, args) -> { {				    	
+			    	if (src instanceof Player){
+			    		if (args.<String>getOne("message").isPresent()){
+			    			if (UChat.mutes.contains(src.getName()) || ch.isMuted(src.getName())){
+			    				UChat.get().getLang().sendMessage(src, "channel.muted");
+			    				return CommandResult.success();
+			    			}
+			    			
+			    			UChat.tempChannels.put(src.getName(), ch.getAlias());
+			    			
+			    			Text msg = Text.of(args.<String>getOne("message").get());				    			
+			    			MessageChannelEvent.Chat event = SpongeEventFactory.createMessageChannelEventChat(
+			    					UChat.get().getVHelper().getCause(src), 
+	    							src.getMessageChannel(), 
+	    							Optional.of(src.getMessageChannel()), 				    							
+	    							new MessageEvent.MessageFormatter(Text.builder("<" + src.getName() + "> ")
+	    									.onShiftClick(TextActions.insertText(src.getName()))
+	    									.onClick(TextActions.suggestCommand("/msg " + src.getName()))
+	    									.build(), msg),
+	    							msg,  
+	    							false);
+			    			Sponge.getEventManager().post(event);
+			    		} else {
+			    			if (!ch.canLock()){
+			    				UChat.get().getLang().sendMessage(src, "help.channels.send");
+								return CommandResult.success();
+							}
+				    		if (ch.isMember((Player) src)){
+				    			UChat.tempChannels.put(src.getName(), ch.getAlias());
+				    			UChat.get().getLang().sendMessage(src, UChat.get().getLang().get("channel.alreadyon").replace("{channel}", ch.getName()));
+								return CommandResult.success();
+							}
+				    		ch.addMember((Player) src);
+				    		UChat.get().getLang().sendMessage(src, UChat.get().getLang().get("channel.entered").replace("{channel}", ch.getName()));	
+			    		}
+			    	} else if (args.<String>getOne("message").isPresent()){
+			    		UCMessages.sendFancyMessage(new String[0], Text.of(args.<String>getOne("message").get()), ch, src, null);  
+			    	} else {
+			    		StringBuilder channels = new StringBuilder();
+			    		for (UCChannel chan:UChat.get().getConfig().getChannels()){
+			    			if (!(src instanceof Player) || UChat.get().getPerms().channelWritePerm((Player)src, chan)){
+			    				channels.append(", "+chan.getName());
+			    			}
+			    		}
+			    		throw new CommandException(getHelpChannel(src).build(), true);
+			    	}
+			    	return CommandResult.success();	
+			    }})
+			    .build(), cha);
+	}
+	
+	public void registerChannelAliases() {
 		//register channel aliases
 		for (String cha:UChat.get().getConfig().getChAliases()){
-			unregisterCmd(cha);
-			UCChannel ch = UChat.get().getConfig().getChannel(cha);
-			if (ch == null){
-				continue;
-			}
-			Sponge.getCommandManager().register(UChat.get().instance(), CommandSpec.builder()
-					.arguments(GenericArguments.optional(GenericArguments.remainingJoinedStrings(Text.of("message"))))
-					.permission("uchat.channel."+ch.getName())
-				    .description(Text.of("Command to use channel "+ch.getName()+"."))
-				    .executor((src, args) -> { {				    	
-				    	if (src instanceof Player){
-				    		if (args.<String>getOne("message").isPresent()){
-				    			if (UChat.mutes.contains(src.getName()) || ch.isMuted(src.getName())){
-				    				UChat.get().getLang().sendMessage(src, "channel.muted");
-				    				return CommandResult.success();
-				    			}
-				    			
-				    			UChat.tempChannels.put(src.getName(), ch.getAlias());
-				    			
-				    			Text msg = Text.of(args.<String>getOne("message").get());				    			
-				    			MessageChannelEvent.Chat event = SpongeEventFactory.createMessageChannelEventChat(
-				    					UChat.get().getVHelper().getCause(src), 
-		    							src.getMessageChannel(), 
-		    							Optional.of(src.getMessageChannel()), 				    							
-		    							new MessageEvent.MessageFormatter(Text.builder("<" + src.getName() + "> ")
-		    									.onShiftClick(TextActions.insertText(src.getName()))
-		    									.onClick(TextActions.suggestCommand("/msg " + src.getName()))
-		    									.build(), msg),
-		    							msg,  
-		    							false);
-				    			Sponge.getEventManager().post(event);
-				    		} else {
-				    			if (!ch.canLock()){
-				    				UChat.get().getLang().sendMessage(src, "help.channels.send");
-									return CommandResult.success();
-								}
-					    		if (ch.isMember((Player) src)){
-					    			UChat.tempChannels.put(src.getName(), ch.getAlias());
-					    			UChat.get().getLang().sendMessage(src, UChat.get().getLang().get("channel.alreadyon").replace("{channel}", ch.getName()));
-									return CommandResult.success();
-								}
-					    		ch.addMember((Player) src);
-					    		UChat.get().getLang().sendMessage(src, UChat.get().getLang().get("channel.entered").replace("{channel}", ch.getName()));	
-				    		}
-				    	} else if (args.<String>getOne("message").isPresent()){
-				    		UCMessages.sendFancyMessage(new String[0], Text.of(args.<String>getOne("message").get()), ch, src, null);  
-				    	} else {
-				    		StringBuilder channels = new StringBuilder();
-				    		for (UCChannel chan:UChat.get().getConfig().getChannels()){
-				    			if (!(src instanceof Player) || UChat.get().getPerms().channelWritePerm((Player)src, chan)){
-				    				channels.append(", "+chan.getName());
-				    			}
-				    		}
-				    		throw new CommandException(UCUtil.toText(UChat.get().getLang().get("help.channels.available").replace("{channels}", channels.toString().substring(2))), true);
-				    	}
-				    	return CommandResult.success();	
-				    }})
-				    .build(), cha);
+			registerChannelAlias(cha);
 		}
 	}
 	
+	private Map<String, String> getChKeys(){
+		Map<String, String> result = new HashMap<String, String>();
+		for (String key:new UCChannel("keys","k","&b").getProperties().keySet()){
+			result.put(key, key);
+		}
+		return result;
+	}
+	
 	private CommandCallable uchat() {
+		CommandSpec delchannel = CommandSpec.builder()
+				.arguments(new ChannelCommandElement(Text.of("channel")))
+				.description(Text.of("Deletes a channel."))
+				.permission("uchat.cmd.delchannel")
+				.executor((src,args) -> {{
+					//uchat delchannel <channel>
+					Optional<UCChannel> optch = args.<UCChannel>getOne("channel");
+					if (!optch.isPresent()){
+						throw new CommandException(UChat.get().getLang().getText("channel.dontexist"), true);
+					}
+					UCChannel ch = optch.get();					
+					UChat.get().getConfig().delChannel(ch);
+					UChat.get().getLang().sendMessage(src, UChat.get().getLang().get("cmd.delchannel.success").replace("{channel}", ch.getName()));
+			    	return CommandResult.success();
+				}}).build();
+		
+		CommandSpec newchannel = CommandSpec.builder()
+				.arguments(GenericArguments.string(Text.of("channel")),
+						GenericArguments.string(Text.of("alias")),
+						GenericArguments.string(Text.of("color")))
+				.description(Text.of("Creates a new channel channel."))
+				.permission("uchat.cmd.newchannel")
+				.executor((src,args) -> {{
+					//uchat newchannel <channel> <alias> <color>
+					String ch = args.<String>getOne("channel").get();
+					String alias = args.<String>getOne("alias").get();
+					String color = args.<String>getOne("color").get();
+					if (color.length() != 2 || !color.matches("(&([a-fk-or0-9]))$")){
+						throw new CommandException(UChat.get().getLang().getText("channel.invalidcolor"), true);
+					}
+					UCChannel newch = new UCChannel(ch, alias, color);
+					try {
+						UChat.get().getConfig().addChannel(newch);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					UChat.get().getLang().sendMessage(src, UChat.get().getLang().get("cmd.newchannel.success").replace("{channel}", newch.getName()));
+			    	return CommandResult.success();
+				}}).build();
+		
 		CommandSpec chconfig = CommandSpec.builder()
 				.arguments(new ChannelCommandElement(Text.of("channel")),
-						GenericArguments.string(Text.of("key")),
+						GenericArguments.choices(Text.of("key"), getChKeys()),
 						GenericArguments.string(Text.of("value")))
 				.description(Text.of("Edit the config of a channel."))
 				.permission("uchat.cmd.chconfig")
 				.executor((src,args) -> {{
 					//uchat chconfig <channel> <key> <value>
-					UCChannel ch = args.<UCChannel>getOne("channel").get();
+					Optional<UCChannel> optch = args.<UCChannel>getOne("channel");
+					if (!optch.isPresent()){
+						throw new CommandException(UChat.get().getLang().getText("channel.dontexist"), true);
+					}
+					UCChannel ch = optch.get();
 					String key = args.<String>getOne("key").get();
 					String value = args.<String>getOne("value").get();
 					if (!ch.getProperties().containsKey(key)){
 						 throw new CommandException(UChat.get().getLang().getText("cmd.chconfig.invalidkey"), true);
 					}
-					ch.setProperty(key, ObjectUtils.clone((Object)value));
+					
+					UChat.get().getConfig().delChannel(ch);
+					
+					ch.setProperty(key, value);
+					
+					try {
+						UChat.get().getConfig().addChannel(ch);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+										
 					UChat.get().getLang().sendMessage(src, "cmd.chconfig.success");
 			    	return CommandResult.success();
 				}}).build();
@@ -480,7 +546,11 @@ public class UCCommands {
 					if (src instanceof Player){
 						Player p = (Player) src;
 						//uchat ignore channel
-						UCChannel ch = args.<UCChannel>getOne("channel").get();
+						Optional<UCChannel> optch = args.<UCChannel>getOne("channel");
+						if (!optch.isPresent()){
+							throw new CommandException(UChat.get().getLang().getText("channel.dontexist"), true);
+						}
+						UCChannel ch = optch.get();
 						if (!UChat.get().getPerms().canIgnore(p, ch)){
 							UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("chat.cantignore"));
 							 return CommandResult.success();
@@ -592,6 +662,8 @@ public class UCCommands {
 			    }})
 			    .child(help, "?")
 			    .child(chconfig, "chconfig")
+			    .child(delchannel, "delchannel")
+			    .child(newchannel, "newchannel")
 			    .child(reload, "reload")
 			    .child(clear, "clear")
 			    .child(clearAll, "clear-all")
@@ -613,44 +685,57 @@ public class UCCommands {
 		fancy.append(UCUtil.toText("\n&7--------------- "+UChat.get().getLang().get("_UChat.prefix")+" Help &7---------------\n"));		
 		fancy.append(UChat.get().getLang().getText("help.channels.enter","\n"));
 		fancy.append(UChat.get().getLang().getText("help.channels.send","\n"));
-		if (p.hasPermission("uchat.cmd.tell")){
+		fancy.append(UChat.get().getLang().getText("help.channels.list","\n"));
+		if (UChat.get().getPerms().cmdPerm(p, "uchat.cmd.tell")){
 			fancy.append(UChat.get().getLang().getText("help.tell.lock","\n"));
 			fancy.append(UChat.get().getLang().getText("help.tell.send","\n"));
 			fancy.append(UChat.get().getLang().getText("help.tell.respond","\n"));
 		}
-		if (p.hasPermission("uchat.cmd.broadcast")){
+		if (UChat.get().getPerms().cmdPerm(p, "uchat.cmd.broadcast")){
 			fancy.append(UChat.get().getLang().getText("help.cmd.broadcast","\n"));
 		}
-		if (p.hasPermission("uchat.cmd.umsg")){
+		if (UChat.get().getPerms().cmdPerm(p, "uchat.cmd.umsg")){
 			fancy.append(UChat.get().getLang().getText("help.cmd.umsg","\n"));
 		}
-		if (p.hasPermission("uchat.cmd.clear")){
+		if (UChat.get().getPerms().cmdPerm(p, "uchat.cmd.clear")){
 			fancy.append(UChat.get().getLang().getText("help.cmd.clear","\n"));
 		}
-		if (p.hasPermission("uchat.cmd.clear-all")){
+		if (UChat.get().getPerms().cmdPerm(p, "uchat.cmd.clear-all")){
 			fancy.append(UChat.get().getLang().getText("help.cmd.clear-all","\n"));
 		}
-		if (p.hasPermission("uchat.cmd.spy")){
+		if (UChat.get().getPerms().cmdPerm(p, "uchat.cmd.spy")){
 			fancy.append(UChat.get().getLang().getText("help.cmd.spy","\n"));
 		}
-		if (p.hasPermission("uchat.cmd.mute")){
+		if (UChat.get().getPerms().cmdPerm(p, "uchat.cmd.mute")){
 			fancy.append(UChat.get().getLang().getText("help.cmd.mute","\n"));
 		}
-		if (p.hasPermission("uchat.cmd.tempmute")){
+		if (UChat.get().getPerms().cmdPerm(p, "uchat.cmd.tempmute")){
 			fancy.append(UChat.get().getLang().getText("help.cmd.tempmute","\n"));
 		}
-		if (p.hasPermission("uchat.cmd.ignore.player")){
+		if (UChat.get().getPerms().cmdPerm(p, "uchat.cmd.ignore.player")){
 			fancy.append(UChat.get().getLang().getText("help.cmd.ignore.player","\n"));
 		}
-		if (p.hasPermission("uchat.cmd.ignore.channel")){
+		if (UChat.get().getPerms().cmdPerm(p, "uchat.cmd.ignore.channel")){
 			fancy.append(UChat.get().getLang().getText("help.cmd.ignore.channel","\n"));
 		}
-		if (p.hasPermission("uchat.cmd.chconfig")){
+		if (UChat.get().getPerms().cmdPerm(p, "uchat.cmd.chconfig")){
 			fancy.append(UChat.get().getLang().getText("help.cmd.chconfig","\n"));
 		}
-		if (p.hasPermission("uchat.cmd.reload")){
+		if (UChat.get().getPerms().cmdPerm(p, "uchat.cmd.reload")){
 			fancy.append(UChat.get().getLang().getText("help.cmd.reload","\n"));
 		}
+		if (UChat.get().getPerms().cmdPerm(p, "newchannel")){
+			fancy.append(UChat.get().getLang().getText("help.cmd.newchannel","\n"));	
+		}
+		if (UChat.get().getPerms().cmdPerm(p, "delchannel")){
+			fancy.append(UChat.get().getLang().getText("help.cmd.delchannel","\n"));	
+		}
+		getHelpChannel(p).applyTo(fancy);		
+		p.sendMessage(fancy.build());
+	}
+	
+	private Builder getHelpChannel(CommandSource p){
+		Builder fancy = Text.builder();
 		fancy.append(UCUtil.toText("&7------------------------------------------\n"));
 		fancy.append(UCUtil.toText(UChat.get().getLang().get("help.channels.available").replace("{channels}", "")));
 		
@@ -670,7 +755,7 @@ public class UCCommands {
 			}
 		}
 		fancy.append(UCUtil.toText("\n&7------------------------------------------ "));
-		p.sendMessage(fancy.build());
+		return fancy;
 	}
 	
 	private void sendTellHelp(CommandSource p) {

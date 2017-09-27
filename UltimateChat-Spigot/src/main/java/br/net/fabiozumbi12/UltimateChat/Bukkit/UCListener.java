@@ -1,16 +1,17 @@
 package br.net.fabiozumbi12.UltimateChat.Bukkit;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -25,7 +26,7 @@ import br.com.devpaulo.legendchat.api.events.ChatMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UCLogger.timingType;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.API.SendChannelMessageEvent;
 
-public class UCListener implements CommandExecutor,Listener {
+public class UCListener implements CommandExecutor, Listener, TabCompleter {
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -105,7 +106,30 @@ public class UCListener implements CommandExecutor,Listener {
 				 
 				 //if /ch or /channel
 				 if (label.equalsIgnoreCase("ch") || label.equalsIgnoreCase("channel")){						
-						if (args.length == 1){				
+						if (args.length == 1){
+							//ch list
+							if (args[0].equalsIgnoreCase("list")){
+								UltimateFancy fancy = new UltimateFancy();
+								fancy.coloredText("&7------------------------------------------\n");
+								fancy.coloredText(UChat.get().getLang().get("help.channels.available").replace("{channels}","")).next();
+								boolean first = true;
+								for (UCChannel ch:UChat.get().getConfig().getChannels()){
+									if (!(p instanceof Player) || UCPerms.channelReadPerm((Player)p, ch)){	
+										if (first){
+											fancy.coloredText(ch.getColor()+ch.getName()+"&a");
+											first = false;
+										} else {
+											fancy.coloredText(", "+ch.getColor()+ch.getName()+"&a");					
+										}	
+										fancy.hoverShowText(ch.getColor()+"Alias: "+ch.getAlias())
+										.clickRunCmd("/"+ch.getAlias())
+										.next();
+									}
+								}
+								fancy.coloredText("\n&7------------------------------------------").send(p);
+								return true;
+							}
+							
 							UCChannel ch = UChat.get().getConfig().getChannel(args[0]);
 							if (ch == null){
 								UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.dontexist").replace("{channel}", args[0]));
@@ -192,6 +216,26 @@ public class UCListener implements CommandExecutor,Listener {
 				 }
 				 
 				 if (args.length == 2){
+					 //chat delchannel <channel-name>
+					 if (args[0].equalsIgnoreCase("delchannel")){
+						 if (!UCPerms.cmdPerm(p, "delchannel")){
+							 UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("cmd.nopermission"));
+							 return true;
+						 }
+						 UCChannel ch = UChat.get().getConfig().getChannel(args[1]);
+						 if (ch == null){
+							 UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.dontexist").replace("{channel}", args[1]));
+							 return true;
+						 }						 
+						 for (CommandSender m:ch.getMembers()){
+							 UChat.get().getConfig().getDefChannel().addMember(m);
+						 }						 
+						 UChat.get().getConfig().delChannel(ch);
+						 UChat.get().registerAliases();
+						 UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("cmd.delchannel.success").replace("{channel}", ch.getName()));
+						 return true;
+					 }
+					 
 					 // chat ignore <channel/player>
 					 if (args[0].equalsIgnoreCase("ignore")){						 						 
 						 UCChannel ch = UChat.get().getConfig().getChannel(args[1]);
@@ -351,6 +395,34 @@ public class UCListener implements CommandExecutor,Listener {
 				 
 				 if (args.length == 4){					 
 					 
+					 //chat newchannel <channel-name> <alias> <color>
+					 if (args[0].equalsIgnoreCase("newchannel")){
+						 if (!UCPerms.cmdPerm(p, "newchannel")){
+							 UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("cmd.nopermission"));
+							 return true;
+						 }
+						 UCChannel ch = UChat.get().getConfig().getChannel(args[1]);
+						 if (ch != null){
+							 UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.alreadyexists").replace("{channel}", ch.getName()));
+							 return true;
+						 }							 
+						 String color = args[3];
+						 if (color.length() != 2 || !color.matches("(&([a-fk-or0-9]))$")){
+							 UChat.get().getLang().sendMessage(p, "channel.invalidcolor");
+							 return true;
+						 }
+						 
+						 UCChannel newch = new UCChannel(args[1], args[2], args[3]);						 
+						 try {
+							 UChat.get().getConfig().addChannel(newch);
+						 } catch (IOException e) {
+							 e.printStackTrace();
+						 }					
+						 UChat.get().registerAliases();
+						 UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("cmd.newchannel.success").replace("{channel}", newch.getName()));
+						 return true;
+					 }
+					 
 					 //chat chconfig <channel> <key> <value>
 					 if (args[0].equalsIgnoreCase("chconfig")){
 						 if (!UCPerms.cmdPerm(p, "chconfig")){
@@ -365,9 +437,16 @@ public class UCListener implements CommandExecutor,Listener {
 						 if (!ch.getProperties().containsKey(args[2])){
 							 UChat.get().getLang().sendMessage(p, "cmd.chconfig.invalidkey");
 							 return true;
-						 }
+						 }	
 						 
-						 ch.setProperty(args[2], ObjectUtils.clone(args[3]));
+						 UChat.get().getConfig().delChannel(ch);
+						 ch.setProperty(args[2], args[3]);
+						 try {
+							 UChat.get().getConfig().addChannel(ch);
+						 } catch (IOException e) {
+						     e.printStackTrace();
+						 }
+						 UChat.get().registerAliases();
 						 UChat.get().getLang().sendMessage(p, "cmd.chconfig.success");
 						 return true;
 					 }
@@ -740,6 +819,7 @@ public class UCListener implements CommandExecutor,Listener {
 		fancy.coloredText("\n&7--------------- "+UChat.get().getLang().get("_UChat.prefix")+" Help &7---------------\n");		
 		fancy.coloredText(UChat.get().getLang().get("help.channels.enter")+"\n");	
 		fancy.coloredText(UChat.get().getLang().get("help.channels.send")+"\n");	
+		fancy.coloredText(UChat.get().getLang().get("help.channels.list")+"\n");	
 		if (UCPerms.cmdPerm(p, "tell")){
 			fancy.coloredText(UChat.get().getLang().get("help.tell.lock")+"\n");	
 			fancy.coloredText(UChat.get().getLang().get("help.tell.send")+"\n");	
@@ -778,6 +858,12 @@ public class UCListener implements CommandExecutor,Listener {
 		if (UCPerms.cmdPerm(p, "chconfig")){
 			fancy.coloredText(UChat.get().getLang().get("help.cmd.chconfig")+"\n");	
 		}
+		if (UCPerms.cmdPerm(p, "newchannel")){
+			fancy.coloredText(UChat.get().getLang().get("help.cmd.newchannel")+"\n");	
+		}
+		if (UCPerms.cmdPerm(p, "delchannel")){
+			fancy.coloredText(UChat.get().getLang().get("help.cmd.delchannel")+"\n");	
+		}
 		fancy.coloredText("&7------------------------------------------\n");
 		fancy.coloredText(UChat.get().getLang().get("help.channels.available").replace("{channels}","")).next();
 		boolean first = true;
@@ -794,7 +880,7 @@ public class UCListener implements CommandExecutor,Listener {
 				.next();
 			}
 		}
-		fancy.coloredText("\n&7------------------------------------------ ").send(p);	
+		fancy.coloredText("\n&7------------------------------------------").send(p);	
 	}
 
 	private void sendChannelHelp(Player p) {
@@ -815,6 +901,30 @@ public class UCListener implements CommandExecutor,Listener {
 		p.sendMessage(UChat.get().getLang().get("help.tell.lock"));
 		p.sendMessage(UChat.get().getLang().get("help.tell.send"));
 		p.sendMessage(UChat.get().getLang().get("help.tell.respond"));
+	}
+
+	@Override
+	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+		List<String> tab = new ArrayList<String>();
+		if (command.getName().equals("uchat")){
+			if (args.length == 1){
+				tab.addAll(UChat.get().getLang().helpStrings());
+			}
+			if (args.length >= 2 && args[0].equalsIgnoreCase("chconfig")){
+				if (args.length == 2){
+					for (UCChannel ch:UChat.get().getConfig().getChannels()){
+						tab.add(ch.getName());	
+					}								
+				}
+				if (args.length == 3){
+					UCChannel ch = UChat.get().getConfig().getChannel(args[1]);
+					if (ch == null) return null;					
+					tab.addAll(ch.getProperties().keySet());				
+				}
+			}
+			
+		}
+		return tab;
 	}
 	
 }

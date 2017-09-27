@@ -76,7 +76,7 @@ public class UChat {
 		return this.econ;
 	}
 	
-	protected UCCommands getCmds(){
+	public UCCommands getCmds(){
 		return this.cmds;
 	}
 	

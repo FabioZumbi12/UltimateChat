@@ -33,8 +33,14 @@ public class UCLang {
 	public SortedSet<String> helpStrings(){
 		SortedSet<String> values = new TreeSet<String>();
 		for (Object help:Lang.keySet()){
-			if (help.toString().startsWith("cmdmanager.help.")){
-				values.add(help.toString().replace("cmdmanager.help.", ""));
+			if (help.toString().startsWith("help.cmd.")){
+				String helpStr = help.toString().replace("help.cmd.", "");
+				if (helpStr.equals("broadcast") || helpStr.equals("umsg")) continue;
+				if (helpStr.split("\\.").length >= 2){
+					values.add(helpStr.split("\\.")[0]);
+				} else {
+					values.add(helpStr);
+				}				
 			}
 		}
 		return values;
