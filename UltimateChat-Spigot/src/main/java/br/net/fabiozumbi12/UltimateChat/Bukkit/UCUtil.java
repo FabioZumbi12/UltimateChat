@@ -45,7 +45,7 @@ public class UCUtil {
 	
 	public static void saveResource(String name, File saveTo){
 		try {
-			InputStream isReader = UChat.get().getResource(name);
+			InputStream isReader = UChat.class.getResourceAsStream(name);
 			FileOutputStream fos = new FileOutputStream(saveTo);
 			while (isReader.available() > 0) {
 		        fos.write(isReader.read());
@@ -159,7 +159,7 @@ public class UCUtil {
 			 Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_GRAY+"> Broadcast: "+ChatColor.RESET+message.toString().substring(1));
 		 }		 
 		 			 
-		 if (UChat.get().getConfig().getBool("general.json-events")){
+		 if (UChat.get().getConfig().getBoolean("general.json-events")){
 			 UltimateFancy fanci = new UltimateFancy();
 			 fanci.text(message.toString().substring(1));
 			 
@@ -189,6 +189,9 @@ public class UCUtil {
 					 fanci.clickSuggestCmd(suggest.toString().substring(1).replace("{clicked}", p.getName()));						 
 				 }
 				 fanci.send(p);
+				 if (UChat.get().getJedis() != null){
+					 UChat.get().getJedis().sendRawMessage(fanci.toString());
+				 }
 			 }
 		 } else {
 			 for (Player p:Bukkit.getOnlinePlayers()){

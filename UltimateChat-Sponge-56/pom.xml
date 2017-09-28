@@ -42,7 +42,7 @@
 			<scope>system</scope>
 			<systemPath>${project.basedir}/../UltimateChat-JDA/target/UltimateChat-JDA.jar</systemPath>
         </dependency>  
-	
+        
   </dependencies>
   <build>
     <finalName>DONT-DOWNLOAD-SpongeAPI56-Reference</finalName>

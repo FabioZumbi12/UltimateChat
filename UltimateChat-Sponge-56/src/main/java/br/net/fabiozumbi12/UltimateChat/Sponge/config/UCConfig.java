@@ -56,6 +56,13 @@ public class UCConfig{
 			config.getNode("debug","timings").setValue(config.getNode("debug","timings").getBoolean(false));
 			config.getNode("language").setValue(config.getNode("language").getString("EN-US"));
 			
+			config.getNode("jedis").setComment("Jedis configuration.\nUse Jedis to send messages between other servers running Jedis.\nConsider a replecement as Bungeecoord.");
+			config.getNode("jedis","enable").setValue(config.getNode("jedis","enable").getBoolean(false));
+			config.getNode("jedis","server-id").setValue(config.getNode("jedis","server-id").getString("&e-ChangeThis-&r "));
+			config.getNode("jedis","ip").setValue(config.getNode("jedis","ip").getString("localhost"));
+			config.getNode("jedis","port").setValue(config.getNode("jedis","port").getInt(6379));
+			config.getNode("jedis","pass").setValue(config.getNode("jedis","pass").getString(""));
+			
 			config.getNode("discord").setComment("Enable the two way chat into discord and minecraft.\nGenerate your bot token following this instructions: https://goo.gl/utfRRv");
 			config.getNode("discord","use").setValue(config.getNode("discord","use").getBoolean(false));
 			config.getNode("discord","update-status").setValue(config.getNode("discord","update-status").getBoolean(true));

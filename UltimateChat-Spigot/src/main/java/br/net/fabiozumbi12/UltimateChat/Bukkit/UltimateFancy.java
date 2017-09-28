@@ -20,6 +20,7 @@ import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionData;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UCLogger.timingType;
 
@@ -120,6 +121,87 @@ public class UltimateFancy {
 		return this;
 	}
 	
+	public UltimateFancy appendObject(JSONObject json){
+		workingGroup.add(json);
+		return this;
+	}
+	
+	public UltimateFancy appendString(String jsonObject){
+		Object obj = JSONValue.parse(jsonObject);
+		if (obj instanceof JSONObject){
+			workingGroup.add((JSONObject)obj);
+		}
+		if (obj instanceof JSONArray){
+			for (Object object:((JSONArray)obj)){
+				if (object.toString().isEmpty()) continue;
+				workingGroup.add((JSONObject)JSONValue.parse(object.toString()));			
+			}			
+		}
+		return this;
+	}
+	
+	public List<JSONObject> getWorkingElements(){
+		return this.workingGroup;
+	}
+	
+	public List<JSONObject> getStoredElements(){
+		return new ArrayList<JSONObject>(this.constructor);
+	}
+	
+	public UltimateFancy removeObject(JSONObject json){
+		this.workingGroup.remove(json);
+		this.constructor.remove(json);
+		return this;
+	}
+	
+	public UltimateFancy appendAtFirst(String json){
+		Object obj = JSONValue.parse(json);
+		if (obj instanceof JSONObject){
+			appendAtFirst((JSONObject)obj);
+		}
+		if (obj instanceof JSONArray){
+			for (Object object:((JSONArray)obj)){
+				if (object.toString().isEmpty()) continue;
+				appendAtFirst((JSONObject)JSONValue.parse(object.toString()));			
+			}			
+		}
+		return this;
+	}
+	
+	public UltimateFancy appendAtFirst(JSONObject json){
+		JSONArray jarray = new JSONArray();
+		jarray.add(json);
+		for (JSONObject obj:getStoredElements()){
+			jarray.add(obj);
+		}
+		this.constructor = jarray;
+		return this;
+	}
+	
+	public UltimateFancy appendAtEnd(String json){
+		Object obj = JSONValue.parse(json);
+		if (obj instanceof JSONObject){
+			appendAtEnd((JSONObject)obj);
+		}
+		if (obj instanceof JSONArray){
+			for (Object object:((JSONArray)obj)){
+				if (object.toString().isEmpty()) continue;
+				appendAtEnd((JSONObject)JSONValue.parse(object.toString()));			
+			}			
+		}
+		return this;
+	}
+	
+	public UltimateFancy appendAtEnd(JSONObject json){
+		List<JSONObject> jarray = new ArrayList<JSONObject>();		
+		for (JSONObject obj:getWorkingElements()){
+			jarray.add(obj);
+		}
+		jarray.add(json);
+		this.workingGroup = jarray;
+		return this;
+	}
+	
 	private JSONObject filterColors(JSONObject obj){
 		for (Entry<String, Boolean> format:lastformats.entrySet()){
 			obj.put(format.getKey(), format.getValue());
@@ -154,7 +236,7 @@ public class UltimateFancy {
 	public void send(CommandSender to){
 		next();
 		if (to instanceof Player){
-			if (UChat.get().getConfig().getBool("general.json-events")){
+			if (UChat.get().getConfig().getBoolean("general.json-events")){
 				UChat.get().getUCLogger().timings(timingType.END, "UltimateFancy#send()|json-events:true|before tellraw");
 				UCUtil.performCommand((Player)to, Bukkit.getConsoleSender(), "tellraw " + to.getName() + " " + toJson());
 				UChat.get().getUCLogger().timings(timingType.END, "UltimateFancy#send()|json-events:true|after tellraw");
@@ -169,7 +251,13 @@ public class UltimateFancy {
 		UChat.get().getUCLogger().debug("JSON: "+toJson());
 	}
 	
+	@Override
+	public String toString(){		
+		return this.toJson();
+	}
+	
 	private String toJson(){
+		next();
 		return "[\"\","+constructor.toJSONString().substring(1);
 	}
 	

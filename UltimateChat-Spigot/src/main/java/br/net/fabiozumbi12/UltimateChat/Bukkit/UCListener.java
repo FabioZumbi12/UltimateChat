@@ -540,8 +540,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 									UChat.get().command.add(p.getName());
 									sendPreTell(p, receiver, msg);
 								}
-								return;
-								//sendTell(p, receiver, msg);						
+								return;						
 							} else {
 								UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("cmd.tell.nonetorespond"));
 								return;
@@ -586,7 +585,17 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 						//send to player
 						Player receiver = UChat.get().getServer().getPlayer(args[1]);
 							
-						if (receiver == null || !receiver.isOnline() || !p.canSee(receiver)){
+						if (receiver == null || !receiver.isOnline()){
+							if (UChat.get().getJedis() != null){
+								UChat.get().getJedis().sendTellMessage(p, args[1], msg.substring(args[1].length()+1));
+								return;
+							} else {
+								UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("listener.invalidplayer"));
+								return;
+							}
+						}
+						
+						if (!p.canSee(receiver)){
 							UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("listener.invalidplayer"));
 							return;
 						}
@@ -758,7 +767,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 		UChat.get().getConfig().getDefChannel().addMember(p);
 		if (UChat.get().getUCJDA() != null){
 			UChat.get().getUCJDA().sendRawToDiscord(UChat.get().getLang().get("discord.join").replace("{player}", p.getName()));
-			if (UChat.get().getConfig().getBool("discord.update-status")){
+			if (UChat.get().getConfig().getBoolean("discord.update-status")){
 				UChat.get().getUCJDA().updateGame(UChat.get().getLang().get("discord.game").replace("{online}", String.valueOf(UChat.get().getServer().getOnlinePlayers().size())));
 			}
 		}
@@ -808,7 +817,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 		}
 		if (UChat.get().getUCJDA() != null){
 			UChat.get().getUCJDA().sendRawToDiscord(UChat.get().getLang().get("discord.leave").replace("{player}", p.getName()));
-			if (UChat.get().getConfig().getBool("discord.update-status")){
+			if (UChat.get().getConfig().getBoolean("discord.update-status")){
 				UChat.get().getUCJDA().updateGame(UChat.get().getLang().get("discord.game").replace("{online}", String.valueOf(UChat.get().getServer().getOnlinePlayers().size()-1)));
 			}
 		}

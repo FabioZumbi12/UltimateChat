@@ -426,7 +426,7 @@ public class UCConfig extends FileConfiguration {
 		return Arrays.asList(configs.getString("general.umsg-cmd-aliases").replace(" ", "").split(","));
 	}
 	
-    public Boolean getBool(String key){		
+    public boolean getBoolean(String key){		
 		return configs.getBoolean(key, false);
 	}
     

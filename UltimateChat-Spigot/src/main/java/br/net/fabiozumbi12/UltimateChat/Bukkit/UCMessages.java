@@ -175,12 +175,12 @@ public class UCMessages {
 				msgPlayers.put(tellReceiver, sendMessage(sender, tellReceiver, evmsg, channel, false));
 			}			
 			if (isIgnoringPlayers(tellReceiver.getName(), sender.getName())){
-				msgPlayers.put(UChat.get().getServer().getConsoleSender(), new UltimateFancy(UChat.get().getLang().get("chat.ignored")+msgPlayers.values().stream().findAny().get().toOldFormat()));
+				msgPlayers.put(UChat.get().getServer().getConsoleSender(), new UltimateFancy(UChat.get().getLang().get("chat.ignored")+msgPlayers.get(sender).toOldFormat()));
 			}
 		}
 		
 		if (!msgPlayers.keySet().contains(UChat.get().getServer().getConsoleSender())){
-			msgPlayers.put(UChat.get().getServer().getConsoleSender(), msgPlayers.values().stream().findAny().get());
+			msgPlayers.put(UChat.get().getServer().getConsoleSender(), msgPlayers.get(sender));
 		}
 		
 		//fire post event
@@ -196,6 +196,12 @@ public class UCMessages {
 			UChat.get().getUCLogger().timings(timingType.END, "UCMessages#send()|after send");
 		});	
 				
+		//send to jedis
+		if (channel != null && !channel.isTell() && UChat.get().getJedis() != null){
+			UChat.get().getJedis().sendMessage(channel.getName().toLowerCase(), msgPlayers.get(sender).toString());
+		}
+		
+		//send to jda
 		if (channel != null && UChat.get().getUCJDA() != null){
 			if (channel.isTell()){
 				UChat.get().getUCJDA().sendTellToDiscord(msgPlayers.get(sender).toOldFormat());
@@ -255,7 +261,7 @@ public class UCMessages {
 	}
 	
 	@SuppressWarnings("deprecation")
-	private static UltimateFancy sendMessage(CommandSender sender, CommandSender receiver, String msg, UCChannel ch, boolean isSpy){		
+	public static UltimateFancy sendMessage(CommandSender sender, Object receiver, String msg, UCChannel ch, boolean isSpy){		
 		UltimateFancy fanci = new UltimateFancy();
 				
 		if (!ch.getName().equals("tell")){
@@ -309,13 +315,13 @@ public class UCMessages {
 					fanci.clickSuggestCmd(formatTags(tag, suggest, sender, receiver, msg, ch));
 				}
 				
-				if (tag.equals("message") && (!msg.equals(mention(sender, receiver, msg)) || msg.contains(UChat.get().getConfig().getString("general.item-hand.placeholder")))){					
+				if (tag.equals("message") && (!msg.equals(mention(sender, (CommandSender)receiver, msg)) || msg.contains(UChat.get().getConfig().getString("general.item-hand.placeholder")))){					
 					tooltip = formatTags("", tooltip, sender, receiver, msg, ch);	
 					format = formatTags(tag, format, sender, receiver, msg, ch);
 					
-					if (UChat.get().getConfig().getBool("general.item-hand.enable") && msg.contains(UChat.get().getConfig().getString("general.item-hand.placeholder")) && sender instanceof Player){					
+					if (UChat.get().getConfig().getBoolean("general.item-hand.enable") && msg.contains(UChat.get().getConfig().getString("general.item-hand.placeholder")) && sender instanceof Player){					
 						fanci.text(format).hoverShowItem(((Player)sender).getItemInHand()).next();
-					} else if (!msg.equals(mention(sender, receiver, msg)) && UChat.get().getConfig().getString("mention.hover-message").length() > 0 && StringUtils.containsIgnoreCase(msg, receiver.getName())){
+					} else if (!msg.equals(mention(sender, (CommandSender)receiver, msg)) && UChat.get().getConfig().getString("mention.hover-message").length() > 0 && StringUtils.containsIgnoreCase(msg, ((CommandSender)receiver).getName())){
 						tooltip = formatTags("", UChat.get().getConfig().getString("mention.hover-message"), sender, receiver, msg, ch);						
 						fanci.text(format).hoverShowText(tooltip).next();
 					} else if (tooltip.length() > 0){	
@@ -363,7 +369,7 @@ public class UCMessages {
 	}
 			
 	public static String mention(Object sender, CommandSender receiver, String msg) {
-		if (UChat.get().getConfig().getBool("mention.enable")){
+		if (UChat.get().getConfig().getBoolean("mention.enable")){
 		    for (Player p:UChat.get().getServer().getOnlinePlayers()){			
 				if (StringUtils.containsIgnoreCase(msg, p.getName())){
 					if (receiver instanceof Player && receiver.equals(p)){
@@ -397,21 +403,24 @@ public class UCMessages {
 	public static String formatTags(String tag, String text, Object cmdSender, Object receiver, String msg, UCChannel ch){	
 		if (receiver instanceof CommandSender && tag.equals("message")){			
 			text = text.replace("{message}", mention(cmdSender, (CommandSender)receiver, msg));
-			if (UChat.get().getConfig().getBool("general.item-hand.enable")){
+			if (UChat.get().getConfig().getBoolean("general.item-hand.enable")){
 				text = text.replace(UChat.get().getConfig().getString("general.item-hand.placeholder"), formatTags("",ChatColor.translateAlternateColorCodes('&', UChat.get().getConfig().getString("general.item-hand.format")),cmdSender, receiver, msg, ch));
 			}			
 		} else {
 			text = text.replace("{message}", msg);
 		}
-		if (tag.equals("message") && !UChat.get().getConfig().getBool("general.enable-tags-on-messages")){
+		if (tag.equals("message") && !UChat.get().getConfig().getBoolean("general.enable-tags-on-messages")){
 			return text;
 		}
 		text = text.replace("{ch-color}", ch.getColor())
 		.replace("{ch-name}", ch.getName())
 		.replace("{ch-alias}", ch.getAlias());		
 		if (cmdSender instanceof CommandSender){
-			text = text.replace("{playername}", ((CommandSender)cmdSender).getName())
-					.replace("{receivername}", ((CommandSender)receiver).getName());
+			text = text.replace("{playername}", ((CommandSender)cmdSender).getName());
+			if (receiver instanceof CommandSender)
+				text = text.replace("{receivername}", ((CommandSender)receiver).getName());
+			if (receiver instanceof String)
+				text = text.replace("{receivername}", (String)receiver);
 		} else {
 			text = text.replace("{playername}", (String)cmdSender)
 					.replace("{receivername}", (String)receiver);
@@ -598,7 +607,7 @@ public class UCMessages {
 		text = text.replaceAll("\\{.*\\}", "");		
 		
 		//remove remain PlaceholderAPI
-		if (UChat.get().getConfig().getBool("general.remove-unnused-placeholderapi")){
+		if (UChat.get().getConfig().getBoolean("general.remove-unnused-placeholderapi")){
 			text = text.replaceAll("\\%.*\\%", "");	
 		}		
 		

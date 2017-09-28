@@ -88,7 +88,7 @@ public class UChatBungee implements PluginMessageListener, Listener {
     					fanci.clickRunCmd(UCMessages.formatTags(tag, "/"+execute, sender, p.getName(), msg, chan));
     				}
     				
-    				if (UChat.get().getConfig().getBool("mention.enable") && tag.equals("message") && !StringUtils.containsIgnoreCase(msg, sender)){
+    				if (UChat.get().getConfig().getBoolean("mention.enable") && tag.equals("message") && !StringUtils.containsIgnoreCase(msg, sender)){
     					tooltip = UCMessages.formatTags(tag, tooltip, sender, p.getName(), msg, chan);	
     					format = UCMessages.formatTags(tag, format, sender, p.getName(), msg, chan);
     					if (UChat.get().getConfig().getString("mention.hover-message").length() > 0 && StringUtils.containsIgnoreCase(msg, p.getName())){

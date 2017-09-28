@@ -30,7 +30,7 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface{
 		try {
 			jda = new JDABuilder(AccountType.BOT).setToken(this.uchat.getConfig().getString("discord.token")).buildBlocking();
 			jda.addEventListener(this);
-			if (plugin.getConfig().getBool("discord.update-status")){
+			if (plugin.getConfig().getBoolean("discord.update-status")){
 				jda.getPresence().setGame(Game.of(plugin.getLang().get("discord.game").replace("{online}", String.valueOf(plugin.getServer().getOnlinePlayers().size()))));
 			}			
 		} catch (LoginException e) {

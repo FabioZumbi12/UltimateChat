@@ -23,6 +23,7 @@ import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.service.economy.EconomyService;
 
 import br.net.fabiozumbi12.UltimateChat.Sponge.API.uChatAPI;
+import br.net.fabiozumbi12.UltimateChat.Sponge.Jedis.UCJedisLoader;
 import br.net.fabiozumbi12.UltimateChat.Sponge.config.UCConfig;
 import br.net.fabiozumbi12.UltimateChat.Sponge.config.UCLang;
 import br.net.fabiozumbi12.UltimateChat.Sponge.config.VersionData;
@@ -105,6 +106,11 @@ public class UChat {
 		return this.helper;
 	}
 	
+	private UCJedisLoader jedis;
+	public UCJedisLoader getJedis(){
+		return this.jedis;
+	}
+	
 	protected static HashMap<String,String> tempChannels = new HashMap<String,String>();
 	protected static HashMap<String,String> tellPlayers = new HashMap<String,String>();
 	protected static HashMap<String,String> tempTellPlayers = new HashMap<String,String>();
@@ -142,9 +148,12 @@ public class UChat {
             logger.info("Init commands module...");
     		this.cmds = new UCCommands(this);
     		
-    		game.getEventManager().registerListeners(plugin, new UCListener());         
-                     
-    		//init other features
+    		game.getEventManager().registerListeners(plugin, new UCListener());
+    		
+    		//init other features    		
+    		//Jedis
+    		registerJedis();    		
+    		//JDA
     		registerJDA();  
     		
     		logger.info("Init API module...");
@@ -185,7 +194,15 @@ public class UChat {
         		getConfig().getDefChannel().addMember(p);
         	}					 
 		}		
+		registerJedis();
 		registerJDA();
+	}
+	
+	protected void registerJedis(){
+		if (this.config.getBool("jedis","enable"))
+		this.jedis = new UCJedisLoader(this.config.getString("jedis","ip"), 
+				this.config.getInt("jedis","port"), 
+				this.config.getString("jedis","pass"), new ArrayList<UCChannel>(this.config.getChannels()));
 	}
 	
 	protected void registerJDA(){
@@ -223,6 +240,9 @@ public class UChat {
 	
 	@Listener
 	public void onStopServer(GameStoppingServerEvent e) {
+		if (this.jedis != null){
+			this.jedis.closePool();
+		}
 		if (this.UCJDA != null){
         	this.UCJDA.sendRawToDiscord(lang.get("discord.stop"));
 		}		
