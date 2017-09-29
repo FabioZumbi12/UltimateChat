@@ -428,19 +428,15 @@ public class UCConfig{
 				    				
 				Map<String, Object> chProps = new HashMap<String, Object>();
 				channel.getChildrenMap().forEach((key,value)->{
-					StringBuilder rkey = new StringBuilder();
-					Object obj = null;
+					String rkey = "";					
 					if (value.hasMapChildren()){
-						rkey.append(key.toString());
-						for (Entry<Object, ? extends CommentedConfigurationNode> vl:value.getChildrenMap().entrySet()){
-							rkey.append("."+vl.getKey().toString());
-							obj = vl.getValue().getValue();
+						rkey = key.toString();
+						for (Entry<Object, ? extends CommentedConfigurationNode> vl:value.getChildrenMap().entrySet()){													
+							chProps.put(rkey+"."+vl.getKey(), vl.getValue().getValue());
 						}											
 					} else {
-						rkey.append(key.toString());
-						obj = value.getValue();
-					}		
-					chProps.put(rkey.toString(), obj);
+						chProps.put(key.toString(), value.getValue());
+					}
 				});
 				
 				UCChannel ch = new UCChannel(chProps);
@@ -534,8 +530,8 @@ public class UCConfig{
 				+ "  allow-server-cmds: false - Use this channel to send commands from discord > minecraft.\n"
 				+ "  channelID: '' - The ID of your Discord Channel. Enable debug on your discord to get the channel ID.\n");
 		
-		ch.getProperties().forEach((key,value)->{
-			chFile.getNode((Object[])key.toString().split("\\.")).setValue(value);
+		ch.getProperties().forEach((key,value)->{			
+			chFile.getNode((Object[])key.split("\\.")).setValue(value);
 		});
 		channelManager.save(chFile);
 		channels.put(Arrays.asList(ch.getName().toLowerCase(), ch.getAlias().toLowerCase()), ch);
