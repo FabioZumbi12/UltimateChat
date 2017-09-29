@@ -298,7 +298,7 @@ public class UCCommands {
 		}
 	}
 	
-	public void registerChannelAlias(String cha){
+	private void registerChannelAlias(String cha){
 		unregisterCmd(cha);
 		UCChannel ch = UChat.get().getConfig().getChannel(cha);
 		if (ch == null){
@@ -408,6 +408,7 @@ public class UCCommands {
 					UCChannel newch = new UCChannel(ch, alias, color);
 					try {
 						UChat.get().getConfig().addChannel(newch);
+						registerChannelAliases();
 					} catch (Exception e) {
 						e.printStackTrace();
 					}

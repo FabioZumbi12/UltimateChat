@@ -29,11 +29,11 @@ public class UCConfig{
 	
 	private HashMap<List<String>,UCChannel> channels = null;
 	
-	private File defConfig = new File(UChat.get().configDir()+"config.conf");
+	private File defConfig = new File(UChat.get().configDir(),"config.conf");
 	private CommentedConfigurationNode config;	
 	private ConfigurationLoader<CommentedConfigurationNode> configManager;
 	
-	private File defProt = new File(UChat.get().configDir()+"protections.conf");
+	private File defProt = new File(UChat.get().configDir(),"protections.conf");
 	private CommentedConfigurationNode prots;	
 	private ConfigurationLoader<CommentedConfigurationNode> protsManager;
 	
@@ -492,9 +492,7 @@ public class UCConfig{
 		}
 	}
 	
-	public void addChannel(UCChannel ch) throws IOException{	
-		UChat.get().getCmds().registerChannelAlias(ch.getAlias().toLowerCase());
-		UChat.get().getCmds().registerChannelAlias(ch.getName().toLowerCase());
+	public void addChannel(UCChannel ch) throws IOException{
 		CommentedConfigurationNode chFile;	
     	ConfigurationLoader<CommentedConfigurationNode> channelManager;		
 		File defch = new File(UChat.get().configDir(),"channels"+File.separator+ch.getName().toLowerCase()+".conf");	

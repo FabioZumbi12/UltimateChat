@@ -25,13 +25,15 @@ public class uChatAPI {
 	}
 	
 	public boolean registerNewChannel(UCChannel channel) throws IOException{
-		UChat.get().getConfig().addChannel(channel);		
+		UChat.get().getConfig().addChannel(channel);
+		UChat.get().getCmds().registerChannelAliases();
 		return true;
 	}
 	
 	public boolean registerNewChannel(Map<String, Object> properties) throws IOException{
 		UCChannel ch = new UCChannel(properties);	
 		UChat.get().getConfig().addChannel(ch);		
+		UChat.get().getCmds().registerChannelAliases();
 		return true;
 	}
 	
