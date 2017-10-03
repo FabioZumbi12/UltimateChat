@@ -190,7 +190,7 @@ public class UCUtil {
 				 }
 				 fanci.send(p);
 				 if (UChat.get().getJedis() != null){
-					 UChat.get().getJedis().sendRawMessage(fanci.toString());
+					 UChat.get().getJedis().sendRawMessage(fanci);
 				 }
 			 }
 		 } else {

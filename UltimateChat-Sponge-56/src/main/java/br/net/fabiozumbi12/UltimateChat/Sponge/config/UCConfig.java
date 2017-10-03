@@ -62,6 +62,7 @@ public class UCConfig{
 			config.getNode("jedis","ip").setValue(config.getNode("jedis","ip").getString("localhost"));
 			config.getNode("jedis","port").setValue(config.getNode("jedis","port").getInt(6379));
 			config.getNode("jedis","pass").setValue(config.getNode("jedis","pass").getString(""));
+			config.getNode("jedis","response-symbol").setValue(config.getNode("jedis","response-symbol").getString("&7« "));
 			
 			config.getNode("discord").setComment("Enable the two way chat into discord and minecraft.\nGenerate your bot token following this instructions: https://goo.gl/utfRRv");
 			config.getNode("discord","use").setValue(config.getNode("discord","use").getBoolean(false));

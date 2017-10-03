@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
+import redis.clients.jedis.exceptions.JedisConnectionException;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UCChannel;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UCMessages;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UChat;
@@ -23,12 +24,15 @@ public class UCJedisLoader {
 	private String[] channels;
 	private ChatChannel channel;
 	protected HashMap<String, String> tellPlayers = new HashMap<String, String>();
+	private String thisId;
 	
 	protected JedisPool getPool(){
-		return this.pool;
+		return this.pool;		
 	}
 	
 	public UCJedisLoader(String ip, int port, String auth, List<UCChannel> channels){
+		this.thisId = UChat.get().getConfig().getString("jedis.server-id").replace("$", "");
+		
 		channels.add(new UCChannel("generic"));
 		channels.add(new UCChannel("tellsend"));
 		channels.add(new UCChannel("tellresponse"));
@@ -47,22 +51,30 @@ public class UCJedisLoader {
 			this.pool = new JedisPool(new JedisPoolConfig(), ip, port, 10000, auth);
 		}	    
 		
-		Jedis jedis = this.pool.getResource();
-		new Thread(new Runnable() {
-	        @Override
-	        public void run() {
-	            try {
-	            	jedis.subscribe(channel, newChannels);
-	            } catch (Exception e) {
-	                e.printStackTrace();
-	            }
-	        }
-	    }).start();   
+		try {
+			Jedis jedis = this.pool.getResource();
+			new Thread(new Runnable() {
+		        @Override
+		        public void run() {
+		            try {
+		            	jedis.subscribe(channel, newChannels);
+		            } catch (Exception e) {
+		                e.printStackTrace();
+		            }
+		        }
+		    }).start();   
+		} catch (JedisConnectionException e){
+			UChat.get().getLogger().warning("JEDIS not conected! Try again with /chat reload, or check the status of your Redis server.");
+			return;
+		} 
 		
 	    UChat.get().getUCLogger().info("JEDIS conected.");
 	}	
 	
 	public void sendTellMessage(CommandSender sender, String tellReceiver, String msg){
+		UltimateFancy fancy = new UltimateFancy();
+		fancy.textAtStart(ChatColor.translateAlternateColorCodes('&', this.thisId));
+		
 		for (Player receiver:UChat.get().getServer().getOnlinePlayers()){			
 			if (!receiver.equals(tellReceiver) && !receiver.equals(sender) && UChat.get().isSpy.contains(receiver.getName())){
 				String spyformat = UChat.get().getConfig().getString("general.spy-format");
@@ -71,9 +83,7 @@ public class UCJedisLoader {
 				receiver.sendMessage(ChatColor.translateAlternateColorCodes('&', spyformat));
 			}
 		}
-		UltimateFancy fancy = UCMessages.sendMessage(sender, tellReceiver, msg, new UCChannel("tell"), false);
-		
-		fancy.appendAtFirst("{\"tellreceiver\":\""+tellReceiver+"\"}");
+		fancy.appendString(UCMessages.sendMessage(sender, tellReceiver, msg, new UCChannel("tell"), false).toString());
 		tellPlayers.put(tellReceiver, sender.getName());
 		
 		if (Arrays.asList(channels).contains("tellsend")){
@@ -82,7 +92,7 @@ public class UCJedisLoader {
 				public void run() {
 					try {
 						Jedis jedis = pool.getResource();
-						jedis.publish("tellsend", fancy.toString());
+						jedis.publish("tellsend", thisId+"$"+tellReceiver+"$"+fancy.toString());
 						jedis.quit();
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -92,14 +102,15 @@ public class UCJedisLoader {
 		}
 	}
 	
-	public void sendRawMessage(String value){	
+	public void sendRawMessage(UltimateFancy value){
+		
 		if (Arrays.asList(channels).contains("generic")){
 			Bukkit.getScheduler().runTaskAsynchronously(UChat.get(), new Runnable(){
 				@Override
 				public void run() {
 					try {
 						Jedis jedis = pool.getResource();
-						jedis.publish("generic", "%"+UChat.get().getConfig().getString("jedis.server-id")+"%"+value);
+						jedis.publish("generic", thisId+"$"+value.toString());
 						jedis.quit();
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -109,14 +120,18 @@ public class UCJedisLoader {
 		}		
 	}
 	
-	public void sendMessage(String channel, String value){	
+	public void sendMessage(String channel, UltimateFancy value){	
+		UltimateFancy fancy = new UltimateFancy();
+		fancy.textAtStart(ChatColor.translateAlternateColorCodes('&', this.thisId));	
+		fancy.appendString(value.toString());
+			
 		if (Arrays.asList(channels).contains(channel)){
 			Bukkit.getScheduler().runTaskAsynchronously(UChat.get(), new Runnable(){
 				@Override
 				public void run() {
 					try {
 						Jedis jedis = pool.getResource();
-						jedis.publish(channel, "%"+UChat.get().getConfig().getString("jedis.server-id")+"%"+value);
+						jedis.publish(channel, thisId+"$"+fancy.toString());
 						jedis.quit();
 					} catch (Exception e) {
 						e.printStackTrace();

@@ -5,10 +5,11 @@ debug:
 language: EN-US
 jedis:
   enable: false
-  server-id: '&e-ChangeThis-&r '
+  server-id: '&e[ChangeThis]&r '
   ip: localhost
   port: 6379
   pass: ''
+  response-symbol: '&7« '
 discord:
   use: false
   update-status: true

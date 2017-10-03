@@ -198,7 +198,7 @@ public class UCMessages {
 				
 		//send to jedis
 		if (channel != null && !channel.isTell() && UChat.get().getJedis() != null){
-			UChat.get().getJedis().sendMessage(channel.getName().toLowerCase(), msgPlayers.get(sender).toString());
+			UChat.get().getJedis().sendMessage(channel.getName().toLowerCase(), msgPlayers.get(sender));
 		}
 		
 		//send to jda

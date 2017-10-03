@@ -86,11 +86,8 @@ public class UltimateFancy {
 		return this.text(text);
 	}
 	
-	/**Root text to show on chat.
-	 * @param text
-	 * @return instance of same {@link UltimateFancy}.
-	 */
-	public UltimateFancy text(String text){		
+	private List<JSONObject> parseColors(String text){
+		List<JSONObject> jsonList = new ArrayList<JSONObject>();
 		for (String part:text.split("(?="+ChatColor.COLOR_CHAR+")")){
 			JSONObject workingText = new JSONObject();	
 			
@@ -116,8 +113,33 @@ public class UltimateFancy {
 			if (!workingText.containsKey("color")){
 				workingText.put("color", "white");
 			}					
-			workingGroup.add(workingText);
-		}			
+			jsonList.add(workingText);
+		}
+		return jsonList;
+	}
+	
+	/**Root text to show on chat.
+	 * @param text
+	 * @return instance of same {@link UltimateFancy}.
+	 */
+	public UltimateFancy text(String text){		
+		workingGroup.addAll(parseColors(text));
+		return this;
+	}
+	
+	/**Root text to show on chat, but in first position.
+	 * @param text
+	 * @return instance of same {@link UltimateFancy}.
+	 */
+	public UltimateFancy textAtStart(String text){		
+		JSONArray jarray = new JSONArray();		
+		for (JSONObject jobj:parseColors(text)){
+			jarray.add(jobj);
+		}				
+		for (JSONObject jobj:getStoredElements()){
+			jarray.add(jobj);
+		}	
+		this.constructor = jarray;
 		return this;
 	}
 	
@@ -134,7 +156,11 @@ public class UltimateFancy {
 		if (obj instanceof JSONArray){
 			for (Object object:((JSONArray)obj)){
 				if (object.toString().isEmpty()) continue;
-				workingGroup.add((JSONObject)JSONValue.parse(object.toString()));			
+				if (object instanceof JSONArray){
+					appendString(object.toString());
+				} else {
+					workingGroup.add((JSONObject)JSONValue.parse(object.toString()));	
+				}
 			}			
 		}
 		return this;
@@ -171,9 +197,9 @@ public class UltimateFancy {
 	public UltimateFancy appendAtFirst(JSONObject json){
 		JSONArray jarray = new JSONArray();
 		jarray.add(json);
-		for (JSONObject obj:getStoredElements()){
-			jarray.add(obj);
-		}
+		for (JSONObject jobj:getStoredElements()){
+			jarray.add(jobj);
+		}		
 		this.constructor = jarray;
 		return this;
 	}
@@ -194,9 +220,7 @@ public class UltimateFancy {
 	
 	public UltimateFancy appendAtEnd(JSONObject json){
 		List<JSONObject> jarray = new ArrayList<JSONObject>();		
-		for (JSONObject obj:getWorkingElements()){
-			jarray.add(obj);
-		}
+		jarray.addAll(getWorkingElements());
 		jarray.add(json);
 		this.workingGroup = jarray;
 		return this;

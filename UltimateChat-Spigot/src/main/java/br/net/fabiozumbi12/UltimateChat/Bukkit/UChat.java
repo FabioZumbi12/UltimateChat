@@ -271,6 +271,7 @@ public class UChat extends JavaPlugin {
 	protected void registerJedis(){
 		if (this.jedis != null){
 			this.jedis.closePool();
+			this.jedis = null;
 		}
 		if (getConfig().getBoolean("jedis.enable")){
 			this.logger.info("Init JEDIS...");			

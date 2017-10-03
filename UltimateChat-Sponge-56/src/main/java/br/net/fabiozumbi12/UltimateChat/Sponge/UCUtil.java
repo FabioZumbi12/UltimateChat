@@ -19,7 +19,7 @@ public class UCUtil {
     }
 
 	public static String toColor(String str){
-    	return str.replaceAll("(&([a-fk-or0-9]))", "\u00A7$2"); 
+    	return str.replaceAll("(&([a-fk-or0-9]))", "§$2"); 
     }
 	
 	public static String stripColor(String str) {

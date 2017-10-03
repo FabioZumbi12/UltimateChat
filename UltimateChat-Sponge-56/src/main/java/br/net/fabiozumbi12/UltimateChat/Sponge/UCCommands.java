@@ -113,11 +113,11 @@ public class UCCommands {
 					    .build(), tell);
 			} else {
 				Sponge.getCommandManager().register(UChat.get().instance(), CommandSpec.builder()
-						.arguments(GenericArguments.optional(GenericArguments.firstParsing(GenericArguments.player(Text.of("receiver"))), GenericArguments.string(Text.of("receiver"))), GenericArguments.optional(GenericArguments.remainingJoinedStrings(Text.of("message"))))
+						.arguments(GenericArguments.optional(GenericArguments.firstParsing(GenericArguments.player(Text.of("receiver")), GenericArguments.string(Text.of("receiver")))), GenericArguments.optional(GenericArguments.remainingJoinedStrings(Text.of("message"))))
 					    .description(Text.of("Lock your chat with a player or send private messages."))
 					    .permission("uchat.cmd.tell")
 					    .executor((src, args) -> { {					    	
-					    	if (!args.<Object>getOne("receiver").isPresent()){
+					    	if (!args.hasAny("receiver")){
 					    		if (UChat.tellPlayers.containsKey(src.getName())){
 									String tp = UChat.tellPlayers.get(src.getName());
 									UChat.tellPlayers.remove(src.getName());
@@ -126,9 +126,12 @@ public class UCCommands {
 								}
 					    	} else {
 					    		Object recObj = args.<Object>getOne("receiver").get();
+					    		UChat.get().getLogger().severe("1");
 						    	if (src instanceof Player){
+						    		UChat.get().getLogger().severe("2");
 						    		Player p = (Player) src;					    		
 						    		if (args.<String>getOne("message").isPresent()){
+						    			UChat.get().getLogger().severe("3");
 						    			Text msg = Text.of(args.<String>getOne("message").get());	
 						    			
 						    			//receiver as player
@@ -144,6 +147,11 @@ public class UCCommands {
 												return CommandResult.success();
 											}
 											
+											if (!p.canSee(receiver)){
+												UChat.get().getLang().sendMessage(p, "listener.invalidplayer");
+												return CommandResult.success();
+											}
+											
 											UChat.tempTellPlayers.put(p.getName(), receiver.getName());
 											UChat.command.add(p.getName());										
 											
@@ -155,8 +163,18 @@ public class UCCommands {
 						    				UChat.tempTellPlayers.put(p.getName(), "CONSOLE");
 											UChat.command.add(p.getName());
 											sendPreTell(p, Sponge.getServer().getConsole(), msg);
-						    			}
+						    			} 
 						    			
+						    			//send to jedis
+						    			else if (UChat.get().getJedis() != null){
+						    				UChat.get().getJedis().sendTellMessage(p, recObj.toString(), msg);
+											return CommandResult.success();												
+						    			} 
+						    			
+						    			//not found
+						    			else {
+						    				UChat.get().getLang().sendMessage(p, "listener.invalidplayer");
+						    			}						    			
 						    			return CommandResult.success();					    			
 						    		} 
 						    		//lock tell
@@ -304,15 +322,23 @@ public class UCCommands {
 		if (ch == null){
 			return;
 		}
+		
 		Sponge.getCommandManager().register(UChat.get().instance(), CommandSpec.builder()
 				.arguments(GenericArguments.optional(GenericArguments.remainingJoinedStrings(Text.of("message"))))
-				.permission("uchat.channel."+ch.getName())
+				.permission("uchat.channel."+ch.getName()+".read")
+				.permission("uchat.channel."+ch.getName()+".write")
 			    .description(Text.of("Command to use channel "+ch.getName()+"."))
 			    .executor((src, args) -> { {				    	
 			    	if (src instanceof Player){
+			    		
 			    		if (args.<String>getOne("message").isPresent()){
 			    			if (UChat.mutes.contains(src.getName()) || ch.isMuted(src.getName())){
 			    				UChat.get().getLang().sendMessage(src, "channel.muted");
+			    				return CommandResult.success();
+			    			}
+			    			
+			    			if (!UChat.get().getPerms().channelWritePerm(src, ch)){
+			    				UChat.get().getLang().sendMessage(src, UChat.get().getLang().get("channel.nopermission").replace("{channel}", ch.getName()));
 			    				return CommandResult.success();
 			    			}
 			    			
@@ -346,12 +372,6 @@ public class UCCommands {
 			    	} else if (args.<String>getOne("message").isPresent()){
 			    		UCMessages.sendFancyMessage(new String[0], Text.of(args.<String>getOne("message").get()), ch, src, null);  
 			    	} else {
-			    		StringBuilder channels = new StringBuilder();
-			    		for (UCChannel chan:UChat.get().getConfig().getChannels()){
-			    			if (!(src instanceof Player) || UChat.get().getPerms().channelWritePerm((Player)src, chan)){
-			    				channels.append(", "+chan.getName());
-			    			}
-			    		}
 			    		throw new CommandException(getHelpChannel(src).build(), true);
 			    	}
 			    	return CommandResult.success();	

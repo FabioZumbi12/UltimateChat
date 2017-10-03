@@ -69,7 +69,7 @@ public class UChat {
 	private EconomyService econ;
 
 	private UCPerms perms;
-	protected UCPerms getPerms(){
+	public UCPerms getPerms(){
 		return this.perms;
 	}
 	
@@ -117,7 +117,7 @@ public class UChat {
 	protected static HashMap<String,String> respondTell = new HashMap<String,String>();
 	protected static HashMap<String,List<String>> ignoringPlayer = new HashMap<String,List<String>>();
 	protected static List<String> mutes = new ArrayList<String>();
-	protected static List<String> isSpy = new ArrayList<String>();	
+	public static List<String> isSpy = new ArrayList<String>();	
 	protected static List<String> command = new ArrayList<String>();
 		
 	@Listener

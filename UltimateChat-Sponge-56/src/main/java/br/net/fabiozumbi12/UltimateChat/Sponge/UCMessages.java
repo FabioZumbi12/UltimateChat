@@ -36,7 +36,7 @@ import br.net.fabiozumbi12.UltimateChat.Sponge.UCLogger.timingType;
 import br.net.fabiozumbi12.UltimateChat.Sponge.API.PostFormatChatMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.Sponge.API.SendChannelMessageEvent;
 
-class UCMessages {
+public class UCMessages {
 
 	private static HashMap<String, String> registeredReplacers = new HashMap<String,String>();
 	private static String[] defFormat = new String[0];	
@@ -217,8 +217,9 @@ class UCMessages {
 			UChat.get().getLogger().timings(timingType.END, "UCMessages#send()|after send");
 		});		
 		
+		//send to jedis
 		if (channel != null && !channel.isTell() && UChat.get().getJedis() != null){
-			UChat.get().getJedis().sendMessage(channel.getName().toLowerCase(), msgPlayers.get(sender).toString());
+			UChat.get().getJedis().sendMessage(channel.getName().toLowerCase(), msgPlayers.get(sender));
 		}
 		
 		//send to jda
@@ -284,7 +285,7 @@ class UCMessages {
 		UChat.ignoringPlayer.put(p, list);
 	}
 	
-	private static Text sendMessage(CommandSource sender, CommandSource receiver, Text srcTxt, UCChannel ch, boolean isSpy){
+	public static Text sendMessage(CommandSource sender, Object receiver, Text srcTxt, UCChannel ch, boolean isSpy){
 		Builder formatter = Text.builder();
 		Builder playername = Text.builder();
 		Builder message = Text.builder();
@@ -369,7 +370,7 @@ class UCMessages {
 						}
 						msgBuilder.append(UCUtil.toText(format)).onHover(TextActions.showItem(hand.createSnapshot()));
 					}
-					else if (UChat.get().getConfig().getString("mention","hover-message").length() > 0 && StringUtils.containsIgnoreCase(msg, receiver.getName())){
+					else if (UChat.get().getConfig().getString("mention","hover-message").length() > 0 && StringUtils.containsIgnoreCase(msg, ((CommandSource)receiver).getName())){
 						tooltip = formatTags("", UChat.get().getConfig().getString("mention","hover-message"), sender, receiver, msg, ch);						
 						msgBuilder.append(UCUtil.toText(format)).onHover(TextActions.showText(UCUtil.toText(tooltip)));
 					} else if (tooltip.length() > 0){				
@@ -442,7 +443,7 @@ class UCMessages {
 		return "";
 	}
 	
-	private static String mention(Object sender, CommandSource receiver, String msg) {
+	private static String mention(Object sender, Object receiver, String msg) {
 		if (UChat.get().getConfig().getBool("mention","enable")){
 		    for (Player p:Sponge.getServer().getOnlinePlayers()){			
 				if (!sender.equals(p) && StringUtils.containsIgnoreCase(msg, p.getName())){
@@ -472,7 +473,7 @@ class UCMessages {
 		return msg;
 	}
 	
-	static String formatTags(String tag, String text, Object cmdSender, Object receiver, String msg, UCChannel ch){	
+	private static String formatTags(String tag, String text, Object cmdSender, Object receiver, String msg, UCChannel ch){	
 		if (receiver instanceof CommandSource && tag.equals("message")){			
 			text = text.replace("{message}", mention(cmdSender, (CommandSource)receiver, msg));
 			if (UChat.get().getConfig().getBool("general","item-hand","enable")){
@@ -488,11 +489,19 @@ class UCMessages {
 		.replace("{ch-name}", ch.getName())
 		.replace("{ch-alias}", ch.getAlias());		
 		if (cmdSender instanceof CommandSource){
-			text = text.replace("{playername}", ((CommandSource)cmdSender).getName())
-					.replace("{receivername}", ((CommandSource)receiver).getName());
+			text = text.replace("{playername}", ((CommandSource)cmdSender).getName());
+			if (receiver instanceof CommandSource){
+				text = text.replace("{receivername}", ((CommandSource)receiver).getName());
+			}
+			if (receiver instanceof String){
+				text = text.replace("{receivername}", receiver.toString());
+			}
 		} else {
-			text = text.replace("{playername}", (String)cmdSender)
-					.replace("{receivername}", (String)receiver);
+			text = text.replace("{playername}", (String)cmdSender);
+			if (receiver instanceof CommandSource)
+				text = text.replace("{receivername}", ((CommandSource)receiver).getName());
+			if (receiver instanceof String)
+				text = text.replace("{receivername}", (String)receiver);					
 		}
 		for (String repl:registeredReplacers.keySet()){
 			if (registeredReplacers.get(repl).equals(repl)){
