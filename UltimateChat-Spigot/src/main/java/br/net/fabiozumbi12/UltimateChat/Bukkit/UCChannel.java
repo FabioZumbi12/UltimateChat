@@ -43,6 +43,7 @@ public class UCChannel {
 		properties.put("receivers-message", true);
 		properties.put("cost", 0.0);
 		properties.put("bungee", false);
+		properties.put("jedis", false);
 		properties.put("channelAlias.enable", false);
 		properties.put("channelAlias.sendAs", "player");
 		properties.put("channelAlias.cmd", "");
@@ -117,6 +118,14 @@ public class UCChannel {
 			}	
 		}			
 	}
+	
+	public boolean useJedis(){
+		return (boolean) properties.get("jedis");
+	}
+	
+	public void setJedis(boolean use){
+		properties.put("jedis", use);
+	}	
 	
 	public boolean getDiscordAllowCmds(){		
 		return (boolean) properties.get("discord.allow-server-cmds");
@@ -224,7 +233,7 @@ public class UCChannel {
 	}
 	
 	public boolean getReceiversMsg(){
-		return Boolean.getBoolean(properties.get("receivers-message").toString());
+		return (boolean) properties.get("receivers-message");
 	}
 	
 	public void muteThis(String player){

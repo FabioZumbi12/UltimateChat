@@ -83,7 +83,7 @@ public class ChatChannel extends JedisPubSub {
 						String messagef = msgc[1];
 				    	
 						UCChannel ch = UChat.get().getConfig().getChannel(channel);
-						if (ch == null) return;
+						if (ch == null || !ch.useJedis()) return;
 						
 						if (ch.getDistance() == 0){
 							if (ch.neeFocus()){

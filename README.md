@@ -18,6 +18,7 @@ Check WIKI for:
 * Permissions
 * Channels
 * BungeeCoord
+* Redis Server Messaging
 * Discord Configuration
 * API Usage
 * ...and more

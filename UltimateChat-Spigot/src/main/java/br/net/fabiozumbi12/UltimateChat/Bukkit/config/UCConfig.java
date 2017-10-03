@@ -250,6 +250,7 @@ public class UCConfig extends FileConfiguration {
         	channel.set("name", "Global");
         	channel.set("alias", "g");
         	channel.set("color", "&2");
+        	channel.set("jedis", true);
         	channel.save(g);
         	
         	File l = new File(chfolder, "local.yml");
@@ -266,6 +267,7 @@ public class UCConfig extends FileConfiguration {
         	channel.set("name", "Admin");
         	channel.set("alias", "ad");
         	channel.set("color", "&b");
+        	channel.set("jedis", true);
         	channel.save(ad);
         	
         	listOfFiles = chfolder.listFiles();

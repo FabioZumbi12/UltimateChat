@@ -199,10 +199,20 @@ public class UChat {
 	}
 	
 	protected void registerJedis(){
-		if (this.config.getBool("jedis","enable"))
-		this.jedis = new UCJedisLoader(this.config.getString("jedis","ip"), 
-				this.config.getInt("jedis","port"), 
-				this.config.getString("jedis","pass"), new ArrayList<UCChannel>(this.config.getChannels()));
+		if (this.jedis != null){
+			this.jedis.closePool();
+			this.jedis = null;
+		}
+		if (this.config.getBool("jedis","enable")){
+			this.logger.info("Init JEDIS...");	
+			try {
+				this.jedis = new UCJedisLoader(this.config.getString("jedis","ip"), 
+						this.config.getInt("jedis","port"), 
+						this.config.getString("jedis","pass"), new ArrayList<UCChannel>(this.config.getChannels()));
+			} catch (Exception e){
+				this.logger.warning("Could not connect to REDIS server! Check ip, password and port, and if the REDIS server is running.");
+			}
+		}		
 	}
 	
 	protected void registerJDA(){

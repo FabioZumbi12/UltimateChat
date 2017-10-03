@@ -399,6 +399,7 @@ public class UCConfig{
 			channel.getNode("name").setValue("Global");
 			channel.getNode("alias").setValue("g");
 			channel.getNode("color").setValue("&2");
+			channel.getNode("jedis").setValue(true);
 			channelManager.save(channel);
         	
         	File l = new File(chfolder, "local.conf");
@@ -417,6 +418,7 @@ public class UCConfig{
 			channel.getNode("name").setValue("Admin");
 			channel.getNode("alias").setValue("ad");
 			channel.getNode("color").setValue("&b");
+			channel.getNode("jedis").setValue(true);
 			channelManager.save(channel);
 			
         	listOfFiles = chfolder.listFiles();

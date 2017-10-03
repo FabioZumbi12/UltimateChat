@@ -67,8 +67,7 @@ public class UCJedisLoader {
 		} catch (JedisConnectionException e){
 			UChat.get().getLogger().warning("JEDIS not conected! Try again with /chat reload, or check the status of your Redis server.");
 			return;
-		}		
-		
+		}				
 		UChat.get().getLogger().info("JEDIS conected.");
 	}	
 		

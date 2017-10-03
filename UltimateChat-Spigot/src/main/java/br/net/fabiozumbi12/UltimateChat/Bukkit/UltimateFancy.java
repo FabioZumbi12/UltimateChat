@@ -230,6 +230,9 @@ public class UltimateFancy {
 		for (Entry<String, Boolean> format:lastformats.entrySet()){
 			obj.put(format.getKey(), format.getValue());
 		}
+		if (lastColor.isColor()){
+			obj.put("color", lastColor.name().toLowerCase());
+		}
 		if (lastColor.isFormat()){
 			String formatStr = lastColor.name().toLowerCase();
 			if (lastColor.equals(ChatColor.MAGIC)){
@@ -240,10 +243,7 @@ public class UltimateFancy {
 			}
 			lastformats.put(formatStr, true);
 			obj.put(formatStr, true);
-		} 
-		if (lastColor.isColor()){
-			obj.put("color", lastColor.name().toLowerCase());
-		}
+		} 		
 		if (lastColor.equals(ChatColor.RESET)){
 			obj.put("color", "white");
 			for (String format:lastformats.keySet()){
