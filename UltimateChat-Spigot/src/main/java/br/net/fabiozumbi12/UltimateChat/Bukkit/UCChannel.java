@@ -212,7 +212,7 @@ public class UCChannel {
 	}
 	
 	public double getCost(){
-		return (double) properties.get("cost");
+		return Double.parseDouble(properties.get("cost").toString());
 	}
 	
 	public void setCost(double cost){
@@ -220,11 +220,11 @@ public class UCChannel {
 	}
 	
 	public void setReceiversMsg(boolean show){
-		properties.put("cost", show);
+		properties.put("receivers-message", show);
 	}
 	
 	public boolean getReceiversMsg(){
-		return (boolean) properties.get("receivers-message");
+		return Boolean.getBoolean(properties.get("receivers-message").toString());
 	}
 	
 	public void muteThis(String player){
