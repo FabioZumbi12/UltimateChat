@@ -10,7 +10,7 @@
 _Put if is the **Spigot** or **Sponge** version._  
 Plataform:  
 
-_Inform you RedProtect jar name like **UltimateChat-Spigot-7.0.3.jar**._  
+_Inform your UltimateChat jar name like **UltimateChat-Spigot-7.0.3.jar**._  
 Jar version:  
 
 _Your server Minecraft version_  
