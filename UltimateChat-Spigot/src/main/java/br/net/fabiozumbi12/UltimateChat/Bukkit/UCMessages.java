@@ -584,7 +584,12 @@ public class UCMessages {
 					}
 				}	
 			}					
-			if (UChat.PlaceHolderAPI){
+			if (UChat.PlaceHolderAPI){				
+				if (receiver instanceof Player){
+					while (text.contains("%rel_")){
+						text = PlaceholderAPI.setRelationalPlaceholders(sender, (Player)receiver, text);
+					}					
+				}
 				text = PlaceholderAPI.setPlaceholders(sender, text);
 				if (tag.equals("message")){					
 					text = composeColor(sender,text);

@@ -250,7 +250,7 @@ public class UChat extends JavaPlugin {
 	}
 	
 	protected void reload(){
-		this.getServer().getScheduler().cancelTasks(UChat.get());
+		this.getServer().getScheduler().cancelTasks(this);
 		try {
 			this.config = new UCConfig(this);
 		} catch (IOException | InvalidConfigurationException e) {
