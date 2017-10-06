@@ -14,10 +14,14 @@ import br.net.fabiozumbi12.UltimateChat.Sponge.config.TagsCategory;
 
 public class uChatAPI {
 	
-	public boolean registerNewTag(String tagName, String format, String clickCmd, List<String> hoverMessages){
-		TagsCategory tagsCat = new TagsCategory(format, clickCmd, hoverMessages, null, null, null);
+	public boolean registerNewTag(String tagName, String format, String clickCmd, List<String> hoverMessages, String permission, List<String> shoinworlds, List<String> hideinworlds){
+		TagsCategory tagsCat = new TagsCategory(format, clickCmd, hoverMessages, permission, shoinworlds, hideinworlds);
 		UChat.get().getConfig().root().tags.put(tagName, tagsCat);
-		return false;
+		return true;
+	}
+	
+	public boolean registerNewTag(String tagName, String format, String clickCmd, List<String> hoverMessages){		
+		return registerNewTag(tagName, format, clickCmd, hoverMessages, null, null, null);
 	}
 	
 	public boolean registerNewChannel(UCChannel channel) throws IOException{
@@ -27,10 +31,8 @@ public class uChatAPI {
 	}
 	
 	public boolean registerNewChannel(Map<String, Object> properties) throws IOException{
-		UCChannel ch = new UCChannel(properties);	
-		UChat.get().getConfig().addChannel(ch);		
-		UChat.get().getCmds().registerChannelAliases();
-		return true;
+		UCChannel ch = new UCChannel(properties);
+		return registerNewChannel(ch);
 	}
 	
 	@Deprecated
