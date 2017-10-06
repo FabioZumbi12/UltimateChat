@@ -35,22 +35,22 @@ public class UCUtil {
 		 boolean isCmd = false;
 		 boolean isUrl = false;
 		 for (String arg:args){
-			 if (arg.contains(UChat.get().getConfig().getString("broadcast","on-hover"))){
-				 hover.append(" "+arg.replace(UChat.get().getConfig().getString("broadcast","on-hover"), ""));
+			 if (arg.contains(UChat.get().getConfig().root().broadcast.on_hover)){
+				 hover.append(" "+arg.replace(UChat.get().getConfig().root().broadcast.on_hover, ""));
 				 isHover = true;
 				 isCmd = false;
 				 isUrl = false;
 				 continue;
 			 }
-			 if (arg.contains(UChat.get().getConfig().getString("broadcast","on-click"))){
-				 cmdline.append(" "+arg.replace(UChat.get().getConfig().getString("broadcast","on-click"), ""));
+			 if (arg.contains(UChat.get().getConfig().root().broadcast.on_click)){
+				 cmdline.append(" "+arg.replace(UChat.get().getConfig().root().broadcast.on_click, ""));
 				 isCmd = true;
 				 isHover = false;
 				 isUrl = false;
 				 continue;
 			 }
-			 if (arg.contains(UChat.get().getConfig().getString("broadcast","url"))){
-				 url.append(" "+arg.replace(UChat.get().getConfig().getString("broadcast","url"), ""));
+			 if (arg.contains(UChat.get().getConfig().root().broadcast.url)){
+				 url.append(" "+arg.replace(UChat.get().getConfig().root().broadcast.url, ""));
 				 isCmd = false;
 				 isHover = false;
 				 isUrl = true;

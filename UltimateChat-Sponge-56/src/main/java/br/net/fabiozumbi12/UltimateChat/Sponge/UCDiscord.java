@@ -32,9 +32,9 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
 	public UCDiscord(UChat plugin){
 		this.uchat = plugin;
 		try {
-			jda = new JDABuilder(AccountType.BOT).setToken(this.uchat.getConfig().getString("discord","token")).buildBlocking();
+			jda = new JDABuilder(AccountType.BOT).setToken(this.uchat.getConfig().root().discord.token).buildBlocking();
 			jda.addEventListener(this);
-			if (plugin.getConfig().getBool("discord","update-status")){
+			if (plugin.getConfig().root().discord.update_status){
 				jda.getPresence().setGame(Game.of(plugin.getLang().get("discord.game").replace("{online}", String.valueOf(Sponge.getServer().getOnlinePlayers().size()))));
 			}			
 		} catch (LoginException e) {
@@ -57,18 +57,18 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
 				String message = e.getMessage().getRawContent();	
 				
 				//check if is cmd
-				if (message.startsWith(this.uchat.getConfig().getString("discord","server-commands","alias")) && ch.getDiscordAllowCmds()){
-					message = message.replace(this.uchat.getConfig().getString("discord","server-commands","alias")+" ", "");
-					if (!this.uchat.getConfig().getStringList("discord","server-commands","whitelist").isEmpty()){
+				if (message.startsWith(this.uchat.getConfig().root().discord.server_commands.alias) && ch.getDiscordAllowCmds()){
+					message = message.replace(this.uchat.getConfig().root().discord.server_commands.alias+" ", "");
+					if (!this.uchat.getConfig().root().discord.server_commands.withelist.isEmpty()){
 						int count = 0;
-						for (String cmd:this.uchat.getConfig().getStringList("discord","server-commands","whitelist")){
+						for (String cmd:this.uchat.getConfig().root().discord.server_commands.withelist){
 							if (message.startsWith(cmd)) count++;
 						}
 						if (count == 0) continue;
 					}
-					if (!this.uchat.getConfig().getStringList("discord","server-commands","blacklist").isEmpty()){
+					if (!this.uchat.getConfig().root().discord.server_commands.blacklist.isEmpty()){
 						int count = 0;
-						for (String cmd:this.uchat.getConfig().getStringList("discord","server-commands","blacklist")){
+						for (String cmd:this.uchat.getConfig().root().discord.server_commands.blacklist){
 							if (message.startsWith(cmd)) count++;
 						}
 						if (count > 0) continue;
@@ -112,14 +112,14 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
 	}
 	
 	public void sendTellToDiscord(String text){
-		if (!uchat.getConfig().getString("discord","tell-channel-id").isEmpty()){
-			sendToChannel(uchat.getConfig().getString("discord","tell-channel-id"), text);
+		if (!uchat.getConfig().root().discord.tell_channel_id.isEmpty()){
+			sendToChannel(uchat.getConfig().root().discord.tell_channel_id, text);
 		}
 	}
 	
 	public void sendRawToDiscord(String text){
-		if (!uchat.getConfig().getString("discord","log-channel-id").isEmpty()){
-			sendToChannel(uchat.getConfig().getString("discord","log-channel-id"), text);
+		if (!uchat.getConfig().root().discord.log_channel_id.isEmpty()){
+			sendToChannel(uchat.getConfig().root().discord.log_channel_id, text);
 		}			
 	}
 	

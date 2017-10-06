@@ -17,12 +17,12 @@ public class ChatChannel extends JedisPubSub {
 
 	public ChatChannel(String[] channels){
 		this.channels = channels;
-		this.thisId = UChat.get().getConfig().getString("jedis","server-id").replace("$", "");
+		this.thisId = UChat.get().getConfig().root().jedis.server_id.replace("$", "");
 	}
 	
     @Override
     public void onMessage(String channel, final String message) {
-    	if (!UChat.get().getConfig().getBool("debug","messages") && message.startsWith(this.thisId)) return;
+    	if (!UChat.get().getConfig().root().debug.messages && message.startsWith(this.thisId)) return;
     	
     	if (Arrays.asList(channels).contains(channel)){
     		Sponge.getScheduler().createAsyncExecutor(UChat.get()).execute(new Runnable(){

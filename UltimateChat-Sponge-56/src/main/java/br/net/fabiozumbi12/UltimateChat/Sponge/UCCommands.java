@@ -28,10 +28,10 @@ public class UCCommands {
 		unregisterCmd("uchat");
 		Sponge.getCommandManager().register(plugin, uchat(),"ultimatechat","uchat","chat");	
 		
-		if (UChat.get().getConfig().getBool("tell","enable")){
+		if (UChat.get().getConfig().root().tell.enable){
 			registerTellAliases();
 		}
-		if (UChat.get().getConfig().getBool("broadcast","enable")){
+		if (UChat.get().getConfig().root().broadcast.enable){
 			registerUbroadcastAliases();
 		}
 		registerChannelAliases();		
@@ -42,12 +42,12 @@ public class UCCommands {
 	void removeCmds(){
 		Sponge.getCommandManager().removeMapping(Sponge.getCommandManager().get("ultimatechat").get());
 		
-		if (UChat.get().getConfig().getBool("tell","enable")){
+		if (UChat.get().getConfig().root().tell.enable){
 			for (String cmd:UChat.get().getConfig().getTellAliases()){			
 				Sponge.getCommandManager().removeMapping(Sponge.getCommandManager().get(cmd).get());
 			}
 		}
-		if (UChat.get().getConfig().getBool("broadcast","enable")){
+		if (UChat.get().getConfig().root().broadcast.enable){
 			for (String cmd:UChat.get().getConfig().getBroadcastAliases()){
 				Sponge.getCommandManager().removeMapping(Sponge.getCommandManager().get(cmd).get());
 			}

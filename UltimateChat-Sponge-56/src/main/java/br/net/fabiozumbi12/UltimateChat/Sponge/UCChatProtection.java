@@ -7,8 +7,6 @@ import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
-import ninja.leaping.configurate.commented.CommentedConfigurationNode;
-
 import org.apache.commons.lang3.StringUtils;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
@@ -34,12 +32,12 @@ class UCChatProtection {
 		
 		//mute check
 		if (muted.contains(p.getName())){
-			p.sendMessage(UChat.get().getConfig().getProtMsg("chat-protection","anti-ip","punish","mute-msg"));
+			p.sendMessage(UCUtil.toText(UChat.get().getConfig().protections().anti_ip.punish.mute_msg));
 			return null;
 		}
 		
 		//antispam
-		if (UChat.get().getConfig().getProtBool("chat-protection","antispam","enable") && !p.hasPermission("uchat.bypass-spam")){	
+		if (UChat.get().getConfig().protections().antispam.enable && !p.hasPermission("uchat.bypass-spam")){	
 			
 			//check spam messages
 			if (!chatSpam.containsKey(p)){
@@ -50,9 +48,9 @@ class UCChatProtection {
 							chatSpam.remove(p);
 						}						
 					}						
-				},UChat.get().getConfig().getProtInt("chat-protection","antispam","time-beteween-messages"), TimeUnit.SECONDS);
+				},UChat.get().getConfig().protections().antispam.time_beteween_messages,TimeUnit.SECONDS);
 			} else if (!chatSpam.get(p).equalsIgnoreCase(msg)){				
-				p.sendMessage(UChat.get().getConfig().getProtMsg("chat-protection","antispam","colldown-msg"));
+				p.sendMessage(UCUtil.toText(UChat.get().getConfig().protections().antispam.cooldown_msg));
 				return null;
 			}
 			
@@ -66,14 +64,14 @@ class UCChatProtection {
 							msgSpam.remove(nmsg);
 						}						
 					}						
-					},UChat.get().getConfig().getProtInt("chat-protection","antispam","time-beteween-same-messages"), TimeUnit.SECONDS);
+					},UChat.get().getConfig().protections().antispam.time_beteween_same_messages, TimeUnit.SECONDS);
 			} else {
 				msgSpam.put(msg, msgSpam.get(msg)+1);				
-				if (msgSpam.get(msg) >= UChat.get().getConfig().getProtInt("chat-protection","antispam","count-of-same-message")){
-					Sponge.getCommandManager().process(Sponge.getServer().getConsole(),UChat.get().getConfig().getProtString("chat-protection","antispam","cmd-action").replace("{player}", p.getName()));
+				if (msgSpam.get(msg) >= UChat.get().getConfig().protections().antispam.count_of_same_message){
+					Sponge.getCommandManager().process(Sponge.getServer().getConsole(),UChat.get().getConfig().protections().antispam.cmd_action.replace("{player}", p.getName()));
 					msgSpam.remove(msg);
 				} else {
-					p.sendMessage(UChat.get().getConfig().getProtMsg("chat-protection","antispam","wait-message"));
+					p.sendMessage(UCUtil.toText(UChat.get().getConfig().protections().antispam.wait_message));
 					
 				}
 				return null;
@@ -81,21 +79,21 @@ class UCChatProtection {
 		}
 				
 		//censor
-		if (UChat.get().getConfig().getProtBool("chat-protection","censor","enable") && !p.hasPermission("uchat.bypass-censor")){
+		if (UChat.get().getConfig().protections().censor.enable && !p.hasPermission("uchat.bypass-censor")){
 			int act = 0;
-			for (Entry<Object, ? extends CommentedConfigurationNode> word:UChat.get().getConfig().getProtReplecements().getChildrenMap().entrySet()){
-				if (!StringUtils.containsIgnoreCase(msg, word.getKey().toString())){
+			for (Entry<String, String> word:UChat.get().getConfig().protections().censor.replace_words.entrySet()){
+				if (!StringUtils.containsIgnoreCase(msg, word.getKey())){
 					continue;
 				} 				
 				
-				String replaceby = word.getValue().getString();
-				if (UChat.get().getConfig().getProtBool("chat-protection","censor","replace-by-symbol")){
-					replaceby = word.getKey().toString().replaceAll("(?s).", UChat.get().getConfig().getProtString("chat-protection","censor","by-symbol"));
+				String replaceby = word.getValue();
+				if (UChat.get().getConfig().protections().censor.replace_by_symbol){
+					replaceby = word.getKey().toString().replaceAll("(?s).", UChat.get().getConfig().protections().censor.by_symbol);
 				}
 				
-				if (!UChat.get().getConfig().getProtBool("chat-protection","censor","replace-partial-word")){
+				if (!UChat.get().getConfig().protections().censor.replace_partial_word){
 					msg = msg.replaceAll("(?i)"+"\\b"+Pattern.quote(word.getKey().toString())+"\\b", replaceby);
-					if (UChat.get().getConfig().getProtBool("chat-protection","censor","action","on-partial-words")){
+					if (UChat.get().getConfig().protections().censor.action.on_partial_words){
 						act++;
 					}
 				} else {
@@ -104,9 +102,9 @@ class UCChatProtection {
 				}				
 			}
 			if (act > 0){
-				String action = UChat.get().getConfig().getProtString("chat-protection","censor","action","cmd");
+				String action = UChat.get().getConfig().protections().censor.action.cmd;
 				if (action.length() > 1){
-					List<String> chs = UChat.get().getConfig().getProtStringList("chat-protection","censor","action","only-on-channels");
+					List<String> chs = UChat.get().getConfig().protections().censor.action.only_on_channels;
 					if (chs.size() > 0 && chs.get(0).length() > 1 && chan != null){
 						for (String ch:chs){
 							if (ch.length() > 1 && (ch.equalsIgnoreCase(chan.getName()) || ch.equalsIgnoreCase(chan.getAlias()))){
@@ -121,14 +119,14 @@ class UCChatProtection {
 			}
 		}
 		
-		String regexIP = UChat.get().getConfig().getProtString("chat-protection","anti-ip","custom-ip-regex");
-		String regexUrl = UChat.get().getConfig().getProtString("chat-protection","anti-ip","custom-url-regex");
+		String regexIP = UChat.get().getConfig().protections().anti_ip.custom_ip_regex;
+		String regexUrl = UChat.get().getConfig().protections().anti_ip.custom_url_regex;
 		
 		//check ip and website
-		if (UChat.get().getConfig().getProtBool("chat-protection","anti-ip","enable") && !p.hasPermission("uchat.bypass-anti-ip")){
+		if (UChat.get().getConfig().protections().anti_ip.enable && !p.hasPermission("uchat.bypass-anti-ip")){
 			
 			//check whitelist
-			for (String check:UChat.get().getConfig().getProtStringList("chat-protection","anti-ip","whitelist-words")){
+			for (String check:UChat.get().getConfig().protections().anti_ip.whitelist_words){
 				if (Pattern.compile(check).matcher(msg).find()){	
 					continue;
 				}
@@ -137,50 +135,50 @@ class UCChatProtection {
 			//continue
 			if (Pattern.compile(regexIP).matcher(msg).find()){	
 				addURLspam(p);
-				if (UChat.get().getConfig().getProtString("chat-protection","anti-ip","cancel-or-replace").equalsIgnoreCase("cancel")){
-					p.sendMessage(UChat.get().getConfig().getProtMsg("chat-protection","anti-ip","cancel-msg"));
+				if (UChat.get().getConfig().protections().anti_ip.cancel_or_replace.equalsIgnoreCase("cancel")){
+					p.sendMessage(UCUtil.toText(UChat.get().getConfig().protections().anti_ip.cancel_msg));
 					return null;
 				} else {
-					msg = msg.replaceAll(regexIP, UChat.get().getConfig().getProtString("chat-protection","anti-ip","replace-by-word"));
+					msg = msg.replaceAll(regexIP, UChat.get().getConfig().protections().anti_ip.replace_by_word);
 				}
 			}
 			if (Pattern.compile(regexUrl).matcher(msg).find()){
 				addURLspam(p);
-				if (UChat.get().getConfig().getProtString("chat-protection","anti-ip","cancel-or-replace").equalsIgnoreCase("cancel")){
-					p.sendMessage(UChat.get().getConfig().getProtMsg("chat-protection","anti-ip","cancel-msg"));
+				if (UChat.get().getConfig().protections().anti_ip.cancel_or_replace.equalsIgnoreCase("cancel")){
+					p.sendMessage(UCUtil.toText(UChat.get().getConfig().protections().anti_ip.cancel_msg));
 					return null;
 				} else {
-					msg = msg.replaceAll(regexUrl, UChat.get().getConfig().getProtString("chat-protection","anti-ip","replace-by-word"));
+					msg = msg.replaceAll(regexUrl, UChat.get().getConfig().protections().anti_ip.replace_by_word);
 				}
 			}
 			
-			for (String word:UChat.get().getConfig().getProtStringList("chat-protection","anti-ip","check-for-words")){
+			for (String word:UChat.get().getConfig().protections().anti_ip.check_for_words){
 				if (Pattern.compile("(?i)"+"\\b"+word+"\\b").matcher(msg).find()){
 					addURLspam(p);
-					if (UChat.get().getConfig().getProtString("chat-protection","anti-ip","cancel-or-replace").equalsIgnoreCase("cancel")){
-						p.sendMessage(UChat.get().getConfig().getProtMsg("chat-protection","anti-ip","cancel-msg"));
+					if (UChat.get().getConfig().protections().anti_ip.cancel_or_replace.equalsIgnoreCase("cancel")){
+						p.sendMessage(UCUtil.toText(UChat.get().getConfig().protections().anti_ip.cancel_msg));
 						return null;
 					} else {
-						msg = msg.replaceAll("(?i)"+word, UChat.get().getConfig().getProtString("chat-protection","anti-ip","replace-by-word"));
+						msg = msg.replaceAll("(?i)"+word, UChat.get().getConfig().protections().anti_ip.replace_by_word);
 					}
 				}
 			}		
 		}	
 		
 		//capitalization verify
-		if (UChat.get().getConfig().getProtBool("chat-protection","chat-enhancement","enable") && !p.hasPermission("uchat.bypass-enhancement")){
-			int lenght = UChat.get().getConfig().getProtInt("chat-protection","chat-enhancement","minimum-lenght");
+		if (UChat.get().getConfig().protections().chat_enhancement.enable && !p.hasPermission("uchat.bypass-enhancement")){
+			int lenght = UChat.get().getConfig().protections().chat_enhancement.minimum_lenght;
 			if (!Pattern.compile(regexIP).matcher(msg).find() && !Pattern.compile(regexUrl).matcher(msg).find() && msg.length() > lenght){
 				msg = msg.replaceAll("([.!?])\\1+", "$1").replaceAll(" +", " ").substring(0, 1).toUpperCase()+msg.substring(1);
-				if (UChat.get().getConfig().getProtBool("chat-protection","chat-enhancement","end-with-dot") && !msg.endsWith("?") && !msg.endsWith("!") && !msg.endsWith(".") && msg.split(" ").length > 2){
+				if (UChat.get().getConfig().protections().chat_enhancement.end_with_dot && !msg.endsWith("?") && !msg.endsWith("!") && !msg.endsWith(".") && msg.split(" ").length > 2){
 					msg = msg+".";
 				}
 			}				
 		}
 		
 		//anti-caps
-		if (UChat.get().getConfig().getProtBool("chat-protection","caps-filter","enable") && !p.hasPermission("uchat.bypass-enhancement")){
-			int lenght = UChat.get().getConfig().getProtInt("chat-protection","caps-filter","minimum-lenght");
+		if (UChat.get().getConfig().protections().caps_filter.enable && !p.hasPermission("uchat.bypass-enhancement")){
+			int lenght = UChat.get().getConfig().protections().caps_filter.minimum_lenght;
 			int msgUppers = msg.replaceAll("\\p{P}", "").replaceAll("[a-z ]+", "").length();
 			if (!Pattern.compile(regexIP).matcher(msg).find() && !Pattern.compile(regexUrl).matcher(msg).find() && msgUppers >= lenght){
 				msg = msg.substring(0, 1).toUpperCase()+msg.substring(1).toLowerCase();
@@ -188,8 +186,8 @@ class UCChatProtection {
 		}
 		
 		//antiflood
-		if (UChat.get().getConfig().getProtBool("chat-protection","anti-flood","enable")){						
-			for (String flood:UChat.get().getConfig().getProtStringList("chat-protection","anti-flood","whitelist-flood-characs")){
+		if (UChat.get().getConfig().protections().anti_flood.enable){						
+			for (String flood:UChat.get().getConfig().protections().anti_flood.whitelist_flood_characs){
 				if (Pattern.compile("(["+flood+"])\\1+").matcher(msg).find()){	
 					return msg;
 				}
@@ -200,26 +198,26 @@ class UCChatProtection {
 	}	
 	
 	private static void addURLspam(final Player p){
-		if (UChat.get().getConfig().getProtBool("chat-protection","anti-ip","punish","enable")){
+		if (UChat.get().getConfig().protections().anti_ip.punish.enable){
 			if (!UrlSpam.containsKey(p)){
 				UrlSpam.put(p, 1);
 			} else {
 				UrlSpam.put(p, UrlSpam.get(p)+1);
 				p.sendMessage(UCUtil.toText("UrlSpam: "+UrlSpam.get(p)));
-				if (UrlSpam.get(p) >= UChat.get().getConfig().getProtInt("chat-protection","anti-ip","punish","max-attempts")){
-					if (UChat.get().getConfig().getProtString("chat-protection","anti-ip","punish","mute-or-cmd").equalsIgnoreCase("mute")){
+				if (UrlSpam.get(p) >= UChat.get().getConfig().protections().anti_ip.punish.max_attempts){
+					if (UChat.get().getConfig().protections().anti_ip.punish.mute_or_cmd.equalsIgnoreCase("mute")){
 						muted.add(p.getName());
-						p.sendMessage(UChat.get().getConfig().getProtMsg("chat-protection","anti-ip","punish","mute-msg"));
+						p.sendMessage(UCUtil.toText(UChat.get().getConfig().protections().anti_ip.punish.mute_msg));
 						Sponge.getScheduler().createSyncExecutor(UChat.get().instance()).schedule(new Runnable() { 
 							public void run() {
 								if (muted.contains(p.getName())){						
 									muted.remove(p.getName());
-									p.sendMessage(UChat.get().getConfig().getProtMsg("chat-protection","anti-ip","punish","unmute-msg"));
+									p.sendMessage(UCUtil.toText(UChat.get().getConfig().protections().anti_ip.punish.unmute_msg));
 								}
 							}						
-						},UChat.get().getConfig().getProtInt("chat-protection","anti-ip","punish","mute-duration"),TimeUnit.MINUTES);
+						},UChat.get().getConfig().protections().anti_ip.punish.mute_duration,TimeUnit.MINUTES);
 					} else {
-						Sponge.getCommandManager().process(Sponge.getServer().getConsole(),UChat.get().getConfig().getProtString("chat-protection","anti-ip","punish","cmd-punish").replace("{player}", p.getName()));
+						Sponge.getCommandManager().process(Sponge.getServer().getConsole(),UChat.get().getConfig().protections().anti_ip.punish.cmd_punish.replace("{player}", p.getName()));
 					}	
 					UrlSpam.remove(p);
 				}

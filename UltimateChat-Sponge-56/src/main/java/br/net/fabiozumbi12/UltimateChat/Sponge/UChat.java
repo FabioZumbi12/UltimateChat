@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import ninja.leaping.configurate.objectmapping.GuiceObjectMapperFactory;
+
 import org.spongepowered.api.Game;
 import org.spongepowered.api.Platform.Component;
 import org.spongepowered.api.Server;
@@ -111,6 +113,9 @@ public class UChat {
 		return this.jedis;
 	}
 	
+	@Inject
+    public GuiceObjectMapperFactory factory;
+	
 	protected static HashMap<String,String> tempChannels = new HashMap<String,String>();
 	protected static HashMap<String,String> tellPlayers = new HashMap<String,String>();
 	protected static HashMap<String,String> tempTellPlayers = new HashMap<String,String>();
@@ -131,7 +136,7 @@ public class UChat {
         	//init logger
         	this.logger = new UCLogger(this.serv);
         	//init config
-        	this.config = new UCConfig();
+        	this.config = new UCConfig(factory);
     		//init lang
         	this.lang = new UCLang();
             //init perms
@@ -186,7 +191,7 @@ public class UChat {
 	
 	protected void reload() throws IOException{
 		this.cmds.removeCmds();
-		this.config = new UCConfig();
+		this.config = new UCConfig(factory);
 		this.lang = new UCLang();
 		this.cmds = new UCCommands(this);
 		for (Player p:serv.getOnlinePlayers()){
@@ -203,12 +208,12 @@ public class UChat {
 			this.jedis.closePool();
 			this.jedis = null;
 		}
-		if (this.config.getBool("jedis","enable")){
+		if (this.config.root().jedis.enable){
 			this.logger.info("Init JEDIS...");	
 			try {
-				this.jedis = new UCJedisLoader(this.config.getString("jedis","ip"), 
-						this.config.getInt("jedis","port"), 
-						this.config.getString("jedis","pass"), new ArrayList<UCChannel>(this.config.getChannels()));
+				this.jedis = new UCJedisLoader(this.config.root().jedis.ip, 
+						this.config.root().jedis.port, 
+						this.config.root().jedis.pass, new ArrayList<UCChannel>(this.config.getChannels()));
 			} catch (Exception e){
 				this.logger.warning("Could not connect to REDIS server! Check ip, password and port, and if the REDIS server is running.");
 			}
@@ -222,7 +227,7 @@ public class UChat {
 				this.UCJDA.shutdown();
 				this.UCJDA = null;
 			}
-			if (config.getBool("discord","use")){
+			if (config.root().discord.use){
 				this.UCJDA = new UCDiscord(this);
 			}	
 		}			

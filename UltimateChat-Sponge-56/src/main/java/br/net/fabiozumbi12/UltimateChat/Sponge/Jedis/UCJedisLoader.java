@@ -32,7 +32,7 @@ public class UCJedisLoader {
 	}
 	
 	public UCJedisLoader(String ip, int port, String auth, List<UCChannel> channels){
-		this.thisId = UChat.get().getConfig().getString("jedis","server-id").replace("$", "");
+		this.thisId = UChat.get().getConfig().root().jedis.server_id.replace("$", "");
 		
 		channels.add(new UCChannel("generic"));
 		channels.add(new UCChannel("tellsend"));
@@ -77,7 +77,7 @@ public class UCJedisLoader {
 				
 		for (Player receiver:Sponge.getServer().getOnlinePlayers()){			
 			if (!receiver.equals(tellReceiver) && !receiver.equals(sender) && UChat.isSpy.contains(receiver.getName())){
-				String spyformat = UChat.get().getConfig().getString("general","spy-format");
+				String spyformat = UChat.get().getConfig().root().general.spy_format;
 				
 				spyformat = spyformat.replace("{output}", UCUtil.stripColor(UCMessages.sendMessage(sender, tellReceiver, msg, new UCChannel("tell"), true).toPlain()));					
 				receiver.sendMessage(UCUtil.toText(spyformat));					

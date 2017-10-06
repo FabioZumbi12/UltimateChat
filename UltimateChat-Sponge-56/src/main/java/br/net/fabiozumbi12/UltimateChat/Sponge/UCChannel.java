@@ -382,7 +382,7 @@ public class UCChannel {
 	 */
 	@Deprecated	
 	public void sendMessage(ConsoleSource sender, String message){
-		sendMessage(sender, Text.of(message), UChat.get().getConfig().getBool("api","format-console-messages"));		
+		sendMessage(sender, Text.of(message), UChat.get().getConfig().root().api.format_console_messages);		
 	}
 	
 	@Override

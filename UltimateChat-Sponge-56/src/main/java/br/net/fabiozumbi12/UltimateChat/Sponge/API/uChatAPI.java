@@ -10,17 +10,13 @@ import org.spongepowered.api.entity.living.player.Player;
 
 import br.net.fabiozumbi12.UltimateChat.Sponge.UCChannel;
 import br.net.fabiozumbi12.UltimateChat.Sponge.UChat;
+import br.net.fabiozumbi12.UltimateChat.Sponge.config.TagsCategory;
 
 public class uChatAPI {
 	
 	public boolean registerNewTag(String tagName, String format, String clickCmd, List<String> hoverMessages){
-		if (UChat.get().getConfig().getString("tags",tagName,"format") == null){
-			UChat.get().getConfig().setConfig("tags",tagName,"format", format);
-			UChat.get().getConfig().setConfig("tags",tagName,"click-cmd", clickCmd);
-			UChat.get().getConfig().setConfig("tags",tagName,"hover-messages", hoverMessages);
-			UChat.get().getConfig().save();
-			return true;
-		}
+		TagsCategory tagsCat = new TagsCategory(format, clickCmd, hoverMessages, null, null, null);
+		UChat.get().getConfig().root().tags.put(tagName, tagsCat);
 		return false;
 	}
 	
@@ -43,7 +39,7 @@ public class uChatAPI {
 			return false;
 		}
 		if (tagBuilder == null || tagBuilder.equals("")){
-			tagBuilder = UChat.get().getConfig().getString("general","default-tag-builder");			
+			tagBuilder = UChat.get().getConfig().root().general.default_tag_builder;			
 		}
 		UCChannel ch = new UCChannel(chName, chAlias, crossWorlds, distance, color, tagBuilder, needFocus, receiverMsg, cost, bungee, false, false, "player", "", new ArrayList<String>(), new String(), ddmode, ddmcformat, mcddformat, ddhover, ddallowcmds, true);	
 		UChat.get().getConfig().addChannel(ch);		
