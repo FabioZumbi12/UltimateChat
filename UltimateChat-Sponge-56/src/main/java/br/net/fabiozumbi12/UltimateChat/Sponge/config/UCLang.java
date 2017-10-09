@@ -38,7 +38,7 @@ public class UCLang {
 				pathLang = UChat.get().configDir() + File.separator + "langEN-US.properties";
 			}
 			try {
-				UChat.get().instance().getAsset(resLang).get().copyToDirectory(new File(UChat.get().configDir()).toPath());
+				UChat.get().instance().getAsset(resLang).get().copyToDirectory(UChat.get().configDir().toPath());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

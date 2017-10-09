@@ -2,6 +2,7 @@ package br.net.fabiozumbi12.UltimateChat.Sponge;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,6 +13,7 @@ import org.spongepowered.api.Game;
 import org.spongepowered.api.Platform.Component;
 import org.spongepowered.api.Server;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.GameReloadEvent;
@@ -46,9 +48,11 @@ public class UChat {
 		return logger;
 	}
 		
-	private String configDir;
-	public String configDir(){
-		return this.configDir;
+	@Inject
+	@ConfigDir(sharedRoot = false)
+	private Path configDir;
+	public File configDir(){
+		return this.configDir.toFile();
 	}
 	
 	@Inject private Game game;	
@@ -56,6 +60,7 @@ public class UChat {
 		return this.game;
 	}
 	
+	@Inject
 	private PluginContainer plugin;	
 	public PluginContainer instance(){
 		return this.plugin;
@@ -128,9 +133,7 @@ public class UChat {
 	@Listener
     public void onServerStart(GamePostInitializationEvent event) {	
         try {
-        	plugin = Sponge.getPluginManager().getPlugin("ultimatechat").get();
-        	uchat = this;   
-        	this.configDir = game.getConfigManager().getSharedConfig(plugin).getDirectory()+File.separator+plugin.getName()+File.separator;        	     	
+        	uchat = this;        	     	
         	this.serv = Sponge.getServer();
         	
         	//init logger

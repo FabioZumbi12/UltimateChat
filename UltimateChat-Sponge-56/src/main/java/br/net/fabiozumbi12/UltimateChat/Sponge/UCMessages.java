@@ -1,6 +1,8 @@
 package br.net.fabiozumbi12.UltimateChat.Sponge;
 
 import java.math.BigDecimal;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -322,6 +324,8 @@ public class UCMessages {
 				String format = lastColor+UChat.get().getConfig().root().tags.get(tag).format;
 				String perm = UChat.get().getConfig().root().tags.get(tag).permission;				
 				String execute = UChat.get().getConfig().root().tags.get(tag).click_cmd;
+				String url = UChat.get().getConfig().root().tags.get(tag).click_url;
+				String suggest = UChat.get().getConfig().root().tags.get(tag).suggest;
 				List<String> messages = UChat.get().getConfig().root().tags.get(tag).hover_messages;
 				List<String> showWorlds = UChat.get().getConfig().root().tags.get(tag).show_in_worlds;
 				List<String> hideWorlds = UChat.get().getConfig().root().tags.get(tag).hide_in_worlds;
@@ -350,7 +354,19 @@ public class UCMessages {
 						tooltip = tooltip.substring(1);
 					}	
 				}		
-							
+					
+				if (url != null && url.length() > 0){
+					try {
+						tagBuilder.onClick(TextActions.openUrl(new URL(formatTags(tag, url, sender, receiver, msg, ch))));
+					} catch (MalformedURLException e) {
+						e.printStackTrace();
+					}
+				}
+				
+				if (suggest != null && suggest.length() > 0){
+					tagBuilder.onClick(TextActions.suggestCommand(formatTags(tag, "/"+suggest, sender, receiver, msg, ch)));
+				}
+				
 				if (execute != null && execute.length() > 0){
 					tagBuilder.onClick(TextActions.runCommand(formatTags(tag, "/"+execute, sender, receiver, msg, ch)));
 				}

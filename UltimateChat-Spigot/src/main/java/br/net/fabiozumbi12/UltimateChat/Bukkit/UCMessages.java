@@ -280,6 +280,7 @@ public class UCMessages {
 				String format = UChat.get().getConfig().getString("tags."+tag+".format");
 				String execute = UChat.get().getConfig().getString("tags."+tag+".click-cmd");
 				String suggest = UChat.get().getConfig().getString("tags."+tag+".suggest-cmd");
+				String url = UChat.get().getConfig().getString("tags."+tag+".suggest-url");
 				List<String> messages = UChat.get().getConfig().getStringList("tags."+tag+".hover-messages");				
 				List<String> showWorlds = UChat.get().getConfig().getStringList("tags."+tag+".show-in-worlds");
 				List<String> hideWorlds = UChat.get().getConfig().getStringList("tags."+tag+".hide-in-worlds");
@@ -313,6 +314,10 @@ public class UCMessages {
 				
 				if (suggest != null && suggest.length() > 0){
 					fanci.clickSuggestCmd(formatTags(tag, suggest, sender, receiver, msg, ch));
+				}
+				
+				if (url != null && url.length() > 0){
+					fanci.clickOpenURL(formatTags(tag, url, sender, receiver, msg, ch));
 				}
 				
 				if (tag.equals("message") && (!msg.equals(mention(sender, (CommandSender)receiver, msg)) || msg.contains(UChat.get().getConfig().getString("general.item-hand.placeholder")))){					

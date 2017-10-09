@@ -13,6 +13,12 @@ public class TagsCategory {
 	@Setting
 	public String format;
 	
+	@Setting(value="click-url")
+	public String click_url;
+	
+	@Setting
+	public String suggest;
+	
 	@Setting(value="click-cmd")
 	public String click_cmd;
 	

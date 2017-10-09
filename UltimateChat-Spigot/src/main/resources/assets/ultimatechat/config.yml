@@ -170,6 +170,7 @@ tags:
   custom-tag:
     format: '&7[&2MyTag&7]&r'
     click-cmd: ''
+    click-url: ''
     suggest-cmd: ''
     hover-messages: []
     permission: 'any-name-perm.custom-tag'

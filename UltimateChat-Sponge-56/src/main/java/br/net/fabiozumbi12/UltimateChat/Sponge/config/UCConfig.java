@@ -50,7 +50,7 @@ public class UCConfig{
 		
 		UChat.get().getLogger().info("-> Config module");
 		try {
-			Files.createDirectories(new File(UChat.get().configDir()).toPath());
+			Files.createDirectories(UChat.get().configDir().toPath());
 			if (!defConfig.exists()){
 				UChat.get().getLogger().info("Creating config file...");
 				defConfig.createNewFile();

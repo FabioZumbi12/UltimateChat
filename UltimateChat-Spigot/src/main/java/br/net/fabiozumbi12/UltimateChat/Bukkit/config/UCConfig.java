@@ -213,6 +213,11 @@ public class UCConfig extends FileConfiguration {
             			configs.set("tags.factions.show-in-worlds", new ArrayList<String>());
             			configs.set("tags.factions.hide-in-worlds", new ArrayList<String>());
             		}
+            		if (configs.getDouble("config-version") < 1.4){
+            			configs.set("config-version", 1.4);
+            			
+            			configs.set("tags.custom-tag.click-url", "");
+            		}
             		
                     /*------------------------------------------------------------------------------------*/
         			
