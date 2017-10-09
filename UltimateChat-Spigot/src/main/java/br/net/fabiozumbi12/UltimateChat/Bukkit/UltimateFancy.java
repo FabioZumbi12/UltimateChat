@@ -226,6 +226,22 @@ public class UltimateFancy {
 		return this;
 	}
 	
+	public List<UltimateFancy> getFancyElements(){
+		next();
+		List<UltimateFancy> list = new ArrayList<UltimateFancy>();
+		for (Object obj:this.constructor){
+			if (obj instanceof JSONObject){
+				list.add(new UltimateFancy().appendAtEnd((JSONObject)obj));
+			}
+		}
+		return list;
+	}
+	
+	public UltimateFancy appendFancy(UltimateFancy fancy){
+		this.appendAtEnd(fancy.toJson());
+		return this;
+	}
+	
 	private JSONObject filterColors(JSONObject obj){
 		for (Entry<String, Boolean> format:lastformats.entrySet()){
 			obj.put(format.getKey(), format.getValue());

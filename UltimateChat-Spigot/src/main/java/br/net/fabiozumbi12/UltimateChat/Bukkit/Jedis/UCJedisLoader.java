@@ -101,8 +101,7 @@ public class UCJedisLoader {
 		}
 	}
 	
-	public void sendRawMessage(UltimateFancy value){
-		
+	public void sendRawMessage(UltimateFancy value){		
 		if (Arrays.asList(channels).contains("generic")){
 			Bukkit.getScheduler().runTaskAsynchronously(UChat.get(), new Runnable(){
 				@Override
@@ -119,10 +118,7 @@ public class UCJedisLoader {
 		}		
 	}
 	
-	public void sendMessage(String channel, UltimateFancy value){	
-		UltimateFancy fancy = new UltimateFancy();
-		fancy.textAtStart(ChatColor.translateAlternateColorCodes('&', this.thisId));	
-		fancy.appendString(value.toString());
+	public void sendMessage(String channel, UltimateFancy value){
 			
 		if (Arrays.asList(channels).contains(channel)){
 			Bukkit.getScheduler().runTaskAsynchronously(UChat.get(), new Runnable(){
@@ -130,7 +126,7 @@ public class UCJedisLoader {
 				public void run() {
 					try {
 						Jedis jedis = pool.getResource();
-						jedis.publish(channel, thisId+"$"+fancy.toString());
+						jedis.publish(channel, thisId+"$"+value.toString());
 						jedis.quit();
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -142,7 +138,9 @@ public class UCJedisLoader {
 
 	public void closePool(){
 		UChat.get().getUCLogger().info("Closing JEDIS...");
-		this.channel.unsubscribe();
+		if (this.channel.isSubscribed()){
+			this.channel.unsubscribe();
+		}		
 		this.pool.destroy();
 		UChat.get().getUCLogger().info("JEDIS closed.");
 	}

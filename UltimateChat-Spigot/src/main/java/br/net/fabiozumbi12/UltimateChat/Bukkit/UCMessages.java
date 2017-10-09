@@ -419,7 +419,12 @@ public class UCMessages {
 		}
 		text = text.replace("{ch-color}", ch.getColor())
 		.replace("{ch-name}", ch.getName())
-		.replace("{ch-alias}", ch.getAlias());		
+		.replace("{ch-alias}", ch.getAlias());
+		
+		if (UChat.get().getConfig().getBoolean("jedis.enable") && ch.useJedis() && tag.equalsIgnoreCase("jedis")){
+			text = text.replace("{server-id}", UChat.get().getConfig().getString("jedis.server-id"));	
+		}			
+		
 		if (cmdSender instanceof CommandSender){
 			text = text.replace("{playername}", ((CommandSender)cmdSender).getName());
 			if (receiver instanceof CommandSender)

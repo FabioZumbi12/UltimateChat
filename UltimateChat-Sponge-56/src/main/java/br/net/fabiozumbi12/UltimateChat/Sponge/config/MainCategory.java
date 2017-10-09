@@ -223,35 +223,8 @@ public class MainCategory {
 		tags.put("message", new TagsCategory("{message}", null, null, null, null, null));		
 		tags.put("ch-tags", new TagsCategory("{ch-color}[{ch-alias}]&r", "ch {ch-alias}", Arrays.asList("&3Channel name: {ch-color}{ch-name}","&bClick to join this channel"), null, null, null));		
 		tags.put("admin-chat", new TagsCategory("&b[&r{playername}&b]&r: &b", null, null, null, null, null));		
-		tags.put("custom-tag", new TagsCategory("&7[&2MyTag&7]", "", new ArrayList<String>(), "any-name-perm.custom-tag", new ArrayList<String>(), new ArrayList<String>()));			
-	}	
-	
-	@ConfigSerializable
-	public static class TagsCat{
-		
-		
-		/*
-		@Setting
-		public NamedTagCategory prefix = new NamedTagCategory("{option_prefix}", "&3Rank: &f{option_display_name}", null, null, null, null);			
-		@Setting
-		public NamedTagCategory nickname = new NamedTagCategory("{nickname}", null, Arrays.asList("&3Player: &f{playername}","&3Money: &7{balance}"), null, null, null);		
-		@Setting
-		public NamedTagCategory playername = new NamedTagCategory("{playername}", null, Arrays.asList("&3Player: &f{playername}","&3Money: &7{balance}"), null, null, null);		
-		@Setting
-		public NamedTagCategory suffix = new NamedTagCategory("{option_suffix}", null, null, null, null, null);		
-		@Setting
-		public NamedTagCategory world = new NamedTagCategory("&7[{world}]&r", null, Arrays.asList("&7Sent from world {world}"), null, null, null);		
-		@Setting
-		public NamedTagCategory message = new NamedTagCategory("{message}", null, null, null, null, null);		
-		@Setting(value="ch-tags")
-		public NamedTagCategory ch_tags = new NamedTagCategory("{ch-color}[{ch-alias}]&r", "ch {ch-alias}", Arrays.asList("&3Channel name: {ch-color}{ch-name}","&bClick to join this channel"), null, null, null);		
-		@Setting(value="admin-chat")
-		public NamedTagCategory admin_chat = new NamedTagCategory("&b[&r{playername}&b]&r: &b", "&3Rank: &f{option_display_name}", null, null, null, null);		
-		@Setting(value="custom-tag")
-		public NamedTagCategory custom_tag = new NamedTagCategory("&7[&2MyTag&7]", "", new ArrayList<String>(), "any-name-perm.custom-tag", new ArrayList<String>(), new ArrayList<String>());
-		@Setting(value="custom-tag", comment="This is the default vanilla chat format.\n"
-				+ "Add this tag name to the default-builder if you want to use \n"
-				+ "vanilla or if other plugins have modificed the tags like nickname of Nucleus.")
-		public NamedTagCategory vanilla_chat = new NamedTagCategory("{chat_header}{chat_body}", null, null, null, null, null);*/
-	}
+		tags.put("custom-tag", new TagsCategory("&7[&2MyTag&7]", "", new ArrayList<String>(), "any-name-perm.custom-tag", new ArrayList<String>(), new ArrayList<String>()));	
+		tags.put("vanilla-chat", new TagsCategory("{chat_header}{chat_body}", null, null, null, null, null));	
+		tags.put("jedis", new TagsCategory("{server-id}", null, Arrays.asList("&7Server: {server-id}","&cChange me on configuration!"), null, null, null));
+	}		
 }

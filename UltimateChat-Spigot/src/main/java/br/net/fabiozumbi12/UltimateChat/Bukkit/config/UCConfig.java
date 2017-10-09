@@ -73,6 +73,7 @@ public class UCConfig extends FileConfiguration {
             					+ "If you want to use only of this tags you can use the replacer bellow and get number of tag separated by spaces;\n"
             					+ " - {default-format-0}: use this tag to show only one of the tags described on '{default-format-full}'. "
             					+ "The number is the posiotion separated by spaces;\n"
+            					+ " - {server-id}: This server id (on jedis configuration)"
             					+ " - {world}: Replaced by sender world;\n"
             					+ " - {message}: Message sent by player;\n"
             					+ " - {playername}: The name of player;\n"
@@ -217,6 +218,12 @@ public class UCConfig extends FileConfiguration {
             			configs.set("config-version", 1.4);
             			
             			configs.set("tags.custom-tag.click-url", "");
+            		}
+            		if (configs.getDouble("config-version") < 1.5){
+            			configs.set("config-version", 1.5);
+            			
+            			configs.set("tags.jedis.format", "");
+            			configs.set("tags.jedis.hover-messages", Arrays.asList("&7Server: {server-id}","&cChange me on configuration!"));
             		}
             		
                     /*------------------------------------------------------------------------------------*/

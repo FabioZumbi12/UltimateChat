@@ -123,9 +123,6 @@ public class UCJedisLoader {
 	}
 	
 	public void sendMessage(String channel, Text value){
-		Builder text = Text.builder();
-		text.append(UCUtil.toText(this.thisId));
-		text.append(value);
 		
 		if (Arrays.asList(channels).contains(channel)){
 			Sponge.getScheduler().createAsyncExecutor(UChat.get().instance()).execute(new Runnable(){
@@ -134,7 +131,7 @@ public class UCJedisLoader {
 					try {
 						Jedis jedis = pool.getResource();
 						//string 0 1
-						jedis.publish(channel, thisId+"$"+TextSerializers.JSON.serialize(text.build()));
+						jedis.publish(channel, thisId+"$"+TextSerializers.JSON.serialize(value));
 						jedis.quit();
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -146,7 +143,9 @@ public class UCJedisLoader {
 
 	public void closePool(){
 		UChat.get().getLogger().info("Closing JEDIS...");
-		this.channel.unsubscribe();
+		if (this.channel.isSubscribed()){
+			this.channel.unsubscribe();
+		}		
 		this.pool.destroy();
 		UChat.get().getLogger().info("JEDIS closed.");
 	}	
