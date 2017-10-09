@@ -222,7 +222,7 @@ public class UCConfig extends FileConfiguration {
             		if (configs.getDouble("config-version") < 1.5){
             			configs.set("config-version", 1.5);
             			
-            			configs.set("tags.jedis.format", "");
+            			configs.set("tags.jedis.format", "{server-id}");
             			configs.set("tags.jedis.hover-messages", Arrays.asList("&7Server: {server-id}","&cChange me on configuration!"));
             		}
             		
