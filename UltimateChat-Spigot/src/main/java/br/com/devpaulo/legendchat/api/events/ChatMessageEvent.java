@@ -59,7 +59,7 @@ public class ChatMessageEvent extends Event implements Cancellable {
 	
 	public void addTag(String tagname, String value){
 		tagname = tagname.toLowerCase();
-		UChat.get().getAPI().registerNewTag(tagname, tagname, "", new ArrayList<String>());
+		UChat.get().getAPI().registerNewTag(tagname, tagname, "", new ArrayList<String>(), "");
 		tags.put(tagname, (value==null?"":value));
 	}
 		
