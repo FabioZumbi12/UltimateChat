@@ -49,6 +49,7 @@ public class PostFormatChatMessageEvent extends Event implements Cancellable  {
 	public String getRawMessage(){
 		return this.raw;
 	}
+	
 	/**Get the message of a receiver, or {@code null} if the receiver is not on list.
 	 * 
 	 * @param receiver {@CommandSender}
@@ -67,6 +68,15 @@ public class PostFormatChatMessageEvent extends Event implements Cancellable  {
 		this.receivers.put(receiver, message);
 	}
 	
+	/**Get all receivers with your messages. Change, add or remove a receiver in this map.
+	 * 
+	 * @return {@code HashMap<CommandSender, UltimateFancy>}
+	 */
+	public HashMap<CommandSender, UltimateFancy> getMessages(){
+		return this.receivers;
+	}
+	
+	
 	@Override
 	public boolean isCancelled() {
 		return cancelled;
@@ -79,6 +89,10 @@ public class PostFormatChatMessageEvent extends Event implements Cancellable  {
 
 	@Override
 	public HandlerList getHandlers() {
+		return handlers;
+	}
+	
+	public static HandlerList getHandlerList() {
 		return handlers;
 	}
 

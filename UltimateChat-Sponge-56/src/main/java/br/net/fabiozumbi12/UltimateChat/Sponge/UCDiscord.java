@@ -142,6 +142,9 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
 			ch.sendMessage(text).queue();
         } catch (PermissionException e) {
         	uchat.getLogger().severe("JDA: No permission to send messages to channel "+ch.getName()+".");
+        } catch (Exception e) {
+        	uchat.getLogger().warning("JDA: The channel ID is incorrect, not available or Discord is offline, in maintance or some other connection problem.");
+        	e.printStackTrace();
         }
 	}
 	

@@ -105,6 +105,7 @@ public class UltimateFancy {
 			if (ChatColor.stripColor(part).isEmpty()){
 				continue;
 			}
+			
 			workingText.put("text", ChatColor.stripColor(part));
 						
 			//fix colors after

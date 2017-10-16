@@ -225,6 +225,6 @@ public class MainCategory {
 		tags.put("admin-chat", new TagsCategory("&b[&r{playername}&b]&r: &b", null, null, null, null, null));		
 		tags.put("custom-tag", new TagsCategory("&7[&2MyTag&7]", "", new ArrayList<String>(), "any-name-perm.custom-tag", new ArrayList<String>(), new ArrayList<String>()));	
 		tags.put("vanilla-chat", new TagsCategory("{chat_header}{chat_body}", null, null, null, null, null));	
-		tags.put("jedis", new TagsCategory("{server-id}", null, Arrays.asList("&7Server: {server-id}","&cChange me on configuration!"), null, null, null));
+		tags.put("jedis", new TagsCategory("{server-id}", null, Arrays.asList("&7Server: {jedis-id}","&cChange me on configuration!"), null, null, null));
 	}		
 }

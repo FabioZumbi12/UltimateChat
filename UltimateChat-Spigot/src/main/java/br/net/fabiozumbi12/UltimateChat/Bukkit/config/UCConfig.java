@@ -67,13 +67,13 @@ public class UCConfig extends FileConfiguration {
             					+ "After add and customize your tag, put the tag name on 'general > default-tag-builder'.\n"
             					+ "------------------------------------------------------------------------\n"
             					+ "Available replacers:\n"
+            					+ "\n"   
             					+ "uChat:\n"
             					+ " - {default-format-full}: Use this tag to see all plugin tags using the default bukkit format. "
             					+ "Normally used by 'myth' plugins and temporary tags."
             					+ "If you want to use only of this tags you can use the replacer bellow and get number of tag separated by spaces;\n"
             					+ " - {default-format-0}: use this tag to show only one of the tags described on '{default-format-full}'. "
-            					+ "The number is the posiotion separated by spaces;\n"
-            					+ " - {server-id}: This server id (on jedis configuration)"
+            					+ "The number is the posiotion separated by spaces;\n"            					
             					+ " - {world}: Replaced by sender world;\n"
             					+ " - {message}: Message sent by player;\n"
             					+ " - {playername}: The name of player;\n"
@@ -87,6 +87,7 @@ public class UCConfig extends FileConfiguration {
             					+ " - {hand-lore}: Item description (lore);\n"
             					+ " - {hand-durability}: Item durability;\n"
             					+ " - {hand-enchants}: Item enchantments;\n"
+            					+ "\n"   
             					+ "Vault:\n"
             					+ " - {group-prefix}: Get group prefix;\n"
             					+ " - {group-suffix}: Get group suffix;\n"
@@ -95,6 +96,7 @@ public class UCConfig extends FileConfiguration {
             					+ " - {player-groups}: Get all groups names the sender has;\n"
             					+ " - {player-groups-prefixes}: Get all group prefixes the sender has;\n"
             					+ " - {player-groups-suffixes}: Get all group suffixes the sender has;\n"
+            					+ "\n"   
             					+ "Simpleclans:\n"
             					+ " - {clan-tag}: Clan tag without colors;\n"
             					+ " - {clan-fulltag}: Clan tag with brackets, colors and separator;\n"
@@ -104,14 +106,18 @@ public class UCConfig extends FileConfiguration {
             					+ " - {clan-isleader}: The player is leader;\n"
             					+ " - {clan-rank}: Player rank on Clan;\n"
             					+ " - {clan-totalkdr}: Clan KDR (not player kdr);\n"
+            					+ "\n"   
             					+ "Marry Plugins:\n"
             					+ " - {marry-partner}: Get the partner name;\n"       			
             					+ " - {marry-prefix}: Get the married prefix tag, normally the heart;\n"   
             					+ " - {marry-suffix}: Get the married suffix tag, or male tag for Marriage Reloaded;\n"
+            					+ "\n"   
             					+ "BungeeCord:\n"
-            					+ "For BungeeCord theres 2 new tags. The other tags still working except username, group and other plugin tags.\n"
-            					+ "- {world}: World from sender;\n"
-            					+ "- {server}: Server from sender, equals on server list on Bungee config.yml;\n"
+            					+ "- {bungee-id}: Server ID from sender;\n"
+            					+ "\n"   
+            					+ "Jedis (redis):\n"
+            					+ "- {jedis-id}: This server id;\n"
+            					+ "\n"   
             					+ "Factions:\n"
             					+ "Gets the info of faction to show on chat.\n"
             					+ "- {fac-id}: Faction ID;\n"
@@ -120,7 +126,7 @@ public class UCConfig extends FileConfiguration {
             					+ "- {fac-description}: Faction Description;\n"
             					+ "- {fac-relation-name}: Faction name in relation of reader of tag;\n"
             					+ "- {fac-relation-color}: Faction color in relation of reader of tag;\n"
-            					+ "");
+            					+ "\n");
             		}
             		if (lang.equalsIgnoreCase("PT-BR")){
             			configs.options().header(""
@@ -133,6 +139,7 @@ public class UCConfig extends FileConfiguration {
             					+ "Depois de criar e personalizar a tag, adicione ela em 'general > default-tag-builder'.\n"
             					+ "------------------------------------------------------------------------\n"
             					+ "Replacers disponíveis:\n"
+            					+ "\n"   
             					+ "uChat:\n"
             					+ " - {default-format-full}: Use esta tag para ver todas tags de plugins que estão usando o formato padrão do bukkit. "
             					+ "Normalmente usado por plugins de 'mito' e tags temporárias. "
@@ -151,6 +158,7 @@ public class UCConfig extends FileConfiguration {
             					+ " - {hand-lore}: Descrição do item(lore);\n"
             					+ " - {hand-durability}: Durabilidade do item;\n"
             					+ " - {hand-enchants}: Encantamentos do item;\n"
+            					+ "\n"   
             					+ "Vault:\n"
             					+ " - {group-prefix}: Prefixo do grupo do player;\n"
             					+ " - {group-suffix}: Sufixo do grupo do player;\n"
@@ -159,6 +167,7 @@ public class UCConfig extends FileConfiguration {
             					+ " - {player-groups}: Lista todos grupos que o player faz parte;\n"
             					+ " - {player-groups-prefixes}: Lista todo prefixes dos grupos que o player esta;\n"
             					+ " - {player-groups-suffixes}: Lista todo suffixes dos grupos que o player esta;\n"
+            					+ "\n"   
             					+ "Simpleclans:\n"
             					+ " - {clan-tag}: Tag do Clan sem cores;\n"
             					+ " - {clan-fulltag}: Tag do clan com os colchetes, cores e separador;\n"
@@ -167,15 +176,19 @@ public class UCConfig extends FileConfiguration {
             					+ " - {clan-kdr}: KDR do player do Clan;\n"
             					+ " - {clan-isleader}: O player é lider;\n"
             					+ " - {clan-rank}: Rank do player no Clan;\n"
-            					+ " - {clan-totalkdr}: Clan KDR (não do player);\n"   
+            					+ " - {clan-totalkdr}: Clan KDR (não do player);\n"
+            					+ "\n"   
             					+ "Marry Plugins:\n"
             					+ " - {marry-partner}: Mostra o nome do(a) parceiro(a);\n"      			
             					+ " - {marry-prefix}: Pega a tag de prefixo, normalmente o coração;\n"   
-            					+ " - {marry-suffix}: Pega a tag de sufixo, ou simbolo masculino do Marriage Reloaded;\n"  
+            					+ " - {marry-suffix}: Pega a tag de sufixo, ou simbolo masculino do Marriage Reloaded;\n"
+            					+ "\n"   
             					+ "BungeeCord:\n"
-            					+ "Para bungee cord tem 2 tags novas. Algumas das outras tags ainda funcionam, com excessão da username, de grupo e de outros plugins.\n"
-            					+ "- {world}: Mundo de quem enviou;\n"
-            					+ "- {server}: O Server de quem enviou, igual o especificado em config.yml do BungeeCord;\n"
+            					+ "- {bungee-id}: O ID do Server de quem enviou;\n"
+            					+ "\n"   
+            					+ "Jedis (redis):\n"
+            					+ "- {jedis-id}: O ID deste server;\n"
+            					+ "\n"   
             					+ "Factions:\n"
             					+ "Pega as informações das Factions pra mostrar no chat.\n"
             					+ "- {fac-id}: Faction ID;\n"
@@ -184,7 +197,7 @@ public class UCConfig extends FileConfiguration {
             					+ "- {fac-description}: Descrição da Faction;\n"
             					+ "- {fac-relation-name}: Nome da Faction em relação á quem ta lendo a tag;\n"
             					+ "- {fac-relation-color}: Cor da Faction em relação á quem ta lendo a tag;\n"
-            					+ "");
+            					+ "\n");
             		}
             		
             		/*------------------------------------------------------------------------------------*/
@@ -222,8 +235,8 @@ public class UCConfig extends FileConfiguration {
             		if (configs.getDouble("config-version") < 1.5){
             			configs.set("config-version", 1.5);
             			
-            			configs.set("tags.jedis.format", "{server-id}");
-            			configs.set("tags.jedis.hover-messages", Arrays.asList("&7Server: {server-id}","&cChange me on configuration!"));
+            			configs.set("tags.jedis.format", "{jedis-id}");
+            			configs.set("tags.jedis.hover-messages", Arrays.asList("&7Server: {jedis-id}","&cChange me on configuration!"));
             		}
             		
                     /*------------------------------------------------------------------------------------*/

@@ -114,16 +114,18 @@ public class UCConfig{
 					+ " - {clan_player_kdr}: Get the player KDR;\n"
 					+ " - {clan_player_ffprotected}: Get if player is friendly fire protected;\n"
 					+ " - {clan_player_isowner}: Get if this player os owner of this Clan;\n"
+					+ "Jedis (Redis):\n"
+					+ "- {jedis-id} - The ID of this server;\n"
 					+ "\n";			
 			
 			cfgLoader = HoconConfigurationLoader.builder().setFile(defConfig).build();	
 			configRoot = cfgLoader.load(ConfigurationOptions.defaults().setObjectMapperFactory(factory).setShouldCopyDefaults(true).setHeader(header));			
-			root  = configRoot.getValue(TypeToken.of(MainCategory.class), new MainCategory());			
+			root = configRoot.getValue(TypeToken.of(MainCategory.class), new MainCategory());			
 			
 			/*--------------------- protections.conf ---------------------------*/
 			protLoader = HoconConfigurationLoader.builder().setFile(defProt).build();	
 			protsRoot = protLoader.load(ConfigurationOptions.defaults().setObjectMapperFactory(factory).setShouldCopyDefaults(true));
-			protections  = protsRoot.getValue(TypeToken.of(ProtectionsCategory.class), new ProtectionsCategory());
+			protections = protsRoot.getValue(TypeToken.of(ProtectionsCategory.class), new ProtectionsCategory());
 					
 		} catch (IOException | ObjectMappingException e) {
 			e.printStackTrace();

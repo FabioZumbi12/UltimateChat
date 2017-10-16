@@ -507,8 +507,8 @@ public class UCMessages {
 		.replace("{ch-name}", ch.getName())
 		.replace("{ch-alias}", ch.getAlias());
 		
-		if (UChat.get().getConfig().root().jedis.enable && ch.useJedis() && tag.equalsIgnoreCase("jedis")){
-			text = text.replace("{server-id}", UChat.get().getConfig().root().jedis.server_id);	
+		if (UChat.get().getConfig().root().jedis.enable && ch.useJedis()){
+			text = text.replace("{jedis-id}", UChat.get().getConfig().root().jedis.server_id);	
 		}		
 		
 		if (cmdSender instanceof CommandSource){

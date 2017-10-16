@@ -84,19 +84,19 @@ public class ChatChannel extends JedisPubSub {
 							} else {
 								for (Player receiver:Bukkit.getServer().getOnlinePlayers()){
 									if (UCPerms.channelReadPerm(receiver, ch)){
-										UCUtil.performCommand((Player)receiver, Bukkit.getConsoleSender(), "tellraw " + receiver.getName() + " " + messagef);
+										UCUtil.performCommand(receiver, Bukkit.getConsoleSender(), "tellraw " + receiver.getName() + " " + messagef);
 									}									
 								}
 							}	
 						}
-						Bukkit.getConsoleSender().sendMessage(UCUtil.colorize("&7Message to channel "+ch.getName()+" from: "+id));
+						Bukkit.getConsoleSender().sendMessage(UCUtil.colorize("&7Redis message to channel "+ch.getName()+" from: "+id));
 					} else {
 						String[] msgc = message.split("\\$");
 						
 						String id = msgc[0];
 						String messagef = msgc[1];	
 						for (Player receiver:Bukkit.getServer().getOnlinePlayers()){
-							UCUtil.performCommand((Player)receiver, Bukkit.getConsoleSender(), "tellraw " + receiver.getName() + " " + messagef);							
+							UCUtil.performCommand(receiver, Bukkit.getConsoleSender(), "tellraw " + receiver.getName() + " " + messagef);							
 						}
 						Bukkit.getConsoleSender().sendMessage(UCUtil.colorize("&7Raw Message from: "+id));
 					}	

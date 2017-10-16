@@ -56,9 +56,7 @@ tell:
   format: '{message}'
   hover-messages: []
 bungee:
-  prefix: '&6[&c{playername} &6-> &c{receivername}&6]: '
-  format: '{message}'
-  hover-messages: []
+  server-id: '&4ChangeMe'
 broadcast:
   enable: true
   on-hover: 'hover:'
@@ -159,11 +157,11 @@ tags:
     show-in-worlds: []
     hide-in-worlds: []
   bungee:
-    format: '&7[{world}]{ch-color}[Bungee-{server}] {playername}: &7'
+    format: '&7[{world}]{ch-color}[Bungee-{bungee-id}] {playername}: &7'
     click-cmd: ''
     suggest-cmd: ''
     hover-messages:
-    - '{ch-color}Sent from server -{server}-'
+    - '{ch-color}Sent from server -{bungee-id}-'
     permission: ''
     show-in-worlds: []
     hide-in-worlds: []
@@ -187,3 +185,8 @@ tags:
     permission: ''
     show-in-worlds: []
     hide-in-worlds: []
+  jedis:
+    format: '{jedis-id}'
+    hover-messages:
+    - '&7Server: {jedis-id}'
+    - '&cChange me on configuration!'
