@@ -1,6 +1,7 @@
 package br.net.fabiozumbi12.UltimateChat.Bukkit;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -280,7 +281,7 @@ public class UCMessages {
 				String format = UChat.get().getConfig().getString("tags."+tag+".format");
 				String execute = UChat.get().getConfig().getString("tags."+tag+".click-cmd");
 				String suggest = UChat.get().getConfig().getString("tags."+tag+".suggest-cmd");
-				String url = UChat.get().getConfig().getString("tags."+tag+".suggest-url");
+				String url = UChat.get().getConfig().getString("tags."+tag+".click-url");
 				List<String> messages = UChat.get().getConfig().getStringList("tags."+tag+".hover-messages");				
 				List<String> showWorlds = UChat.get().getConfig().getStringList("tags."+tag+".show-in-worlds");
 				List<String> hideWorlds = UChat.get().getConfig().getStringList("tags."+tag+".hide-in-worlds");
@@ -376,7 +377,7 @@ public class UCMessages {
 	public static String mention(Object sender, CommandSender receiver, String msg) {
 		if (UChat.get().getConfig().getBoolean("mention.enable")){
 		    for (Player p:UChat.get().getServer().getOnlinePlayers()){			
-				if (StringUtils.containsIgnoreCase(msg, p.getName())){
+				if (!sender.equals(p) && Arrays.asList(msg.split(" ")).stream().anyMatch(p.getName()::equalsIgnoreCase)){
 					if (receiver instanceof Player && receiver.equals(p)){
 						
 						String mentionc = UChat.get().getConfig().getColorStr("mention.color-template").replace("{mentioned-player}", p.getName());
@@ -388,7 +389,7 @@ public class UCMessages {
 						}
 											
 						for (Sound sound:Sound.values()){
-							if (StringUtils.containsIgnoreCase(sound.toString(),UChat.get().getConfig().getString("mention.playsound")) && !msg.contains(mentionc)){
+							if (StringUtils.containsIgnoreCase(sound.toString(),UChat.get().getConfig().getString("mention.playsound"))){
 								p.playSound(p.getLocation(), sound, 1F, 1F);
 								break;
 							}

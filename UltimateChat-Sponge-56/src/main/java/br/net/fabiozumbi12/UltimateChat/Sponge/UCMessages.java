@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -464,7 +465,7 @@ public class UCMessages {
 	private static String mention(Object sender, Object receiver, String msg) {
 		if (UChat.get().getConfig().root().mention.enable){
 		    for (Player p:Sponge.getServer().getOnlinePlayers()){			
-				if (!sender.equals(p) && StringUtils.containsIgnoreCase(msg, p.getName())){
+				if (!sender.equals(p) && Arrays.asList(msg.split(" ")).stream().anyMatch(p.getName()::equalsIgnoreCase)){
 					if (receiver instanceof Player && receiver.equals(p)){
 						
 						String mentionc = UChat.get().getConfig().root().mention.color_template.replace("{mentioned-player}", p.getName());
