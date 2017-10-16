@@ -215,16 +215,16 @@ public class MainCategory {
 	public Map<String, TagsCategory> tags = new HashMap<String, TagsCategory>();
 	
 	private void defaultTags(){		
-		tags.put("prefix", new TagsCategory("{option_prefix}", null, Arrays.asList("&3Rank: &f{option_display_name}"), null, null, null));		
-		tags.put("nickname", new TagsCategory("{nickname}", null, Arrays.asList("&3Player: &f{playername}","&3Money: &7{balance}"), null, null, null));
-		tags.put("playername", new TagsCategory("{playername}", null, Arrays.asList("&3Player: &f{playername}","&3Money: &7{balance}"), null, null, null));		
-		tags.put("suffix", new TagsCategory("{option_suffix}", null, null, null, null, null));		
-		tags.put("world", new TagsCategory("&7[{world}]&r", null, Arrays.asList("&7Sent from world {world}"), null, null, null));		
-		tags.put("message", new TagsCategory("{message}", null, null, null, null, null));		
-		tags.put("ch-tags", new TagsCategory("{ch-color}[{ch-alias}]&r", "ch {ch-alias}", Arrays.asList("&3Channel name: {ch-color}{ch-name}","&bClick to join this channel"), null, null, null));		
-		tags.put("admin-chat", new TagsCategory("&b[&r{playername}&b]&r: &b", null, null, null, null, null));		
-		tags.put("custom-tag", new TagsCategory("&7[&2MyTag&7]", "", new ArrayList<String>(), "any-name-perm.custom-tag", new ArrayList<String>(), new ArrayList<String>()));	
-		tags.put("vanilla-chat", new TagsCategory("{chat_header}{chat_body}", null, null, null, null, null));	
-		tags.put("jedis", new TagsCategory("{server-id}", null, Arrays.asList("&7Server: {jedis-id}","&cChange me on configuration!"), null, null, null));
+		tags.put("prefix", new TagsCategory("{option_prefix}", null, Arrays.asList("&3Rank: &f{option_display_name}"), null, null, null, null));		
+		tags.put("nickname", new TagsCategory("{nickname}", null, Arrays.asList("&3Player: &f{playername}","&3Money: &7{balance}"), null, null, null, null));
+		tags.put("playername", new TagsCategory("{playername}", null, Arrays.asList("&3Player: &f{playername}","&3Money: &7{balance}"), null, null, null, null));		
+		tags.put("suffix", new TagsCategory("{option_suffix}", null, null, null, null, null, null));		
+		tags.put("world", new TagsCategory("&7[{world}]&r", null, Arrays.asList("&7Sent from world {world}"), null, null, null, null));		
+		tags.put("message", new TagsCategory("{message}", null, null, null, null, null, null));		
+		tags.put("ch-tags", new TagsCategory("{ch-color}[{ch-alias}]&r", "ch {ch-alias}", Arrays.asList("&3Channel name: {ch-color}{ch-name}","&bClick to join this channel"), null, null, null, null));		
+		tags.put("admin-chat", new TagsCategory("&b[&r{playername}&b]&r: &b", null, null, null, null, null, null));		
+		tags.put("custom-tag", new TagsCategory("&7[&2MyTag&7]", "", new ArrayList<String>(), "any-name-perm.custom-tag", new ArrayList<String>(), new ArrayList<String>(), ""));	
+		tags.put("vanilla-chat", new TagsCategory("{chat_header}{chat_body}", null, null, null, null, null, null));	
+		tags.put("jedis", new TagsCategory("{server-id}", null, Arrays.asList("&7Server: {jedis-id}","&cChange me on configuration!"), null, null, null, null));
 	}		
 }

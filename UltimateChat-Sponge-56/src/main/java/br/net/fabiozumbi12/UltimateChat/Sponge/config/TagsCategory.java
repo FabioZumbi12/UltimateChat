@@ -42,12 +42,13 @@ public class TagsCategory {
 	 * @param show_in_worlds
 	 * @param hide_in_worlds
 	 */	
-	public TagsCategory(String format, String click_cmd, List<String> hover_messages, String permission, List<String> show_in_worlds, List<String> hide_in_worlds){
+	public TagsCategory(String format, String click_cmd, List<String> hover_messages, String permission, List<String> show_in_worlds, List<String> hide_in_worlds, String click_url){
 		this.format = format;
 		this.click_cmd = click_cmd;
 		this.hover_messages = hover_messages;
 		this.permission = permission;
 		this.show_in_worlds = show_in_worlds;
 		this.hide_in_worlds = hide_in_worlds;
+		this.click_url = click_url;
 	}
 }

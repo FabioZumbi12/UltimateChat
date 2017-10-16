@@ -17,10 +17,11 @@ import br.net.fabiozumbi12.UltimateChat.Bukkit.UChat;
 
 public class uChatAPI{
 
-	public boolean registerNewTag(String tagName, String format, String clickCmd, List<String> hoverMessages){
+	public boolean registerNewTag(String tagName, String format, String clickCmd, List<String> hoverMessages, String clickUrl){
 		if (UChat.get().getConfig().getString("tags."+tagName+".format") == null){
 			UChat.get().getConfig().setConfig("tags."+tagName+".format", format);
 			UChat.get().getConfig().setConfig("tags."+tagName+".click-cmd", clickCmd);
+			UChat.get().getConfig().setConfig("tags."+tagName+".click-url", clickUrl);
 			UChat.get().getConfig().setConfig("tags."+tagName+".hover-messages", hoverMessages);
 			UChat.get().getConfig().save();
 			return true;

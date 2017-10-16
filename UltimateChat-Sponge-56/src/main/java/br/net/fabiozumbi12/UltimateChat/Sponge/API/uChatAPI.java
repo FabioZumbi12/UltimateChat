@@ -14,14 +14,14 @@ import br.net.fabiozumbi12.UltimateChat.Sponge.config.TagsCategory;
 
 public class uChatAPI {
 	
-	public boolean registerNewTag(String tagName, String format, String clickCmd, List<String> hoverMessages, String permission, List<String> shoinworlds, List<String> hideinworlds){
-		TagsCategory tagsCat = new TagsCategory(format, clickCmd, hoverMessages, permission, shoinworlds, hideinworlds);
+	public boolean registerNewTag(String tagName, String format, String clickCmd, List<String> hoverMessages, String permission, List<String> shoinworlds, List<String> hideinworlds, String clickUrl){
+		TagsCategory tagsCat = new TagsCategory(format, clickCmd, hoverMessages, permission, shoinworlds, hideinworlds, clickUrl);
 		UChat.get().getConfig().root().tags.put(tagName, tagsCat);
 		return true;
 	}
 	
 	public boolean registerNewTag(String tagName, String format, String clickCmd, List<String> hoverMessages){		
-		return registerNewTag(tagName, format, clickCmd, hoverMessages, null, null, null);
+		return registerNewTag(tagName, format, clickCmd, hoverMessages, null, null, null, null);
 	}
 	
 	public boolean registerNewChannel(UCChannel channel) throws IOException{
