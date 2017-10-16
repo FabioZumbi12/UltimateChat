@@ -8,7 +8,6 @@ import java.io.IOException;
 
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.Connection;
-import net.md_5.bungee.api.connection.Server;
 import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -28,44 +27,34 @@ public class UCProxy extends Plugin implements Listener {
 		if (!e.getTag().equals("uChat")){
 			return;
 		}
-		/*if (!(e.getSender() instanceof Server)) {
-			return;
-		}*/
+		
 		ByteArrayInputStream stream = new ByteArrayInputStream(e.getData());
 	    DataInputStream in = new DataInputStream(stream);
+	    String id = "";
 	    String ch = "";
-	    String sender = "";
-	    String msg = "";
-	    String ws = "";	    
+	    String json = "";
 	    try {
+	    	id = in.readUTF();
 	    	ch = in.readUTF();
-	    	sender = in.readUTF();
-	    	msg = in.readUTF();
-	    	ws = in.readUTF();
+	    	json = in.readUTF();
 	    } catch (IOException ex){
 	    	ex.printStackTrace();
 	    }
-	    sendMessage(e.getSender(), ch, sender, msg, ws); 
+	    sendMessage(e.getSender(), ch, json, id); 
 	}
 	
-	public void sendMessage(Connection server, String ch, String sender, String msg, String ws){	    
+	public void sendMessage(Connection server, String ch, String json, String id){	    
 	    ByteArrayOutputStream stream = new ByteArrayOutputStream();
 	    DataOutputStream out = new DataOutputStream(stream);
 	    try {
+	    	out.writeUTF(id);
 	    	out.writeUTF(ch);
-	        out.writeUTF(sender);
-	        out.writeUTF(msg);
-	        out.writeUTF(ws+","+((Server)server).getInfo().getName());
+	        out.writeUTF(json);
 	    } catch (IOException e) {
 	        e.printStackTrace();
 	    }
 	    for (ServerInfo si:getProxy().getServers().values()){
 	    	si.sendData("uChat", stream.toByteArray());
-	    	//getLogger().info("Sent message to "+si.getName());
-	    	/*
-	        if (!si.getName().equals(((Server)server).getInfo().getName())) {
-	        	si.sendData("uChat", stream.toByteArray());
-	        }*/
 	    }	    
 	}
 }
