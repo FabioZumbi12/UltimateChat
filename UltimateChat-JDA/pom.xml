@@ -74,6 +74,12 @@
       <version>1.7.25</version>
       <scope>compile</scope>
     </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-nop</artifactId>
+      <version>1.7.25</version>
+      <scope>compile</scope>
+    </dependency>
         
   </dependencies>
   
@@ -123,6 +129,7 @@
                             <include>com.squareup.okhttp3:okhttp</include>
                             <include>com.squareup.okio:okio</include>
                             <include>org.slf4j:slf4j-api</include>
+                            <include>org.slf4j:slf4j-nop</include>
                           </includes> 
                                                  
                         </artifactSet>
