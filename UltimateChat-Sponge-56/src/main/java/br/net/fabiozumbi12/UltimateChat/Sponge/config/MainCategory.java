@@ -188,7 +188,7 @@ public class MainCategory {
 		@Setting(comment="Tag to use on broadcast message to set a website url on click.")
 		public String url = "url:";
 		@Setting(comment="Aliases to use for broadcast.")
-		public String aliases = "broadcast,broad,announce,say,action,all,anunciar,todos";
+		public String aliases = "broadcast,broad,ubroad,announce,say,action,all,anunciar,todos";
 	}
 	
 	@Setting(comment="Enable hook with other plugins here. Only enable if installed.")
