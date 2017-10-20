@@ -765,10 +765,10 @@ public class UCCommands {
 			if (!(p instanceof Player) || UChat.get().getPerms().channelWritePerm((Player)p, ch)){
 				Builder fancych = Text.builder();
 				if (first){
-					fancych.append(UCUtil.toText(ch.getColor()+ch.getName()+"&a"));
+					fancych.append(UCUtil.toText(" "+ch.getColor()+ch.getName()));
 					first = false;
 				} else {
-					fancych.append(UCUtil.toText(", "+ch.getColor()+ch.getName()+"&a"));					
+					fancych.append(UCUtil.toText("&a, "+ch.getColor()+ch.getName()));					
 				}
 				fancych.onHover(TextActions.showText(UCUtil.toText(ch.getColor()+"Alias: "+ch.getAlias())));
 				fancych.onClick(TextActions.runCommand("/"+ch.getAlias()));
