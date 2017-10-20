@@ -14,7 +14,6 @@ import org.spongepowered.api.Platform.Component;
 import org.spongepowered.api.Server;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.config.ConfigDir;
-import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.GameReloadEvent;
 import org.spongepowered.api.event.game.state.GamePostInitializationEvent;
@@ -118,6 +117,15 @@ public class UChat {
 		return this.jedis;
 	}
 	
+	private HashMap<List<String>,UCChannel> channels;
+	public HashMap<List<String>,UCChannel> getChannels(){
+		return this.channels;
+	}
+	
+	public void setChannels(HashMap<List<String>,UCChannel> channels){
+		this.channels = channels;
+	}
+	
 	@Inject
     public GuiceObjectMapperFactory factory;
 	
@@ -167,12 +175,6 @@ public class UChat {
     		logger.info("Init API module...");
             this.ucapi = new uChatAPI();
             
-            for (Player p:serv.getOnlinePlayers()){
-            	if (config.getPlayerChannel(p) == null){
-            		getConfig().getDefChannel().addMember(p);
-            	}
-            }
-            
             getLogger().info("Sponge version "+this.game.getPlatform().getContainer(Component.API).getVersion().get());
             getLogger().logClear("\n"
             		+ "&b  _    _ _ _   _                 _        _____ _           _  \n"
@@ -197,11 +199,7 @@ public class UChat {
 		this.config = new UCConfig(factory);
 		this.lang = new UCLang();
 		this.cmds = new UCCommands(this);
-		for (Player p:serv.getOnlinePlayers()){
-			if (config.getPlayerChannel(p) == null){
-        		getConfig().getDefChannel().addMember(p);
-        	}					 
-		}		
+				
 		registerJedis();
 		registerJDA();
 	}

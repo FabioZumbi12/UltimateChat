@@ -27,8 +27,7 @@ public class UCConfig extends FileConfiguration {
 	static YamlConfiguration defConfigs = new YamlConfiguration();
 	static YamlConfiguration configs = new YamlConfiguration();
 	static YamlConfiguration Prots = new YamlConfiguration();
-	private HashMap<List<String>,UCChannel> channels = null;
-	
+		
 	public UCConfig(UChat plugin) throws IOException, InvalidConfigurationException {
 		            File main = UChat.get().getDataFolder();
     	            File config = new File(UChat.get().getDataFolder(),"config.yml");    	            
@@ -263,7 +262,10 @@ public class UCConfig extends FileConfiguration {
         	UChat.get().getUCLogger().info("Created folder: " +chfolder.getPath());
         } 
 		
-        channels = new HashMap<List<String>,UCChannel>();
+		if (UChat.get().getChannels() == null){
+			UChat.get().setChannels(new HashMap<List<String>,UCChannel>());
+		}
+		
         File[] listOfFiles = chfolder.listFiles();
         
         YamlConfiguration channel = new YamlConfiguration();
@@ -313,9 +315,9 @@ public class UCConfig extends FileConfiguration {
 	}
 	
 	public void delChannel(UCChannel ch) {
-		for (Entry<List<String>, UCChannel> ch0:channels.entrySet()){
+		for (Entry<List<String>, UCChannel> ch0:UChat.get().getChannels().entrySet()){
 			if (ch0.getValue().equals(ch)){
-				channels.remove(ch0.getKey());
+				UChat.get().getChannels().remove(ch0.getKey());
 				break;
 			}
 		}
@@ -325,7 +327,7 @@ public class UCConfig extends FileConfiguration {
 		}
 	}
 	
-	public void addChannel(UCChannel ch) throws IOException{		
+	public void addChannel(UCChannel ch) throws IOException{	
 		File defch = new File(UChat.get().getDataFolder(),"channels"+File.separator+ch.getName().toLowerCase()+".yml");		
 		YamlConfiguration chFile = YamlConfiguration.loadConfiguration(defch);
 		chFile.options().header(""
@@ -365,43 +367,48 @@ public class UCConfig extends FileConfiguration {
 			chFile.set(map.getKey(), map.getValue());			
 		});
 		chFile.save(defch);		
-		channels.put(Arrays.asList(ch.getName().toLowerCase(), ch.getAlias().toLowerCase()), ch);
+		
+		if (getChannel(ch.getName()) != null){
+			ch.setMembers(getChannel(ch.getName()).getMembers());
+			UChat.get().getChannels().remove(Arrays.asList(ch.getName().toLowerCase(), ch.getAlias().toLowerCase()));
+		}
+		UChat.get().getChannels().put(Arrays.asList(ch.getName().toLowerCase(), ch.getAlias().toLowerCase()), ch);
 	}
 	
 	public UCChannel getChannel(String alias){		
-		for (List<String> aliases:channels.keySet()){
+		for (List<String> aliases:UChat.get().getChannels().keySet()){
 			if (aliases.contains(alias.toLowerCase())){				
-				return channels.get(aliases);
+				return UChat.get().getChannels().get(aliases);
 			}
 		}
 		return null;
 	}
 	
 	public Collection<UCChannel> getChannels(){
-		return channels.values();
+		return UChat.get().getChannels().values();
 	}
 
 	public List<String> getChAliases(){
 		List<String> aliases = new ArrayList<String>();
 		aliases.addAll(Arrays.asList(getString("general.channel-cmd-aliases").replace(" ", "").split(",")));
-		for (List<String> alias:channels.keySet()){
+		for (List<String> alias:UChat.get().getChannels().keySet()){
 			aliases.addAll(alias);
 		}
 		return aliases;
 	}
 	
 	public UCChannel getPlayerChannel(CommandSender p){
-		for (UCChannel ch:channels.values()){
+		for (UCChannel ch:UChat.get().getChannels().values()){
 			if (ch.isMember(p)){
 				return ch;
 			}
 		}
-		return null;
+		return getDefChannel();
 	}
 	
 
 	public void unMuteInAllChannels(String player){
-		for (UCChannel ch:channels.values()){
+		for (UCChannel ch:UChat.get().getChannels().values()){
 			if (ch.isMuted(player)){				
 				ch.unMuteThis(player);;
 			}
@@ -409,7 +416,7 @@ public class UCConfig extends FileConfiguration {
 	}
 	
 	public void muteInAllChannels(String player){
-		for (UCChannel ch:channels.values()){
+		for (UCChannel ch:UChat.get().getChannels().values()){
 			if (!ch.isMuted(player)){				
 				ch.muteThis(player);;
 			}
@@ -419,9 +426,9 @@ public class UCConfig extends FileConfiguration {
 	public UCChannel getDefChannel(){
 		UCChannel ch = getChannel(getString("general.default-channel"));
 		if (ch == null){
-			UChat.get().getLogger().severe("Default channel not found with alias '"+getString("general.default-channel")+"'. Fix this setting to a valid channel alias.");
+			UChat.get().getLogger().severe("Default channel not found with alias '"+getString("general.default-channel")+"'. Fix this setting to a valid channel alias.");			
 		}
-		return getChannel(getString("general.default-channel"));
+		return ch;
 	}
 	
 	public List<String> getTagList(){

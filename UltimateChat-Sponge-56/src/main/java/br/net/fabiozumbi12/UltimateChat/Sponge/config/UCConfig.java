@@ -28,7 +28,6 @@ import com.google.common.reflect.TypeToken;
 
 public class UCConfig{
 	
-	private HashMap<List<String>,UCChannel> channels = null;	
 	private File defConfig = new File(UChat.get().configDir(),"config.conf");	
 	private File defProt = new File(UChat.get().configDir(),"protections.conf");
 	
@@ -149,7 +148,10 @@ public class UCConfig{
 	            
 	    //--------------------------------------- Load Aliases -----------------------------------//
         
-        channels = new HashMap<List<String>,UCChannel>();
+	    if (UChat.get().getChannels() == null){
+			UChat.get().setChannels(new HashMap<List<String>,UCChannel>());
+		}
+	    
         File[] listOfFiles = chfolder.listFiles();
                     
         CommentedConfigurationNode channel;	
@@ -221,16 +223,16 @@ public class UCConfig{
 	}
 	
 	public UCChannel getChannel(String alias){		
-		for (List<String> aliases:channels.keySet()){
+		for (List<String> aliases:UChat.get().getChannels().keySet()){
 			if (aliases.contains(alias.toLowerCase())){				
-				return channels.get(aliases);
+				return UChat.get().getChannels().get(aliases);
 			}
 		}
 		return null;
 	}
 	
 	public Collection<UCChannel> getChannels(){
-		Collection<UCChannel> chs = this.channels.values();
+		Collection<UCChannel> chs = UChat.get().getChannels().values();
 		chs.removeIf(ch -> ch == null);
 		return chs;
 	}
@@ -238,9 +240,9 @@ public class UCConfig{
 	public void delChannel(UCChannel ch){
 		UChat.get().getCmds().unregisterCmd(ch.getAlias());
 		UChat.get().getCmds().unregisterCmd(ch.getName());
-		for (Entry<List<String>, UCChannel> ch0:channels.entrySet()){
+		for (Entry<List<String>, UCChannel> ch0:UChat.get().getChannels().entrySet()){
 			if (ch0.getValue().equals(ch)){
-				channels.remove(ch0.getKey());
+				UChat.get().getChannels().remove(ch0.getKey());
 				break;
 			}
 		}
@@ -296,11 +298,17 @@ public class UCConfig{
 			chFile.getNode((Object[])key.split("\\.")).setValue(value);
 		});
 		channelManager.save(chFile);
-		channels.put(Arrays.asList(ch.getName().toLowerCase(), ch.getAlias().toLowerCase()), ch);
+		
+		if (getChannel(ch.getName()) != null){
+			ch.setMembers(getChannel(ch.getName()).getMembers());
+			UChat.get().getChannels().remove(Arrays.asList(ch.getName().toLowerCase(), ch.getAlias().toLowerCase()));
+		}
+		
+		UChat.get().getChannels().put(Arrays.asList(ch.getName().toLowerCase(), ch.getAlias().toLowerCase()), ch);
 	}
 	
 	public void unMuteInAllChannels(String player){
-		for (UCChannel ch:channels.values()){
+		for (UCChannel ch:UChat.get().getChannels().values()){
 			if (ch.isMuted(player)){				
 				ch.unMuteThis(player);;
 			}
@@ -308,7 +316,7 @@ public class UCConfig{
 	}
 	
 	public void muteInAllChannels(String player){
-		for (UCChannel ch:channels.values()){
+		for (UCChannel ch:UChat.get().getChannels().values()){
 			if (!ch.isMuted(player)){				
 				ch.muteThis(player);;
 			}
@@ -329,7 +337,7 @@ public class UCConfig{
 	
 	public List<String> getChAliases(){
 		List<String> aliases = new ArrayList<String>();
-		for (List<String> alias:channels.keySet()){
+		for (List<String> alias:UChat.get().getChannels().keySet()){
 			if (alias == null){
 				continue;
 			}
@@ -339,12 +347,12 @@ public class UCConfig{
 	}
 	
 	public UCChannel getPlayerChannel(Player p){
-		for (UCChannel ch:this.channels.values()){
+		for (UCChannel ch:UChat.get().getChannels().values()){
 			if (ch.isMember(p)){
 				return ch;
 			}
 		}
-		return null;
+		return getDefChannel();
 	}
 	
 	public List<String> getChCmd(){

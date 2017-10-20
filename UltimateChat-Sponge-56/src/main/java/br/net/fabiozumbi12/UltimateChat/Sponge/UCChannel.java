@@ -123,6 +123,10 @@ public class UCChannel {
 		}
 	}
 	
+	public void setMembers(List<CommandSource> members){
+		this.members = members;
+	}
+	
 	public boolean useJedis(){
 		return (boolean) properties.get("jedis");
 	}

@@ -22,7 +22,6 @@ import org.bukkit.command.PluginCommandYamlParser;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -32,9 +31,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import at.pcgamingfreaks.MarriageMaster.Bukkit.MarriageMaster;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.API.uChatAPI;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.Bungee.UChatBungee;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.Jedis.UCJedisLoader;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.config.UCConfig;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.config.UCLang;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.Jedis.UCJedisLoader;
 
 import com.lenis0012.bukkit.marriage2.Marriage;
 import com.lenis0012.bukkit.marriage2.MarriageAPI;
@@ -63,6 +62,15 @@ public class UChat extends JavaPlugin {
 	protected HashMap<String,List<String>> ignoringPlayer = new HashMap<String,List<String>>();
 	protected List<String> mutes = new ArrayList<String>();
 	public List<String> isSpy = new ArrayList<String>();
+	
+	private HashMap<List<String>,UCChannel> channels;
+	public HashMap<List<String>,UCChannel> getChannels(){
+		return this.channels;
+	}
+	
+	public void setChannels(HashMap<List<String>,UCChannel> channels){
+		this.channels = channels;
+	}
 	
 	public FileConfiguration getAMConfig(){
 		return this.amConfig;
@@ -214,12 +222,6 @@ public class UChat extends JavaPlugin {
             logger.info("Init API module...");
             this.ucapi = new uChatAPI();
             
-            for (Player p:getServer().getOnlinePlayers()){
-            	if (config.getPlayerChannel(p) == null){
-            		config.getDefChannel().addMember(p);
-            	}
-            }
-            
             //init other features
             
             //Jedis
@@ -258,11 +260,7 @@ public class UChat extends JavaPlugin {
 		}
 		this.lang = new UCLang();
 		this.registerAliases();
-		for (Player p:Bukkit.getOnlinePlayers()){
-			if (config.getPlayerChannel(p) == null){
-				config.getDefChannel().addMember(p);
-			}
-		}
+		
 		this.registerJDA();
 		this.registerJedis();
 		this.initAutomessage();
