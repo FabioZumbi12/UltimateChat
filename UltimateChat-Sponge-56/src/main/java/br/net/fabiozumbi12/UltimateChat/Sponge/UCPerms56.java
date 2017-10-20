@@ -30,6 +30,10 @@ class UCPerms56 implements UCPerms{
 		this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "uchat.cmd.clear", Tristate.TRUE);
 	}
 	
+	public boolean hasSpyPerm(CommandSource receiver, String ch){
+		return hasPerm(receiver, "chat-spy."+ch) || hasPerm(receiver, "chat-spy.all");
+	}
+	
 	public boolean cmdPerm(CommandSource p, String cmd){
 		return hasPerm(p, "cmd."+cmd);
 	}

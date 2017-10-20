@@ -16,6 +16,7 @@ import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.exceptions.JedisConnectionException;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UCChannel;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UCMessages;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.UCPerms;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UChat;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UltimateFancy;
 
@@ -74,14 +75,19 @@ public class UCJedisLoader {
 		UltimateFancy fancy = new UltimateFancy();
 		fancy.textAtStart(ChatColor.translateAlternateColorCodes('&', this.thisId));
 		
-		for (Player receiver:UChat.get().getServer().getOnlinePlayers()){			
-			if (!receiver.equals(tellReceiver) && !receiver.equals(sender) && UChat.get().isSpy.contains(receiver.getName())){
-				String spyformat = UChat.get().getConfig().getString("general.spy-format");
-				
-				spyformat = spyformat.replace("{output}", ChatColor.stripColor(UCMessages.sendMessage(sender, tellReceiver, msg, new UCChannel("tell"), true).toOldFormat()));					
-				receiver.sendMessage(ChatColor.translateAlternateColorCodes('&', spyformat));
+		//spy
+		if (!sender.hasPermission("uchat.chat-spy.bypass")){
+			for (Player receiver:UChat.get().getServer().getOnlinePlayers()){			
+				if (!receiver.getName().equals(tellReceiver) && !receiver.equals(sender) && 
+						UChat.get().isSpy.contains(receiver.getName()) && UCPerms.hasSpyPerm(receiver, "private")){
+					String spyformat = UChat.get().getConfig().getString("general.spy-format");
+					
+					spyformat = spyformat.replace("{output}", ChatColor.stripColor(UCMessages.sendMessage(sender, tellReceiver, msg, new UCChannel("tell"), true).toOldFormat()));					
+					receiver.sendMessage(ChatColor.translateAlternateColorCodes('&', spyformat));
+				}
 			}
 		}
+		
 		fancy.appendString(UCMessages.sendMessage(sender, tellReceiver, msg, new UCChannel("tell"), false).toString());
 		tellPlayers.put(tellReceiver, sender.getName());
 		

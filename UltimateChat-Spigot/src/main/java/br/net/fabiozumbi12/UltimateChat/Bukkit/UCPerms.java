@@ -5,7 +5,11 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 public class UCPerms {
-
+	
+	public static boolean hasSpyPerm(CommandSender receiver, String ch){
+		return hasPerm(receiver, "chat-spy."+ch) || hasPerm(receiver, "chat-spy.all");
+	}
+	
 	public static boolean cmdPerm(CommandSender p, String cmd){
 		return hasPerm(p, "cmd."+cmd);
 	}

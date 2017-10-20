@@ -7,6 +7,7 @@ import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.service.permission.Subject;
 
 public interface UCPerms {
+	boolean hasSpyPerm(CommandSource receiver, String ch);
 	boolean cmdPerm(CommandSource p, String cmd);
 	boolean channelReadPerm(CommandSource p, UCChannel ch);
 	boolean channelWritePerm(CommandSource p, UCChannel ch);

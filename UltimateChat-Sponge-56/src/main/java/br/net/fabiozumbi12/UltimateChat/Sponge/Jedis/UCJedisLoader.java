@@ -75,14 +75,19 @@ public class UCJedisLoader {
 		Builder text = Text.builder();
 		text.append(UCUtil.toText(this.thisId));
 				
-		for (Player receiver:Sponge.getServer().getOnlinePlayers()){			
-			if (!receiver.equals(tellReceiver) && !receiver.equals(sender) && UChat.isSpy.contains(receiver.getName())){
-				String spyformat = UChat.get().getConfig().root().general.spy_format;
-				
-				spyformat = spyformat.replace("{output}", UCUtil.stripColor(UCMessages.sendMessage(sender, tellReceiver, msg, new UCChannel("tell"), true).toPlain()));					
-				receiver.sendMessage(UCUtil.toText(spyformat));					
+		//send spy
+		if (!sender.hasPermission("uchat.chat-spy.bypass")){
+			for (Player receiver:Sponge.getServer().getOnlinePlayers()){			
+				if (!receiver.getName().equals(tellReceiver) && !receiver.equals(sender) && 
+						UChat.isSpy.contains(receiver.getName()) && UChat.get().getPerms().hasSpyPerm(receiver, "private")){
+					String spyformat = UChat.get().getConfig().root().general.spy_format;
+					
+					spyformat = spyformat.replace("{output}", UCUtil.stripColor(UCMessages.sendMessage(sender, tellReceiver, msg, new UCChannel("tell"), true).toPlain()));					
+					receiver.sendMessage(UCUtil.toText(spyformat));					
+				}
 			}
 		}
+		
 		text.append(UCMessages.sendMessage(sender, tellReceiver, msg, new UCChannel("tell"), false));			
 		tellPlayers.put(tellReceiver, sender.getName());
 		
