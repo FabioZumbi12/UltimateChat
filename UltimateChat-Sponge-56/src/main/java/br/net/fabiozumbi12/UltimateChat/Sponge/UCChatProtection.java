@@ -37,7 +37,8 @@ class UCChatProtection {
 		}
 		
 		//antispam
-		if (UChat.get().getConfig().protections().antispam.enable && !p.hasPermission("uchat.bypass-spam")){	
+		if (UChat.get().getConfig().protections().antispam.enable && !p.hasPermission("uchat.bypass-spam")
+				&& !UChat.get().getConfig().protections().antispam.disable_on_chanels.contains(chan.getName())){	
 			
 			//check spam messages
 			if (!chatSpam.containsKey(p)){
@@ -79,7 +80,8 @@ class UCChatProtection {
 		}
 				
 		//censor
-		if (UChat.get().getConfig().protections().censor.enable && !p.hasPermission("uchat.bypass-censor")){
+		if (UChat.get().getConfig().protections().censor.enable && !p.hasPermission("uchat.bypass-censor")
+				&& !UChat.get().getConfig().protections().censor.disable_on_chanels.contains(chan.getName())){
 			int act = 0;
 			for (Entry<String, String> word:UChat.get().getConfig().protections().censor.replace_words.entrySet()){
 				if (!StringUtils.containsIgnoreCase(msg, word.getKey())){
@@ -123,50 +125,55 @@ class UCChatProtection {
 		String regexUrl = UChat.get().getConfig().protections().anti_ip.custom_url_regex;
 		
 		//check ip and website
-		if (UChat.get().getConfig().protections().anti_ip.enable && !p.hasPermission("uchat.bypass-anti-ip")){
+		if (UChat.get().getConfig().protections().anti_ip.enable && !p.hasPermission("uchat.bypass-anti-ip")
+				&& !UChat.get().getConfig().protections().anti_ip.disable_on_chanels.contains(chan.getName())){
 			
 			//check whitelist
+			int cont = 0;
 			for (String check:UChat.get().getConfig().protections().anti_ip.whitelist_words){
 				if (Pattern.compile(check).matcher(msg).find()){	
-					continue;
+					cont++;
 				}
 			}
 			
 			//continue
-			if (Pattern.compile(regexIP).matcher(msg).find()){	
-				addURLspam(p);
-				if (UChat.get().getConfig().protections().anti_ip.cancel_or_replace.equalsIgnoreCase("cancel")){
-					p.sendMessage(UCUtil.toText(UChat.get().getConfig().protections().anti_ip.cancel_msg));
-					return null;
-				} else {
-					msg = msg.replaceAll(regexIP, UChat.get().getConfig().protections().anti_ip.replace_by_word);
-				}
-			}
-			if (Pattern.compile(regexUrl).matcher(msg).find()){
-				addURLspam(p);
-				if (UChat.get().getConfig().protections().anti_ip.cancel_or_replace.equalsIgnoreCase("cancel")){
-					p.sendMessage(UCUtil.toText(UChat.get().getConfig().protections().anti_ip.cancel_msg));
-					return null;
-				} else {
-					msg = msg.replaceAll(regexUrl, UChat.get().getConfig().protections().anti_ip.replace_by_word);
-				}
-			}
-			
-			for (String word:UChat.get().getConfig().protections().anti_ip.check_for_words){
-				if (Pattern.compile("(?i)"+"\\b"+word+"\\b").matcher(msg).find()){
+			if (UChat.get().getConfig().protections().anti_ip.whitelist_words.isEmpty() || cont == 0){
+				if (Pattern.compile(regexIP).matcher(msg).find()){	
 					addURLspam(p);
 					if (UChat.get().getConfig().protections().anti_ip.cancel_or_replace.equalsIgnoreCase("cancel")){
 						p.sendMessage(UCUtil.toText(UChat.get().getConfig().protections().anti_ip.cancel_msg));
 						return null;
 					} else {
-						msg = msg.replaceAll("(?i)"+word, UChat.get().getConfig().protections().anti_ip.replace_by_word);
+						msg = msg.replaceAll(regexIP, UChat.get().getConfig().protections().anti_ip.replace_by_word);
 					}
 				}
-			}		
+				if (Pattern.compile(regexUrl).matcher(msg).find()){
+					addURLspam(p);
+					if (UChat.get().getConfig().protections().anti_ip.cancel_or_replace.equalsIgnoreCase("cancel")){
+						p.sendMessage(UCUtil.toText(UChat.get().getConfig().protections().anti_ip.cancel_msg));
+						return null;
+					} else {
+						msg = msg.replaceAll(regexUrl, UChat.get().getConfig().protections().anti_ip.replace_by_word);
+					}
+				}
+				
+				for (String word:UChat.get().getConfig().protections().anti_ip.check_for_words){
+					if (Pattern.compile("(?i)"+"\\b"+word+"\\b").matcher(msg).find()){
+						addURLspam(p);
+						if (UChat.get().getConfig().protections().anti_ip.cancel_or_replace.equalsIgnoreCase("cancel")){
+							p.sendMessage(UCUtil.toText(UChat.get().getConfig().protections().anti_ip.cancel_msg));
+							return null;
+						} else {
+							msg = msg.replaceAll("(?i)"+word, UChat.get().getConfig().protections().anti_ip.replace_by_word);
+						}
+					}
+				}
+			}					
 		}	
 		
 		//capitalization verify
-		if (UChat.get().getConfig().protections().chat_enhancement.enable && !p.hasPermission("uchat.bypass-enhancement")){
+		if (UChat.get().getConfig().protections().chat_enhancement.enable && !p.hasPermission("uchat.bypass-enhancement")
+				&& !UChat.get().getConfig().protections().chat_enhancement.disable_on_chanels.contains(chan.getName())){
 			int lenght = UChat.get().getConfig().protections().chat_enhancement.minimum_lenght;
 			if (!Pattern.compile(regexIP).matcher(msg).find() && !Pattern.compile(regexUrl).matcher(msg).find() && msg.length() > lenght){
 				msg = msg.replaceAll("([.!?])\\1+", "$1").replaceAll(" +", " ").substring(0, 1).toUpperCase()+msg.substring(1);
@@ -177,7 +184,8 @@ class UCChatProtection {
 		}
 		
 		//anti-caps
-		if (UChat.get().getConfig().protections().caps_filter.enable && !p.hasPermission("uchat.bypass-enhancement")){
+		if (UChat.get().getConfig().protections().caps_filter.enable && !p.hasPermission("uchat.bypass-enhancement")
+				&& !UChat.get().getConfig().protections().caps_filter.disable_on_chanels.contains(chan.getName())){
 			int lenght = UChat.get().getConfig().protections().caps_filter.minimum_lenght;
 			int msgUppers = msg.replaceAll("\\p{P}", "").replaceAll("[a-z ]+", "").length();
 			if (!Pattern.compile(regexIP).matcher(msg).find() && !Pattern.compile(regexUrl).matcher(msg).find() && msgUppers >= lenght){
@@ -186,7 +194,8 @@ class UCChatProtection {
 		}
 		
 		//antiflood
-		if (UChat.get().getConfig().protections().anti_flood.enable){						
+		if (UChat.get().getConfig().protections().anti_flood.enable
+				&& !UChat.get().getConfig().protections().anti_flood.disable_on_chanels.contains(chan.getName())){						
 			for (String flood:UChat.get().getConfig().protections().anti_flood.whitelist_flood_characs){
 				if (Pattern.compile("(["+flood+"])\\1+").matcher(msg).find()){	
 					return msg;
@@ -203,7 +212,6 @@ class UCChatProtection {
 				UrlSpam.put(p, 1);
 			} else {
 				UrlSpam.put(p, UrlSpam.get(p)+1);
-				p.sendMessage(UCUtil.toText("UrlSpam: "+UrlSpam.get(p)));
 				if (UrlSpam.get(p) >= UChat.get().getConfig().protections().anti_ip.punish.max_attempts){
 					if (UChat.get().getConfig().protections().anti_ip.punish.mute_or_cmd.equalsIgnoreCase("mute")){
 						muted.add(p.getName());

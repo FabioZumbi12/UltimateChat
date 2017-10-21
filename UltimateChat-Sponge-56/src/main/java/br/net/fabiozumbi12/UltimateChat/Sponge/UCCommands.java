@@ -126,12 +126,9 @@ public class UCCommands {
 								}
 					    	} else {
 					    		Object recObj = args.<Object>getOne("receiver").get();
-					    		UChat.get().getLogger().severe("1");
 						    	if (src instanceof Player){
-						    		UChat.get().getLogger().severe("2");
 						    		Player p = (Player) src;					    		
 						    		if (args.<String>getOne("message").isPresent()){
-						    			UChat.get().getLogger().severe("3");
 						    			Text msg = Text.of(args.<String>getOne("message").get());	
 						    			
 						    			//receiver as player

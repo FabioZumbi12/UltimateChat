@@ -1,5 +1,6 @@
 package br.net.fabiozumbi12.UltimateChat.Sponge.config;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +28,8 @@ public class ProtectionsCategory {
 			
 			@Setting
 			public boolean enable = true;
+			@Setting(value="disable-on-channels")
+			public List<String> disable_on_chanels = new ArrayList<String>();
 			@Setting(value="end-with-dot")
 			public boolean end_with_dot = true;
 			@Setting(value="minimum-lenght")
@@ -42,8 +45,10 @@ public class ProtectionsCategory {
 			
 			@Setting
 			public boolean enable = true;
+			@Setting(value="disable-on-channels")
+			public List<String> disable_on_chanels = Arrays.asList("Local");
 			@Setting(value="whitelist-flood-characs")
-			public List<String> whitelist_flood_characs = Arrays.asList("k");
+			public List<String> whitelist_flood_characs = Arrays.asList("k","w");
 		}
 		
 		//caps-filter
@@ -55,6 +60,8 @@ public class ProtectionsCategory {
 			
 			@Setting
 			public boolean enable = true;
+			@Setting(value="disable-on-channels")
+			public List<String> disable_on_chanels = new ArrayList<String>();
 			@Setting(value="minimum-lenght")
 			public int minimum_lenght = 3;
 		}
@@ -68,6 +75,8 @@ public class ProtectionsCategory {
 			
 			@Setting
 			public boolean enable = true;
+			@Setting(value="disable-on-channels")
+			public List<String> disable_on_chanels = Arrays.asList("Local");
 			@Setting(value="time-beteween-messages", comment="In seconds")
 			public int time_beteween_messages = 1;
 			@Setting(value="count-of-same-message")
@@ -96,6 +105,8 @@ public class ProtectionsCategory {
 			
 			@Setting
 			public boolean enable = true;
+			@Setting(value="disable-on-channels")
+			public List<String> disable_on_chanels = new ArrayList<String>();
 			@Setting(value="replace-by-symbol")
 			public boolean replace_by_symbol = true;
 			@Setting(value="by-symbol")
@@ -130,8 +141,10 @@ public class ProtectionsCategory {
 			
 			@Setting
 			public boolean enable = true;
+			@Setting(value="disable-on-channels")
+			public List<String> disable_on_chanels = new ArrayList<String>();
 			@Setting(value="custom-ip-regex")
-			public String custom_ip_regex = "^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$";
+			public String custom_ip_regex = "(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])";
 			@Setting(value="custom-url-regex")
 			public String custom_url_regex = "((http:\\/\\/|https:\\/\\/)?(www.)?(([a-zA-Z0-9-]){2,}\\.){1,4}([a-zA-Z]){2,6}(\\/([a-zA-Z-_\\/\\.0-9#:?=&;,]*)?)?)";
 			@Setting(value="check-for-words")

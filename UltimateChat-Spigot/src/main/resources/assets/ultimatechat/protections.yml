@@ -2,6 +2,8 @@
 chat-protection:
   # Chat enhancement.
   chat-enhancement:
+    # Channels where this will be enabled
+    disable-on-channels: []
     # All to lower-case and first word to uppercase.
     enabled: true
     # Always end with dots.
@@ -11,18 +13,27 @@ chat-protection:
 
   # Anti-Flood
   anti-flood:
+    # Channels where this will be enabled
+    disable-on-channels: 
+    - Local
     enable: true
     whitelist-flood-characs:
     - k
+    - w
 
   # Caps Lock filter
   caps-filter:
+    # Channels where this will be enabled
+    disable-on-channels: []
     enabled: true
     # Minimun lentgh of upper case letters to apply filter
     minimum-lenght: 3
     
   # Anti-Spam system.
   antispam:
+    # Channels where this will be enabled
+    disable-on-channels: 
+    - Local
     enabled: false
     # Time in seconds the player can send new messages.
     time-beteween-messages: 1
@@ -37,6 +48,8 @@ chat-protection:
 
   # Word Censor
   censor:
+    # Channels where this will be disabled
+    disable-on-channels: []
     enabled: true
     # Use symbol instead a word.
     replace-by-symbol: true
@@ -63,9 +76,11 @@ chat-protection:
 
   # Anti-IP and websites
   anti-ip:
+    # Channels where this will be enabled
+    disable-on-channels: []
     enabled: true
     # This regex for detect IP is already working, but if you find one more efficient you can change.
-    custom-ip-regex: ^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$
+    custom-ip-regex: (([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])
     # This regex for detect URLs is already working, but if you find one more efficient you can change.
     custom-url-regex: ((http:\/\/|https:\/\/)?(www.)?(([a-zA-Z0-9-]){2,}\.){1,4}([a-zA-Z]){2,6}(\/([a-zA-Z-_\/\.0-9#:?=&;,]*)?)?)
     # Check for additional words or entire websites/ips on player message. If unique word add a dot stating the word. This will check for '.net', '. net' or '.     net' using 'net' as exmaple.

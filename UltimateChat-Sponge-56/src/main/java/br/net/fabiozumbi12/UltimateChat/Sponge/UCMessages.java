@@ -388,6 +388,9 @@ public class UCMessages {
 					
 					lastColor = getLastColor(format);
 					
+					//append text
+					msgBuilder.append(UCUtil.toText(format));
+					
 					if (UChat.get().getConfig().root().general.item_hand.enable && msg.contains(UChat.get().getConfig().root().general.item_hand.placeholder) && sender instanceof Player){						
 						ItemStack hand = ItemStack.of(ItemTypes.NONE, 1);
 						if (((Player)sender).getItemInHand(HandTypes.MAIN_HAND).isPresent()){	
@@ -395,16 +398,23 @@ public class UCMessages {
 						} else if(((Player)sender).getItemInHand(HandTypes.OFF_HAND).isPresent()){
 							hand = ((Player)sender).getItemInHand(HandTypes.OFF_HAND).get();							
 						}
-						msgBuilder.append(UCUtil.toText(format)).onHover(TextActions.showItem(hand.createSnapshot()));
+						msgBuilder.onHover(TextActions.showItem(hand.createSnapshot()));
 					}
 					else if (UChat.get().getConfig().root().mention.hover_message.length() > 0 && StringUtils.containsIgnoreCase(msg, ((CommandSource)receiver).getName())){
 						tooltip = formatTags("", UChat.get().getConfig().root().mention.hover_message, sender, receiver, msg, ch);						
-						msgBuilder.append(UCUtil.toText(format)).onHover(TextActions.showText(UCUtil.toText(tooltip)));
+						msgBuilder.onHover(TextActions.showText(UCUtil.toText(tooltip)));
 					} else if (tooltip.length() > 0){				
-						msgBuilder.append(UCUtil.toText(format)).onHover(TextActions.showText(UCUtil.toText(tooltip)));
-					} else {
-						msgBuilder.append(UCUtil.toText(format));
-					}		
+						msgBuilder.onHover(TextActions.showText(UCUtil.toText(tooltip)));
+					}
+					/*
+					String regex = "((http:\\/\\/|https:\\/\\/)?(www.)?(([a-zA-Z0-9-]){2,}\\.){1,4}([a-zA-Z]){2,6}(\\/([a-zA-Z-_\\/\\.0-9#:?=&;,]*)?)?)";
+					if (Pattern.compile(regex).matcher(format).find()){
+						try {
+							msgBuilder.onClick(TextActions.openUrl(new URL(Pattern.compile(regex).matcher(format).group())));
+						} catch (MalformedURLException e) {
+							e.printStackTrace();
+						}
+					}*/
 					msgBuilder.applyTo(message);
 				} else {					
 					format = formatTags(tag, format, sender, receiver, msg, ch);

@@ -12,5 +12,7 @@ public interface UCDInterface {
 	
 	public void updateGame(String text);
 	
+	public void sendCommandsToDiscord(String text);
+	
 	public void shutdown();
 }

@@ -69,12 +69,14 @@ public class MainCategory {
 		public String log_channel_id = "";		
 		@Setting(value="tell-channel-id", comment="Channel id to spy private messages")
 		public String tell_channel_id = "";		
-		@Setting(value="server-commands")
+		@Setting(value="commands-channel-id", comment="Channel id to send commands issued by players")
+		public String commands_channel_id = "";	
+		@Setting(value="server-commands", comment="Put the id on 'commands-channel-id' option or/and enable server commands on channel configuration to use this.")
 		public ServerCmds server_commands = new ServerCmds();		
 		@ConfigSerializable
 		public static class ServerCmds{
 			
-			@Setting
+			@Setting(comment="This alias is not needed if using the channel set on 'commands-channel-id' option.")
 			public String alias = "!cmd";			
 			@Setting
 			public List<String> withelist = new ArrayList<String>();			

@@ -52,10 +52,11 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
     public void onMessageReceived(MessageReceivedEvent e) {
 		if (e.getAuthor().getId().equals(e.getJDA().getSelfUser().getId()) || e.getMember().getUser().isFake())return;
 		
+		String message = e.getMessage().getRawContent();	
+		int used = 0;
+		
 		for (UCChannel ch:this.uchat.getConfig().getChannels()){
-			if (ch.isListenDiscord() && ch.matchDiscordID(e.getChannel().getId())){
-				String message = e.getMessage().getRawContent();	
-				
+			if (ch.isListenDiscord() && ch.matchDiscordID(e.getChannel().getId())){				
 				//check if is cmd
 				if (message.startsWith(this.uchat.getConfig().root().discord.server_commands.alias) && ch.getDiscordAllowCmds()){
 					message = message.replace(this.uchat.getConfig().root().discord.server_commands.alias+" ", "");
@@ -74,6 +75,7 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
 						if (count > 0) continue;
 					}
 					Sponge.getCommandManager().process(Sponge.getServer().getConsole(), message);
+					used++;
 				} else {
 					Builder text = Text.builder();
 					
@@ -102,9 +104,29 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
 						text.append(Text.of(message));
 					}
 					ch.sendMessage(Sponge.getServer().getConsole(), text.build(), true);	
+					used++;
 				}										
 			}
 		}
+		
+		//check if is from log command chanel
+		if (used == 0 && e.getChannel().getId().equals(UChat.get().getConfig().root().discord.commands_channel_id)){
+			if (!this.uchat.getConfig().root().discord.server_commands.withelist.isEmpty()){
+				int count = 0;
+				for (String cmd:this.uchat.getConfig().root().discord.server_commands.withelist){
+					if (message.startsWith(cmd)) count++;
+				}
+				if (count == 0) return;
+			}
+			if (!this.uchat.getConfig().root().discord.server_commands.blacklist.isEmpty()){
+				int count = 0;
+				for (String cmd:this.uchat.getConfig().root().discord.server_commands.blacklist){
+					if (message.startsWith(cmd)) count++;
+				}
+				if (count > 0) return;
+			}
+			Sponge.getCommandManager().process(Sponge.getServer().getConsole(), message);
+		} 	
 	}
 	
 	public void updateGame(String text){
@@ -115,6 +137,12 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
 		if (!uchat.getConfig().root().discord.tell_channel_id.isEmpty()){
 			sendToChannel(uchat.getConfig().root().discord.tell_channel_id, text);
 		}
+	}
+	
+	public void sendCommandsToDiscord(String text){
+		if (!uchat.getConfig().root().discord.commands_channel_id.isEmpty()){
+			sendToChannel(uchat.getConfig().root().discord.commands_channel_id, text);
+		}			
 	}
 	
 	public void sendRawToDiscord(String text){

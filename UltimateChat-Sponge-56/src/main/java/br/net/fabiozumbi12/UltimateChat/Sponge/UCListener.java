@@ -9,6 +9,9 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
+import org.spongepowered.api.event.command.SendCommandEvent;
+import org.spongepowered.api.event.entity.DestructEntityEvent;
+import org.spongepowered.api.event.filter.Getter;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.event.message.MessageChannelEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
@@ -105,6 +108,20 @@ public class UCListener {
 				}										
 			}
 		}				
+	}
+	
+	@Listener(order = Order.POST)
+	public void onCommand(SendCommandEvent e, @First CommandSource p){
+		if (UChat.get().getUCJDA() != null){
+			UChat.get().getUCJDA().sendCommandsToDiscord(UChat.get().getLang().get("discord.command").replace("{player}", p.getName()).replace("{cmd}", "/"+e.getCommand()+" "+e.getArguments()));				
+		}		
+	}	
+	
+	@Listener
+	public void onDeath(DestructEntityEvent.Death e, @Getter("getTargetEntity") Player p){
+		if (UChat.get().getUCJDA() != null){
+			UChat.get().getUCJDA().sendRawToDiscord(UChat.get().getLang().get("discord.death").replace("{player}", p.getName()));				
+		}
 	}
 	
 	@Listener

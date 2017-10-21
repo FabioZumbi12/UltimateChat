@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -759,6 +760,22 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 				}
 			}
 		}				
+	}
+	
+	@EventHandler
+	public void onDeath(PlayerDeathEvent e){
+		Player p = e.getEntity();	
+		if (UChat.get().getUCJDA() != null){
+			UChat.get().getUCJDA().sendRawToDiscord(UChat.get().getLang().get("discord.death").replace("{player}", p.getName()));			
+		}
+	}
+	
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onCommand(PlayerCommandPreprocessEvent e){
+		Player p = e.getPlayer();
+		if (UChat.get().getUCJDA() != null){
+			UChat.get().getUCJDA().sendCommandsToDiscord(UChat.get().getLang().get("discord.command").replace("{player}", p.getName()).replace("{cmd}", e.getMessage()));			
+		}
 	}
 	
 	@EventHandler

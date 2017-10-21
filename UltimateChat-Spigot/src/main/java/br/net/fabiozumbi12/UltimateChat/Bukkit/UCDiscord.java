@@ -48,10 +48,12 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface{
     public void onMessageReceived(MessageReceivedEvent e) {
 		if (e.getAuthor().getId().equals(e.getJDA().getSelfUser().getId()) || e.getMember().getUser().isFake())return;
 		
+		String message = e.getMessage().getRawContent();
+		int used = 0;
+		
 		for (UCChannel ch:this.uchat.getConfig().getChannels()){
-			if (ch.isListenDiscord() && ch.matchDiscordID(e.getChannel().getId())){
-				String message = e.getMessage().getRawContent();
-				
+			if (ch.isListenDiscord() && ch.matchDiscordID(e.getChannel().getId())){				
+				//check if is cmd
 				if (message.startsWith(this.uchat.getConfig().getString("discord.server-commands.alias")) && ch.getDiscordAllowCmds()){
 					message = message.replace(this.uchat.getConfig().getString("discord.server-commands.alias")+" ", "");
 					if (!this.uchat.getConfig().getStringList("discord.server-commands.whitelist").isEmpty()){
@@ -68,7 +70,8 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface{
 						}
 						if (count > 0) continue;
 					}
-					UCUtil.performCommand(null, Bukkit.getServer().getConsoleSender(), message);
+					UCUtil.performCommand(null, Bukkit.getServer().getConsoleSender(), message);					
+					used++;
 				} else {
 					UltimateFancy fancy = new UltimateFancy();
 					
@@ -96,8 +99,27 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface{
 						fancy.text(message);	
 					}
 					ch.sendMessage(uchat.getServer().getConsoleSender(), fancy, true);	
+					used++;
 				}										
 			}
+		}
+		
+		if (used == 0 && e.getChannel().getId().equals(this.uchat.getConfig().getString("discord.commands-channel-id"))){
+			if (!this.uchat.getConfig().getStringList("discord.server-commands.whitelist").isEmpty()){
+				int count = 0;
+				for (String cmd:this.uchat.getConfig().getStringList("discord.server-commands.whitelist")){
+					if (message.startsWith(cmd)) count++;
+				}
+				if (count == 0) return;
+			}
+			if (!this.uchat.getConfig().getStringList("discord.server-commands.blacklist").isEmpty()){
+				int count = 0;
+				for (String cmd:this.uchat.getConfig().getStringList("discord.server-commands.blacklist")){
+					if (message.startsWith(cmd)) count++;
+				}
+				if (count > 0) return;
+			}
+			UCUtil.performCommand(null, Bukkit.getServer().getConsoleSender(), message);
 		}
 	}
 	
@@ -106,10 +128,15 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface{
 	}
 	
 	public void sendTellToDiscord(String text){
-		if (!uchat.getConfig().getString("discord.tell-channel-id").isEmpty()){
-			text = text.replaceAll("([&"+ChatColor.COLOR_CHAR+"]([a-fk-or0-9]))", "");
+		if (!uchat.getConfig().getString("discord.tell-channel-id").isEmpty()){			
 			sendToChannel(uchat.getConfig().getString("discord.tell-channel-id"), text);
 		}
+	}
+	
+	public void sendCommandsToDiscord(String text){
+		if (!uchat.getConfig().getString("discord.commands-channel-id").isEmpty()){
+			sendToChannel(uchat.getConfig().getString("discord.commands-channel-id"), text);
+		}			
 	}
 	
 	public void sendRawToDiscord(String text){
@@ -124,14 +151,14 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface{
 				text = text.replace("@everyone", "everyone")
 						.replace("@here", "here");
 			}
-			text = text.replaceAll("([&"+ChatColor.COLOR_CHAR+"]([a-fk-or0-9]))", "");
 			text = formatTags(ch.getMCtoDiscordFormat(), ch, null, sender.getName(), text);
 					
 			sendToChannel(ch.getDiscordChannelID(), text);
 		}		
 	}
 	
-	private void sendToChannel(String id, String text){
+	public void sendToChannel(String id, String text){
+		text = text.replaceAll("([&"+ChatColor.COLOR_CHAR+"]([a-fk-or0-9]))", "");
 		TextChannel ch = jda.getTextChannelById(id);
 		try {
 			ch.sendMessage(text).queue();

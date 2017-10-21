@@ -85,12 +85,20 @@ public class UltimateFancy {
 		text = ChatColor.translateAlternateColorCodes('&', text);
 		return this.text(text);
 	}
-	
+	/*
+	private JSONObject checkUrl(JSONObject json, String text){
+		String regex = "((http:\\/\\/|https:\\/\\/)?(www.)?(([a-zA-Z0-9-]){2,}\\.){1,4}([a-zA-Z]){2,6}(\\/([a-zA-Z-_\\/\\.0-9#:?=&;,]*)?)?)";
+		if (Pattern.compile(regex).matcher(text).find()){
+			json.put("clickEvent", parseJson("open_url", Pattern.compile(regex).matcher(text).group(1)));
+		}
+		return json;
+	}
+	*/
 	private List<JSONObject> parseColors(String text){
 		List<JSONObject> jsonList = new ArrayList<JSONObject>();
 		for (String part:text.split("(?="+ChatColor.COLOR_CHAR+")")){
 			JSONObject workingText = new JSONObject();	
-			
+						
 			//fix colors before
 			filterColors(workingText);
 			
@@ -107,9 +115,12 @@ public class UltimateFancy {
 			}
 			
 			workingText.put("text", ChatColor.stripColor(part));
-						
+									
 			//fix colors after
 			filterColors(workingText);
+			
+			//check if url
+			//workingText = checkUrl(workingText, part);
 			
 			if (!workingText.containsKey("color")){
 				workingText.put("color", "white");
