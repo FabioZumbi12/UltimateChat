@@ -38,7 +38,7 @@ class UCChatProtection {
 		
 		//antispam
 		if (UChat.get().getConfig().protections().antispam.enable && !p.hasPermission("uchat.bypass-spam")
-				&& !UChat.get().getConfig().protections().antispam.disable_on_chanels.contains(chan.getName())){	
+				&& (chan == null || !UChat.get().getConfig().protections().antispam.disable_on_chanels.contains(chan.getName()))){	
 			
 			//check spam messages
 			if (!chatSpam.containsKey(p)){
@@ -81,7 +81,7 @@ class UCChatProtection {
 				
 		//censor
 		if (UChat.get().getConfig().protections().censor.enable && !p.hasPermission("uchat.bypass-censor")
-				&& !UChat.get().getConfig().protections().censor.disable_on_chanels.contains(chan.getName())){
+				&& (chan == null || !UChat.get().getConfig().protections().censor.disable_on_chanels.contains(chan.getName()))){
 			int act = 0;
 			for (Entry<String, String> word:UChat.get().getConfig().protections().censor.replace_words.entrySet()){
 				if (!StringUtils.containsIgnoreCase(msg, word.getKey())){
@@ -126,7 +126,7 @@ class UCChatProtection {
 		
 		//check ip and website
 		if (UChat.get().getConfig().protections().anti_ip.enable && !p.hasPermission("uchat.bypass-anti-ip")
-				&& !UChat.get().getConfig().protections().anti_ip.disable_on_chanels.contains(chan.getName())){
+				&& (chan == null || !UChat.get().getConfig().protections().anti_ip.disable_on_chanels.contains(chan.getName()))){
 			
 			//check whitelist
 			int cont = 0;
@@ -173,7 +173,7 @@ class UCChatProtection {
 		
 		//capitalization verify
 		if (UChat.get().getConfig().protections().chat_enhancement.enable && !p.hasPermission("uchat.bypass-enhancement")
-				&& !UChat.get().getConfig().protections().chat_enhancement.disable_on_chanels.contains(chan.getName())){
+				&& (chan == null || !UChat.get().getConfig().protections().chat_enhancement.disable_on_chanels.contains(chan.getName()))){
 			int lenght = UChat.get().getConfig().protections().chat_enhancement.minimum_lenght;
 			if (!Pattern.compile(regexIP).matcher(msg).find() && !Pattern.compile(regexUrl).matcher(msg).find() && msg.length() > lenght){
 				msg = msg.replaceAll("([.!?])\\1+", "$1").replaceAll(" +", " ").substring(0, 1).toUpperCase()+msg.substring(1);
@@ -185,7 +185,7 @@ class UCChatProtection {
 		
 		//anti-caps
 		if (UChat.get().getConfig().protections().caps_filter.enable && !p.hasPermission("uchat.bypass-enhancement")
-				&& !UChat.get().getConfig().protections().caps_filter.disable_on_chanels.contains(chan.getName())){
+				&& (chan == null || !UChat.get().getConfig().protections().caps_filter.disable_on_chanels.contains(chan.getName()))){
 			int lenght = UChat.get().getConfig().protections().caps_filter.minimum_lenght;
 			int msgUppers = msg.replaceAll("\\p{P}", "").replaceAll("[a-z ]+", "").length();
 			if (!Pattern.compile(regexIP).matcher(msg).find() && !Pattern.compile(regexUrl).matcher(msg).find() && msgUppers >= lenght){
@@ -195,7 +195,7 @@ class UCChatProtection {
 		
 		//antiflood
 		if (UChat.get().getConfig().protections().anti_flood.enable
-				&& !UChat.get().getConfig().protections().anti_flood.disable_on_chanels.contains(chan.getName())){						
+				&& (chan == null || !UChat.get().getConfig().protections().anti_flood.disable_on_chanels.contains(chan.getName()))){						
 			for (String flood:UChat.get().getConfig().protections().anti_flood.whitelist_flood_characs){
 				if (Pattern.compile("(["+flood+"])\\1+").matcher(msg).find()){	
 					return msg;
