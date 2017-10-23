@@ -16,7 +16,7 @@ discord:
   token: ""
   log-channel-id: ''
   tell-channel-id: ''
-  log-commands-channel-id: ''
+  commands-channel-id: ''
   server-commands:
     alias: '!cmd'
     whitelist: []
