@@ -17,15 +17,9 @@ commands:
   umsg:
     description: "Send a message to player"
 permissions:
-  uchat.*:
-    description: "All ultimatechat commands."
-    default: op
-    children:
-      uchat.admin: true
-      uchat.player: true
   uchat.admin:
     description: "All admin commands."
-    default: false
+    default: op
     children:
       uchat.cmd.reload: true
       uchat.cmd.spy: true

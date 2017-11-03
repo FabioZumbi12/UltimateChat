@@ -40,7 +40,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 				 return true;
 			 }
 					 
-			 if (args[0].equalsIgnoreCase("reload") && sender.hasPermission("uchat.cmd.reload")){
+			 if (args[0].equalsIgnoreCase("reload") && UCPerms.hasPermission(sender, "uchat.cmd.reload")){
 				 UChat.get().reload();
 				 UChat.get().getLang().sendMessage(sender, "plugin.reloaded");
 				 return true;

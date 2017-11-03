@@ -76,7 +76,7 @@ public class UCJedisLoader {
 		fancy.textAtStart(ChatColor.translateAlternateColorCodes('&', this.thisId));
 		
 		//spy
-		if (!sender.hasPermission("uchat.chat-spy.bypass")){
+		if (!UCPerms.hasPermission(sender, "uchat.chat-spy.bypass")){
 			for (Player receiver:UChat.get().getServer().getOnlinePlayers()){			
 				if (!receiver.getName().equals(tellReceiver) && !receiver.equals(sender) && 
 						UChat.get().isSpy.contains(receiver.getName()) && UCPerms.hasSpyPerm(receiver, "private")){

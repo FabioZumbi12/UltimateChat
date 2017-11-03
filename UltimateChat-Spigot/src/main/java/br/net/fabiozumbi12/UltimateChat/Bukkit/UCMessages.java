@@ -138,7 +138,7 @@ public class UCMessages {
 			}	
 									
 			//chat spy
-			if (!sender.hasPermission("uchat.chat-spy.bypass")){
+			if (!UCPerms.hasPermission(sender, "uchat.chat-spy.bypass")){
 				for (Player receiver:UChat.get().getServer().getOnlinePlayers()){			
 					if (!receiver.equals(sender) && !receivers.contains(receiver) && !receivers.contains(sender) && 
 							UChat.get().isSpy.contains(receiver.getName()) && UCPerms.hasSpyPerm(receiver, ch.getName())){	
@@ -165,7 +165,7 @@ public class UCMessages {
 			channel = new UCChannel("tell");
 			
 			//send spy			
-			if (!sender.hasPermission("uchat.chat-spy.bypass")){
+			if (!UCPerms.hasPermission(sender, "uchat.chat-spy.bypass")){
 				for (Player receiver:UChat.get().getServer().getOnlinePlayers()){			
 					if (!receiver.equals(tellReceiver) && !receiver.equals(sender) && 
 							UChat.get().isSpy.contains(receiver.getName()) && UCPerms.hasSpyPerm(receiver, "private")){
@@ -240,7 +240,7 @@ public class UCMessages {
 	
 	public static boolean isIgnoringPlayers(String p, String victim){
 		Player play = Bukkit.getPlayer(p);
-		if (play != null && (play.isOp() || play.hasPermission("uchat.admin"))){
+		if (play != null && (play.isOp() || UCPerms.hasPermission(play, "uchat.admin"))){
 			return false;
 		}
 		
@@ -295,7 +295,7 @@ public class UCMessages {
 				List<String> hideWorlds = UChat.get().getConfig().getStringList("tags."+tag+".hide-in-worlds");
 				
 				//check perm
-				if (perm != null && !perm.isEmpty() && !sender.hasPermission(perm)){
+				if (perm != null && !perm.isEmpty() && !UCPerms.hasPermission(sender, perm)){
 					continue;
 				}
 				
@@ -514,27 +514,21 @@ public class UCMessages {
 			
 			if (UChat.get().getVaultChat() != null){			
 				text = text
-						.replace("{group-suffix}", UChat.get().getVaultChat().getPlayerSuffix(sender))
-						.replace("{group-prefix}", UChat.get().getVaultChat().getPlayerPrefix(sender));
-				String[] pgs = UChat.get().getVaultChat().getPlayerGroups(sender.getWorld().getName(), sender);
-				if (pgs.length > 0){
-					StringBuilder gprefixes = new StringBuilder();
-					StringBuilder gsuffixes = new StringBuilder();
-					for (String g:pgs){
-						gprefixes.append(UChat.get().getVaultChat().getGroupPrefix(sender.getWorld().getName(), g));
-						gsuffixes.append(UChat.get().getVaultChat().getGroupSuffix(sender.getWorld().getName(), g));
-					}
+						.replace("{group-suffix}", UCVaultCache.getVaultChat(sender).getPlayerSuffix())
+						.replace("{group-prefix}", UCVaultCache.getVaultChat(sender).getPlayerPrefix());
+				String[] pgs = UCVaultCache.getVaultPerms(sender).getPlayerGroups();
+				if (pgs.length > 0){					
 					text = text
-							.replace("{player-groups-prefixes}", gprefixes.toString())
-							.replace("{player-groups-suffixes}", gsuffixes.toString());
+							.replace("{player-groups-prefixes}", UCVaultCache.getVaultChat(sender).getGroupPrefixes())
+							.replace("{player-groups-suffixes}", UCVaultCache.getVaultChat(sender).getGroupSuffixes());
 				}
 			}			
 			if (UChat.get().getVaultEco() != null){			
 				text = text
 						.replace("{balance}", ""+UChat.get().getVaultEco().getBalance(sender,sender.getWorld().getName()));
 			}	
-			if (UChat.get().getVaultPerms() != null){	
-				String[] pgs = UChat.get().getVaultPerms().getPlayerGroups(sender.getWorld().getName(), sender);
+			if (UChat.get().getVaultPerms() != null){
+				String[] pgs = UCVaultCache.getVaultPerms(sender).getPlayerGroups();
 				if (pgs.length > 0){
 					StringBuilder groups = new StringBuilder();
 					for (String g:pgs){
@@ -544,7 +538,7 @@ public class UCMessages {
 					
 				}
 				text = text
-						.replace("{prim-group}", UChat.get().getVaultPerms().getPrimaryGroup(sender.getWorld().getName(),sender));
+						.replace("{prim-group}", UCVaultCache.getVaultPerms(sender).getPrimaryGroup());
 						
 			}
 			if (text.contains("{clan-") && UChat.SClans){		
