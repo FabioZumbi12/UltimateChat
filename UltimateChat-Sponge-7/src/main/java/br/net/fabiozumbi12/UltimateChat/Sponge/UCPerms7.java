@@ -29,6 +29,7 @@ class UCPerms7 implements UCPerms {
 		this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "uchat.cmd.ignore.channel", Tristate.TRUE);
 		this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "uchat.cmd.ignore.player", Tristate.TRUE);
 		this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "uchat.cmd.clear", Tristate.TRUE);
+		this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "uchat.password", Tristate.TRUE);
 	}
 	
 	public boolean hasSpyPerm(CommandSource receiver, String ch){
@@ -40,12 +41,12 @@ class UCPerms7 implements UCPerms {
 	}
 	
 	public boolean channelReadPerm(CommandSource p, UCChannel ch){
-		UCChannel defCh = UChat.get().getConfig().getDefChannel();
+		UCChannel defCh = UChat.get().getDefChannel();
 		return defCh.equals(ch) || hasPerm(p, "channel."+ch.getName().toLowerCase()+".read");
 	}
 	
 	public boolean channelWritePerm(CommandSource p, UCChannel ch){
-		UCChannel defCh = UChat.get().getConfig().getDefChannel();
+		UCChannel defCh = UChat.get().getDefChannel();
 		return defCh.equals(ch) || hasPerm(p, "channel."+ch.getName().toLowerCase()+".write");
 	}
 	

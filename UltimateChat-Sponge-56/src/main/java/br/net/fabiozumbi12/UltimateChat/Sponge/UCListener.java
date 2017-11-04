@@ -73,13 +73,13 @@ public class UCListener {
 		} 
 		
 		else {
-			UCChannel ch = UChat.get().getConfig().getPlayerChannel(p);
+			UCChannel ch = UChat.get().getPlayerChannel(p);
 			if (UChat.tempChannels.containsKey(p.getName()) && !UChat.tempChannels.get(p.getName()).equals(ch.getAlias())){
-				ch = UChat.get().getConfig().getChannel(UChat.tempChannels.get(p.getName()));
+				ch = UChat.get().getChannel(UChat.tempChannels.get(p.getName()));
 				UChat.tempChannels.remove(p.getName());
 			}
 			
-			if (UChat.mutes.contains(p.getName()) || ch.isMuted(p.getName())){
+			if (UChat.get().mutes.contains(p.getName()) || ch.isMuted(p.getName())){
 				UChat.get().getLang().sendMessage(p, "channel.muted");
 				e.setMessageCancelled(true);
 				return;
@@ -127,7 +127,7 @@ public class UCListener {
 	@Listener
 	public void onJoin(ClientConnectionEvent.Join e){
 		Player p = e.getTargetEntity();		
-		UChat.get().getConfig().getDefChannel().addMember(p);
+		UChat.get().getDefChannel().addMember(p);
 		if (UChat.get().getUCJDA() != null){
 			UChat.get().getUCJDA().sendRawToDiscord(UChat.get().getLang().get("discord.join").replace("{player}", p.getName()));
 			if (UChat.get().getConfig().root().discord.update_status){
@@ -157,7 +157,7 @@ public class UCListener {
 		for (String remove:toRemove2){
 			UChat.respondTell.remove(remove);
 		}
-		UChat.get().getConfig().getPlayerChannel(p).removeMember(p);
+		UChat.get().getPlayerChannel(p).removeMember(p);
 		if (UChat.tempChannels.containsKey(p.getName())){
 			UChat.tempChannels.remove(p.getName());
 		}

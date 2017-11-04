@@ -20,13 +20,13 @@ public class ChannelCommandElement extends CommandElement {
 	@Override
 	protected Object parseValue(CommandSource source, CommandArgs args)
 			throws ArgumentParseException {		
-		return UChat.get().getConfig().getChannel(args.next());
+		return UChat.get().getChannel(args.next());
 	}
 
 	@Override
 	public List<String> complete(CommandSource src, CommandArgs args,
 			CommandContext context) {
-		return UChat.get().getConfig().getChannels().stream().filter(key->UChat.get().getPerms().channelWritePerm(src, key)).sorted(Comparator.comparing(UCChannel::getName)).map(UCChannel::getName).collect(Collectors.toList());
+		return UChat.get().getChannels().values().stream().filter(key->UChat.get().getPerms().channelWritePerm(src, key)).sorted(Comparator.comparing(UCChannel::getName)).map(UCChannel::getName).collect(Collectors.toList());
 	}
 	
 	@Override

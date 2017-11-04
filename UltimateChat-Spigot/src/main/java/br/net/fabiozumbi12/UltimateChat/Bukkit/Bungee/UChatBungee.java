@@ -38,7 +38,7 @@ public class UChatBungee implements PluginMessageListener, Listener {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}				
-		UCChannel chan = UChat.get().getConfig().getChannel(ch);
+		UCChannel chan = UChat.get().getChannel(ch);
 		if (chan == null || !chan.isBungee()){
 			return;
 		}

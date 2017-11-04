@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,8 +16,6 @@ import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import ninja.leaping.configurate.objectmapping.GuiceObjectMapperFactory;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
-
-import org.spongepowered.api.entity.living.player.Player;
 
 import br.net.fabiozumbi12.UltimateChat.Sponge.UCChannel;
 import br.net.fabiozumbi12.UltimateChat.Sponge.UChat;
@@ -222,21 +219,6 @@ public class UCConfig{
 		return tags;
 	}
 	
-	public UCChannel getChannel(String alias){		
-		for (List<String> aliases:UChat.get().getChannels().keySet()){
-			if (aliases.contains(alias.toLowerCase())){				
-				return UChat.get().getChannels().get(aliases);
-			}
-		}
-		return null;
-	}
-	
-	public Collection<UCChannel> getChannels(){
-		Collection<UCChannel> chs = UChat.get().getChannels().values();
-		chs.removeIf(ch -> ch == null);
-		return chs;
-	}
-	
 	public void delChannel(UCChannel ch){
 		UChat.get().getCmds().unregisterCmd(ch.getAlias());
 		UChat.get().getCmds().unregisterCmd(ch.getName());
@@ -295,64 +277,19 @@ public class UCConfig{
 				+ "  channelID: '' - The ID of your Discord Channel. Enable debug on your discord to get the channel ID.\n");
 		
 		ch.getProperties().forEach((key,value)->{			
-			chFile.getNode((Object[])key.split("\\.")).setValue(value);
+			chFile.getNode((Object[])key.toString().split("\\.")).setValue(value);
 		});
 		channelManager.save(chFile);
 		
-		if (getChannel(ch.getName()) != null){
-			ch.setMembers(getChannel(ch.getName()).getMembers());
+		if (UChat.get().getChannel(ch.getName()) != null){
+			ch.setMembers(UChat.get().getChannel(ch.getName()).getMembers());
 			UChat.get().getChannels().remove(Arrays.asList(ch.getName().toLowerCase(), ch.getAlias().toLowerCase()));
-		}
-		
+		}		
 		UChat.get().getChannels().put(Arrays.asList(ch.getName().toLowerCase(), ch.getAlias().toLowerCase()), ch);
-	}
-	
-	public void unMuteInAllChannels(String player){
-		for (UCChannel ch:UChat.get().getChannels().values()){
-			if (ch.isMuted(player)){				
-				ch.unMuteThis(player);;
-			}
-		}
-	}
-	
-	public void muteInAllChannels(String player){
-		for (UCChannel ch:UChat.get().getChannels().values()){
-			if (!ch.isMuted(player)){				
-				ch.muteThis(player);;
-			}
-		}
-	}
-	
-	public UCChannel getDefChannel(){
-		UCChannel ch = getChannel(root.general.default_channel);
-		if (ch == null){
-			UChat.get().getLogger().warning("Defalt channel not found with alias '"+root.general.default_channel+"'. Fix this setting to a valid channel alias.");
-		}
-		return ch;
 	}
 	
 	public String[] getDefBuilder(){
 		return root.general.default_tag_builder.replace(" ", "").split(",");
-	}
-	
-	public List<String> getChAliases(){
-		List<String> aliases = new ArrayList<String>();
-		for (List<String> alias:UChat.get().getChannels().keySet()){
-			if (alias == null){
-				continue;
-			}
-			aliases.addAll(alias);
-		}
-		return aliases;
-	}
-	
-	public UCChannel getPlayerChannel(Player p){
-		for (UCChannel ch:UChat.get().getChannels().values()){
-			if (ch.isMember(p)){
-				return ch;
-			}
-		}
-		return getDefChannel();
 	}
 	
 	public List<String> getChCmd(){

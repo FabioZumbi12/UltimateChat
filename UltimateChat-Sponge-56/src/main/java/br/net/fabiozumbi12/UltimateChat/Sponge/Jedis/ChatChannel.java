@@ -82,7 +82,7 @@ public class ChatChannel extends JedisPubSub {
 						String id = msgc[0];
 						String messagef = msgc[1];
 				    	
-						UCChannel ch = UChat.get().getConfig().getChannel(channel);
+						UCChannel ch = UChat.get().getChannel(channel);
 						if (ch == null || !ch.useJedis()) return;
 						
 						if (ch.getDistance() == 0){

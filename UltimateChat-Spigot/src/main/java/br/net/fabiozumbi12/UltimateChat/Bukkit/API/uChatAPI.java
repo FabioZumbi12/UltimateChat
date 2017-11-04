@@ -42,7 +42,7 @@ public class uChatAPI{
 			
 	@Deprecated
 	public boolean registerNewChannel(String chName, String chAlias, boolean crossWorlds, int distance, String color, String tagBuilder, boolean needFocus, boolean receiverMsg, double cost, String ddmode, String ddmcformat, String mcddformat, String ddhover, boolean ddallowcmds, boolean bungee) throws IOException{
-		if (UChat.get().getConfig().getChannel(chName) != null){
+		if (UChat.get().getChannel(chName) != null){
 			return false;
 		}
 		if (tagBuilder == null || tagBuilder.equals("")){
@@ -54,15 +54,15 @@ public class uChatAPI{
 	}	
 	
 	public UCChannel getChannel(String chName){
-		return UChat.get().getConfig().getChannel(chName);
+		return UChat.get().getChannel(chName);
 	}
 	
 	public UCChannel getPlayerChannel(Player player){
-		return UChat.get().getConfig().getPlayerChannel(player);
+		return UChat.get().getPlayerChannel(player);
 	}
 	
 	public Collection<UCChannel> getChannels(){
-		return UChat.get().getConfig().getChannels();
+		return UChat.get().getChannels().values();
 	}
 	
 	public Chat getVaultChat(){

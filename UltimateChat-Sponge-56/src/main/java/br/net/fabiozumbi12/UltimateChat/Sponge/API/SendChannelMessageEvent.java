@@ -126,7 +126,7 @@ public class SendChannelMessageEvent extends AbstractEvent implements Cancellabl
 	 * @param newCh - New UCChannel component to send the message.
 	 */
 	public void setChannel(String newCh){
-		this.channel = UChat.get().getConfig().getChannel(newCh);
+		this.channel = UChat.get().getChannel(newCh);
 	}
 	
 	/**Get the actual channel will be send the message.

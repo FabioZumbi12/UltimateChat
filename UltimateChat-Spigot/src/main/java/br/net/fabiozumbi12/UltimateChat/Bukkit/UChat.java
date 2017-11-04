@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -17,6 +18,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
+import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.PluginCommandYamlParser;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -276,7 +278,7 @@ public class UChat extends JavaPlugin {
 			try {
 				this.jedis = new UCJedisLoader(getConfig().getString("jedis.ip"), 
 						getConfig().getInt("jedis.port"), 
-						getConfig().getString("jedis.pass"), new ArrayList<UCChannel>(getConfig().getChannels()));
+						getConfig().getString("jedis.pass"), new ArrayList<UCChannel>(getChannels().values()));
 			} catch (Exception e){
 				this.logger.warning("Could not connect to REDIS server! Check ip, password and port, and if the REDIS server is running.");
 			}			
@@ -402,7 +404,7 @@ public class UChat extends JavaPlugin {
 	 * 
 	 */
 	public void registerAliases(){
-		registerAliases("channel",config.getChAliases());
+		registerAliases("channel",getChAliases());
         registerAliases("tell",config.getTellAliases());
         registerAliases("umsg",config.getMsgAliases());
         if (config.getBoolean("broadcast.enable")){
@@ -431,6 +433,60 @@ public class UChat extends JavaPlugin {
 			}			
 		}        
     }	
+		
+	//------- channels
+
+	public UCChannel getChannel(String alias){		
+		for (List<String> aliases:UChat.get().getChannels().keySet()){
+			if (aliases.contains(alias.toLowerCase())){				
+				return UChat.get().getChannels().get(aliases);
+			}
+		}
+		return null;
+	}
+	
+	public List<String> getChAliases(){
+		List<String> aliases = new ArrayList<String>();
+		aliases.addAll(Arrays.asList(config.getString("general.channel-cmd-aliases").replace(" ", "").split(",")));
+		for (List<String> alias:UChat.get().getChannels().keySet()){
+			aliases.addAll(alias);
+		}
+		return aliases;
+	}
+	
+	public UCChannel getPlayerChannel(CommandSender p){
+		for (UCChannel ch:UChat.get().getChannels().values()){
+			if (ch.isMember(p)){
+				return ch;
+			}
+		}
+		return getDefChannel();
+	}
+	
+
+	public void unMuteInAllChannels(String player){
+		for (UCChannel ch:UChat.get().getChannels().values()){
+			if (ch.isMuted(player)){				
+				ch.unMuteThis(player);;
+			}
+		}
+	}
+	
+	public void muteInAllChannels(String player){
+		for (UCChannel ch:UChat.get().getChannels().values()){
+			if (!ch.isMuted(player)){				
+				ch.muteThis(player);;
+			}
+		}
+	}
+	
+	public UCChannel getDefChannel(){
+		UCChannel ch = getChannel(config.getString("general.default-channel"));
+		if (ch == null){
+			UChat.get().getLogger().severe("Default channel not found with alias '"+config.getString("general.default-channel")+"'. Fix this setting to a valid channel alias.");			
+		}
+		return ch;
+	}
 		
 	private boolean checkJDA(){
     	Plugin p = Bukkit.getPluginManager().getPlugin("JDALibLoaderBukkit");

@@ -1,11 +1,11 @@
 package br.net.fabiozumbi12.UltimateChat.Sponge;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Properties;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
@@ -18,10 +18,10 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.world.World;
 
+import br.net.fabiozumbi12.UltimateChat.Sponge.UCLogger.timingType;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-
-import br.net.fabiozumbi12.UltimateChat.Sponge.UCLogger.timingType;
 
 /**Represents a chat channel use by UltimateChat to control from where/to send/receive messages.
  * 
@@ -32,7 +32,7 @@ public class UCChannel {
 	private List<String> ignoring = new ArrayList<String>();
 	private List<String> mutes = new ArrayList<String>();
 	private List<CommandSource> members = new ArrayList<CommandSource>();	
-	private Map<String, Object> properties = new HashMap<String, Object>();
+	private Properties properties = new Properties();
 	
 	private void addDefaults() {
 		properties.put("name", "");
@@ -48,6 +48,7 @@ public class UCChannel {
 		properties.put("cost", 0.0);
 		properties.put("bungee", false);
 		properties.put("jedis", false);
+		properties.put("password", "");
 		properties.put("channelAlias.enable", false);
 		properties.put("channelAlias.sendAs", "player");
 		properties.put("channelAlias.cmd", "");
@@ -107,7 +108,7 @@ public class UCChannel {
 		});
 	}
 
-	public Map<String, Object> getProperties(){
+	public Properties getProperties(){
 		return properties;
 	}
 	
@@ -121,6 +122,14 @@ public class UCChannel {
 				properties.put(key, value);
 			}	
 		}
+	}
+	
+	public void setPassword(String pass){
+		properties.put("password", pass);
+	}
+	
+	public String getPassword(){
+		return (String) properties.get("password");
 	}
 	
 	public void setMembers(List<CommandSource> members){
@@ -184,7 +193,7 @@ public class UCChannel {
 	}
 	
 	public boolean addMember(CommandSource p){
-		for (UCChannel ch:UChat.get().getConfig().getChannels()){
+		for (UCChannel ch:UChat.get().getChannels().values()){
 			ch.removeMember(p);
 		}
 		return this.members.add(p);
@@ -333,7 +342,7 @@ public class UCChannel {
 	public void sendMessage(Player src, Text message, boolean direct){	
 		if (direct){
 			for (Player p:Sponge.getServer().getOnlinePlayers()){
-				UCChannel chp = UChat.get().getConfig().getPlayerChannel(p);
+				UCChannel chp = UChat.get().getPlayerChannel(p);
 				if (UChat.get().getPerms().channelReadPerm(p, this) && !this.isIgnoring(p.getName()) && (this.neeFocus() && chp.equals(this) || !this.neeFocus())){
 					UChat.get().getLogger().timings(timingType.START, "UCChannel#sendMessage()|Direct Message");
 					p.sendMessage(message);					
@@ -366,7 +375,7 @@ public class UCChannel {
 	public void sendMessage(ConsoleSource sender, Text message, boolean direct){
 		if (direct){			
 			for (Player p:Sponge.getServer().getOnlinePlayers()){
-				UCChannel chp = UChat.get().getConfig().getPlayerChannel(p);
+				UCChannel chp = UChat.get().getPlayerChannel(p);
 				if (UChat.get().getPerms().channelReadPerm(p, this) && !this.isIgnoring(p.getName()) && (this.neeFocus() && chp.equals(this) || !this.neeFocus())){
 					UChat.get().getLogger().timings(timingType.START, "UCChannel#sendMessage()|Direct Message");
 					p.sendMessage(message);					
@@ -392,9 +401,9 @@ public class UCChannel {
 	@Override
 	public String toString(){
 		JsonArray array = new JsonArray();
-		for (Entry<String, Object> prop:properties.entrySet()){
+		for (Entry<Object, Object> prop:properties.entrySet()){
 			JsonObject json = new JsonObject();
-			json.addProperty(prop.getKey(),prop.getValue().toString());
+			json.addProperty((String) prop.getKey(),prop.getValue().toString());
 			array.add(json);
 		}
 		return array.toString();		

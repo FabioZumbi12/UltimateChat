@@ -52,6 +52,7 @@ permissions:
       uchat.channel.global.write: true
       uchat.channel.local.read: true
       uchat.channel.local.write: true
+      uchat.password: true
   uchat.bypass-protections:
     description: "Permissions to bypass chat checks."
     default: false

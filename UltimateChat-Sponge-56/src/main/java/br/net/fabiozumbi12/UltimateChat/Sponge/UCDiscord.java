@@ -55,7 +55,7 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
 		String message = e.getMessage().getRawContent();	
 		int used = 0;
 		
-		for (UCChannel ch:this.uchat.getConfig().getChannels()){
+		for (UCChannel ch:this.uchat.getChannels().values()){
 			if (ch.isListenDiscord() && ch.matchDiscordID(e.getChannel().getId())){				
 				//check if is cmd
 				if (message.startsWith(this.uchat.getConfig().root().discord.server_commands.alias) && ch.getDiscordAllowCmds()){

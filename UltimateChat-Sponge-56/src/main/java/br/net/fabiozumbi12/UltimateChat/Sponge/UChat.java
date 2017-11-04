@@ -14,6 +14,7 @@ import org.spongepowered.api.Platform.Component;
 import org.spongepowered.api.Server;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.config.ConfigDir;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.GameReloadEvent;
 import org.spongepowered.api.event.game.state.GamePostInitializationEvent;
@@ -134,7 +135,7 @@ public class UChat {
 	protected static HashMap<String,String> tempTellPlayers = new HashMap<String,String>();
 	protected static HashMap<String,String> respondTell = new HashMap<String,String>();
 	protected static HashMap<String,List<String>> ignoringPlayer = new HashMap<String,List<String>>();
-	protected static List<String> mutes = new ArrayList<String>();
+	protected List<String> mutes = new ArrayList<String>();
 	public static List<String> isSpy = new ArrayList<String>();	
 	protected static List<String> command = new ArrayList<String>();
 		
@@ -214,7 +215,7 @@ public class UChat {
 			try {
 				this.jedis = new UCJedisLoader(this.config.root().jedis.ip, 
 						this.config.root().jedis.port, 
-						this.config.root().jedis.pass, new ArrayList<UCChannel>(this.config.getChannels()));
+						this.config.root().jedis.pass, new ArrayList<UCChannel>(getChannels().values()));
 			} catch (Exception e){
 				this.logger.warning("Could not connect to REDIS server! Check ip, password and port, and if the REDIS server is running.");
 			}
@@ -271,4 +272,59 @@ public class UChat {
 		}		
 		get().getLogger().severe(plugin.getName()+" disabled!");
 	}
+	
+	//----------- channels
+	public UCChannel getChannel(String alias){		
+		for (List<String> aliases:UChat.get().getChannels().keySet()){
+			if (aliases.contains(alias.toLowerCase())){				
+				return UChat.get().getChannels().get(aliases);
+			}
+		}
+		return null;
+	}
+	
+	public void unMuteInAllChannels(String player){
+		for (UCChannel ch:UChat.get().getChannels().values()){
+			if (ch.isMuted(player)){				
+				ch.unMuteThis(player);;
+			}
+		}
+	}
+	
+	public void muteInAllChannels(String player){
+		for (UCChannel ch:UChat.get().getChannels().values()){
+			if (!ch.isMuted(player)){				
+				ch.muteThis(player);;
+			}
+		}
+	}
+	
+	public UCChannel getDefChannel(){
+		UCChannel ch = getChannel(getConfig().root().general.default_channel);
+		if (ch == null){
+			UChat.get().getLogger().warning("Defalt channel not found with alias '"+getConfig().root().general.default_channel+"'. Fix this setting to a valid channel alias.");
+		}
+		return ch;
+	}
+	
+	public List<String> getChAliases(){
+		List<String> aliases = new ArrayList<String>();
+		for (List<String> alias:UChat.get().getChannels().keySet()){
+			if (alias == null){
+				continue;
+			}
+			aliases.addAll(alias);
+		}
+		return aliases;
+	}
+	
+	public UCChannel getPlayerChannel(Player p){
+		for (UCChannel ch:UChat.get().getChannels().values()){
+			if (ch.isMember(p)){
+				return ch;
+			}
+		}
+		return getDefChannel();
+	}
+	
 }

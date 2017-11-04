@@ -512,7 +512,7 @@ public class UCMessages {
 				text = text.replace("{hand-type}", "Air");
 			}
 			
-			if (UChat.get().getVaultChat() != null){			
+			if (UChat.get().getVaultChat() != null && (text.contains("-prefix") || text.contains("-suffix"))){			
 				text = text
 						.replace("{group-suffix}", UCVaultCache.getVaultChat(sender).getPlayerSuffix())
 						.replace("{group-prefix}", UCVaultCache.getVaultChat(sender).getPlayerPrefix());
@@ -523,11 +523,11 @@ public class UCMessages {
 							.replace("{player-groups-suffixes}", UCVaultCache.getVaultChat(sender).getGroupSuffixes());
 				}
 			}			
-			if (UChat.get().getVaultEco() != null){			
+			if (UChat.get().getVaultEco() != null && text.contains("{balance}")){			
 				text = text
 						.replace("{balance}", ""+UChat.get().getVaultEco().getBalance(sender,sender.getWorld().getName()));
 			}	
-			if (UChat.get().getVaultPerms() != null){
+			if (UChat.get().getVaultPerms() != null && (text.contains("-group}") || text.contains("-groups}"))){
 				String[] pgs = UCVaultCache.getVaultPerms(sender).getPlayerGroups();
 				if (pgs.length > 0){
 					StringBuilder groups = new StringBuilder();

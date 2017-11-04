@@ -5,14 +5,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -364,71 +362,15 @@ public class UCConfig extends FileConfiguration {
 				+ "  channelID: '' - The ID of your Discord Channel. Enable debug on your discord to get the channel ID.\n");
 		
 		ch.getProperties().entrySet().forEach((map)->{
-			chFile.set(map.getKey(), map.getValue());			
+			chFile.set((String) map.getKey(), map.getValue());			
 		});
 		chFile.save(defch);		
 		
-		if (getChannel(ch.getName()) != null){
-			ch.setMembers(getChannel(ch.getName()).getMembers());
+		if (UChat.get().getChannel(ch.getName()) != null){
+			ch.setMembers(UChat.get().getChannel(ch.getName()).getMembers());
 			UChat.get().getChannels().remove(Arrays.asList(ch.getName().toLowerCase(), ch.getAlias().toLowerCase()));
 		}
 		UChat.get().getChannels().put(Arrays.asList(ch.getName().toLowerCase(), ch.getAlias().toLowerCase()), ch);
-	}
-	
-	public UCChannel getChannel(String alias){		
-		for (List<String> aliases:UChat.get().getChannels().keySet()){
-			if (aliases.contains(alias.toLowerCase())){				
-				return UChat.get().getChannels().get(aliases);
-			}
-		}
-		return null;
-	}
-	
-	public Collection<UCChannel> getChannels(){
-		return UChat.get().getChannels().values();
-	}
-
-	public List<String> getChAliases(){
-		List<String> aliases = new ArrayList<String>();
-		aliases.addAll(Arrays.asList(getString("general.channel-cmd-aliases").replace(" ", "").split(",")));
-		for (List<String> alias:UChat.get().getChannels().keySet()){
-			aliases.addAll(alias);
-		}
-		return aliases;
-	}
-	
-	public UCChannel getPlayerChannel(CommandSender p){
-		for (UCChannel ch:UChat.get().getChannels().values()){
-			if (ch.isMember(p)){
-				return ch;
-			}
-		}
-		return getDefChannel();
-	}
-	
-
-	public void unMuteInAllChannels(String player){
-		for (UCChannel ch:UChat.get().getChannels().values()){
-			if (ch.isMuted(player)){				
-				ch.unMuteThis(player);;
-			}
-		}
-	}
-	
-	public void muteInAllChannels(String player){
-		for (UCChannel ch:UChat.get().getChannels().values()){
-			if (!ch.isMuted(player)){				
-				ch.muteThis(player);;
-			}
-		}
-	}
-	
-	public UCChannel getDefChannel(){
-		UCChannel ch = getChannel(getString("general.default-channel"));
-		if (ch == null){
-			UChat.get().getLogger().severe("Default channel not found with alias '"+getString("general.default-channel")+"'. Fix this setting to a valid channel alias.");			
-		}
-		return ch;
 	}
 	
 	public List<String> getTagList(){

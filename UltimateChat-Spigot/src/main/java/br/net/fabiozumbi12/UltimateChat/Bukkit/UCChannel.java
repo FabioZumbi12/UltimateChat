@@ -1,11 +1,11 @@
 package br.net.fabiozumbi12.UltimateChat.Bukkit;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
@@ -28,7 +28,7 @@ public class UCChannel {
 	private List<String> ignoring = new ArrayList<String>();
 	private List<String> mutes = new ArrayList<String>();
 	private List<CommandSender> members = new ArrayList<CommandSender>();
-	private Map<String, Object> properties = new HashMap<String, Object>();
+	private Properties properties = new Properties();
 	
 	private void addDefaults(){
 		properties.put("name", "");
@@ -44,6 +44,7 @@ public class UCChannel {
 		properties.put("cost", 0.0);
 		properties.put("bungee", false);
 		properties.put("jedis", false);
+		properties.put("password", "");
 		properties.put("channelAlias.enable", false);
 		properties.put("channelAlias.sendAs", "player");
 		properties.put("channelAlias.cmd", "");
@@ -103,7 +104,7 @@ public class UCChannel {
 		});
 	}
 
-	public Map<String, Object> getProperties(){
+	public Properties getProperties(){
 		return properties;
 	}
 	
@@ -117,6 +118,14 @@ public class UCChannel {
 				properties.put(key, value);
 			}	
 		}			
+	}
+	
+	public void setPassword(String pass){
+		properties.put("password", pass);
+	}
+	
+	public String getPassword(){
+		return (String) properties.get("password");
 	}
 	
 	public void setMembers(List<CommandSender> members){
@@ -180,7 +189,7 @@ public class UCChannel {
 	}
 	
 	public boolean addMember(CommandSender p){
-		for (UCChannel ch:UChat.get().getConfig().getChannels()){
+		for (UCChannel ch:UChat.get().getChannels().values()){
 			ch.removeMember(p);
 		}
 		return this.members.add(p);
@@ -329,7 +338,7 @@ public class UCChannel {
 	public void sendMessage(Player sender, UltimateFancy message, boolean direct){
 		if (direct){
 			for (Player p:Bukkit.getOnlinePlayers()){
-				UCChannel chp = UChat.get().getConfig().getPlayerChannel(p);
+				UCChannel chp = UChat.get().getPlayerChannel(p);
 				if (UCPerms.channelReadPerm(p, this) && !this.isIgnoring(p.getName()) && (this.neeFocus() && chp.equals(this) || !this.neeFocus())){
 					UChat.get().getUCLogger().timings(timingType.START, "UCChannel#sendMessage()|Direct Message");
 					message.send(p);					
@@ -360,7 +369,7 @@ public class UCChannel {
 	public void sendMessage(ConsoleCommandSender sender, UltimateFancy message, boolean direct){	
 		if (direct){
 			for (Player p:Bukkit.getOnlinePlayers()){
-				UCChannel chp = UChat.get().getConfig().getPlayerChannel(p);
+				UCChannel chp = UChat.get().getPlayerChannel(p);
 				if (UCPerms.channelReadPerm(p, this) && !this.isIgnoring(p.getName()) && (this.neeFocus() && chp.equals(this) || !this.neeFocus())){
 					UChat.get().getUCLogger().timings(timingType.START, "UCChannel#sendMessage()|Direct Message");
 					message.send(p);					
@@ -384,7 +393,7 @@ public class UCChannel {
 		} else {
 			UltimateFancy fmsg = new UltimateFancy(message);
 			for (Player p:Bukkit.getOnlinePlayers()){
-				UCChannel chp = UChat.get().getConfig().getPlayerChannel(p);
+				UCChannel chp = UChat.get().getPlayerChannel(p);
 				if (UCPerms.channelReadPerm(p, this) && !this.isIgnoring(p.getName()) && (this.neeFocus() && chp.equals(this) || !this.neeFocus())){	
 					UChat.get().getUCLogger().timings(timingType.START, "UCChannel#sendMessage()|Fire AsyncPlayerChatEvent");
 					fmsg.send(p);					
@@ -398,9 +407,9 @@ public class UCChannel {
 	@Override
 	public String toString(){
 		JSONArray array = new JSONArray();
-		for (Entry<String, Object> prop:properties.entrySet()){
+		for (Entry<Object, Object> prop:properties.entrySet()){
 			JSONObject json = new JSONObject();
-			json.put(prop.getKey(),prop.getValue());
+			json.put((String) prop.getKey(),prop.getValue());
 			array.add(json);
 		}
 		return array.toJSONString();		
