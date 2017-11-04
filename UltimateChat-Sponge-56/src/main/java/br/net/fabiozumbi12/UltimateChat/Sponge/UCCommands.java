@@ -18,6 +18,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.SpongeEventFactory;
 import org.spongepowered.api.event.message.MessageChannelEvent;
 import org.spongepowered.api.event.message.MessageEvent;
+import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.Text.Builder;
 import org.spongepowered.api.text.action.TextActions;
@@ -333,7 +334,11 @@ public class UCCommands {
 			    		
 			    		if (args.<String>getOne("message").isPresent()){
 			    			if (UChat.get().mutes.contains(src.getName()) || ch.isMuted(src.getName())){
-			    				UChat.get().getLang().sendMessage(src, "channel.muted");
+			    				if (UChat.get().timeMute.containsKey(src.getName())) {
+									UChat.get().getLang().sendMessage(src, UChat.get().getLang().get("channel.tempmuted").replace("{time}", String.valueOf(UChat.get().timeMute.get(src.getName()))));
+								} else {
+									UChat.get().getLang().sendMessage(src, "channel.muted");
+								}	
 			    				return CommandResult.success();
 			    			}
 			    			
@@ -666,18 +671,9 @@ public class UCCommands {
 						if (play.isOnline()){
 							UChat.get().getLang().sendMessage(play, UChat.get().getLang().get("channel.player.tempmuted.all").replace("{time}", String.valueOf(time)));
 						}
-						Sponge.getScheduler().createSyncExecutor(UChat.get().instance()).schedule(new Runnable(){
-							@Override
-							public void run() {
-								if (UChat.get().mutes.contains(play.getName())){
-									UChat.get().mutes.remove(play.getName());
-									UChat.get().unMuteInAllChannels(play.getName());
-									if (play.isOnline()){
-										UChat.get().getLang().sendMessage(play, "channel.player.unmuted.all");
-								    }
-								}
-							}							
-						}, time, TimeUnit.MINUTES);
+						
+						//mute counter
+						Task.builder().execute(new MuteCountDown(play.getName(), time)).interval(1, TimeUnit.SECONDS).name("Mute Counter").submit(UChat.get().instance());						
 					}									
 			    	return CommandResult.success();
 				}}).build();

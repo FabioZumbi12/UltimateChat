@@ -22,6 +22,7 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerCommandEvent;
+
 import br.com.devpaulo.legendchat.api.events.ChatMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UCLogger.timingType;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.API.SendChannelMessageEvent;
@@ -87,7 +88,11 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 						
 						if (ch != null && msg != null){
 							if (UChat.get().mutes.contains(p.getName()) || ch.isMuted(p.getName())){
-			    				UChat.get().getLang().sendMessage(p, "channel.muted");
+								if (UChat.get().timeMute.containsKey(p.getName())) {
+									UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.tempmuted").replace("{time}", String.valueOf(UChat.get().timeMute.get(p.getName()))));
+								} else {
+									UChat.get().getLang().sendMessage(p, "channel.muted");
+								}			    				
 			    				return true;
 			    			}
 							
@@ -365,25 +370,15 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 						 if (UChat.get().mutes.contains(pname)){
 							 UChat.get().getLang().sendMessage(p, "channel.already.muted");
 						 } else {
-							 final String fpname = pname;
 							 UChat.get().mutes.add(pname);
 							 UChat.get().muteInAllChannels(pname);
 							 UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.tempmuted.all").replace("{player}", pname).replace("{time}", String.valueOf(time)));
 							 if (Bukkit.getPlayer(pname) != null){
 								 UChat.get().getLang().sendMessage(Bukkit.getPlayer(args[2]), UChat.get().getLang().get("channel.player.tempmuted.all").replace("{time}", String.valueOf(time)));
 							 }
-							 Bukkit.getScheduler().runTaskLater(UChat.get(), new Runnable(){
-								@Override
-								public void run() {
-									if (UChat.get().mutes.contains(fpname)){
-										UChat.get().mutes.remove(fpname);
-										UChat.get().unMuteInAllChannels(fpname);
-										if (Bukkit.getPlayer(fpname) != null){
-											UChat.get().getLang().sendMessage(Bukkit.getPlayer(args[2]), UChat.get().getLang().get("channel.player.unmuted.all"));
-										}
-									}
-								}								 
-							 }, (time*60)*20);
+							 
+							 //mute counter
+							 new MuteCountDown(pname, time).runTaskTimer(UChat.get(), 20, 20);							 
 						 }
 						 return true;
 					 }
@@ -765,7 +760,11 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 			}
 			
 			if (UChat.get().mutes.contains(p.getName()) || ch.isMuted(p.getName())){
-				UChat.get().getLang().sendMessage(p, "channel.muted");
+				if (UChat.get().timeMute.containsKey(p.getName())) {
+					UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.tempmuted").replace("{time}", String.valueOf(UChat.get().timeMute.get(p.getName()))));
+				} else {
+					UChat.get().getLang().sendMessage(p, "channel.muted");
+				}
 				e.setCancelled(true);
 				return;
 			}			
@@ -980,6 +979,5 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 			}			
 		}
 		return tab;
-	}
-	
+	}	
 }

@@ -109,9 +109,8 @@ chat-protection:
       mute-or-cmd: mute
       # Mute for x minutes.
       mute-duration: 1
-      # Mute and unmute msgs to send.
+      # Mute msg to send.
       mute-msg: '&cYou have been muted for send IPs or URLs on chat!'
-      unmute-msg: '&aYou can chat again!'
 
       # Command to execute if choose 'cmd'.
-      cmd-punish: tempban {player} 10m &cYou have been warned about send links or IPs on chat!
+      cmd-punish: 'tempban {player} 10m &cYou have been warned about send links or IPs on chat!'

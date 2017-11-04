@@ -1,6 +1,5 @@
 package br.net.fabiozumbi12.UltimateChat.Sponge;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -11,13 +10,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.scheduler.Task;
 
 class UCChatProtection {
 	
 	private static HashMap<Player,String> chatSpam = new HashMap<Player,String>();
 	private static HashMap<String,Integer> msgSpam = new HashMap<String,Integer>();
 	private static HashMap<Player,Integer> UrlSpam = new HashMap<Player,Integer>();
-	private static List<String> muted = new ArrayList<String>();
 	
 	public static String filterChatMessage(CommandSource source, String msg, UCChannel chan){
 		if (!(source instanceof Player)){
@@ -31,7 +30,7 @@ class UCChatProtection {
 		}
 		
 		//mute check
-		if (muted.contains(p.getName())){
+		if (UChat.get().mutes.contains(p.getName())){
 			p.sendMessage(UCUtil.toText(UChat.get().getConfig().protections().anti_ip.punish.mute_msg));
 			return null;
 		}
@@ -214,18 +213,16 @@ class UCChatProtection {
 				UrlSpam.put(p, UrlSpam.get(p)+1);
 				if (UrlSpam.get(p) >= UChat.get().getConfig().protections().anti_ip.punish.max_attempts){
 					if (UChat.get().getConfig().protections().anti_ip.punish.mute_or_cmd.equalsIgnoreCase("mute")){
-						muted.add(p.getName());
+						
+						int time = UChat.get().getConfig().protections().anti_ip.punish.mute_duration;
+						UChat.get().mutes.add(p.getName());
+						UChat.get().muteInAllChannels(p.getName());
 						p.sendMessage(UCUtil.toText(UChat.get().getConfig().protections().anti_ip.punish.mute_msg));
-						Sponge.getScheduler().createSyncExecutor(UChat.get().instance()).schedule(new Runnable() { 
-							public void run() {
-								if (muted.contains(p.getName())){						
-									muted.remove(p.getName());
-									p.sendMessage(UCUtil.toText(UChat.get().getConfig().protections().anti_ip.punish.unmute_msg));
-								}
-							}						
-						},UChat.get().getConfig().protections().anti_ip.punish.mute_duration,TimeUnit.MINUTES);
+						
+						//mute counter
+						Task.builder().execute(new MuteCountDown(p.getName(), time)).interval(1, TimeUnit.SECONDS).name("Chat Protection Mute Counter").submit(UChat.get().instance());								
 					} else {
-						Sponge.getCommandManager().process(Sponge.getServer().getConsole(),UChat.get().getConfig().protections().anti_ip.punish.cmd_punish.replace("{player}", p.getName()));
+						Sponge.getCommandManager().process(Sponge.getServer().getConsole(), UChat.get().getConfig().protections().anti_ip.punish.cmd_punish.replace("{player}", p.getName()));
 					}	
 					UrlSpam.remove(p);
 				}

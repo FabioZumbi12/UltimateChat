@@ -64,6 +64,7 @@ public class UChat extends JavaPlugin {
 	protected HashMap<String,List<String>> ignoringPlayer = new HashMap<String,List<String>>();
 	protected List<String> mutes = new ArrayList<String>();
 	public List<String> isSpy = new ArrayList<String>();
+	protected HashMap<String, Integer> timeMute = new HashMap<String, Integer>();
 	
 	private HashMap<List<String>,UCChannel> channels;
 	public HashMap<List<String>,UCChannel> getChannels(){

@@ -1,6 +1,5 @@
 package br.net.fabiozumbi12.UltimateChat.Bukkit;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -18,7 +17,6 @@ class UCChatProtection implements Listener{
 	private HashMap<Player,String> chatSpam = new HashMap<Player,String>();
 	private HashMap<String,Integer> msgSpam = new HashMap<String,Integer>();
 	private HashMap<Player,Integer> UrlSpam = new HashMap<Player,Integer>();
-	private List<String> muted = new ArrayList<String>();
 
 	@EventHandler
 	public void onPlayerChat(SendChannelMessageEvent e){
@@ -35,7 +33,7 @@ class UCChatProtection implements Listener{
 		}
 		
 		//mute check
-		if (muted.contains(p.getName())){
+		if (UChat.get().mutes.contains(p.getName())){
 			UChat.get().getLang().sendMessage(p, UChat.get().getConfig().getProtMsg("chat-protection.anti-ip.punish.mute-msg"));
 			e.setCancelled(true);
 			return;
@@ -224,18 +222,16 @@ class UCChatProtection implements Listener{
 				//p.sendMessage("UrlSpam: "+UrlSpam.get(p));
 				if (UrlSpam.get(p) >= UChat.get().getConfig().getProtInt("chat-protection.anti-ip.punish.max-attempts")){
 					if (UChat.get().getConfig().getProtString("chat-protection.anti-ip.punish.mute-or-cmd").equalsIgnoreCase("mute")){
-						muted.add(p.getName());
-						p.sendMessage(UChat.get().getConfig().getProtMsg("chat-protection.anti-ip.punish.mute-msg"));
-						Bukkit.getScheduler().scheduleSyncDelayedTask(UChat.get(), new Runnable() { 
-							public void run() {
-								if (muted.contains(p.getName())){						
-									muted.remove(p.getName());
-									p.sendMessage(UChat.get().getConfig().getProtMsg("chat-protection.anti-ip.punish.unmute-msg"));
-								}
-							}						
-						},(UChat.get().getConfig().getProtInt("chat-protection.anti-ip.punish.mute-duration")*60)*20);
+						
+						int time = UChat.get().getConfig().getProtInt("chat-protection.anti-ip.punish.mute-duration");
+						UChat.get().mutes.add(p.getName());
+						UChat.get().muteInAllChannels(p.getName());
+						p.sendMessage(UChat.get().getConfig().getProtMsg("chat-protection.anti-ip.punish.mute-msg"));						 
+						
+						//mute counter
+						new MuteCountDown(p.getName(), time).runTaskTimer(UChat.get(), 20, 20);							
 					} else {
-						UCUtil.performCommand(p, UChat.get().getServer().getConsoleSender(),UChat.get().getConfig().getProtString("chat-protection.anti-ip.punish.cmd-punish").replace("{player}", p.getName()));
+						UCUtil.performCommand(p, UChat.get().getServer().getConsoleSender(), UChat.get().getConfig().getProtString("chat-protection.anti-ip.punish.cmd-punish").replace("{player}", p.getName()));
 					}	
 					UrlSpam.remove(p);
 				}

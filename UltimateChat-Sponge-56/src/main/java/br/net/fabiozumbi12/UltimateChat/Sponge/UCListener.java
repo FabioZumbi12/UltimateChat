@@ -80,7 +80,11 @@ public class UCListener {
 			}
 			
 			if (UChat.get().mutes.contains(p.getName()) || ch.isMuted(p.getName())){
-				UChat.get().getLang().sendMessage(p, "channel.muted");
+				if (UChat.get().timeMute.containsKey(p.getName())) {
+					UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.tempmuted").replace("{time}", String.valueOf(UChat.get().timeMute.get(p.getName()))));
+				} else {
+					UChat.get().getLang().sendMessage(p, "channel.muted");
+				}
 				e.setMessageCancelled(true);
 				return;
 			}			
