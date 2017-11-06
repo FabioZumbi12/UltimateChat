@@ -1,7 +1,6 @@
 package br.net.fabiozumbi12.UltimateChat.Bukkit;
 
 import me.clip.placeholderapi.external.EZPlaceholderHook;
-
 import org.bukkit.entity.Player;
 
 public class UCPlaceHolders extends EZPlaceholderHook {

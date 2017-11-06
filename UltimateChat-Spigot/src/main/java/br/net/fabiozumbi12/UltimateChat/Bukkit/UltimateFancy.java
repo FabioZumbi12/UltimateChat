@@ -1,12 +1,6 @@
 package br.net.fabiozumbi12.UltimateChat.Bukkit;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+import br.net.fabiozumbi12.UltimateChat.Bukkit.UCLogger.timingType;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -22,7 +16,12 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
-import br.net.fabiozumbi12.UltimateChat.Bukkit.UCLogger.timingType;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**Class to generate JSON elements to use with UltimateChat.
  * @author FabioZumbi12

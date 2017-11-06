@@ -1,9 +1,8 @@
 package br.net.fabiozumbi12.UltimateChat.Bukkit;
 
-import org.bukkit.entity.Player;
-
 import com.massivecraft.factions.entity.Faction;
 import com.massivecraft.factions.entity.MPlayer;
+import org.bukkit.entity.Player;
 
 public class UCFactionsHook {
 	public static String formatFac(String text, Player sender, Object receiver){

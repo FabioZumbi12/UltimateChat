@@ -1,26 +1,20 @@
 package br.net.fabiozumbi12.UltimateChat.Bukkit;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-
+import at.pcgamingfreaks.MarriageMaster.Bukkit.MarriageMaster;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.API.uChatAPI;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.Bungee.UChatBungee;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.Jedis.UCJedisLoader;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.config.UCConfig;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.config.UCLang;
+import com.lenis0012.bukkit.marriage2.Marriage;
+import com.lenis0012.bukkit.marriage2.MarriageAPI;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import net.sacredlabyrinth.phaed.simpleclans.SimpleClans;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandMap;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.PluginCommand;
-import org.bukkit.command.PluginCommandYamlParser;
+import org.bukkit.command.*;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -30,41 +24,40 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import at.pcgamingfreaks.MarriageMaster.Bukkit.MarriageMaster;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.API.uChatAPI;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.Bungee.UChatBungee;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.Jedis.UCJedisLoader;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.config.UCConfig;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.config.UCLang;
-
-import com.lenis0012.bukkit.marriage2.Marriage;
-import com.lenis0012.bukkit.marriage2.MarriageAPI;
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 public class UChat extends JavaPlugin {
 	
-    private static boolean Vault = false;	    
-    protected static boolean SClans;
-    protected static SimpleClans sc;
-    protected static boolean MarryReloded;
-    protected static boolean MarryMaster;
+    private static boolean Vault = false;
+	static boolean SClans;
+	static SimpleClans sc;
+	static boolean MarryReloded;
+	static boolean MarryMaster;
 	private static boolean ProtocolLib;
-	protected static MarriageMaster mm;
-	protected static Marriage mapi;
-	protected static boolean PlaceHolderAPI;
-	protected static boolean Factions;
+	static MarriageMaster mm;
+	static Marriage mapi;
+	static boolean PlaceHolderAPI;
+	static boolean Factions;
 	private FileConfiguration amConfig;
 	private int index = 0;	
 
 	//public static HashMap<String,String> pChannels = new HashMap<String,String>();
-	protected HashMap<String,String> tempChannels = new HashMap<String,String>();
-	protected HashMap<String,String> tellPlayers = new HashMap<String,String>();
-	protected HashMap<String,String> tempTellPlayers = new HashMap<String,String>();
-	protected HashMap<String,String> respondTell = new HashMap<String,String>();
+    HashMap<String,String> tempChannels = new HashMap<String,String>();
+	HashMap<String,String> tellPlayers = new HashMap<String,String>();
+	HashMap<String,String> tempTellPlayers = new HashMap<String,String>();
+	HashMap<String,String> respondTell = new HashMap<String,String>();
 	protected List<String> command = new ArrayList<String>();
-	protected HashMap<String,List<String>> ignoringPlayer = new HashMap<String,List<String>>();
-	protected List<String> mutes = new ArrayList<String>();
+	HashMap<String,List<String>> ignoringPlayer = new HashMap<String,List<String>>();
+	List<String> mutes = new ArrayList<String>();
 	public List<String> isSpy = new ArrayList<String>();
-	protected HashMap<String, Integer> timeMute = new HashMap<String, Integer>();
+	HashMap<String, Integer> timeMute = new HashMap<String, Integer>();
 	
 	private HashMap<List<String>,UCChannel> channels;
 	public HashMap<List<String>,UCChannel> getChannels(){
@@ -74,8 +67,8 @@ public class UChat extends JavaPlugin {
 	public void setChannels(HashMap<List<String>,UCChannel> channels){
 		this.channels = channels;
 	}
-	
-	public FileConfiguration getAMConfig(){
+
+	private FileConfiguration getAMConfig(){
 		return this.amConfig;
 	}
 		
@@ -97,7 +90,7 @@ public class UChat extends JavaPlugin {
 	}
 	
 	private UCDInterface UCJDA;
-	public UCDInterface getUCJDA(){
+	UCDInterface getUCJDA(){
 		return this.UCJDA;
 	}
 	
@@ -254,7 +247,7 @@ public class UChat extends JavaPlugin {
         }
 	}
 	
-	protected void reload(){
+	public void reload(){
 		this.getServer().getScheduler().cancelTasks(this);
 		try {
 			this.config = new UCConfig(this);
@@ -268,8 +261,8 @@ public class UChat extends JavaPlugin {
 		this.registerJedis();
 		this.initAutomessage();
 	}
-	
-	protected void registerJedis(){
+
+	private void registerJedis(){
 		if (this.jedis != null){
 			this.jedis.closePool();
 			this.jedis = null;
@@ -285,8 +278,8 @@ public class UChat extends JavaPlugin {
 			}			
 		}		
 	}
-	
-	protected void registerJDA(){
+
+	private void registerJDA(){
 		if (checkJDA()){
 			this.logger.info("JDA LibLoader is present...");
 			if (this.UCJDA != null){			
@@ -404,7 +397,7 @@ public class UChat extends JavaPlugin {
 	/** Needed to be called after register or unregister channels.
 	 * 
 	 */
-	public void registerAliases(){
+	void registerAliases(){
 		registerAliases("channel",getChAliases());
         registerAliases("tell",config.getTellAliases());
         registerAliases("umsg",config.getMsgAliases());
@@ -445,8 +438,8 @@ public class UChat extends JavaPlugin {
 		}
 		return null;
 	}
-	
-	public List<String> getChAliases(){
+
+	List<String> getChAliases(){
 		List<String> aliases = new ArrayList<String>();
 		aliases.addAll(Arrays.asList(config.getString("general.channel-cmd-aliases").replace(" ", "").split(",")));
 		for (List<String> alias:UChat.get().getChannels().keySet()){
@@ -463,25 +456,25 @@ public class UChat extends JavaPlugin {
 		}
 		return getDefChannel();
 	}
-	
 
-	public void unMuteInAllChannels(String player){
+
+	void unMuteInAllChannels(String player){
 		for (UCChannel ch:UChat.get().getChannels().values()){
 			if (ch.isMuted(player)){				
 				ch.unMuteThis(player);;
 			}
 		}
 	}
-	
-	public void muteInAllChannels(String player){
+
+	void muteInAllChannels(String player){
 		for (UCChannel ch:UChat.get().getChannels().values()){
 			if (!ch.isMuted(player)){				
 				ch.muteThis(player);;
 			}
 		}
 	}
-	
-	public UCChannel getDefChannel(){
+
+	UCChannel getDefChannel(){
 		UCChannel ch = getChannel(config.getString("general.default-channel"));
 		if (ch == null){
 			UChat.get().getLogger().severe("Default channel not found with alias '"+config.getString("general.default-channel")+"'. Fix this setting to a valid channel alias.");			
@@ -516,42 +509,26 @@ public class UChat extends JavaPlugin {
 	
 	private boolean checkMR() {
 		Plugin p = Bukkit.getPluginManager().getPlugin("Marriage");
-    	if (p != null && p.isEnabled()){
-    		return true;
-    	}
-		return false;
+		return p != null && p.isEnabled();
 	}
 	
 	private boolean checkMM() {
 		Plugin p = Bukkit.getPluginManager().getPlugin("MarriageMaster");
-    	if (p != null && p.isEnabled()){
-    		return true;
-    	}
-		return false;
+		return p != null && p.isEnabled();
 	}
 	
 	private boolean checkPL() {
 		Plugin p = Bukkit.getPluginManager().getPlugin("ProtocolLib");
-    	if (p != null && p.isEnabled()){
-    		return true;
-    	}
-		return false;
+		return p != null && p.isEnabled();
 	}
-	
 
 	private boolean checkPHAPI() {
 		Plugin p = Bukkit.getPluginManager().getPlugin("PlaceholderAPI");
-    	if (p != null && p.isEnabled()){
-    		return true;
-    	}
-		return false;
+		return p != null && p.isEnabled();
 	}
 	
 	private boolean checkFac() {
 		Plugin p = Bukkit.getPluginManager().getPlugin("Factions");
-    	if (p != null && p.isEnabled()){
-    		return true;
-    	}
-		return false;
+		return p != null && p.isEnabled();
 	}
 }

@@ -1,10 +1,10 @@
 package br.net.fabiozumbi12.UltimateChat.Sponge;
 
-import java.util.concurrent.ExecutionException;
-
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.service.permission.Subject;
+
+import java.util.concurrent.ExecutionException;
 
 public interface UCPerms {
 	boolean hasSpyPerm(CommandSource receiver, String ch);

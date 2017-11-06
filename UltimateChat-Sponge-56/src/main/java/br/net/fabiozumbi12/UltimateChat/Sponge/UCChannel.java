@@ -1,12 +1,8 @@
 package br.net.fabiozumbi12.UltimateChat.Sponge;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.Properties;
-
+import br.net.fabiozumbi12.UltimateChat.Sponge.UCLogger.timingType;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.source.ConsoleSource;
@@ -18,10 +14,8 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.world.World;
 
-import br.net.fabiozumbi12.UltimateChat.Sponge.UCLogger.timingType;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+import java.util.*;
+import java.util.Map.Entry;
 
 /**Represents a chat channel use by UltimateChat to control from where/to send/receive messages.
  * 
@@ -390,7 +384,7 @@ public class UCChannel {
 	
 	/** Send a message from a channel as console.<p>
 	 * <i>Use {@code sendMessage(ConsoleSource, message, direct)} as replecement for this method</i>
-	 * @param src {@code ConsoleSource} - Console sender.
+	 * @param sender {@code ConsoleSource} - Console sender.
 	 * @param message {@code Text} - message to send.
 	 */
 	@Deprecated	

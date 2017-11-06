@@ -1,15 +1,11 @@
 package br.net.fabiozumbi12.UltimateChat.Bukkit;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map.Entry;
-
+import br.net.fabiozumbi12.UltimateChat.Bukkit.API.PostFormatChatMessageEvent;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.API.SendChannelMessageEvent;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.UCLogger.timingType;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import net.sacredlabyrinth.phaed.simpleclans.managers.SettingsManager;
-
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -22,9 +18,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import br.net.fabiozumbi12.UltimateChat.Bukkit.UCLogger.timingType;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.API.PostFormatChatMessageEvent;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.API.SendChannelMessageEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map.Entry;
 
 public class UCMessages {
 
@@ -406,7 +404,7 @@ public class UCMessages {
 						msg = msg.replaceAll("(?i)\\b"+p.getName()+"\\b", mentionc);
 					} else {
 						msg = msg.replaceAll("(?i)\\b"+p.getName()+"\\b", p.getName());
-					}					
+					}
 				}
 			}
 		}				
@@ -497,7 +495,7 @@ public class UCMessages {
 					if (meta.hasEnchants()){
 						StringBuilder str = new StringBuilder();
 						for (Entry<Enchantment, Integer> enchant:meta.getEnchants().entrySet()){
-							str.append("\n "+enchant.getKey().getName()+": "+enchant.getValue());							
+							str.append("\n "+enchant.getKey().getName()+": "+enchant.getValue());
 						}	
 						if (str.length() >= 2){
 							text = text.replace("{hand-enchants}", str.toString().substring(0, str.length()-1));
@@ -626,11 +624,11 @@ public class UCMessages {
 		}		
 		
 		//remove blank items		
-		text = text.replaceAll("\\{.*\\}", "");		
+		text = text.replaceAll("\\{.*\\}", "");
 		
 		//remove remain PlaceholderAPI
 		if (UChat.get().getConfig().getBoolean("general.remove-unnused-placeholderapi")){
-			text = text.replaceAll("\\%.*\\%", "");	
+			text = text.replaceAll("\\%.*\\%", "");
 		}		
 		
 		if (!tag.equals("message")){
@@ -639,7 +637,7 @@ public class UCMessages {
 			}
 		}		
 		if (text.equals(" ") || text.equals("  ")){
-			return text = "";
+			text = "";
 		}
 		return text;
 	}

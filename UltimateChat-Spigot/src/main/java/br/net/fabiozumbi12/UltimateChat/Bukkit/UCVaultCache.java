@@ -1,9 +1,9 @@
 package br.net.fabiozumbi12.UltimateChat.Bukkit;
 
-import java.util.HashMap;
-
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+
+import java.util.HashMap;
 
 public class UCVaultCache {
 	static HashMap<String, String[]> playerGroups = new HashMap<String, String[]>();

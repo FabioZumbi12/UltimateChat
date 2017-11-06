@@ -1,9 +1,9 @@
 package br.net.fabiozumbi12.UltimateChat.Sponge.config;
 
-import java.util.List;
-
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
+
+import java.util.List;
 
 @ConfigSerializable
 public class TagsCategory {

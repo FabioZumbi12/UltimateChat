@@ -1,24 +1,18 @@
 package br.net.fabiozumbi12.UltimateChat.Bukkit.Jedis;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-
+import br.net.fabiozumbi12.UltimateChat.Bukkit.*;
 import net.md_5.bungee.api.ChatColor;
-
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.exceptions.JedisConnectionException;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.UCChannel;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.UCMessages;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.UCPerms;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.UChat;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.UltimateFancy;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 public class UCJedisLoader {
 	private JedisPool pool;

@@ -1,5 +1,15 @@
 package br.net.fabiozumbi12.UltimateChat.Bukkit.config;
 
+import br.net.fabiozumbi12.UltimateChat.Bukkit.UCChannel;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.UCUtil;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.UChat;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -8,17 +18,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
-
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-
-import br.net.fabiozumbi12.UltimateChat.Bukkit.UCChannel;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.UCUtil;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.UChat;
 
 public class UCConfig extends FileConfiguration {
 	
@@ -495,20 +494,16 @@ public class UCConfig extends FileConfiguration {
 
 	@Override
 	public String saveToString() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void loadFromString(String contents)
 			throws InvalidConfigurationException {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	protected String buildHeader() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 }

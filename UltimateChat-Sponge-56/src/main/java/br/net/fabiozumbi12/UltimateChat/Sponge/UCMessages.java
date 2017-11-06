@@ -1,20 +1,10 @@
 package br.net.fabiozumbi12.UltimateChat.Sponge;
 
-import java.math.BigDecimal;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.ExecutionException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+import br.net.fabiozumbi12.UltimateChat.Sponge.API.PostFormatChatMessageEvent;
+import br.net.fabiozumbi12.UltimateChat.Sponge.API.SendChannelMessageEvent;
+import br.net.fabiozumbi12.UltimateChat.Sponge.UCLogger.timingType;
 import nl.riebie.mcclans.api.ClanPlayer;
 import nl.riebie.mcclans.api.ClanService;
-
 import org.apache.commons.lang3.StringUtils;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
@@ -35,16 +25,20 @@ import org.spongepowered.api.text.channel.MessageChannel;
 import org.spongepowered.api.text.channel.MutableMessageChannel;
 import org.spongepowered.api.text.serializer.TextSerializers;
 
-import br.net.fabiozumbi12.UltimateChat.Sponge.UCLogger.timingType;
-import br.net.fabiozumbi12.UltimateChat.Sponge.API.PostFormatChatMessageEvent;
-import br.net.fabiozumbi12.UltimateChat.Sponge.API.SendChannelMessageEvent;
+import java.math.BigDecimal;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class UCMessages {
 
 	private static HashMap<String, String> registeredReplacers = new HashMap<String,String>();
 	private static String[] defFormat = new String[0];	
 		
-	protected static MutableMessageChannel sendFancyMessage(String[] format, Text msg, UCChannel channel, CommandSource sender, CommandSource tellReceiver){
+	static MutableMessageChannel sendFancyMessage(String[] format, Text msg, UCChannel channel, CommandSource sender, CommandSource tellReceiver){
 		//Execute listener:
 		HashMap<String,String> tags = new HashMap<String,String>();
 		for (String str:UChat.get().getConfig().root().general.custom_tags){

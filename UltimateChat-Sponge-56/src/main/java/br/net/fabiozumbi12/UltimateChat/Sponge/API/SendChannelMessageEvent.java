@@ -1,7 +1,7 @@
 package br.net.fabiozumbi12.UltimateChat.Sponge.API;
 
-import java.util.HashMap;
-
+import br.net.fabiozumbi12.UltimateChat.Sponge.UCChannel;
+import br.net.fabiozumbi12.UltimateChat.Sponge.UChat;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.event.Cancellable;
 import org.spongepowered.api.event.Event;
@@ -9,8 +9,7 @@ import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.impl.AbstractEvent;
 import org.spongepowered.api.text.Text;
 
-import br.net.fabiozumbi12.UltimateChat.Sponge.UCChannel;
-import br.net.fabiozumbi12.UltimateChat.Sponge.UChat;
+import java.util.HashMap;
 
 /**This event listen to all chat messages sent by players before get formated and separated by player and channel.
  * @author FabioZumbi12

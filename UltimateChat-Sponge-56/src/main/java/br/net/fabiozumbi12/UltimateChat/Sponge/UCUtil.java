@@ -1,8 +1,5 @@
 package br.net.fabiozumbi12.UltimateChat.Sponge;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
@@ -10,6 +7,9 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.Text.Builder;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.serializer.TextSerializers;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class UCUtil {
 

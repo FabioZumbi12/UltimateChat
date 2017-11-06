@@ -1,16 +1,15 @@
 package br.net.fabiozumbi12.UltimateChat.Bukkit;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.regex.Pattern;
-
+import br.net.fabiozumbi12.UltimateChat.Bukkit.API.SendChannelMessageEvent;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-import br.net.fabiozumbi12.UltimateChat.Bukkit.API.SendChannelMessageEvent;
+import java.util.HashMap;
+import java.util.List;
+import java.util.regex.Pattern;
 
 class UCChatProtection implements Listener{
 	

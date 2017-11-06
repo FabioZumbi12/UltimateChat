@@ -1,8 +1,13 @@
 package br.net.fabiozumbi12.UltimateChat.Bukkit.Bungee;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.API.PostFormatChatMessageEvent;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.UCChannel;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.UCPerms;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.UCUtil;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.UChat;
+import com.google.common.collect.Iterables;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -11,14 +16,9 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
-import br.net.fabiozumbi12.UltimateChat.Bukkit.UCChannel;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.UCUtil;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.UCPerms;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.UChat;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.API.PostFormatChatMessageEvent;
-import com.google.common.collect.Iterables;
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import java.io.IOException;
 
 public class UChatBungee implements PluginMessageListener, Listener {
 	

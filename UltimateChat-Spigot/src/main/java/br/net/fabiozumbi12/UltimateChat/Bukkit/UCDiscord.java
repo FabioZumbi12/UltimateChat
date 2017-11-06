@@ -1,11 +1,5 @@
 package br.net.fabiozumbi12.UltimateChat.Bukkit;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
-
-import javax.security.auth.login.LoginException;
-
 import jdalib.jda.core.AccountType;
 import jdalib.jda.core.JDA;
 import jdalib.jda.core.JDABuilder;
@@ -16,10 +10,14 @@ import jdalib.jda.core.events.message.MessageReceivedEvent;
 import jdalib.jda.core.exceptions.PermissionException;
 import jdalib.jda.core.exceptions.RateLimitedException;
 import jdalib.jda.core.hooks.ListenerAdapter;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+
+import javax.security.auth.login.LoginException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class UCDiscord extends ListenerAdapter implements UCDInterface{	
 	private JDA jda;

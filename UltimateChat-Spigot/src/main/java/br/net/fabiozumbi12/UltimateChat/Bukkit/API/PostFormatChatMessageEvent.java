@@ -1,14 +1,13 @@
 package br.net.fabiozumbi12.UltimateChat.Bukkit.API;
 
-import java.util.HashMap;
-
+import br.net.fabiozumbi12.UltimateChat.Bukkit.UCChannel;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.UltimateFancy;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import br.net.fabiozumbi12.UltimateChat.Bukkit.UCChannel;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.UltimateFancy;
+import java.util.HashMap;
 
 /**This event listen all fancy messages to be sent to players formated and colored, ready to send to chat.<p>
  * This event includes console. This event will listen to private messages too.<p>

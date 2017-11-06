@@ -1,14 +1,13 @@
 package br.net.fabiozumbi12.UltimateChat.Bukkit.API;
 
-import java.util.HashMap;
-
+import br.net.fabiozumbi12.UltimateChat.Bukkit.UCChannel;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.UChat;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import br.net.fabiozumbi12.UltimateChat.Bukkit.UCChannel;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.UChat;
+import java.util.HashMap;
 
 /**This event listen to all chat messages sent by player and allow devs to change the message, tags, channel and canccel the chat event too.
  * @author FabioZumbi12

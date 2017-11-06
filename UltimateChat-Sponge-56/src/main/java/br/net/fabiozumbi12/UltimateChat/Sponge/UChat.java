@@ -1,14 +1,12 @@
 package br.net.fabiozumbi12.UltimateChat.Sponge;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
+import br.net.fabiozumbi12.UltimateChat.Sponge.API.uChatAPI;
+import br.net.fabiozumbi12.UltimateChat.Sponge.Jedis.UCJedisLoader;
+import br.net.fabiozumbi12.UltimateChat.Sponge.config.UCConfig;
+import br.net.fabiozumbi12.UltimateChat.Sponge.config.UCLang;
+import br.net.fabiozumbi12.UltimateChat.Sponge.config.VersionData;
+import com.google.inject.Inject;
 import ninja.leaping.configurate.objectmapping.GuiceObjectMapperFactory;
-
 import org.spongepowered.api.Game;
 import org.spongepowered.api.Platform.Component;
 import org.spongepowered.api.Server;
@@ -26,13 +24,12 @@ import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.service.economy.EconomyService;
 
-import br.net.fabiozumbi12.UltimateChat.Sponge.API.uChatAPI;
-import br.net.fabiozumbi12.UltimateChat.Sponge.Jedis.UCJedisLoader;
-import br.net.fabiozumbi12.UltimateChat.Sponge.config.UCConfig;
-import br.net.fabiozumbi12.UltimateChat.Sponge.config.UCLang;
-import br.net.fabiozumbi12.UltimateChat.Sponge.config.VersionData;
-
-import com.google.inject.Inject;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 @Plugin(id = "ultimatechat", 
 name = "UltimateChat", 

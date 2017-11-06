@@ -1,9 +1,9 @@
 package br.net.fabiozumbi12.UltimateChat.Sponge;
 
-import java.util.function.Consumer;
-
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.scheduler.Task;
+
+import java.util.function.Consumer;
 
 public class MuteCountDown implements Consumer<Task> {	
 	int time;

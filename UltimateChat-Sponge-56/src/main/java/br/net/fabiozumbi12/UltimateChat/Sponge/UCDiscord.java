@@ -1,13 +1,5 @@
 package br.net.fabiozumbi12.UltimateChat.Sponge;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
-
-import javax.security.auth.login.LoginException;
-
 import jdalib.jda.core.AccountType;
 import jdalib.jda.core.JDA;
 import jdalib.jda.core.JDABuilder;
@@ -18,12 +10,18 @@ import jdalib.jda.core.events.message.MessageReceivedEvent;
 import jdalib.jda.core.exceptions.PermissionException;
 import jdalib.jda.core.exceptions.RateLimitedException;
 import jdalib.jda.core.hooks.ListenerAdapter;
-
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.Text.Builder;
 import org.spongepowered.api.text.action.TextActions;
+
+import javax.security.auth.login.LoginException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class UCDiscord extends ListenerAdapter implements UCDInterface {	
 	private JDA jda;

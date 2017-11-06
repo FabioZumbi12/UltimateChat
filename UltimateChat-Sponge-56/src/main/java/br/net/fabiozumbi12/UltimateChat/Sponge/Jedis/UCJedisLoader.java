@@ -1,24 +1,23 @@
 package br.net.fabiozumbi12.UltimateChat.Sponge.Jedis;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-
+import br.net.fabiozumbi12.UltimateChat.Sponge.UCChannel;
+import br.net.fabiozumbi12.UltimateChat.Sponge.UCMessages;
+import br.net.fabiozumbi12.UltimateChat.Sponge.UCUtil;
+import br.net.fabiozumbi12.UltimateChat.Sponge.UChat;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.Text.Builder;
 import org.spongepowered.api.text.serializer.TextSerializers;
-
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.exceptions.JedisConnectionException;
-import br.net.fabiozumbi12.UltimateChat.Sponge.UCChannel;
-import br.net.fabiozumbi12.UltimateChat.Sponge.UCMessages;
-import br.net.fabiozumbi12.UltimateChat.Sponge.UCUtil;
-import br.net.fabiozumbi12.UltimateChat.Sponge.UChat;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 public class UCJedisLoader {
 	private JedisPool pool;

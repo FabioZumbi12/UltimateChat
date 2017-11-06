@@ -4,15 +4,15 @@ import org.bukkit.command.CommandSender;
 
 public interface UCDInterface {
 	
-	public void sendTellToDiscord(String text);
+	void sendTellToDiscord(String text);
 	
-	public void sendRawToDiscord(String text);
+	void sendRawToDiscord(String text);
 	
-	public void sendToDiscord(CommandSender sender, String text, UCChannel ch);
+	void sendToDiscord(CommandSender sender, String text, UCChannel ch);
 	
-	public void updateGame(String text);
+	void updateGame(String text);
 	
-	public void sendCommandsToDiscord(String text);
+	void sendCommandsToDiscord(String text);
 	
-	public void shutdown();
+	void shutdown();
 }

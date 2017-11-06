@@ -1,15 +1,15 @@
 package br.net.fabiozumbi12.UltimateChat.Sponge.Jedis;
 
-import java.util.Arrays;
-import java.util.Optional;
-
+import br.net.fabiozumbi12.UltimateChat.Sponge.UCChannel;
+import br.net.fabiozumbi12.UltimateChat.Sponge.UCUtil;
+import br.net.fabiozumbi12.UltimateChat.Sponge.UChat;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import redis.clients.jedis.JedisPubSub;
-import br.net.fabiozumbi12.UltimateChat.Sponge.UCChannel;
-import br.net.fabiozumbi12.UltimateChat.Sponge.UCUtil;
-import br.net.fabiozumbi12.UltimateChat.Sponge.UChat;
+
+import java.util.Arrays;
+import java.util.Optional;
 
 public class ChatChannel extends JedisPubSub {
 	private String[] channels;

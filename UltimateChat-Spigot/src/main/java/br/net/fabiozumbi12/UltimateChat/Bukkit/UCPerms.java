@@ -1,11 +1,11 @@
 package br.net.fabiozumbi12.UltimateChat.Bukkit;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class UCPerms {
 	
@@ -35,7 +35,7 @@ public class UCPerms {
 		return hasPerm(receiver, "chat-spy."+ch) || hasPerm(receiver, "chat-spy.all");
 	}
 	
-	public static boolean cmdPerm(CommandSender p, String cmd){
+	static boolean cmdPerm(CommandSender p, String cmd){
 		return hasPerm(p, "cmd."+cmd);
 	}
 	
@@ -44,12 +44,12 @@ public class UCPerms {
 		return defCh.equals(ch) || hasPerm(p, "channel."+ch.getName().toLowerCase()+".read");
 	}
 	
-	public static boolean channelWritePerm(CommandSender p, UCChannel ch){
+	static boolean channelWritePerm(CommandSender p, UCChannel ch){
 		UCChannel defCh = UChat.get().getDefChannel();
 		return defCh.equals(ch) || hasPerm(p, "channel."+ch.getName().toLowerCase()+".write");
 	}
 	
-	public static boolean canIgnore(CommandSender sender, Object toignore){
+	static boolean canIgnore(CommandSender sender, Object toignore){
 		if (toignore instanceof CommandSender && isAdmin((CommandSender)toignore)){
 			return false;
 		} else {
@@ -57,7 +57,7 @@ public class UCPerms {
 		}
 	}
 	
-	public static boolean hasPerm(CommandSender p, String perm){
+	static boolean hasPerm(CommandSender p, String perm){
 		return isAdmin(p) || hasPermission(p, "uchat."+perm);
 	}
 	

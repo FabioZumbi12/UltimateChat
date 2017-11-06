@@ -1,13 +1,6 @@
 package br.net.fabiozumbi12.UltimateChat.Bukkit;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Properties;
-import java.util.Set;
-
+import br.net.fabiozumbi12.UltimateChat.Bukkit.UCLogger.timingType;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -17,7 +10,8 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import br.net.fabiozumbi12.UltimateChat.Bukkit.UCLogger.timingType;
+import java.util.*;
+import java.util.Map.Entry;
 
 /**Represents a chat channel use by UltimateChat to control from where/to send/receive messages.
  * 
@@ -322,7 +316,7 @@ public class UCChannel {
 	}
 	
 	/** Send a message from a channel as player.
-	 * @param src {@code Player}
+	 * @param sender {@code Player}
 	 * @param message {@code String} - Message to send.
 	 */
 	@Deprecated
@@ -331,7 +325,7 @@ public class UCChannel {
 	}
 	
 	/** Send a message from a channel as player.
-	 * @param src {@code Player}
+	 * @param sender {@code Player}
 	 * @param message {@code FancyMessage} - Message to send.
 	 * @param direct {@code boolean} - Send message direct to players on channel.
 	 */

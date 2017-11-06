@@ -1,16 +1,15 @@
 package br.net.fabiozumbi12.UltimateChat.Bukkit.Jedis;
 
-import java.util.Arrays;
-
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
-import redis.clients.jedis.JedisPubSub;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UCChannel;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UCPerms;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UCUtil;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UChat;
+import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import redis.clients.jedis.JedisPubSub;
+
+import java.util.Arrays;
 
 public class ChatChannel extends JedisPubSub {
 	private String[] channels;

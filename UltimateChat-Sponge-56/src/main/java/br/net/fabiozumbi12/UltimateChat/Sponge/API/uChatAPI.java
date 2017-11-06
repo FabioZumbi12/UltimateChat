@@ -1,16 +1,15 @@
 package br.net.fabiozumbi12.UltimateChat.Sponge.API;
 
+import br.net.fabiozumbi12.UltimateChat.Sponge.UCChannel;
+import br.net.fabiozumbi12.UltimateChat.Sponge.UChat;
+import br.net.fabiozumbi12.UltimateChat.Sponge.config.TagsCategory;
+import org.spongepowered.api.entity.living.player.Player;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-
-import org.spongepowered.api.entity.living.player.Player;
-
-import br.net.fabiozumbi12.UltimateChat.Sponge.UCChannel;
-import br.net.fabiozumbi12.UltimateChat.Sponge.UChat;
-import br.net.fabiozumbi12.UltimateChat.Sponge.config.TagsCategory;
 
 public class uChatAPI {
 	

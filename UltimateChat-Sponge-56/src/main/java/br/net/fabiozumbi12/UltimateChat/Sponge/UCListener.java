@@ -1,9 +1,5 @@
 package br.net.fabiozumbi12.UltimateChat.Sponge;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
@@ -18,6 +14,10 @@ import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.channel.MutableMessageChannel;
 import org.spongepowered.api.text.serializer.TextSerializers;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public class UCListener {
 	

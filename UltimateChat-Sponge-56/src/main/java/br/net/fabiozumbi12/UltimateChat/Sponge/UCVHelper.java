@@ -5,9 +5,9 @@ import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.plugin.PluginContainer;
 
 public interface UCVHelper {
-	public Cause getCause(CommandSource src);
+	Cause getCause(CommandSource src);
 
-    public Cause getCause(PluginContainer instance);
+    Cause getCause(PluginContainer instance);
 	
 	
 }
