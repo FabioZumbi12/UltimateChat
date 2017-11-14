@@ -2,6 +2,7 @@ package br.net.fabiozumbi12.UltimateChat.Bukkit;
 
 import br.net.fabiozumbi12.UltimateChat.Bukkit.API.PostFormatChatMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.API.SendChannelMessageEvent;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.Bungee.UChatBungee;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UCLogger.timingType;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
@@ -196,26 +197,32 @@ public class UCMessages {
 		if (postEvent.isCancelled()){
 			return cancel;
 		}
-		
-		msgPlayers.forEach((send,text)->{			
-			UChat.get().getUCLogger().timings(timingType.END, "UCMessages#send()|before send");
-			text.send(send);
-			UChat.get().getUCLogger().timings(timingType.END, "UCMessages#send()|after send");
-		});	
-				
-		//send to jedis
-		if (channel != null && !channel.isTell() && UChat.get().getJedis() != null){
-			UChat.get().getJedis().sendMessage(channel.getName().toLowerCase(), msgPlayers.get(sender));
+
+		if (channel != null && !channel.isTell() && channel.isBungee()){
+			UChatBungee.sendBungee(channel, msgPlayers.get(sender));
+		} else {
+			msgPlayers.forEach((send,text)->{
+				UChat.get().getUCLogger().timings(timingType.END, "UCMessages#send()|before send");
+				text.send(send);
+				UChat.get().getUCLogger().timings(timingType.END, "UCMessages#send()|after send");
+			});
 		}
-		
-		//send to jda
-		if (channel != null && UChat.get().getUCJDA() != null){
-			if (channel.isTell()){
-				UChat.get().getUCJDA().sendTellToDiscord(msgPlayers.get(sender).toOldFormat());
-			} else {
-				UChat.get().getUCJDA().sendToDiscord(sender, evmsg, channel);
-			}
-		}
+
+		if (channel != null){
+            //send to jedis
+            if (!channel.isTell() && UChat.get().getJedis() != null){
+                UChat.get().getJedis().sendMessage(channel.getName().toLowerCase(), msgPlayers.get(sender));
+            }
+
+            //send to jda
+            if (UChat.get().getUCJDA() != null){
+                if (channel.isTell()){
+                    UChat.get().getUCJDA().sendTellToDiscord(msgPlayers.get(sender).toOldFormat());
+                } else {
+                    UChat.get().getUCJDA().sendToDiscord(sender, evmsg, channel);
+                }
+            }
+        }
 		
 		return cancel;
 	}

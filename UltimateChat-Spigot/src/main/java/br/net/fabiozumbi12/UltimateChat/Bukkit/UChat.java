@@ -58,6 +58,7 @@ public class UChat extends JavaPlugin {
 	List<String> mutes = new ArrayList<String>();
 	public List<String> isSpy = new ArrayList<String>();
 	HashMap<String, Integer> timeMute = new HashMap<String, Integer>();
+	private UCListener listener;
 	
 	private HashMap<List<String>,UCChannel> channels;
 	public HashMap<List<String>,UCChannel> getChannels(){
@@ -152,11 +153,11 @@ public class UChat extends JavaPlugin {
             ProtocolLib = checkPL();
             PlaceHolderAPI = checkPHAPI();
             Factions = checkFac();
-            
-            getServer().getPluginCommand("uchat").setExecutor(new UCListener());
-            getServer().getPluginManager().registerEvents(new UCListener(), this);
+			listener = new UCListener();
+
+            getServer().getPluginCommand("uchat").setExecutor(listener);
+            getServer().getPluginManager().registerEvents(listener, this);
             getServer().getPluginManager().registerEvents(new UCChatProtection(), this);
-            getServer().getPluginManager().registerEvents(new UChatBungee(), this);
             
             getServer().getMessenger().registerOutgoingPluginChannel(this, "uChat");
             getServer().getMessenger().registerIncomingPluginChannel(this, "uChat", new UChatBungee());
@@ -420,7 +421,7 @@ public class UChat extends JavaPlugin {
 		            CommandMap commandMap = (CommandMap)(field.get(getServer().getPluginManager()));		            
 		            Method register = commandMap.getClass().getMethod("register", String.class, Command.class);
 		            register.invoke(commandMap, cmd.getName(),cmd);
-		            ((PluginCommand) cmd).setExecutor(new UCListener());
+		            ((PluginCommand) cmd).setExecutor(listener);
 		        } catch(Exception e) {
 		            e.printStackTrace();
 		        }

@@ -1,10 +1,7 @@
 package br.net.fabiozumbi12.UltimateChat.Bukkit.Bungee;
 
+import br.net.fabiozumbi12.UltimateChat.Bukkit.*;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.API.PostFormatChatMessageEvent;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.UCChannel;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.UCPerms;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.UCUtil;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.UChat;
 import com.google.common.collect.Iterables;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
@@ -58,20 +55,14 @@ public class UChatBungee implements PluginMessageListener, Listener {
 		}
 		Bukkit.getConsoleSender().sendMessage(UCUtil.colorize("&7Bungee message to channel "+chan.getName()+" from: "+id));		
 	}	
-	
-	@EventHandler(priority = EventPriority.LOWEST)
-	public void onchatmessage(PostFormatChatMessageEvent e){
-		if (e.isCancelled() || e.getChannel() == null || !e.getChannel().isBungee()){
-			return;
-		}
-		e.setCancelled(true);
-		
-		ByteArrayDataOutput out = ByteStreams.newDataOutput();
-		out.writeUTF(UChat.get().getConfig().getString("bungee.server-id"));
-		out.writeUTF(e.getChannel().getAlias());
-        out.writeUTF(e.getReceiverMessage(e.getSender()).toString());
-        
-	    Player p = Iterables.getFirst(Bukkit.getOnlinePlayers(), null);
-	    p.sendPluginMessage(UChat.get(), "uChat", out.toByteArray());
+
+	public static void sendBungee(UCChannel ch, UltimateFancy text){
+        ByteArrayDataOutput out = ByteStreams.newDataOutput();
+        out.writeUTF(UChat.get().getConfig().getString("bungee.server-id"));
+        out.writeUTF(ch.getAlias());
+        out.writeUTF(text.toString());
+
+        Player p = Iterables.getFirst(Bukkit.getOnlinePlayers(), null);
+        p.sendPluginMessage(UChat.get(), "uChat", out.toByteArray());
 	}
 }
