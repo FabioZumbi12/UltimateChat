@@ -289,6 +289,12 @@ public class UChat extends JavaPlugin {
 			}
 			if (getConfig().getBoolean("discord.use")){
 				this.UCJDA = new UCDiscord(this);
+				if (!this.UCJDA.JDAAvailable()){
+                    this.UCJDA = null;
+                    this.logger.info("JDA is not available due errors before...");
+				} else {
+                    this.logger.info("JDA connected and ready to use!");
+                }
 			}	
 		}			
 	}
@@ -298,10 +304,9 @@ public class UChat extends JavaPlugin {
 		try {
 			if (!am.exists()){
 				am.createNewFile();
-				this.amConfig.load(am);
-			} else {
-				this.amConfig.load(am);
 			}
+            this.amConfig.load(am);
+
 			getAMConfig().options().header("\n"
 					+ "AutoMessages configuration for UltimateChat:\n"
 					+ "\n"

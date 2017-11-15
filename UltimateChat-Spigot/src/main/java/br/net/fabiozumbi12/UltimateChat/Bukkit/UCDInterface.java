@@ -3,7 +3,8 @@ package br.net.fabiozumbi12.UltimateChat.Bukkit;
 import org.bukkit.command.CommandSender;
 
 public interface UCDInterface {
-	
+	boolean JDAAvailable();
+
 	void sendTellToDiscord(String text);
 	
 	void sendRawToDiscord(String text);

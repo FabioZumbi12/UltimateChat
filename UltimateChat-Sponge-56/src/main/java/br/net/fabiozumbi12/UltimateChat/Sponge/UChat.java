@@ -236,6 +236,12 @@ public class UChat {
 			}
 			if (config.root().discord.use){
 				this.UCJDA = new UCDiscord(this);
+                if (!this.UCJDA.JDAAvailable()){
+                    this.UCJDA = null;
+                    this.logger.info("JDA is not available due errors before...");
+                } else {
+                    this.logger.info("JDA connected and ready to use!");
+                }
 			}	
 		}			
 	}

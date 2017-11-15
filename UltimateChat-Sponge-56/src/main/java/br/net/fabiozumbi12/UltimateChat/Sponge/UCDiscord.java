@@ -26,6 +26,10 @@ import java.util.TreeMap;
 public class UCDiscord extends ListenerAdapter implements UCDInterface {	
 	private JDA jda;
 	private UChat uchat;
+
+    public boolean JDAAvailable(){
+        return this.jda != null;
+    }
 	
 	public UCDiscord(UChat plugin){
 		this.uchat = plugin;
@@ -37,14 +41,10 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
 			}			
 		} catch (LoginException e) {
 			uchat.getLogger().severe("The TOKEN is wrong or empty! Check you config and your token.");
-		} catch (IllegalArgumentException e) {
+		} catch (IllegalArgumentException | InterruptedException | RateLimitedException e) {
 			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} catch (RateLimitedException e) {
-			e.printStackTrace();
-		}		
-	}
+		}
+    }
 	
 	@Override
     public void onMessageReceived(MessageReceivedEvent e) {

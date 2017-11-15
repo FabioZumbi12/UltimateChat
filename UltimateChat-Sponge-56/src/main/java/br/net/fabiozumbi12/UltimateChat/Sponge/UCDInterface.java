@@ -3,7 +3,8 @@ package br.net.fabiozumbi12.UltimateChat.Sponge;
 import org.spongepowered.api.command.CommandSource;
 
 public interface UCDInterface {
-	
+	boolean JDAAvailable();
+
 	void sendTellToDiscord(String text);
 	
 	void sendRawToDiscord(String text);
