@@ -20,10 +20,14 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 public class UCCommands {
+
+    CommandManager manager;
 	
 	UCCommands(UChat plugin) {
+	    manager = Sponge.getCommandManager();
+
 		unregisterCmd("uchat");
-		Sponge.getCommandManager().register(plugin, uchat(),"ultimatechat","uchat","chat");	
+		manager.register(plugin, uchat(),"ultimatechat","uchat","chat");
 		
 		if (UChat.get().getConfig().root().tell.enable){
 			registerTellAliases();
@@ -37,34 +41,35 @@ public class UCCommands {
 	}	
 
 	void removeCmds(){
-		Sponge.getCommandManager().removeMapping(Sponge.getCommandManager().get("ultimatechat").get());
+        manager.removeMapping(manager.get("ultimatechat").get());
 		
 		if (UChat.get().getConfig().root().tell.enable){
-			for (String cmd:UChat.get().getConfig().getTellAliases()){			
-				Sponge.getCommandManager().removeMapping(Sponge.getCommandManager().get(cmd).get());
+			for (String cmd:UChat.get().getConfig().getTellAliases()){
+                manager.removeMapping(manager.get(cmd).get());
 			}
 		}
 		if (UChat.get().getConfig().root().broadcast.enable){
 			for (String cmd:UChat.get().getConfig().getBroadcastAliases()){
-				Sponge.getCommandManager().removeMapping(Sponge.getCommandManager().get(cmd).get());
+                manager.removeMapping(manager.get(cmd).get());
 			}
 		}
 		for (String cmd:UChat.get().getChAliases()){
-			Optional<? extends CommandMapping> cmdo = Sponge.getCommandManager().get(cmd);
-			if (cmdo.isPresent())
-			Sponge.getCommandManager().removeMapping(cmdo.get());
+			Optional<? extends CommandMapping> cmdo = manager.get(cmd);
+			if (cmdo.isPresent()) {
+                manager.removeMapping(cmdo.get());
+            }
 		}		
 		for (String cmd:UChat.get().getConfig().getMsgAliases()){
-			Sponge.getCommandManager().removeMapping(Sponge.getCommandManager().get(cmd).get());
+            manager.removeMapping(manager.get(cmd).get());
 		}
 		for (String cmd:UChat.get().getConfig().getChCmd()){
-			Sponge.getCommandManager().removeMapping(Sponge.getCommandManager().get(cmd).get());
+            manager.removeMapping(manager.get(cmd).get());
 		}
 	}
 		
 	public void unregisterCmd(String cmd){
-		if (Sponge.getCommandManager().get(cmd).isPresent()){
-			Sponge.getCommandManager().removeMapping(Sponge.getCommandManager().get(cmd).get());
+		if (manager.get(cmd).isPresent()){
+			manager.removeMapping(manager.get(cmd).get());
 		}
 	}
 	
@@ -73,10 +78,10 @@ public class UCCommands {
 		for (String tell:UChat.get().getConfig().getTellAliases()){
 			unregisterCmd(tell);
 			if (tell.equals("r")){
-				Sponge.getCommandManager().register(UChat.get().instance(), CommandSpec.builder()
+				manager.register(UChat.get().instance(), CommandSpec.builder()
 						.arguments(GenericArguments.remainingJoinedStrings(Text.of("message")))
 						.permission("uchat.cmd.tell")
-					    .description(Text.of("Respond private messages of other players."))
+					    .description(Text.of("Respond to the private messages of other players."))
 					    .executor((src, args) -> { {
 					    	if (src instanceof Player){
 					    		Player p = (Player) src;						
@@ -109,7 +114,7 @@ public class UCCommands {
 					    }})
 					    .build(), tell);
 			} else {
-				Sponge.getCommandManager().register(UChat.get().instance(), CommandSpec.builder()
+				manager.register(UChat.get().instance(), CommandSpec.builder()
 						.arguments(GenericArguments.optional(GenericArguments.firstParsing(GenericArguments.player(Text.of("receiver")), GenericArguments.string(Text.of("receiver")))), GenericArguments.optional(GenericArguments.remainingJoinedStrings(Text.of("message"))))
 					    .description(Text.of("Lock your chat with a player or send private messages."))
 					    .permission("uchat.cmd.tell")
@@ -240,7 +245,7 @@ public class UCCommands {
 		//register ch cmds aliases
 		for (String cmd:UChat.get().getConfig().getChCmd()){
 			unregisterCmd(cmd);
-			Sponge.getCommandManager().register(UChat.get().instance(), CommandSpec.builder()
+			manager.register(UChat.get().instance(), CommandSpec.builder()
 					.arguments(new ChannelCommandElement(Text.of("channel")))
 				    .description(Text.of("Join in a channel if you have permission."))
 				    .executor((src, args) -> { {
@@ -280,7 +285,7 @@ public class UCCommands {
 		//register umsg aliases
 		for (String msga:UChat.get().getConfig().getMsgAliases()){
 			unregisterCmd(msga);
-			Sponge.getCommandManager().register(UChat.get().instance(), CommandSpec.builder()
+			manager.register(UChat.get().instance(), CommandSpec.builder()
 					.arguments(GenericArguments.player(Text.of("player")), GenericArguments.remainingJoinedStrings(Text.of("message")))
 					.permission("uchat.cmd.umsg")
 				    .description(Text.of("Send a message directly to a player."))
@@ -299,7 +304,7 @@ public class UCCommands {
 		//register ubroadcast aliases
 		for (String brod:UChat.get().getConfig().getBroadcastAliases()){
 			unregisterCmd(brod);
-			Sponge.getCommandManager().register(UChat.get().instance(), CommandSpec.builder()
+			manager.register(UChat.get().instance(), CommandSpec.builder()
 					.arguments(GenericArguments.remainingJoinedStrings(Text.of("message")))
 					.permission("uchat.cmd.broadcast")
 				    .description(Text.of("Command to send broadcast to server."))
@@ -320,7 +325,7 @@ public class UCCommands {
 			return;
 		}
 		
-		Sponge.getCommandManager().register(UChat.get().instance(), CommandSpec.builder()
+		manager.register(UChat.get().instance(), CommandSpec.builder()
 				.arguments(GenericArguments.optional(GenericArguments.remainingJoinedStrings(Text.of("message"))))
 				.permission("uchat.channel."+ch.getName()+".read")
 				.permission("uchat.channel."+ch.getName()+".write")

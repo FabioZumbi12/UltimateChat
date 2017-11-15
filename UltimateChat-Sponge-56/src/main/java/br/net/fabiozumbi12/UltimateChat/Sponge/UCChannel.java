@@ -12,6 +12,8 @@ import org.spongepowered.api.event.message.MessageChannelEvent;
 import org.spongepowered.api.event.message.MessageEvent;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
+import org.spongepowered.api.text.channel.MessageReceiver;
+import org.spongepowered.api.text.channel.MutableMessageChannel;
 import org.spongepowered.api.world.World;
 
 import java.util.*;
@@ -22,10 +24,10 @@ import java.util.Map.Entry;
  * @author FabioZumbi12
  *
  */
-public class UCChannel {
+public class UCChannel implements MutableMessageChannel {
 	private List<String> ignoring = new ArrayList<String>();
 	private List<String> mutes = new ArrayList<String>();
-	private List<CommandSource> members = new ArrayList<CommandSource>();	
+	private List<MessageReceiver> members = new ArrayList<MessageReceiver>();
 	private Properties properties = new Properties();
 	
 	private void addDefaults() {
@@ -126,7 +128,7 @@ public class UCChannel {
 		return (String) properties.get("password");
 	}
 	
-	public void setMembers(List<CommandSource> members){
+	public void setMembers(List<MessageReceiver> members){
 		this.members = members;
 	}
 	
@@ -178,25 +180,27 @@ public class UCChannel {
 		return properties.get("discord.format-to-dd").toString();
 	}
 	
-	public List<CommandSource> getMembers(){
+	public List<MessageReceiver> getMembers(){
 		return this.members;
 	}
-	
+
+	@Override
+	public boolean addMember(MessageReceiver member) {
+		for (UCChannel ch:UChat.get().getChannels().values()){
+			ch.removeMember(member);
+		}
+		return this.members.add(member);
+	}
+
+	@Override
+	public boolean removeMember(MessageReceiver member) {
+		return this.members.remove(member);
+	}
+
 	public void clearMembers(){
 		this.members.clear();
 	}
-	
-	public boolean addMember(CommandSource p){
-		for (UCChannel ch:UChat.get().getChannels().values()){
-			ch.removeMember(p);
-		}
-		return this.members.add(p);
-	}
-	
-	public boolean removeMember(CommandSource p){
-		return this.members.remove(p);
-	}
-	
+
 	public boolean isMember(CommandSource p){
 		return this.members.contains(p);
 	}
@@ -318,14 +322,15 @@ public class UCChannel {
 	public boolean isBungee() {		
 		return (boolean) properties.get("bungee");
 	}
+
 	/** Send a message from a channel as player.<p>
-	 * <i>Use {@code sendMessage(Player, Text)} as replecement for this method</i>
+	 * <i>Use {@code sendMessage(Player, Text, Direct)} as replacement for this method</i>
 	 * @param src {@code Player}
 	 * @param message {@code Text}
 	 */
 	@Deprecated
 	public void sendMessage(Player src, String message){
-		sendMessage(src, message);
+		sendMessage(src, Text.of(message), false);
 	}
 	
 	/** Send a message from a channel as player.

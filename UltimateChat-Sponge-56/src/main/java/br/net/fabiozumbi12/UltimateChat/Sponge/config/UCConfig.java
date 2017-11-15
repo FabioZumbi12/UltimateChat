@@ -188,9 +188,8 @@ public class UCConfig{
 				    				
 				Map<String, Object> chProps = new HashMap<String, Object>();
 				channel.getChildrenMap().forEach((key,value)->{
-					String rkey = "";					
 					if (value.hasMapChildren()){
-						rkey = key.toString();
+						String rkey = key.toString();
 						for (Entry<Object, ? extends CommentedConfigurationNode> vl:value.getChildrenMap().entrySet()){													
 							chProps.put(rkey+"."+vl.getKey(), vl.getValue().getValue());
 						}											

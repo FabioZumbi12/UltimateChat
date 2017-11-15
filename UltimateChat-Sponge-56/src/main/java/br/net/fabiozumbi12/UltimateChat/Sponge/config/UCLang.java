@@ -67,7 +67,7 @@ public class UCLang {
 			int langv = Integer.parseInt(((String)Lang.get("_lang.version")).replace(".", ""));
 			int rpv = Integer.parseInt(UChat.get().instance().getVersion().get().replace(".", ""));
 			if (langv < rpv || langv == 0){
-				UChat.get().instance().getLogger().info("Your lang file is outdated. Probally need strings updates!");
+				UChat.get().instance().getLogger().info("Your lang file is outdated. Probably need strings updates!");
 				UChat.get().instance().getLogger().info("Lang file version: "+Lang.get("_lang.version"));
 				Lang.put("_lang.version", UChat.get().instance().getVersion().get());
 			}

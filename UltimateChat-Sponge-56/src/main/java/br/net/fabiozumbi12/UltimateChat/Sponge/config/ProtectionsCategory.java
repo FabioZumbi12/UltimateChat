@@ -29,11 +29,11 @@ public class ProtectionsCategory {
 			@Setting
 			public boolean enable = true;
 			@Setting(value="disable-on-channels")
-			public List<String> disable_on_chanels = new ArrayList<String>();
+			public List<String> disable_on_channels = new ArrayList<String>();
 			@Setting(value="end-with-dot")
 			public boolean end_with_dot = true;
-			@Setting(value="minimum-lenght")
-			public int minimum_lenght = 3;
+			@Setting(value="minimum-length")
+			public int minimum_length = 3;
 		}
 		
 		//anti-flood
@@ -46,7 +46,7 @@ public class ProtectionsCategory {
 			@Setting
 			public boolean enable = true;
 			@Setting(value="disable-on-channels")
-			public List<String> disable_on_chanels = Arrays.asList("Local");
+			public List<String> disable_on_channels = Arrays.asList("Local");
 			@Setting(value="whitelist-flood-characs")
 			public List<String> whitelist_flood_characs = Arrays.asList("k","w");
 		}
@@ -61,9 +61,9 @@ public class ProtectionsCategory {
 			@Setting
 			public boolean enable = true;
 			@Setting(value="disable-on-channels")
-			public List<String> disable_on_chanels = new ArrayList<String>();
-			@Setting(value="minimum-lenght")
-			public int minimum_lenght = 3;
+			public List<String> disable_on_channels = new ArrayList<String>();
+			@Setting(value="minimum-length")
+			public int minimum_length = 3;
 		}
 		
 		//anti-spam
@@ -76,13 +76,13 @@ public class ProtectionsCategory {
 			@Setting
 			public boolean enable = true;
 			@Setting(value="disable-on-channels")
-			public List<String> disable_on_chanels = Arrays.asList("Local");
-			@Setting(value="time-beteween-messages", comment="In seconds")
-			public int time_beteween_messages = 1;
+			public List<String> disable_on_channels = Arrays.asList("Local");
+			@Setting(value="time-between-messages", comment="In seconds")
+			public int time_between_messages = 1;
 			@Setting(value="count-of-same-message")
 			public int count_of_same_message = 5;
-			@Setting(value="time-beteween-same-messages", comment="In seconds.")
-			public int time_beteween_same_messages = 10;
+			@Setting(value="time-between-same-messages", comment="In seconds.")
+			public int time_between_same_messages = 10;
 			@Setting(value="cooldown-msg")
 			public String cooldown_msg = "&6Slow down your messages!";
 			@Setting(value="wait-message")
@@ -106,7 +106,7 @@ public class ProtectionsCategory {
 			@Setting
 			public boolean enable = true;
 			@Setting(value="disable-on-channels")
-			public List<String> disable_on_chanels = new ArrayList<String>();
+			public List<String> disable_on_channels = new ArrayList<String>();
 			@Setting(value="replace-by-symbol")
 			public boolean replace_by_symbol = true;
 			@Setting(value="by-symbol")
@@ -142,7 +142,7 @@ public class ProtectionsCategory {
 			@Setting
 			public boolean enable = true;
 			@Setting(value="disable-on-channels")
-			public List<String> disable_on_chanels = new ArrayList<String>();
+			public List<String> disable_on_channels = new ArrayList<String>();
 			@Setting(value="custom-ip-regex")
 			public String custom_ip_regex = "(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])";
 			@Setting(value="custom-url-regex")
