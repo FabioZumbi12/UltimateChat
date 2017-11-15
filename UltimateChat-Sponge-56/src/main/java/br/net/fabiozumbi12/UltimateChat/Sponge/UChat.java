@@ -149,17 +149,25 @@ public class UChat {
         	this.config = new UCConfig(factory);
     		//init lang
         	this.lang = new UCLang();
+
             //init perms
-            String v = this.game.getPlatform().getContainer(Component.API).getVersion().get();
-            if (v.startsWith("5") || v.startsWith("6")){
-            	this.perms = (UCPerms)Class.forName("br.net.fabiozumbi12.UltimateChat.Sponge.UCPerms56").newInstance();
-            	this.helper = (UCVHelper)Class.forName("br.net.fabiozumbi12.UltimateChat.Sponge.UCVHelper56").newInstance();
+        	try {
+                String v = this.game.getPlatform().getContainer(Component.API).getVersion().get();
+                if (v.startsWith("5") || v.startsWith("6")){
+                    this.perms = (UCPerms)Class.forName("br.net.fabiozumbi12.UltimateChat.Sponge.UCPerms56").newInstance();
+                    this.helper = (UCVHelper)Class.forName("br.net.fabiozumbi12.UltimateChat.Sponge.UCVHelper56").newInstance();
+                }
+                if (v.startsWith("7")){
+                    this.perms = (UCPerms)Class.forName("br.net.fabiozumbi12.UltimateChat.Sponge.UCPerms7").newInstance();
+                    this.helper = (UCVHelper)Class.forName("br.net.fabiozumbi12.UltimateChat.Sponge.UCVHelper7").newInstance();
+                }
+                getLogger().info("Sponge version "+ v);
+            } catch (Exception e){
+                this.perms = (UCPerms)Class.forName("br.net.fabiozumbi12.UltimateChat.Sponge.UCPerms56").newInstance();
+                this.helper = (UCVHelper)Class.forName("br.net.fabiozumbi12.UltimateChat.Sponge.UCVHelper56").newInstance();
+                getLogger().info("Permissions set to default classes for API 5-6");
             }
-            if (v.startsWith("7")){
-            	this.perms = (UCPerms)Class.forName("br.net.fabiozumbi12.UltimateChat.Sponge.UCPerms7").newInstance();
-            	this.helper = (UCVHelper)Class.forName("br.net.fabiozumbi12.UltimateChat.Sponge.UCVHelper7").newInstance();
-            }
-            
+
             logger.info("Init commands module...");
     		this.cmds = new UCCommands(this);
     		
@@ -173,8 +181,7 @@ public class UChat {
     		
     		logger.info("Init API module...");
             this.ucapi = new uChatAPI();
-            
-            getLogger().info("Sponge version "+this.game.getPlatform().getContainer(Component.API).getVersion().get());
+
             getLogger().logClear("\n"
             		+ "&b  _    _ _ _   _                 _        _____ _           _  \n"
             		+ " | |  | | | | (_)               | |      / ____| |         | |  \n"
