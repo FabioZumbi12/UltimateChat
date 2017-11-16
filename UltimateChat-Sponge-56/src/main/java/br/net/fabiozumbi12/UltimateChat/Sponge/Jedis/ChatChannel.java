@@ -6,6 +6,7 @@ import br.net.fabiozumbi12.UltimateChat.Sponge.UChat;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.text.channel.MessageReceiver;
 import redis.clients.jedis.JedisPubSub;
 
 import java.util.Arrays;
@@ -87,11 +88,11 @@ public class ChatChannel extends JedisPubSub {
 						
 						if (ch.getDistance() == 0){
 							if (ch.neeFocus()){
-								for (CommandSource receiver:ch.getMembers()){
+								for (MessageReceiver receiver:ch.getMembers()){
 									Sponge.getScheduler().createSyncExecutor(UChat.get()).execute(new Runnable(){
 										@Override
 										public void run() {
-											Sponge.getCommandManager().process(Sponge.getServer().getConsole(), "tellraw "+receiver.getName()+" "+messagef);
+											Sponge.getCommandManager().process(Sponge.getServer().getConsole(), "tellraw "+((CommandSource)receiver).getName()+" "+messagef);
 										}											
 									});	
 								}
