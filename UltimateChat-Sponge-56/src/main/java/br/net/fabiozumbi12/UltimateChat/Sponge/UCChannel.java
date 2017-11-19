@@ -109,11 +109,11 @@ public class UCChannel implements MutableMessageChannel {
 	}
 	
 	public void setProperty(String key, String value){
-		if (value.equals("true") || value.equals("false")){
+		if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")){
 			properties.put(key, Boolean.getBoolean(value));
 		} else {
 			try {
-				properties.put(key, Double.parseDouble(value));
+				properties.put(key, Integer.parseInt(value));
 			} catch (Exception ex){
 				properties.put(key, value);
 			}	
