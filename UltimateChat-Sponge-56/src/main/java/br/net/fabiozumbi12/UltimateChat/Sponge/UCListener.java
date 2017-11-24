@@ -27,27 +27,30 @@ public class UCListener {
 				){
 			UChat.get().getLang().sendMessage(sender, "listener.invalidplayer");
 			return;
-		}		
+		}
 		UChat.respondTell.put(receiver.get().getName(),sender.getName());
 		UCMessages.sendFancyMessage(new String[0], msg, null, sender, receiver.get());			
 	}
 	
 	@Listener(order = Order.LATE)
 	public void onChat(MessageChannelEvent.Chat e, @First Player p){
-		
+
+        UChat.get().getLogger().timings(UCLogger.timingType.START, "UCListener#onChat()|Listening AsyncPlayerChatEvent");
+
 		if (UChat.tellPlayers.containsKey(p.getName()) && (!UChat.tempTellPlayers.containsKey("CONSOLE") || !UChat.tempTellPlayers.get("CONSOLE").equals(p.getName()))){		
 			String recStr = UChat.tellPlayers.get(p.getName());
 			Optional<CommandSource> tellreceiver = Optional.ofNullable(Sponge.getServer().getPlayer(recStr).orElse(null));	
 			sendTell(p, tellreceiver, e.getRawMessage());
 			e.setMessageCancelled(true);			
 		}
+
 		else if (UChat.command.contains(p.getName()) || UChat.command.contains("CONSOLE")){
 			if (UChat.tempTellPlayers.containsKey("CONSOLE")){
 				String recStr = UChat.tempTellPlayers.get("CONSOLE");	
 				Optional<CommandSource> pRec = Optional.ofNullable(Sponge.getServer().getPlayer(recStr).orElse(null));
 				if (pRec.isPresent() && p.equals(pRec.get())){
 					sendTell(Sponge.getServer().getConsole(), pRec, e.getRawMessage());
-					UChat.tempTellPlayers.remove("CONSOLE");	
+					UChat.tempTellPlayers.remove("CONSOLE");
 					UChat.command.remove("CONSOLE");
 				}				
 			} else if (UChat.tempTellPlayers.containsKey(p.getName())){
@@ -57,7 +60,7 @@ public class UCListener {
 				} else {
 					sendTell(p, Optional.ofNullable(Sponge.getServer().getPlayer(recStr).orElse(null)), e.getRawMessage());
 				}		
-				UChat.tempTellPlayers.remove(p.getName());	
+				UChat.tempTellPlayers.remove(p.getName());
 				UChat.command.remove(p.getName());
 			} else if (UChat.respondTell.containsKey(p.getName())){
 				String recStr = UChat.respondTell.get(p.getName());
@@ -66,7 +69,7 @@ public class UCListener {
 				} else {
 					sendTell(p, Optional.ofNullable(Sponge.getServer().getPlayer(recStr).orElse(null)), e.getRawMessage());
 				}
-				UChat.respondTell.remove(p.getName());
+				//UChat.respondTell.remove(p.getName());
 				UChat.command.remove(p.getName());
 			}
 			e.setMessageCancelled(true);

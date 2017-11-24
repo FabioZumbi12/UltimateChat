@@ -21,10 +21,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class UCListener implements CommandExecutor, Listener, TabCompleter {
 	
@@ -260,7 +257,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 							 UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.dontexist").replace("{channel}", args[1]));
 							 return true;
 						 }						 
-						 for (CommandSender m:ch.getMembers()){
+						 for (String m:ch.getMembers()){
 							 UChat.get().getDefChannel().addMember(m);
 						 }						 
 						 UChat.get().getConfig().delChannel(ch);
@@ -654,14 +651,10 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 		}
 		pls.add(p);
 		AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(true, p, msg, pls);
-		Bukkit.getScheduler().runTaskAsynchronously(UChat.get(), new Runnable(){
-
-			@Override
-			public void run() {
-				UChat.get().getUCLogger().timings(timingType.START, "UCListener#sendPreTell()|Fire AsyncPlayerChatEvent");
-				UChat.get().getServer().getPluginManager().callEvent(event); 
-			}			
-		});		
+		Bukkit.getScheduler().runTaskAsynchronously(UChat.get(), () -> {
+            UChat.get().getUCLogger().timings(timingType.START, "UCListener#sendPreTell()|Fire AsyncPlayerChatEvent");
+            UChat.get().getServer().getPluginManager().callEvent(event);
+        });
 	}
 	
 	@EventHandler
@@ -725,7 +718,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 				Player pRec = UChat.get().getServer().getPlayer(recStr);
 				if (pRec.equals(p)){
 					sendTell(UChat.get().getServer().getConsoleSender(), p, e.getMessage());				
-					UChat.get().tempTellPlayers.remove("CONSOLE");	
+					UChat.get().tempTellPlayers.remove("CONSOLE");
 					UChat.get().command.remove("CONSOLE");
 				}				
 			} else if (UChat.get().tempTellPlayers.containsKey(p.getName())){
@@ -735,7 +728,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 				} else {
 					sendTell(p, UChat.get().getServer().getPlayer(recStr), e.getMessage());
 				}		
-				UChat.get().tempTellPlayers.remove(p.getName());	
+				UChat.get().tempTellPlayers.remove(p.getName());
 				UChat.get().command.remove(p.getName());
 			} else if (UChat.get().respondTell.containsKey(p.getName())){
 				String recStr = UChat.get().respondTell.get(p.getName());
@@ -744,7 +737,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 				} else {
 					sendTell(p, UChat.get().getServer().getPlayer(recStr), e.getMessage());
 				}
-				UChat.get().respondTell.remove(p.getName());
+				//UChat.get().respondTell.remove(p.getName());
 				UChat.get().command.remove(p.getName());
 			}
 			e.setCancelled(true);
@@ -965,7 +958,12 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-		List<String> tab = new ArrayList<String>();
+		List<String> tab = new ArrayList<>();
+        if (command.getName().equals("tell")){
+            if (args.length == 1 && Bukkit.getPlayer(args[0]) != null){
+                return Collections.singletonList(Bukkit.getPlayer(args[0]).getName());
+            }
+        }
 		if (command.getName().equals("uchat")){
 			if (args.length == 1){
 				tab.addAll(UChat.get().getLang().helpStrings());

@@ -104,7 +104,6 @@ public class UCCommands {
 											sendPreTell(p, receiver, msg);	
 										}																			
 									}
-					    			
 					    			return CommandResult.success();
 								} else {
 									throw new CommandException(UChat.get().getLang().getText("cmd.tell.nonetorespond"));
@@ -227,7 +226,10 @@ public class UCCommands {
 		CommandSource src = sender;
 		if (sender instanceof ConsoleSource){
 			src = receiver;
-		} 
+		}
+
+		UChat.get().getLogger().timings(UCLogger.timingType.START, "UCListener#sendPreTell()|Fire AsyncPlayerChatEvent");
+
 		MessageChannelEvent.Chat event = SpongeEventFactory.createMessageChannelEventChat(
 				UChat.get().getVHelper().getCause(src), 
 				src.getMessageChannel(), 
@@ -364,7 +366,9 @@ public class UCCommands {
 							}
 			    			
 			    			UChat.tempChannels.put(src.getName(), ch.getAlias());
-			    			
+
+                            UChat.get().getLogger().timings(UCLogger.timingType.START, "UCListener#sendPreTell()|Fire AsyncPlayerChatEvent");
+
 			    			//run sponge chat event
 			    			Text msg = Text.of(args.<String>getOne("message").get());				    			
 			    			MessageChannelEvent.Chat event = SpongeEventFactory.createMessageChannelEventChat(
@@ -431,7 +435,10 @@ public class UCCommands {
 					if (!optch.isPresent()){
 						throw new CommandException(UChat.get().getLang().getText("channel.dontexist"), true);
 					}
-					UCChannel ch = optch.get();					
+					UCChannel ch = optch.get();
+                    for (String m:ch.getMembers()){
+                        UChat.get().getDefChannel().addMember(m);
+                    }
 					UChat.get().getConfig().delChannel(ch);
 					UChat.get().getLang().sendMessage(src, UChat.get().getLang().get("cmd.delchannel.success").replace("{channel}", ch.getName()));
 			    	return CommandResult.success();

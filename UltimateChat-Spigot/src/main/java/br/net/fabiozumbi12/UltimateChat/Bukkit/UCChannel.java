@@ -19,9 +19,9 @@ import java.util.Map.Entry;
  *
  */
 public class UCChannel {
-	private List<String> ignoring = new ArrayList<String>();
-	private List<String> mutes = new ArrayList<String>();
-	private List<CommandSender> members = new ArrayList<CommandSender>();
+	private List<String> ignoring = new ArrayList<>();
+	private List<String> mutes = new ArrayList<>();
+	private List<String> members = new ArrayList<>();
 	private Properties properties = new Properties();
 	
 	private void addDefaults(){
@@ -122,7 +122,7 @@ public class UCChannel {
 		return (String) properties.get("password");
 	}
 	
-	public void setMembers(List<CommandSender> members){
+	public void setMembers(List<String> members){
 		this.members = members;
 	}
 	
@@ -174,7 +174,7 @@ public class UCChannel {
 		return properties.get("discord.format-to-dd").toString();
 	}
 	
-	public List<CommandSender> getMembers(){
+	public List<String> getMembers(){
 		return this.members;
 	}
 	
@@ -183,18 +183,27 @@ public class UCChannel {
 	}
 	
 	public boolean addMember(CommandSender p){
-		for (UCChannel ch:UChat.get().getChannels().values()){
-			ch.removeMember(p);
-		}
-		return this.members.add(p);
+		return addMember(p.getName());
+	}
+
+	public boolean addMember(String p){
+        for (UCChannel ch:UChat.get().getChannels().values()){
+            ch.removeMember(p);
+        }
+        return this.members.add(p);
 	}
 	
 	public boolean removeMember(CommandSender p){
-		return this.members.remove(p);
+		return removeMember(p.getName());
 	}
+
+    public boolean removeMember(String p){
+        return this.members.remove(p);
+    }
+
 	
 	public boolean isMember(CommandSender p){
-		return this.members.contains(p);
+		return this.members.contains(p.getName());
 	}
 		
 	public boolean canLock(){

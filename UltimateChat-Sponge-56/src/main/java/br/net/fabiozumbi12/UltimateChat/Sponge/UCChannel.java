@@ -12,8 +12,6 @@ import org.spongepowered.api.event.message.MessageChannelEvent;
 import org.spongepowered.api.event.message.MessageEvent;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
-import org.spongepowered.api.text.channel.MessageReceiver;
-import org.spongepowered.api.text.channel.MutableMessageChannel;
 import org.spongepowered.api.world.World;
 
 import java.util.*;
@@ -24,10 +22,10 @@ import java.util.Map.Entry;
  * @author FabioZumbi12
  *
  */
-public class UCChannel implements MutableMessageChannel {
-	private List<String> ignoring = new ArrayList<String>();
-	private List<String> mutes = new ArrayList<String>();
-	private List<MessageReceiver> members = new ArrayList<MessageReceiver>();
+public class UCChannel {
+	private List<String> ignoring = new ArrayList<>();
+	private List<String> mutes = new ArrayList<>();
+	private List<String> members = new ArrayList<>();
 	private Properties properties = new Properties();
 	
 	private void addDefaults() {
@@ -128,7 +126,7 @@ public class UCChannel implements MutableMessageChannel {
 		return (String) properties.get("password");
 	}
 	
-	public void setMembers(List<MessageReceiver> members){
+	public void setMembers(List<String> members){
 		this.members = members;
 	}
 	
@@ -180,22 +178,28 @@ public class UCChannel implements MutableMessageChannel {
 		return properties.get("discord.format-to-dd").toString();
 	}
 	
-	public List<MessageReceiver> getMembers(){
+	public List<String> getMembers(){
 		return this.members;
 	}
 
-	@Override
-	public boolean addMember(MessageReceiver member) {
+	public boolean addMember(CommandSource member) {
+		return addMember(member.getName());
+	}
+
+	public boolean addMember(String member) {
 		for (UCChannel ch:UChat.get().getChannels().values()){
 			ch.removeMember(member);
 		}
 		return this.members.add(member);
 	}
 
-	@Override
-	public boolean removeMember(MessageReceiver member) {
-		return this.members.remove(member);
+	public boolean removeMember(CommandSource member) {
+		return removeMember(member.getName());
 	}
+
+    public boolean removeMember(String member) {
+        return this.members.remove(member);
+    }
 
 	public void clearMembers(){
 		this.members.clear();

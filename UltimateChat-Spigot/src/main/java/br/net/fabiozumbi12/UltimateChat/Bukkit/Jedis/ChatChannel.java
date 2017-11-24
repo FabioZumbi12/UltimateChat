@@ -77,8 +77,10 @@ public class ChatChannel extends JedisPubSub {
 						
 						if (ch.getDistance() == 0){
 							if (ch.neeFocus()){
-								for (CommandSender receiver:ch.getMembers()){
-									UCUtil.performCommand((Player)receiver, Bukkit.getConsoleSender(), "tellraw " + receiver.getName() + " " + messagef);
+								for (String receiver:ch.getMembers()){
+									if (Bukkit.getPlayer(receiver) != null){
+										UCUtil.performCommand(Bukkit.getPlayer(receiver), Bukkit.getConsoleSender(), "tellraw " + receiver + " " + messagef);
+									}
 								}
 							} else {
 								for (Player receiver:Bukkit.getServer().getOnlinePlayers()){

@@ -88,13 +88,9 @@ public class ChatChannel extends JedisPubSub {
 						
 						if (ch.getDistance() == 0){
 							if (ch.neeFocus()){
-								for (MessageReceiver receiver:ch.getMembers()){
-									Sponge.getScheduler().createSyncExecutor(UChat.get()).execute(new Runnable(){
-										@Override
-										public void run() {
-											Sponge.getCommandManager().process(Sponge.getServer().getConsole(), "tellraw "+((CommandSource)receiver).getName()+" "+messagef);
-										}											
-									});	
+								for (String receiver:ch.getMembers()){
+									Sponge.getScheduler().createSyncExecutor(UChat.get())
+											.execute(() -> Sponge.getCommandManager().process(Sponge.getServer().getConsole(), "tellraw "+receiver+" "+messagef));
 								}
 							} else {
 								for (Player receiver:Sponge.getServer().getOnlinePlayers()){
