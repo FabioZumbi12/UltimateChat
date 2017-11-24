@@ -134,6 +134,8 @@ public class MainCategory {
 		public boolean enable_tags_on_messages = false;
 		@Setting(value="nick-symbol")
 		public String nick_symbol = "&6~&f";
+		@Setting(value="persist-channels")
+		public boolean persist_channels = true;
 		@Setting(value="item-hand")
 		public ItemHandCat item_hand = new ItemHandCat();
 

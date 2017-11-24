@@ -806,8 +806,12 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 	
 	@EventHandler
 	public void onJoin(PlayerJoinEvent e){
-		Player p = e.getPlayer();		
-		UChat.get().getDefChannel().addMember(p);
+		Player p = e.getPlayer();
+
+		if (!UChat.get().getConfig().getBoolean("general.persist-channels")){
+			UChat.get().getDefChannel().addMember(p);
+		}
+
 		if (UChat.get().getUCJDA() != null){
 			UChat.get().getUCJDA().sendRawToDiscord(UChat.get().getLang().get("discord.join").replace("{player}", p.getName()));
 			if (UChat.get().getConfig().getBoolean("discord.update-status")){
@@ -832,7 +836,12 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 	
 	@EventHandler
 	public void onQuit(PlayerQuitEvent e){
-		Player p = e.getPlayer();	
+		Player p = e.getPlayer();
+
+        if (!UChat.get().getConfig().getBoolean("general.persist-channels")){
+            UChat.get().getPlayerChannel(p).removeMember(p);
+        }
+
 		List<String> toRemove = new ArrayList<String>();
 		for (String play:UChat.get().tellPlayers.keySet()){
 			if (play.equals(p.getName()) || UChat.get().tellPlayers.get(play).equals(p.getName())){
@@ -850,8 +859,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 		}	
 		for (String remove:toRemove2){
 			UChat.get().respondTell.remove(remove);
-		}		
-		UChat.get().getPlayerChannel(p).removeMember(p);
+		}
 		if (UChat.get().tempChannels.containsKey(p.getName())){
 			UChat.get().tempChannels.remove(p.getName());
 		}

@@ -53,7 +53,7 @@ public class UCListener {
 			} else if (UChat.tempTellPlayers.containsKey(p.getName())){
 				String recStr = UChat.tempTellPlayers.get(p.getName());
 				if (recStr.equals("CONSOLE")){
-					sendTell(p, Optional.ofNullable(Sponge.getServer().getConsole()), e.getRawMessage());
+					sendTell(p, Optional.of(Sponge.getServer().getConsole()), e.getRawMessage());
 				} else {
 					sendTell(p, Optional.ofNullable(Sponge.getServer().getPlayer(recStr).orElse(null)), e.getRawMessage());
 				}		
@@ -62,7 +62,7 @@ public class UCListener {
 			} else if (UChat.respondTell.containsKey(p.getName())){
 				String recStr = UChat.respondTell.get(p.getName());
 				if (recStr.equals("CONSOLE")){
-					sendTell(p, Optional.ofNullable(Sponge.getServer().getConsole()), e.getRawMessage());
+					sendTell(p, Optional.of(Sponge.getServer().getConsole()), e.getRawMessage());
 				} else {
 					sendTell(p, Optional.ofNullable(Sponge.getServer().getPlayer(recStr).orElse(null)), e.getRawMessage());
 				}
@@ -130,8 +130,12 @@ public class UCListener {
 	
 	@Listener
 	public void onJoin(ClientConnectionEvent.Join e){
-		Player p = e.getTargetEntity();		
-		UChat.get().getDefChannel().addMember(p);
+		Player p = e.getTargetEntity();
+
+		if (!UChat.get().getConfig().root().general.persist_channels){
+			UChat.get().getDefChannel().addMember(p);
+		}
+
 		if (UChat.get().getUCJDA() != null){
 			UChat.get().getUCJDA().sendRawToDiscord(UChat.get().getLang().get("discord.join").replace("{player}", p.getName()));
 			if (UChat.get().getConfig().root().discord.update_status){
@@ -142,7 +146,12 @@ public class UCListener {
 		
 	@Listener
 	public void onQuit(ClientConnectionEvent.Disconnect e){
-		Player p = e.getTargetEntity();	
+		Player p = e.getTargetEntity();
+
+        if (!UChat.get().getConfig().root().general.persist_channels){
+            UChat.get().getPlayerChannel(p).removeMember(p);
+        }
+
 		List<String> toRemove = new ArrayList<String>();
 		for (String play:UChat.tellPlayers.keySet()){
 			if (play.equals(p.getName()) || UChat.tellPlayers.get(play).equals(p.getName())){
@@ -161,10 +170,9 @@ public class UCListener {
 		for (String remove:toRemove2){
 			UChat.respondTell.remove(remove);
 		}
-		UChat.get().getPlayerChannel(p).removeMember(p);
-		if (UChat.tempChannels.containsKey(p.getName())){
-			UChat.tempChannels.remove(p.getName());
-		}
+        if (UChat.tempChannels.containsKey(p.getName())){
+            UChat.tempChannels.remove(p.getName());
+        }
 		if (UChat.get().getUCJDA() != null){
 			UChat.get().getUCJDA().sendRawToDiscord(UChat.get().getLang().get("discord.leave").replace("{player}", p.getName()));
 			if (UChat.get().getConfig().root().discord.update_status){

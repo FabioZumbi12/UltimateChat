@@ -47,6 +47,7 @@ general:
   use-channel-tag-builder: true
   default-tag-builder: world,marry-tag,ch-tags,clan-tag,factions,group-prefix,nickname,group-suffix,message
   enable-tags-on-messages: false
+  persist-channels: true
   item-hand:
     enable: true
     format: '&6[{hand-amount} {hand-type}]{group-suffix}'
