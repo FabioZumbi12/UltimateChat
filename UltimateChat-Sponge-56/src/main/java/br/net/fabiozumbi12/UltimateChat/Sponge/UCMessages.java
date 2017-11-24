@@ -3,6 +3,7 @@ package br.net.fabiozumbi12.UltimateChat.Sponge;
 import br.net.fabiozumbi12.UltimateChat.Sponge.API.PostFormatChatMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.Sponge.API.SendChannelMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.Sponge.UCLogger.timingType;
+import io.github.nucleuspowered.nucleus.api.NucleusAPI;
 import nl.riebie.mcclans.api.ClanPlayer;
 import nl.riebie.mcclans.api.ClanService;
 import org.apache.commons.lang3.StringUtils;
@@ -317,9 +318,9 @@ public class UCMessages {
 			for (String tag:defaultBuilder){
 				Builder tagBuilder = Text.builder();
 				
-				Builder msgBuilder = Text.builder();
+				Builder msgBuilder;
 				
-				if (UChat.get().getConfig().root().tags.get(tag).format == null){
+				if (UChat.get().getConfig().root().tags.get(tag) == null){
 					tagBuilder.append(Text.of(tag));
 					continue;
 				}
@@ -547,30 +548,42 @@ public class UCMessages {
 			text = text.replace(repl, registeredReplacers.get(repl));			
 		}	
 		
-		if (defFormat.length == 3){
+		if (defFormat.length > 0){
+			StringBuilder all = new StringBuilder();
+			for (int i = 0; i < defFormat.length;i++){
+				if (i == 0) text = text.replace("{chat_header}", defFormat[i]);
+				if (i == 1) text = text.replace("{chat_body}", defFormat[i]);
+				if (i == 2) text = text.replace("{chat_footer}", defFormat[i]);
+
+				all.append(defFormat[i]);
+			}
+			text = text.replace("{chat_all}", all.toString());
+
+			/*
 			text = text.replace("{chat_header}", defFormat[0])
 					.replace("{chat_body}", defFormat[1])
 					.replace("{chat_footer}", defFormat[2])
-					.replace("{chat_all}", defFormat[0]+defFormat[1]+defFormat[2]);
+					.replace("{chat_all}", defFormat[0]+defFormat[1]+defFormat[2]);*/
 		}		
 				
 		if (cmdSender instanceof Player){
 			Player sender = (Player)cmdSender;
 			
 			if (text.contains("{nickname}") && sender.get(Keys.DISPLAY_NAME).isPresent()){
-				String nick = sender.get(Keys.DISPLAY_NAME).get().toPlain();	
+				String nick = sender.get(Keys.DISPLAY_NAME).get().toPlain();
+
 				if (!nick.equals(sender.getName())){
 					text = text.replace("{nickname}", nick);
-				} else {
-					String nuNick = new String();
-					if (defFormat.length == 3){
-						String[] nuNickStr = defFormat[0].split(" ");
-						nuNick = nuNickStr[nuNickStr.length-1].replace(":", "");
-					}
-					if (!nuNick.isEmpty() && !nuNick.equals(sender.getName())){					
-						text = text.replace("{nickname}", nuNick);
-					}
-				}							
+					text = text.replace("{nick-symbol}", UChat.get().getConfig().root().general.nick_symbol);
+				}
+				else if (Sponge.getPluginManager().getPlugin("nucleus").isPresent() && NucleusAPI.getNicknameService().isPresent()){
+                    Optional<Text> opNick = NucleusAPI.getNicknameService().get().getNickname(sender);
+                    if (opNick.isPresent()){
+                        nick = TextSerializers.FORMATTING_CODE.serialize(opNick.get());
+                        text = text.replace("{nick-symbol}", UChat.get().getConfig().root().general.nick_symbol);
+                    }
+                }
+                text = text.replace("{nickname}", nick);
 			}				
 			
 			//replace item hand	

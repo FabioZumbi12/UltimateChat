@@ -66,6 +66,7 @@ public class UCConfig{
 					+ " - {message}: Message sent by player;\n"
 					+ " - {playername}: The name of player;\n"
 					+ " - {nickname}: The nickname of player. If not set, will show realname;\n"
+					+ " - {nick-symbol}: The symbol to use before nickname;\n"
 					+ " - {ch-name}: Channel name;\n"
 					+ " - {ch-alias}: Channel alias;\n"
 					+ " - {ch-color}: Channel color;\n"

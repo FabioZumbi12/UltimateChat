@@ -37,7 +37,8 @@ version = VersionData.VERSION,
 authors="FabioZumbi12", 
 description="Complete and advanced chat plugin",
 dependencies={
-		@Dependency(id = "jdalibraryloader", optional = true)})
+		@Dependency(id = "jdalibraryloader", optional = true),
+		@Dependency(id = "nucleus", optional = true)})
 public class UChat {
 	
 	private UCLogger logger;

@@ -42,6 +42,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" scope="PROVIDED" name="Maven: io.github.nucleuspowered:nucleus-api:1.1.7-LTS-S5.1" level="project" />
     <orderEntry type="module-library">
       <library name="Maven: JDALib:Loader:1.0.0">
         <CLASSES>
