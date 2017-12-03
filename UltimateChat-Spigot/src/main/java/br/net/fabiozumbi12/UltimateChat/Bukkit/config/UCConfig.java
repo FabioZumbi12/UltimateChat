@@ -19,235 +19,45 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
-public class UCConfig extends FileConfiguration {
-	
-	static YamlConfiguration defConfigs = new YamlConfiguration();
-	static YamlConfiguration configs = new YamlConfiguration();
-	static YamlConfiguration Prots = new YamlConfiguration();
+public class UCConfig {
+
+    private static UCCommentedConfig comConfig;
+	private static YamlConfiguration Prots = new YamlConfiguration();
+	private UChat plugin;
 		
 	public UCConfig(UChat plugin) throws IOException, InvalidConfigurationException {
-		            File main = UChat.get().getDataFolder();
-    	            File config = new File(UChat.get().getDataFolder(),"config.yml");    	            
-    	            File protections = new File(UChat.get().getDataFolder(),"protections.yml");
-    	            
-    	            if (!main.exists()) {
-    	                main.mkdir();
-    	                plugin.getUCLogger().info("Created folder: " +UChat.get().getDataFolder());
-    	            }
-    	            
-    	            if (!config.exists()) {
-    	            	UCUtil.saveResource("/assets/ultimatechat/config.yml", new File(UChat.get().getDataFolder(),"config.yml"));
-    	            	plugin.getUCLogger().info("Created config file: " + config.getPath());
-    	            } 
-    	            
-    	            if (!protections.exists()) {
-    	            	UCUtil.saveResource("/assets/ultimatechat/protections.yml", new File(UChat.get().getDataFolder(),"protections.yml"));
-    	            	plugin.getUCLogger().info("Created protections file: " + protections.getPath());
-    	            }
-    	                	            
-    	            //------------------------------ Add default Values ----------------------------//
-    	            
-    	            configs = updateFile(config, "assets/ultimatechat/config.yml"); 
-    	            
-                    //-------------------------------- Change config Header ----------------------------------//
-                    
-            		String lang = configs.getString("language");
-            		if (lang.equalsIgnoreCase("EN-US")){
-            			configs.options().header(""
-            					+ "Uchat configuration file\n"
-            					+ "Author: FabioZumbi12\n"
-            					+ "We recommend you to use NotePad++ to edit this file and avoid TAB errors!\n"
-            					+ "------------------------------------------------------------------------\n"
-            					+ "Tags is where you can customize what will show on chat, on hover or on click on tag.\n"
-            					+ "To add a tag, you can copy an existent and change the name and the texts.\n"
-            					+ "After add and customize your tag, put the tag name on 'general > default-tag-builder'.\n"
-            					+ "------------------------------------------------------------------------\n"
-            					+ "Available replacers:\n"
-            					+ "\n"   
-            					+ "uChat:\n"
-            					+ " - {default-format-full}: Use this tag to see all plugin tags using the default bukkit format. "
-            					+ "Normally used by 'myth' plugins and temporary tags."
-            					+ "If you want to use only of this tags you can use the replacer bellow and get number of tag separated by spaces;\n"
-            					+ " - {default-format-0}: use this tag to show only one of the tags described on '{default-format-full}'. "
-            					+ "The number is the posiotion separated by spaces;\n"            					
-            					+ " - {world}: Replaced by sender world;\n"
-            					+ " - {message}: Message sent by player;\n"
-            					+ " - {playername}: The name of player;\n"
-            					+ " - {nickname}: The nickname of player. If not set, will show realname;\n"
-            					+ " - {ch-name}: Channel name;\n"
-            					+ " - {ch-alias}: Channel alias;\n"
-            					+ " - {ch-color}: Channel color;\n"
-            					+ " - {hand-type}: Item type;\n"
-            					+ " - {hand-name}: Item name;\n"
-            					+ " - {hand-amount}: Item quantity;\n"
-            					+ " - {hand-lore}: Item description (lore);\n"
-            					+ " - {hand-durability}: Item durability;\n"
-            					+ " - {hand-enchants}: Item enchantments;\n"
-            					+ "\n"   
-            					+ "Vault:\n"
-            					+ " - {group-prefix}: Get group prefix;\n"
-            					+ " - {group-suffix}: Get group suffix;\n"
-            					+ " - {balance}: Get the sender money;\n"
-            					+ " - {prim-group}: Get the primary group tag;\n"
-            					+ " - {player-groups}: Get all groups names the sender has;\n"
-            					+ " - {player-groups-prefixes}: Get all group prefixes the sender has;\n"
-            					+ " - {player-groups-suffixes}: Get all group suffixes the sender has;\n"
-            					+ "\n"   
-            					+ "Simpleclans:\n"
-            					+ " - {clan-tag}: Clan tag without colors;\n"
-            					+ " - {clan-fulltag}: Clan tag with brackets, colors and separator;\n"
-            					+ " - {clan-ctag}: Clan with colors;\n"
-            					+ " - {clan-name}: Clan name;\n"
-            					+ " - {clan-kdr}: Player clan KDR;\n"
-            					+ " - {clan-isleader}: The player is leader;\n"
-            					+ " - {clan-rank}: Player rank on Clan;\n"
-            					+ " - {clan-totalkdr}: Clan KDR (not player kdr);\n"
-            					+ "\n"   
-            					+ "Marry Plugins:\n"
-            					+ " - {marry-partner}: Get the partner name;\n"       			
-            					+ " - {marry-prefix}: Get the married prefix tag, normally the heart;\n"   
-            					+ " - {marry-suffix}: Get the married suffix tag, or male tag for Marriage Reloaded;\n"
-            					+ "\n"   
-            					+ "BungeeCord:\n"
-            					+ "- {bungee-id}: Server ID from sender;\n"
-            					+ "\n"   
-            					+ "Jedis (redis):\n"
-            					+ "- {jedis-id}: This server id;\n"
-            					+ "\n"   
-            					+ "Factions:\n"
-            					+ "Gets the info of faction to show on chat.\n"
-            					+ "- {fac-id}: Faction ID;\n"
-            					+ "- {fac-name}: Faction Name;\n"
-            					+ "- {fac-motd}: Faction MOTD;\n"
-            					+ "- {fac-description}: Faction Description;\n"
-            					+ "- {fac-relation-name}: Faction name in relation of reader of tag;\n"
-            					+ "- {fac-relation-color}: Faction color in relation of reader of tag;\n"
-            					+ "\n");
-            		}
-            		if (lang.equalsIgnoreCase("PT-BR")){
-            			configs.options().header(""
-            					+ "Arquivo de configuração do Uchat\n"
-            					+ "Autor: FabioZumbi12\n"
-            					+ "Recomando usar o Notepad++ para editar este arquivo!\n"
-            					+ "------------------------------------------------------------------------\n"
-            					+ "Tags é onde voce vai personalizar os textos pra aparecer no chat, ao passar o mouse ou clicar na tag.\n"
-            					+ "Para adicionar uma tag, copie uma existente e troque o nome para um de sua escolha.\n"
-            					+ "Depois de criar e personalizar a tag, adicione ela em 'general > default-tag-builder'.\n"
-            					+ "------------------------------------------------------------------------\n"
-            					+ "Replacers disponíveis:\n"
-            					+ "\n"   
-            					+ "uChat:\n"
-            					+ " - {default-format-full}: Use esta tag para ver todas tags de plugins que estão usando o formato padrão do bukkit. "
-            					+ "Normalmente usado por plugins de 'mito' e tags temporárias. "
-            					+ "Caso queira apenas usar uma delas elas são separadas por espaços e abaixo vc pode usar apenas uma de cada.\n"
-            					+ " - {default-format-0}: Use esta tag para usar apenas uma tag das descritas acima. O numero é a posição dela entre os espaços;\n"
-            					+ " - {world}: O mundo de quem enviou a mensagem;\n"
-            					+ " - {message}: Mensagem enviada;\n"
-            					+ " - {playername}: O nome de quem enviou;\n"
-            					+ " - {nickname}: O nick de quem enviou. Se o nick não foi definido irá mostrar o nome;\n"
-            					+ " - {ch-name}: Nome do canal;\n"
-            					+ " - {ch-alias}: Atalho do canal;\n"
-            					+ " - {ch-color}: Cor do canal;\n"
-            					+ " - {hand-type}: Tipo do item;\n"
-            					+ " - {hand-name}: Nome do item;\n"
-            					+ " - {hand-amount}: Quantidade do item;\n"
-            					+ " - {hand-lore}: Descrição do item(lore);\n"
-            					+ " - {hand-durability}: Durabilidade do item;\n"
-            					+ " - {hand-enchants}: Encantamentos do item;\n"
-            					+ "\n"   
-            					+ "Vault:\n"
-            					+ " - {group-prefix}: Prefixo do grupo do player;\n"
-            					+ " - {group-suffix}: Sufixo do grupo do player;\n"
-            					+ " - {balance}: Dinheiro do player;\n"
-            					+ " - {prim-group}: Tag do grupo primário;\n"
-            					+ " - {player-groups}: Lista todos grupos que o player faz parte;\n"
-            					+ " - {player-groups-prefixes}: Lista todo prefixes dos grupos que o player esta;\n"
-            					+ " - {player-groups-suffixes}: Lista todo suffixes dos grupos que o player esta;\n"
-            					+ "\n"   
-            					+ "Simpleclans:\n"
-            					+ " - {clan-tag}: Tag do Clan sem cores;\n"
-            					+ " - {clan-fulltag}: Tag do clan com os colchetes, cores e separador;\n"
-            					+ " - {clan-ctag}: Tag do Clan com cores;\n"
-            					+ " - {clan-name}: Nome do Clan;\n"
-            					+ " - {clan-kdr}: KDR do player do Clan;\n"
-            					+ " - {clan-isleader}: O player é lider;\n"
-            					+ " - {clan-rank}: Rank do player no Clan;\n"
-            					+ " - {clan-totalkdr}: Clan KDR (não do player);\n"
-            					+ "\n"   
-            					+ "Marry Plugins:\n"
-            					+ " - {marry-partner}: Mostra o nome do(a) parceiro(a);\n"      			
-            					+ " - {marry-prefix}: Pega a tag de prefixo, normalmente o coração;\n"   
-            					+ " - {marry-suffix}: Pega a tag de sufixo, ou simbolo masculino do Marriage Reloaded;\n"
-            					+ "\n"   
-            					+ "BungeeCord:\n"
-            					+ "- {bungee-id}: O ID do Server de quem enviou;\n"
-            					+ "\n"   
-            					+ "Jedis (redis):\n"
-            					+ "- {jedis-id}: O ID deste server;\n"
-            					+ "\n"   
-            					+ "Factions:\n"
-            					+ "Pega as informações das Factions pra mostrar no chat.\n"
-            					+ "- {fac-id}: Faction ID;\n"
-            					+ "- {fac-name}: Nome da Faction;\n"
-            					+ "- {fac-motd}: MOTD da faction;\n"
-            					+ "- {fac-description}: Descrição da Faction;\n"
-            					+ "- {fac-relation-name}: Nome da Faction em relação á quem ta lendo a tag;\n"
-            					+ "- {fac-relation-color}: Cor da Faction em relação á quem ta lendo a tag;\n"
-            					+ "\n");
-            		}
-            		
-            		/*------------------------------------------------------------------------------------*/
-            		            		
-            		//add new config on update
-            		if (configs.getDouble("config-version") < 1.2){
-            			configs.set("config-version", 1.2);
-            			
-            			configs.set("tags.custom-tag.format", "&7[&2MyTag&7]&r");
-            			configs.set("tags.custom-tag.click-cmd", "");
-            			configs.set("tags.custom-tag.suggest-cmd", "");
-            			configs.set("tags.custom-tag.hover-messages", new ArrayList<String>());
-            			configs.set("tags.custom-tag.permission", "any-name-perm.custom-tag");     
-            			configs.set("tags.custom-tag.show-in-worlds", new ArrayList<String>());
-            			configs.set("tags.custom-tag.hide-in-worlds", new ArrayList<String>());
-            		}
-            		if (configs.getDouble("config-version") < 1.3){
-            			configs.set("config-version", 1.3);
-            			
-            			configs.set("tags.factions.format", "&7[{fac-relation-color}{fac-relation-name}&7]&r");
-            			configs.set("tags.factions.click-cmd", "");
-            			configs.set("tags.factions.hover-messages", Arrays.asList(
-            					"&7Faction name: {fac-relation-color}{fac-name}", 
-            					"&7Motd: &a{fac-motd}", 
-            					"&7Description: {fac-description}"));   
-            			configs.set("tags.factions.permission", ""); 
-            			configs.set("tags.factions.show-in-worlds", new ArrayList<String>());
-            			configs.set("tags.factions.hide-in-worlds", new ArrayList<String>());
-            		}
-            		if (configs.getDouble("config-version") < 1.4){
-            			configs.set("config-version", 1.4);
-            			
-            			configs.set("tags.custom-tag.click-url", "");
-            		}
-            		if (configs.getDouble("config-version") < 1.5){
-            			configs.set("config-version", 1.5);
-            			
-            			configs.set("tags.jedis.format", "{jedis-id}");
-            			configs.set("tags.jedis.hover-messages", Arrays.asList("&7Server: {jedis-id}","&cChange me on configuration!"));
-            		}
-            		
-                    /*------------------------------------------------------------------------------------*/
-        			
-        			//load protections file
-        			Prots = updateFile(protections, "assets/ultimatechat/protections.yml");
+	    this.plugin = plugin;
+        File main = UChat.get().getDataFolder();
+        File protections = new File(UChat.get().getDataFolder(),"protections.yml");
 
-            		/* Load Channels */
-            		loadChannels();
-            		
-        			/*------------------------------------------------------------------------------------*/
-        			
-            		//----------------------------------------------------------------------------------------//
-        			save();        			
-    	            plugin.getUCLogger().info("All configurations loaded!");
+        if (!main.exists()) {
+            main.mkdir();
+            plugin.getUCLogger().info("Created folder: " +UChat.get().getDataFolder());
+        }
+
+        if (!protections.exists()) {
+            UCUtil.saveResource("/assets/ultimatechat/protections.yml", new File(UChat.get().getDataFolder(),"protections.yml"));
+            plugin.getUCLogger().info("Created protections file: " + protections.getPath());
+        }
+
+        //------------------------------ Add default Values ----------------------------//
+
+        comConfig = new UCCommentedConfig();
+        comConfig.addDefaults();
+
+        /*------------------------------------------------------------------------------------*/
+
+        //load protections file
+        Prots = updateFile(protections, "assets/ultimatechat/protections.yml");
+
+        /* Load Channels */
+        loadChannels();
+
+        /*------------------------------------------------------------------------------------*/
+
+        //----------------------------------------------------------------------------------------//
+        save();
+        plugin.getUCLogger().info("All configurations loaded!");
 	}
     
 	/* Channels */
@@ -374,7 +184,7 @@ public class UCConfig extends FileConfiguration {
 	
 	public List<String> getTagList(){
 		List<String> tags = new ArrayList<String>();
-		for (String key:configs.getKeys(true)){
+		for (String key:plugin.getConfig().getKeys(true)){
 			if (key.startsWith("tags.") && key.split("\\.").length == 2){
 				tags.add(key.replace("tags.", ""));
 			}			
@@ -390,44 +200,44 @@ public class UCConfig extends FileConfiguration {
 	}
 		
 	public List<String> getBroadcastAliases() {
-		return Arrays.asList(configs.getString("broadcast.aliases").replace(" ", "").split(","));
+		return Arrays.asList(plugin.getConfig().getString("broadcast.aliases").replace(" ", "").split(","));
 	}
 	
 	public List<String> getTellAliases() {
-		return Arrays.asList(configs.getString("tell.cmd-aliases").replace(" ", "").split(","));
+		return Arrays.asList(plugin.getConfig().getString("tell.cmd-aliases").replace(" ", "").split(","));
 	}
 	
 	public List<String> getMsgAliases() {
-		return Arrays.asList(configs.getString("general.umsg-cmd-aliases").replace(" ", "").split(","));
+		return Arrays.asList(plugin.getConfig().getString("general.umsg-cmd-aliases").replace(" ", "").split(","));
 	}
 	
     public boolean getBoolean(String key){		
-		return configs.getBoolean(key, false);
+		return plugin.getConfig().getBoolean(key, false);
 	}
     
     public void setConfig(String key, Object value){
-    	configs.set(key, value);
+    	plugin.getConfig().set(key, value);
     }
     
     public String getString(String key){		
-		return configs.getString(key);
+		return plugin.getConfig().getString(key);
 	}
     
     public int getInt(String key){		
-		return configs.getInt(key);
+		return plugin.getConfig().getInt(key);
 	}
     
     public List<String> getStringList(String key){		
-		return configs.getStringList(key);
+		return plugin.getConfig().getStringList(key);
 	}
     
     public Material getMaterial(String key){
-    	return Material.getMaterial(configs.getString(key));
+    	return Material.getMaterial(plugin.getConfig().getString(key));
     }
     
     public void save(){
     	try {
-    		configs.save(new File(UChat.get().getDataFolder(),"config.yml"));
+            comConfig.saveConfig();
 			Prots.save(new File(UChat.get().getDataFolder(),"protections.yml"));
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -464,7 +274,7 @@ public class UCConfig extends FileConfiguration {
 	}
 	
 	public String getColorStr(String key){
-		return ChatColor.translateAlternateColorCodes('&',configs.getString(key));
+		return ChatColor.translateAlternateColorCodes('&',plugin.getConfig().getString(key));
 	}
 	
 	private static YamlConfiguration updateFile(File saved, String resource){
@@ -489,22 +299,7 @@ public class UCConfig extends FileConfiguration {
 	}
 
 	public String getURLTemplate() {
-		return ChatColor.translateAlternateColorCodes('&', configs.getString("general.URL-template"));
-	}
-
-	@Override
-	public String saveToString() {
-		return null;
-	}
-
-	@Override
-	public void loadFromString(String contents)
-			throws InvalidConfigurationException {
-	}
-
-	@Override
-	protected String buildHeader() {
-		return null;
+		return ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("general.URL-template"));
 	}
 }
    

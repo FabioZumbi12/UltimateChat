@@ -5,7 +5,6 @@ import br.net.fabiozumbi12.UltimateChat.Bukkit.UCPerms;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UCUtil;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UChat;
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import redis.clients.jedis.JedisPubSub;
 
@@ -17,12 +16,12 @@ public class ChatChannel extends JedisPubSub {
 
 	public ChatChannel(String[] channels){
 		this.channels = channels;
-		this.thisId = UChat.get().getConfig().getString("jedis.server-id").replace("$", "");
+		this.thisId = UChat.get().getUCConfig().getString("jedis.server-id").replace("$", "");
 	}
 	
     @Override
     public void onMessage(String channel, String message) {
-    	if (!UChat.get().getConfig().getBoolean("debug.messages") && message.startsWith(this.thisId)) return;
+    	if (!UChat.get().getUCConfig().getBoolean("debug.messages") && message.startsWith(this.thisId)) return;
     	
     	if (Arrays.asList(channels).contains(channel)){
     		Bukkit.getScheduler().runTaskAsynchronously(UChat.get(), new Runnable(){

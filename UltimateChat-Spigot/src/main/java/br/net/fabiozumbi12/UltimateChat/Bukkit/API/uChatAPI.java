@@ -16,25 +16,25 @@ import java.util.Map;
 public class uChatAPI{
 
 	public boolean registerNewTag(String tagName, String format, String clickCmd, List<String> hoverMessages, String clickUrl){
-		if (UChat.get().getConfig().getString("tags."+tagName+".format") == null){
-			UChat.get().getConfig().setConfig("tags."+tagName+".format", format);
-			UChat.get().getConfig().setConfig("tags."+tagName+".click-cmd", clickCmd);
-			UChat.get().getConfig().setConfig("tags."+tagName+".click-url", clickUrl);
-			UChat.get().getConfig().setConfig("tags."+tagName+".hover-messages", hoverMessages);
-			UChat.get().getConfig().save();
+		if (UChat.get().getUCConfig().getString("tags."+tagName+".format") == null){
+			UChat.get().getUCConfig().setConfig("tags."+tagName+".format", format);
+			UChat.get().getUCConfig().setConfig("tags."+tagName+".click-cmd", clickCmd);
+			UChat.get().getUCConfig().setConfig("tags."+tagName+".click-url", clickUrl);
+			UChat.get().getUCConfig().setConfig("tags."+tagName+".hover-messages", hoverMessages);
+			UChat.get().getUCConfig().save();
 			return true;
 		}
 		return false;
 	}
 	
 	public boolean registerNewChannel(UCChannel channel) throws IOException{	
-		UChat.get().getConfig().addChannel(channel);		
+		UChat.get().getUCConfig().addChannel(channel);
 		return true;
 	}
 	
 	public boolean registerNewChannel(Map<String, Object> properties) throws IOException{
 		UCChannel ch = new UCChannel(properties);		
-		UChat.get().getConfig().addChannel(ch);		
+		UChat.get().getUCConfig().addChannel(ch);
 		return true;
 	}
 			
@@ -44,10 +44,10 @@ public class uChatAPI{
 			return false;
 		}
 		if (tagBuilder == null || tagBuilder.equals("")){
-			tagBuilder = UChat.get().getConfig().getString("general.default-tag-builder");			
+			tagBuilder = UChat.get().getUCConfig().getString("general.default-tag-builder");
 		}
 		UCChannel ch = new UCChannel(chName, chAlias, crossWorlds, distance, color, tagBuilder, needFocus, receiverMsg, cost, bungee, false, false, "player", "", new ArrayList<String>(), new String(), ddmode, ddmcformat, mcddformat, ddhover, ddallowcmds, true);		
-		UChat.get().getConfig().addChannel(ch);		
+		UChat.get().getUCConfig().addChannel(ch);
 		return true;
 	}	
 	

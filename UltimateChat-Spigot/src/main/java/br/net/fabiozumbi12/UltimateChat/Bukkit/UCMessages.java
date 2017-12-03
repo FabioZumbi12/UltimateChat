@@ -33,7 +33,7 @@ public class UCMessages {
 	protected static boolean sendFancyMessage(String[] format, String msg, UCChannel channel, CommandSender sender, CommandSender tellReceiver){
 		//Execute listener:
 		HashMap<String,String> tags = new HashMap<String,String>();
-		for (String str:UChat.get().getConfig().getStringList("api.legendchat-tags")){
+		for (String str:UChat.get().getUCConfig().getStringList("api.legendchat-tags")){
 			tags.put(str, str);
 		}
 		SendChannelMessageEvent event = new SendChannelMessageEvent(tags, format, sender, channel, msg);
@@ -141,7 +141,7 @@ public class UCMessages {
 				for (Player receiver:UChat.get().getServer().getOnlinePlayers()){			
 					if (!receiver.equals(sender) && !receivers.contains(receiver) && !receivers.contains(sender) && 
 							UChat.get().isSpy.contains(receiver.getName()) && UCPerms.hasSpyPerm(receiver, ch.getName())){	
-						String spyformat = UChat.get().getConfig().getString("general.spy-format");
+						String spyformat = UChat.get().getUCConfig().getString("general.spy-format");
 						spyformat = spyformat.replace("{output}", ChatColor.stripColor(sendMessage(sender, receiver, evmsg, ch, true).toOldFormat()));					
 						receiver.sendMessage(ChatColor.translateAlternateColorCodes('&', spyformat));
 					}
@@ -168,7 +168,7 @@ public class UCMessages {
 				for (Player receiver:UChat.get().getServer().getOnlinePlayers()){			
 					if (!receiver.equals(tellReceiver) && !receiver.equals(sender) && 
 							UChat.get().isSpy.contains(receiver.getName()) && UCPerms.hasSpyPerm(receiver, "private")){
-						String spyformat = UChat.get().getConfig().getString("general.spy-format");
+						String spyformat = UChat.get().getUCConfig().getString("general.spy-format");
 						if (isIgnoringPlayers(tellReceiver.getName(), sender.getName())){
 							spyformat = UChat.get().getLang().get("chat.ignored")+spyformat;
 						}
@@ -279,25 +279,25 @@ public class UCMessages {
 		UltimateFancy fanci = new UltimateFancy();
 				
 		if (!ch.getName().equals("tell")){
-			String[] defaultBuilder = UChat.get().getConfig().getDefBuilder();
+			String[] defaultBuilder = UChat.get().getUCConfig().getDefBuilder();
 			if (ch.useOwnBuilder()){
 				defaultBuilder = ch.getBuilder();
 			}
 			
 			for (String tag:defaultBuilder){
-				if (UChat.get().getConfig().getString("tags."+tag+".format") == null){
+				if (UChat.get().getUCConfig().getString("tags."+tag+".format") == null){
 					fanci.text(tag).next();
 					continue;
 				}
 				
-				String perm = UChat.get().getConfig().getString("tags."+tag+".permission");
-				String format = UChat.get().getConfig().getString("tags."+tag+".format");
-				String execute = UChat.get().getConfig().getString("tags."+tag+".click-cmd");
-				String suggest = UChat.get().getConfig().getString("tags."+tag+".suggest-cmd");
-				String url = UChat.get().getConfig().getString("tags."+tag+".click-url");
-				List<String> messages = UChat.get().getConfig().getStringList("tags."+tag+".hover-messages");				
-				List<String> showWorlds = UChat.get().getConfig().getStringList("tags."+tag+".show-in-worlds");
-				List<String> hideWorlds = UChat.get().getConfig().getStringList("tags."+tag+".hide-in-worlds");
+				String perm = UChat.get().getUCConfig().getString("tags."+tag+".permission");
+				String format = UChat.get().getUCConfig().getString("tags."+tag+".format");
+				String execute = UChat.get().getUCConfig().getString("tags."+tag+".click-cmd");
+				String suggest = UChat.get().getUCConfig().getString("tags."+tag+".suggest-cmd");
+				String url = UChat.get().getUCConfig().getString("tags."+tag+".click-url");
+				List<String> messages = UChat.get().getUCConfig().getStringList("tags."+tag+".hover-messages");
+				List<String> showWorlds = UChat.get().getUCConfig().getStringList("tags."+tag+".show-in-worlds");
+				List<String> hideWorlds = UChat.get().getUCConfig().getStringList("tags."+tag+".hide-in-worlds");
 				
 				//check perm
 				if (perm != null && !perm.isEmpty() && !UCPerms.hasPermission(sender, perm)){
@@ -334,14 +334,14 @@ public class UCMessages {
 					fanci.clickOpenURL(formatTags(tag, url, sender, receiver, msg, ch));
 				}
 				
-				if (tag.equals("message") && (!msg.equals(mention(sender, (CommandSender)receiver, msg)) || msg.contains(UChat.get().getConfig().getString("general.item-hand.placeholder")))){					
+				if (tag.equals("message") && (!msg.equals(mention(sender, (CommandSender)receiver, msg)) || msg.contains(UChat.get().getUCConfig().getString("general.item-hand.placeholder")))){
 					tooltip = formatTags("", tooltip, sender, receiver, msg, ch);	
 					format = formatTags(tag, format, sender, receiver, msg, ch);
 					
-					if (UChat.get().getConfig().getBoolean("general.item-hand.enable") && msg.contains(UChat.get().getConfig().getString("general.item-hand.placeholder")) && sender instanceof Player){					
+					if (UChat.get().getUCConfig().getBoolean("general.item-hand.enable") && msg.contains(UChat.get().getUCConfig().getString("general.item-hand.placeholder")) && sender instanceof Player){
 						fanci.text(format).hoverShowItem(((Player)sender).getItemInHand()).next();
-					} else if (!msg.equals(mention(sender, (CommandSender)receiver, msg)) && UChat.get().getConfig().getString("mention.hover-message").length() > 0 && StringUtils.containsIgnoreCase(msg, ((CommandSender)receiver).getName())){
-						tooltip = formatTags("", UChat.get().getConfig().getString("mention.hover-message"), sender, receiver, msg, ch);						
+					} else if (!msg.equals(mention(sender, (CommandSender)receiver, msg)) && UChat.get().getUCConfig().getString("mention.hover-message").length() > 0 && StringUtils.containsIgnoreCase(msg, ((CommandSender)receiver).getName())){
+						tooltip = formatTags("", UChat.get().getUCConfig().getString("mention.hover-message"), sender, receiver, msg, ch);
 						fanci.text(format).hoverShowText(tooltip).next();
 					} else if (tooltip.length() > 0){	
 						fanci.text(format).hoverShowText(tooltip).next();
@@ -360,9 +360,9 @@ public class UCMessages {
 			}			
 		} else {
 			//if tell
-			String prefix = UChat.get().getConfig().getString("tell.prefix");
-			String format = UChat.get().getConfig().getString("tell.format");
-			List<String> messages = UChat.get().getConfig().getStringList("tell.hover-messages");
+			String prefix = UChat.get().getUCConfig().getString("tell.prefix");
+			String format = UChat.get().getUCConfig().getString("tell.format");
+			List<String> messages = UChat.get().getUCConfig().getStringList("tell.hover-messages");
 						
 			String tooltip = "";
 			for (String tp:messages){
@@ -388,12 +388,12 @@ public class UCMessages {
 	}
 			
 	public static String mention(Object sender, CommandSender receiver, String msg) {
-		if (UChat.get().getConfig().getBoolean("mention.enable")){
+		if (UChat.get().getUCConfig().getBoolean("mention.enable")){
 		    for (Player p:UChat.get().getServer().getOnlinePlayers()){			
 				if (!sender.equals(p) && Arrays.asList(msg.split(" ")).stream().anyMatch(p.getName()::equalsIgnoreCase)){
 					if (receiver instanceof Player && receiver.equals(p)){
 						
-						String mentionc = UChat.get().getConfig().getColorStr("mention.color-template").replace("{mentioned-player}", p.getName());
+						String mentionc = UChat.get().getUCConfig().getColorStr("mention.color-template").replace("{mentioned-player}", p.getName());
 						mentionc = formatTags("", mentionc, sender, receiver, "", new UCChannel("mention"));
 						
 						if (msg.contains(mentionc) || sender instanceof CommandSender && !UCPerms.hasPerm((CommandSender)sender, "chat.mention")){
@@ -402,7 +402,7 @@ public class UCMessages {
 						}
 											
 						for (Sound sound:Sound.values()){
-							if (StringUtils.containsIgnoreCase(sound.toString(),UChat.get().getConfig().getString("mention.playsound"))){
+							if (StringUtils.containsIgnoreCase(sound.toString(),UChat.get().getUCConfig().getString("mention.playsound"))){
 								p.playSound(p.getLocation(), sound, 1F, 1F);
 								break;
 							}
@@ -422,25 +422,25 @@ public class UCMessages {
 	public static String formatTags(String tag, String text, Object cmdSender, Object receiver, String msg, UCChannel ch){	
 		if (receiver instanceof CommandSender && tag.equals("message")){			
 			text = text.replace("{message}", mention(cmdSender, (CommandSender)receiver, msg));
-			if (UChat.get().getConfig().getBoolean("general.item-hand.enable")){
-				text = text.replace(UChat.get().getConfig().getString("general.item-hand.placeholder"), formatTags("",ChatColor.translateAlternateColorCodes('&', UChat.get().getConfig().getString("general.item-hand.format")),cmdSender, receiver, msg, ch));
+			if (UChat.get().getUCConfig().getBoolean("general.item-hand.enable")){
+				text = text.replace(UChat.get().getUCConfig().getString("general.item-hand.placeholder"), formatTags("",ChatColor.translateAlternateColorCodes('&', UChat.get().getUCConfig().getString("general.item-hand.format")),cmdSender, receiver, msg, ch));
 			}			
 		} else {
 			text = text.replace("{message}", msg);
 		}
-		if (tag.equals("message") && !UChat.get().getConfig().getBoolean("general.enable-tags-on-messages")){
+		if (tag.equals("message") && !UChat.get().getUCConfig().getBoolean("general.enable-tags-on-messages")){
 			return text;
 		}
 		text = text.replace("{ch-color}", ch.getColor())
 		.replace("{ch-name}", ch.getName())
 		.replace("{ch-alias}", ch.getAlias());
 		
-		if (UChat.get().getConfig().getBoolean("jedis.enable") && ch.useJedis()){
-			text = text.replace("{jedis-id}", UChat.get().getConfig().getString("jedis.server-id"));	
+		if (UChat.get().getUCConfig().getBoolean("jedis.enable") && ch.useJedis()){
+			text = text.replace("{jedis-id}", UChat.get().getUCConfig().getString("jedis.server-id"));
 		}		
 		
 		if (ch.isBungee()){
-			text = text.replace("{bungee-id}", UChat.get().getConfig().getString("bungee.server-id"));
+			text = text.replace("{bungee-id}", UChat.get().getUCConfig().getString("bungee.server-id"));
 		}
 		
 		if (cmdSender instanceof CommandSender){
@@ -476,7 +476,7 @@ public class UCMessages {
 					.replace("{world}", sender.getWorld().getName());
 			
 			//replace item hand			
-			text = text.replace(UChat.get().getConfig().getString("general.item-hand.placeholder"), ChatColor.translateAlternateColorCodes('&', UChat.get().getConfig().getString("general.item-hand.format")));
+			text = text.replace(UChat.get().getUCConfig().getString("general.item-hand.placeholder"), ChatColor.translateAlternateColorCodes('&', UChat.get().getUCConfig().getString("general.item-hand.format")));
 			if (text.contains("{hand-") && !sender.getItemInHand().getType().equals(Material.AIR)){
 				ItemStack item = sender.getItemInHand();
 				
@@ -620,9 +620,9 @@ public class UCMessages {
 		}		
 		
 		if (cmdSender instanceof CommandSender){
-			text = text.replace("{nickname}", UChat.get().getConfig().getString("general.console-tag").replace("{console}", ((CommandSender)cmdSender).getName()));
+			text = text.replace("{nickname}", UChat.get().getUCConfig().getString("general.console-tag").replace("{console}", ((CommandSender)cmdSender).getName()));
 		} else {
-			text = text.replace("{nickname}", UChat.get().getConfig().getString("general.console-tag").replace("{console}", (String)cmdSender));
+			text = text.replace("{nickname}", UChat.get().getUCConfig().getString("general.console-tag").replace("{console}", (String)cmdSender));
 		}			
 		
 		//colorize tags (not message)
@@ -634,12 +634,12 @@ public class UCMessages {
 		text = text.replaceAll("\\{.*\\}", "");
 		
 		//remove remain PlaceholderAPI
-		if (UChat.get().getConfig().getBoolean("general.remove-unnused-placeholderapi")){
+		if (UChat.get().getUCConfig().getBoolean("general.remove-unnused-placeholderapi")){
 			text = text.replaceAll("\\%.*\\%", "");
 		}		
 		
 		if (!tag.equals("message")){
-			for (String rpl:UChat.get().getConfig().getStringList("general.remove-from-chat")){
+			for (String rpl:UChat.get().getUCConfig().getStringList("general.remove-from-chat")){
 				text = text.replace(ChatColor.translateAlternateColorCodes('&', rpl), "");
 			}
 		}		

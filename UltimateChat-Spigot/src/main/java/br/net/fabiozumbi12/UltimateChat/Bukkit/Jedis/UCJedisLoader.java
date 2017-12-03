@@ -26,7 +26,7 @@ public class UCJedisLoader {
 	}
 	
 	public UCJedisLoader(String ip, int port, String auth, List<UCChannel> channels){
-		this.thisId = UChat.get().getConfig().getString("jedis.server-id").replace("$", "");
+		this.thisId = UChat.get().getUCConfig().getString("jedis.server-id").replace("$", "");
 		
 		channels.add(new UCChannel("generic"));
 		channels.add(new UCChannel("tellsend"));
@@ -48,16 +48,13 @@ public class UCJedisLoader {
 		
 		try {
 			Jedis jedis = this.pool.getResource();
-			new Thread(new Runnable() {
-		        @Override
-		        public void run() {
-		            try {
-		            	jedis.subscribe(channel, newChannels);
-		            } catch (Exception e) {
-		                e.printStackTrace();
-		            }
-		        }
-		    }).start();   
+			new Thread(() -> {
+                try {
+                    jedis.subscribe(channel, newChannels);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }).start();
 		} catch (JedisConnectionException e){
 			UChat.get().getLogger().warning("JEDIS not conected! Try again with /chat reload, or check the status of your Redis server.");
 			return;
@@ -74,7 +71,7 @@ public class UCJedisLoader {
 			for (Player receiver:UChat.get().getServer().getOnlinePlayers()){			
 				if (!receiver.getName().equals(tellReceiver) && !receiver.equals(sender) && 
 						UChat.get().isSpy.contains(receiver.getName()) && UCPerms.hasSpyPerm(receiver, "private")){
-					String spyformat = UChat.get().getConfig().getString("general.spy-format");
+					String spyformat = UChat.get().getUCConfig().getString("general.spy-format");
 					
 					spyformat = spyformat.replace("{output}", ChatColor.stripColor(UCMessages.sendMessage(sender, tellReceiver, msg, new UCChannel("tell"), true).toOldFormat()));					
 					receiver.sendMessage(ChatColor.translateAlternateColorCodes('&', spyformat));
@@ -86,53 +83,44 @@ public class UCJedisLoader {
 		tellPlayers.put(tellReceiver, sender.getName());
 		
 		if (Arrays.asList(channels).contains("tellsend")){
-			Bukkit.getScheduler().runTaskAsynchronously(UChat.get(), new Runnable(){
-				@Override
-				public void run() {
-					try {
-						Jedis jedis = pool.getResource();
-						jedis.publish("tellsend", thisId+"$"+tellReceiver+"$"+fancy.toString());
-						jedis.quit();
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}	    		
-	    	});
+			Bukkit.getScheduler().runTaskAsynchronously(UChat.get(), () -> {
+                try {
+                    Jedis jedis = pool.getResource();
+                    jedis.publish("tellsend", thisId+"$"+tellReceiver+"$"+fancy.toString());
+                    jedis.quit();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
 		}
 	}
 	
 	public void sendRawMessage(UltimateFancy value){		
 		if (Arrays.asList(channels).contains("generic")){
-			Bukkit.getScheduler().runTaskAsynchronously(UChat.get(), new Runnable(){
-				@Override
-				public void run() {
-					try {
-						Jedis jedis = pool.getResource();
-						jedis.publish("generic", thisId+"$"+value.toString());
-						jedis.quit();
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}	    		
-	    	});
+			Bukkit.getScheduler().runTaskAsynchronously(UChat.get(), () -> {
+                try {
+                    Jedis jedis = pool.getResource();
+                    jedis.publish("generic", thisId+"$"+value.toString());
+                    jedis.quit();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
 		}		
 	}
 	
 	public void sendMessage(String channel, UltimateFancy value){
 			
 		if (Arrays.asList(channels).contains(channel)){
-			Bukkit.getScheduler().runTaskAsynchronously(UChat.get(), new Runnable(){
-				@Override
-				public void run() {
-					try {
-						Jedis jedis = pool.getResource();
-						jedis.publish(channel, thisId+"$"+value.toString());
-						jedis.quit();
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}	    		
-	    	});
+			Bukkit.getScheduler().runTaskAsynchronously(UChat.get(), () -> {
+                try {
+                    Jedis jedis = pool.getResource();
+                    jedis.publish(channel, thisId+"$"+value.toString());
+                    jedis.quit();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
 		}		
 	}
 

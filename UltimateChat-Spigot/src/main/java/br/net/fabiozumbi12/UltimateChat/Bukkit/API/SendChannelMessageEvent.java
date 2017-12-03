@@ -29,7 +29,7 @@ public class SendChannelMessageEvent extends Event implements Cancellable{
 		this.sender = sender;
 		this.msg = msg;
 		this.channel = channel;
-		this.defBuilder = UChat.get().getConfig().getDefBuilder();
+		this.defBuilder = UChat.get().getUCConfig().getDefBuilder();
 		this.defFormat = defFormat;
 		this.registeredTags = registeredReplacers;
 	}

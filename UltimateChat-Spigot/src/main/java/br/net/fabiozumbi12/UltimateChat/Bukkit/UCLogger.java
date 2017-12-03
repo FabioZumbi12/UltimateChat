@@ -39,13 +39,13 @@ public class UCLogger{
     }
     
     public void debug(String s) {
-        if (UChat.get().getConfig() != null && UChat.get().getConfig().getBoolean("debug.messages")) {
+        if (UChat.get().getUCConfig() != null && UChat.get().getUCConfig().getBoolean("debug.messages")) {
         	uchat.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "UltimateChat: [&b"+s+"&r]"));
         }  
     }
     
     public void timings(timingType type, String message) {
-        if (UChat.get().getConfig() != null && UChat.get().getConfig().getBoolean("debug.timings")) {
+        if (UChat.get().getUCConfig() != null && UChat.get().getUCConfig().getBoolean("debug.timings")) {
         	switch (type){
         	case START:
         		long diff = 0;

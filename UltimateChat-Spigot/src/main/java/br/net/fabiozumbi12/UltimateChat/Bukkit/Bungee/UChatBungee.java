@@ -1,15 +1,11 @@
 package br.net.fabiozumbi12.UltimateChat.Bukkit.Bungee;
 
 import br.net.fabiozumbi12.UltimateChat.Bukkit.*;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.API.PostFormatChatMessageEvent;
 import com.google.common.collect.Iterables;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
@@ -60,7 +56,7 @@ public class UChatBungee implements PluginMessageListener, Listener {
 
 	public static void sendBungee(UCChannel ch, UltimateFancy text){
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
-        out.writeUTF(UChat.get().getConfig().getString("bungee.server-id"));
+        out.writeUTF(UChat.get().getUCConfig().getString("bungee.server-id"));
         out.writeUTF(ch.getAlias());
         out.writeUTF(text.toString());
 

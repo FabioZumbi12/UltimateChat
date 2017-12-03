@@ -287,7 +287,7 @@ public class UltimateFancy {
 	public void send(CommandSender to){
 		next();
 		if (to instanceof Player){
-			if (UChat.get().getConfig().getBoolean("general.json-events")){
+			if (UChat.get().getUCConfig().getBoolean("general.json-events")){
 				UChat.get().getUCLogger().timings(timingType.END, "UltimateFancy#send()|json-events:true|before tellraw");
 				UCUtil.performCommand((Player)to, Bukkit.getConsoleSender(), "tellraw " + to.getName() + " " + toJson());
 				UChat.get().getUCLogger().timings(timingType.END, "UltimateFancy#send()|json-events:true|after tellraw");

@@ -260,7 +260,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 						 for (String m:ch.getMembers()){
 							 UChat.get().getDefChannel().addMember(m);
 						 }						 
-						 UChat.get().getConfig().delChannel(ch);
+						 UChat.get().getUCConfig().delChannel(ch);
 						 UChat.get().registerAliases();
 						 UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("cmd.delchannel.success").replace("{channel}", ch.getName()));
 						 return true;
@@ -434,7 +434,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 						 
 						 UCChannel newch = new UCChannel(args[1], args[2], args[3]);						 
 						 try {
-							 UChat.get().getConfig().addChannel(newch);
+							 UChat.get().getUCConfig().addChannel(newch);
 						 } catch (IOException e) {
 							 e.printStackTrace();
 						 }					
@@ -459,10 +459,10 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 							 return true;
 						 }	
 						 
-						 UChat.get().getConfig().delChannel(ch);
+						 UChat.get().getUCConfig().delChannel(ch);
 						 ch.setProperty(args[2], args[3]);
 						 try {
-							 UChat.get().getConfig().addChannel(ch);
+							 UChat.get().getUCConfig().addChannel(ch);
 						 } catch (IOException e) {
 						     e.printStackTrace();
 						 }
@@ -520,7 +520,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 		UChat.get().getUCLogger().debug("PlayerCommandPreprocessEvent - Channel: "+args[0]);
 				
 		//check tell aliases
-		if (UChat.get().getConfig().getTellAliases().contains(args[0])){
+		if (UChat.get().getUCConfig().getTellAliases().contains(args[0])){
 			e.setCancelled(true);
 			
 			Bukkit.getScheduler().runTaskAsynchronously(UChat.get(), new Runnable(){
@@ -665,7 +665,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 			msg = e.getCommand().substring(args[0].length()+1);
 		}
 		
-		if (UChat.get().getConfig().getTellAliases().contains(args[0])){
+		if (UChat.get().getUCConfig().getTellAliases().contains(args[0])){
 			if (args.length >= 3){
 				Player p = UChat.get().getServer().getPlayer(args[1]);
 				
@@ -801,13 +801,13 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 	public void onJoin(PlayerJoinEvent e){
 		Player p = e.getPlayer();
 
-		if (!UChat.get().getConfig().getBoolean("general.persist-channels")){
+		if (!UChat.get().getUCConfig().getBoolean("general.persist-channels")){
 			UChat.get().getDefChannel().addMember(p);
 		}
 
 		if (UChat.get().getUCJDA() != null){
 			UChat.get().getUCJDA().sendRawToDiscord(UChat.get().getLang().get("discord.join").replace("{player}", p.getName()));
-			if (UChat.get().getConfig().getBoolean("discord.update-status")){
+			if (UChat.get().getUCConfig().getBoolean("discord.update-status")){
 				UChat.get().getUCJDA().updateGame(UChat.get().getLang().get("discord.game").replace("{online}", String.valueOf(UChat.get().getServer().getOnlinePlayers().size())));
 			}
 		}
@@ -831,7 +831,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 	public void onQuit(PlayerQuitEvent e){
 		Player p = e.getPlayer();
 
-        if (!UChat.get().getConfig().getBoolean("general.persist-channels")){
+        if (!UChat.get().getUCConfig().getBoolean("general.persist-channels")){
             UChat.get().getPlayerChannel(p).removeMember(p);
         }
 
@@ -861,7 +861,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 		}
 		if (UChat.get().getUCJDA() != null){
 			UChat.get().getUCJDA().sendRawToDiscord(UChat.get().getLang().get("discord.leave").replace("{player}", p.getName()));
-			if (UChat.get().getConfig().getBoolean("discord.update-status")){
+			if (UChat.get().getUCConfig().getBoolean("discord.update-status")){
 				UChat.get().getUCJDA().updateGame(UChat.get().getLang().get("discord.game").replace("{online}", String.valueOf(UChat.get().getServer().getOnlinePlayers().size()-1)));
 			}
 		}

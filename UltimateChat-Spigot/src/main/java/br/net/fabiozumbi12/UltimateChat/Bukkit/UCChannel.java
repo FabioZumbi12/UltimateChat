@@ -391,7 +391,7 @@ public class UCChannel {
 	 */
 	@Deprecated
 	public void sendMessage(ConsoleCommandSender sender, String message){	
-		if (UChat.get().getConfig().getBoolean("api.format-console-messages")){
+		if (UChat.get().getUCConfig().getBoolean("api.format-console-messages")){
 			UCMessages.sendFancyMessage(new String[0], message, this, sender, null);
 		} else {
 			UltimateFancy fmsg = new UltimateFancy(message);

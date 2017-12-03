@@ -84,9 +84,7 @@ public class UChat extends JavaPlugin {
 	}
 	
 	private UCConfig config;
-	
-	@Override
-	public UCConfig getConfig(){
+	public UCConfig getUCConfig(){
 		return this.config;
 	}
 	
@@ -268,12 +266,12 @@ public class UChat extends JavaPlugin {
 			this.jedis.closePool();
 			this.jedis = null;
 		}
-		if (getConfig().getBoolean("jedis.enable")){
+		if (getUCConfig().getBoolean("jedis.enable")){
 			this.logger.info("Init JEDIS...");			
 			try {
-				this.jedis = new UCJedisLoader(getConfig().getString("jedis.ip"), 
-						getConfig().getInt("jedis.port"), 
-						getConfig().getString("jedis.pass"), new ArrayList<UCChannel>(getChannels().values()));
+				this.jedis = new UCJedisLoader(getUCConfig().getString("jedis.ip"),
+						getUCConfig().getInt("jedis.port"),
+						getUCConfig().getString("jedis.pass"), new ArrayList<UCChannel>(getChannels().values()));
 			} catch (Exception e){
 				this.logger.warning("Could not connect to REDIS server! Check ip, password and port, and if the REDIS server is running.");
 			}			
@@ -287,7 +285,7 @@ public class UChat extends JavaPlugin {
 				this.UCJDA.shutdown();
 				this.UCJDA = null;
 			}
-			if (getConfig().getBoolean("discord.use")){
+			if (getUCConfig().getBoolean("discord.use")){
 				this.UCJDA = new UCDiscord(this);
 				if (!this.UCJDA.JDAAvailable()){
                     this.UCJDA = null;
@@ -365,16 +363,16 @@ public class UChat extends JavaPlugin {
 					
 					String cmd = text;
 					if (hover.length() > 1){
-						cmd = cmd+" "+getConfig().getString("broadcast.on-hover")+hover;
+						cmd = cmd+" "+ getUCConfig().getString("broadcast.on-hover")+hover;
 					}
 					if (onclick.length() > 1){
-						cmd = cmd+" "+getConfig().getString("broadcast.on-click")+onclick;
+						cmd = cmd+" "+ getUCConfig().getString("broadcast.on-click")+onclick;
 					}
 					if (suggest.length() > 1){
-						cmd = cmd+" "+getConfig().getString("broadcast.suggest")+suggest;
+						cmd = cmd+" "+ getUCConfig().getString("broadcast.suggest")+suggest;
 					}
 					if (url.length() > 1){
-						cmd = cmd+" "+getConfig().getString("broadcast.url")+url;
+						cmd = cmd+" "+ getUCConfig().getString("broadcast.url")+url;
 					}
 					if (plays == 0 || getServer().getOnlinePlayers().size() >= plays){						
 						UCUtil.sendBroadcast(getServer().getConsoleSender(), cmd.split(" "), silent);
