@@ -14,6 +14,7 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.Text.Builder;
 import org.spongepowered.api.text.action.TextActions;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -334,7 +335,6 @@ public class UCCommands {
 			    .description(Text.of("Command to use channel "+ch.getName()+"."))
 			    .executor((src, args) -> { {				    	
 			    	if (src instanceof Player){
-			    		
 			    		if (args.<String>getOne("message").isPresent()){
 			    			if (UChat.get().mutes.contains(src.getName()) || ch.isMuted(src.getName())){
 			    				if (UChat.get().timeMute.containsKey(src.getName())) {
@@ -800,6 +800,9 @@ public class UCCommands {
 			}
 		}
 		fancy.append(UCUtil.toText("\n&7------------------------------------------ "));
+
+		String jarversion = UChat.get().instance().getSource().get().toFile().getName();
+		fancy.append(UCUtil.toText("\n&8&o- UChat full version: "+jarversion));
 		return fancy;
 	}
 	

@@ -933,7 +933,13 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 				.next();
 			}
 		}
-		fancy.coloredText("\n&7------------------------------------------").send(p);	
+		fancy.coloredText("\n&7------------------------------------------");
+		String jarversion = new java.io.File(UCListener.class.getProtectionDomain()
+				.getCodeSource()
+				.getLocation()
+				.getPath())
+				.getName();
+		fancy.coloredText("\n&8&o- UChat full version: "+jarversion).send(p);
 	}
 
 	private void sendChannelHelp(Player p) {
@@ -959,9 +965,13 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
 		List<String> tab = new ArrayList<>();
-        if (command.getName().equals("tell")){
-            if (args.length == 1 && Bukkit.getPlayer(args[0]) != null){
-                return Collections.singletonList(Bukkit.getPlayer(args[0]).getName());
+        if (command.getName().equals("tell") || command.getName().equals("channel")){
+            if (args.length > 0){
+                for (String arg:args){
+                    if (Bukkit.getPlayer(arg) != null){
+                        tab.add(Bukkit.getPlayer(arg).getName());
+                    }
+                }
             }
         }
 		if (command.getName().equals("uchat")){
