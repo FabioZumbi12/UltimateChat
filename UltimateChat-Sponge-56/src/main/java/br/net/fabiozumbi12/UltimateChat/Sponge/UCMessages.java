@@ -358,15 +358,7 @@ public class UCMessages {
 						tooltip = tooltip.substring(1);
 					}	
 				}		
-					
-				if (url != null && url.length() > 0){
-					try {
-						tagBuilder.onClick(TextActions.openUrl(new URL(formatTags(tag, url, sender, receiver, msg, ch))));
-					} catch (MalformedURLException e) {
-						e.printStackTrace();
-					}
-				}
-				
+
 				if (suggest != null && suggest.length() > 0){
 					tagBuilder.onClick(TextActions.suggestCommand(formatTags(tag, "/"+suggest, sender, receiver, msg, ch)));
 				}
@@ -374,7 +366,25 @@ public class UCMessages {
 				if (execute != null && execute.length() > 0){
 					tagBuilder.onClick(TextActions.runCommand(formatTags(tag, "/"+execute, sender, receiver, msg, ch)));
 				}
-							
+
+
+				if (url != null && url.length() > 0){
+					try {
+						tagBuilder.onClick(TextActions.openUrl(new URL(formatTags(tag, url, sender, receiver, msg, ch))));
+					} catch (MalformedURLException e) {
+						e.printStackTrace();
+					}
+				}
+
+				if (tag.equals("message") && UChat.get().getPerms().hasPerm(sender, "chat.click-urls")){
+					for (String arg:msg.split(" ")){
+						try{
+							tagBuilder.onClick(TextActions.openUrl(new URL(formatTags(tag, arg, sender, receiver, msg, ch))));
+                            tagBuilder.onHover(TextActions.showText(UCUtil.toText(formatTags(tag, UChat.get().getConfig().root().general.URL_template.replace("{url}", arg), sender, receiver, msg, ch))));
+						} catch (MalformedURLException e) {}
+					}
+				}
+
 				msgBuilder = tagBuilder;
 				
 				if (tag.equals("message") && (!msg.equals(mention(sender, receiver, msg)) || msg.contains(UChat.get().getConfig().root().general.item_hand.placeholder))){
@@ -401,15 +411,6 @@ public class UCMessages {
 					} else if (tooltip.length() > 0){				
 						msgBuilder.onHover(TextActions.showText(UCUtil.toText(tooltip)));
 					}
-					/*
-					String regex = "((http:\\/\\/|https:\\/\\/)?(www.)?(([a-zA-Z0-9-]){2,}\\.){1,4}([a-zA-Z]){2,6}(\\/([a-zA-Z-_\\/\\.0-9#:?=&;,]*)?)?)";
-					if (Pattern.compile(regex).matcher(format).find()){
-						try {
-							msgBuilder.onClick(TextActions.openUrl(new URL(Pattern.compile(regex).matcher(format).group())));
-						} catch (MalformedURLException e) {
-							e.printStackTrace();
-						}
-					}*/
 					msgBuilder.applyTo(message);
 				} else {					
 					format = formatTags(tag, format, sender, receiver, msg, ch);

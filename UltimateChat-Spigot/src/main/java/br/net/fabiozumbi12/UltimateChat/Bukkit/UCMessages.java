@@ -4,6 +4,7 @@ import br.net.fabiozumbi12.UltimateChat.Bukkit.API.PostFormatChatMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.API.SendChannelMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.Bungee.UChatBungee;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UCLogger.timingType;
+import com.sun.jndi.toolkit.url.Uri;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import net.sacredlabyrinth.phaed.simpleclans.managers.SettingsManager;
@@ -19,6 +20,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -27,12 +31,12 @@ import java.util.Map.Entry;
 
 public class UCMessages {
 
-	private static HashMap<String, String> registeredReplacers = new HashMap<String,String>();
+	private static HashMap<String, String> registeredReplacers = new HashMap<>();
 	private static String[] defFormat = new String[0];	
 	
 	protected static boolean sendFancyMessage(String[] format, String msg, UCChannel channel, CommandSender sender, CommandSender tellReceiver){
 		//Execute listener:
-		HashMap<String,String> tags = new HashMap<String,String>();
+		HashMap<String,String> tags = new HashMap<>();
 		for (String str:UChat.get().getUCConfig().getStringList("api.legendchat-tags")){
 			tags.put(str, str);
 		}
@@ -48,7 +52,7 @@ public class UCMessages {
 		defFormat = event.getDefFormat();
 		String evmsg = event.getMessage();
 				
-		HashMap<CommandSender, UltimateFancy> msgPlayers = new HashMap<CommandSender, UltimateFancy>();
+		HashMap<CommandSender, UltimateFancy> msgPlayers = new HashMap<>();
 		evmsg = composeColor(sender,evmsg);
 						
 		if (event.getChannel() != null){					
@@ -79,7 +83,7 @@ public class UCMessages {
 				}
 			}
 			
-			List<Player> receivers = new ArrayList<Player>();	
+			List<Player> receivers = new ArrayList<>();
 			int noWorldReceived = 0;
 			int vanish = 0;
 			
@@ -88,7 +92,7 @@ public class UCMessages {
 			
 			if (ch.getDistance() > 0 && sender instanceof Player){			
 				for (Entity ent:((Player)sender).getNearbyEntities(ch.getDistance(), ch.getDistance(), ch.getDistance())){
-					if (ent instanceof Player && UCPerms.channelReadPerm((Player)ent, ch)){	
+					if (ent instanceof Player && UCPerms.channelReadPerm(ent, ch)){
 						Player receiver = (Player) ent;				
 						if (!ch.availableWorlds().isEmpty() && !ch.availableInWorld(receiver.getWorld())){
 							continue;
@@ -230,13 +234,13 @@ public class UCMessages {
 	private static String composeColor(CommandSender sender, String evmsg){
 		evmsg = ChatColor.translateAlternateColorCodes('&', evmsg);	
 		if (sender instanceof Player){			
-			if (!UCPerms.hasPerm((Player)sender, "chat.color")){
+			if (!UCPerms.hasPerm(sender, "chat.color")){
 				evmsg = evmsg.replaceAll("(?i)§([a-f0-9r])", "&$1");
 			}
-			if (!UCPerms.hasPerm((Player)sender, "chat.color.formats")){
+			if (!UCPerms.hasPerm(sender, "chat.color.formats")){
 				evmsg = evmsg.replaceAll("(?i)§([l-o])", "&$1");
 			}
-			if (!UCPerms.hasPerm((Player)sender, "chat.color.magic")){
+			if (!UCPerms.hasPerm(sender, "chat.color.magic")){
 				evmsg = evmsg.replaceAll("(?i)§([k])", "&$1");
 			}
 		}	
@@ -249,7 +253,7 @@ public class UCMessages {
 			return false;
 		}
 		
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		if (UChat.get().ignoringPlayer.containsKey(p)){
 			list.addAll(UChat.get().ignoringPlayer.get(p));			
 		}		
@@ -257,7 +261,7 @@ public class UCMessages {
 	}
 	
 	public static void ignorePlayer(String p, String victim){
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		if (UChat.get().ignoringPlayer.containsKey(p)){
 			list.addAll(UChat.get().ignoringPlayer.get(p));
 		}
@@ -266,7 +270,7 @@ public class UCMessages {
 	}
 	
 	public static void unIgnorePlayer(String p, String victim){
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		if (UChat.get().ignoringPlayer.containsKey(p)){
 			list.addAll(UChat.get().ignoringPlayer.get(p));
 		}
@@ -333,6 +337,16 @@ public class UCMessages {
 				if (url != null && url.length() > 0){
 					fanci.clickOpenURL(formatTags(tag, url, sender, receiver, msg, ch));
 				}
+
+				if (tag.equals("message") && UCPerms.hasPerm(sender, "chat.click-urls")){
+				    for (String arg:msg.split(" ")){
+                        try{
+                            new URL(arg);
+                            fanci.clickOpenURL(formatTags(tag, arg, sender, receiver, msg, ch));
+                            fanci.hoverShowText(UCUtil.colorize(formatTags(tag, UChat.get().getUCConfig().getString("general.URL-template").replace("{url}", arg), sender, receiver, msg, ch)));
+                        } catch (MalformedURLException e) {}
+                    }
+                }
 				
 				if (tag.equals("message") && (!msg.equals(mention(sender, (CommandSender)receiver, msg)) || msg.contains(UChat.get().getUCConfig().getString("general.item-hand.placeholder")))){
 					tooltip = formatTags("", tooltip, sender, receiver, msg, ch);	
