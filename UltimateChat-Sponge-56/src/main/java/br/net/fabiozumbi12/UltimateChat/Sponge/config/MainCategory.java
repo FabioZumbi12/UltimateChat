@@ -115,7 +115,7 @@ public class MainCategory {
 	public static class GeneralCat{
 		
 		@Setting(value="URL-template", comment="Template to show when players send links or urls.")
-		public String URL_template = "Click to open &n{url}&r";
+		public String URL_template = "&3Click to open &n{url}&r";
 		@Setting(value="console-tag", comment="Tag to show when sent messages from console to channels.")
 		public String console_tag = "&6 {console}&3";
 		@Setting(value="custom-tags")

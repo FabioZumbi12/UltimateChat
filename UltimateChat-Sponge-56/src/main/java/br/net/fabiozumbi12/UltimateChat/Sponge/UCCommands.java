@@ -2,7 +2,7 @@ package br.net.fabiozumbi12.UltimateChat.Sponge;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.*;
-import org.spongepowered.api.command.args.GenericArguments;
+import org.spongepowered.api.command.args.*;
 import org.spongepowered.api.command.source.ConsoleSource;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
@@ -14,11 +14,12 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.Text.Builder;
 import org.spongepowered.api.text.action.TextActions;
 
+import javax.annotation.Nullable;
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 public class UCCommands {
 
@@ -80,7 +81,7 @@ public class UCCommands {
 			unregisterCmd(tell);
 			if (tell.equals("r")){
 				manager.register(UChat.get().instance(), CommandSpec.builder()
-						.arguments(GenericArguments.remainingJoinedStrings(Text.of("message")))
+						.arguments(new remainJoinedStringsWithTab(Text.of("message")))
 						.permission("uchat.cmd.tell")
 					    .description(Text.of("Respond to the private messages of other players."))
 					    .executor((src, args) -> { {
@@ -115,7 +116,7 @@ public class UCCommands {
 					    .build(), tell);
 			} else {
 				manager.register(UChat.get().instance(), CommandSpec.builder()
-						.arguments(GenericArguments.optional(GenericArguments.firstParsing(GenericArguments.player(Text.of("receiver")), GenericArguments.string(Text.of("receiver")))), GenericArguments.optional(GenericArguments.remainingJoinedStrings(Text.of("message"))))
+						.arguments(GenericArguments.optional(GenericArguments.firstParsing(GenericArguments.player(Text.of("receiver")), GenericArguments.string(Text.of("receiver")))), GenericArguments.optional(new remainJoinedStringsWithTab(Text.of("message"))))
 					    .description(Text.of("Lock your chat with a player or send private messages."))
 					    .permission("uchat.cmd.tell")
 					    .executor((src, args) -> { {					    	
@@ -257,7 +258,7 @@ public class UCCommands {
 				    		if (!args.<UCChannel>getOne("channel").isPresent()){
 				    			StringBuilder channels = new StringBuilder();
 				    			for (UCChannel ch:UChat.get().getChannels().values()){
-				    				if (!(p instanceof Player) || UChat.get().getPerms().channelWritePerm((Player)p, ch)){
+				    				if (UChat.get().getPerms().channelWritePerm(p, ch)){
 				    					channels.append(", "+ch.getName());
 				    				}
 				    			}
@@ -329,7 +330,7 @@ public class UCCommands {
 		}
 		
 		manager.register(UChat.get().instance(), CommandSpec.builder()
-				.arguments(GenericArguments.optional(GenericArguments.remainingJoinedStrings(Text.of("message"))))
+				.arguments(GenericArguments.optional(new remainJoinedStringsWithTab(Text.of("message"))))
 				.permission("uchat.channel."+ch.getName()+".read")
 				.permission("uchat.channel."+ch.getName()+".write")
 			    .description(Text.of("Command to use channel "+ch.getName()+"."))
@@ -812,5 +813,52 @@ public class UCCommands {
 		p.sendMessage(UCUtil.toText(UChat.get().getLang().get("help.tell.lock")));
 		p.sendMessage(UCUtil.toText(UChat.get().getLang().get("help.tell.send")));
 		p.sendMessage(UCUtil.toText(UChat.get().getLang().get("help.tell.respond")));
+	}
+
+	public class ChannelCommandElement extends CommandElement {
+
+		public ChannelCommandElement(Text key) {
+			super(key);
+		}
+
+		@Override
+		protected Object parseValue(CommandSource source, CommandArgs args)
+				throws ArgumentParseException {
+			return UChat.get().getChannel(args.next());
+		}
+
+		@Override
+		public List<String> complete(CommandSource src, CommandArgs args,
+									 CommandContext context) {
+			return UChat.get().getChannels().values().stream().filter(key->UChat.get().getPerms().channelWritePerm(src, key)).sorted(Comparator.comparing(UCChannel::getName)).map(UCChannel::getName).collect(Collectors.toList());
+		}
+
+		@Override
+		public Text getUsage(CommandSource src) {
+			return Text.of("<channel>");
+		}
+	}
+
+	public class remainJoinedStringsWithTab extends CommandElement {
+
+		public remainJoinedStringsWithTab(Text key){
+			super(key);
+		}
+
+		@Override
+		protected Object parseValue(CommandSource source, CommandArgs args) throws ArgumentParseException {
+            StringBuilder ret = new StringBuilder(args.next());
+            while(args.hasNext()) {
+                ret.append(' ').append(args.next());
+            }
+            return ret.toString();
+		}
+
+		@Override
+		public List<String> complete(CommandSource src, CommandArgs args, CommandContext context) {
+		    return Sponge.getServer().getOnlinePlayers().stream().filter(
+		            play -> args.hasNext() && (src instanceof ConsoleSource || (src instanceof Player && play.canSee((Player) src))) && play.getName().toUpperCase().startsWith(args.getAll().get(args.getAll().size()-1).toUpperCase()))
+                    .map(Player::getName).collect(Collectors.toList());
+		}
 	}
 }
