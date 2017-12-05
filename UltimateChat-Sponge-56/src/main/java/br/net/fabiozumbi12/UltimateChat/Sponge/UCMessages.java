@@ -612,9 +612,7 @@ public class UCMessages {
 				}
 				if (item.get(Keys.ITEM_ENCHANTMENTS).isPresent()){
 					StringBuilder str = new StringBuilder();
-					for (ItemEnchantment enchant:item.get(Keys.ITEM_ENCHANTMENTS).get()){
-						str.append("\n "+enchant.getEnchantment().getTranslation().get()+": "+enchant.getLevel());
-					}
+					str.append(UChat.get().getVHelper().getEnchantments(str, item));
 					if (str.length() >= 2){
 						text = text.replace("{hand-enchants}", str.toString().substring(0, str.length()-1));
 					}
