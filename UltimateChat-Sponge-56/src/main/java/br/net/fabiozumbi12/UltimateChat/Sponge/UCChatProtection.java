@@ -14,9 +14,9 @@ import java.util.regex.Pattern;
 
 class UCChatProtection {
 	
-	private static HashMap<Player,String> chatSpam = new HashMap<Player,String>();
-	private static HashMap<String,Integer> msgSpam = new HashMap<String,Integer>();
-	private static HashMap<Player,Integer> UrlSpam = new HashMap<Player,Integer>();
+	private static final HashMap<Player,String> chatSpam = new HashMap<>();
+	private static final HashMap<String,Integer> msgSpam = new HashMap<>();
+	private static final HashMap<Player,Integer> UrlSpam = new HashMap<>();
 	
 	public static String filterChatMessage(CommandSource source, String msg, UCChannel chan){
 		if (!(source instanceof Player)){
@@ -42,13 +42,11 @@ class UCChatProtection {
 			//check spam messages
 			if (!chatSpam.containsKey(p)){
 				chatSpam.put(p, msg);				
-				Sponge.getScheduler().createSyncExecutor(UChat.get().instance()).schedule(new Runnable() { 
-					public void run() {
-						if (chatSpam.containsKey(p)){
-							chatSpam.remove(p);
-						}						
-					}						
-				},UChat.get().getConfig().protections().antispam.time_between_messages,TimeUnit.SECONDS);
+				Sponge.getScheduler().createSyncExecutor(UChat.get().instance()).schedule(() -> {
+                    if (chatSpam.containsKey(p)){
+                        chatSpam.remove(p);
+                    }
+                },UChat.get().getConfig().protections().antispam.time_between_messages,TimeUnit.SECONDS);
 			} else if (!chatSpam.get(p).equalsIgnoreCase(msg)){				
 				p.sendMessage(UCUtil.toText(UChat.get().getConfig().protections().antispam.cooldown_msg));
 				return null;
@@ -58,13 +56,11 @@ class UCChatProtection {
 			if (!msgSpam.containsKey(msg)){
 				msgSpam.put(msg, 1);
 				final String nmsg = msg;
-				Sponge.getScheduler().createSyncExecutor(UChat.get().instance()).schedule(new Runnable() { 
-					public void run() {
-						if (msgSpam.containsKey(nmsg)){
-							msgSpam.remove(nmsg);
-						}						
-					}						
-					},UChat.get().getConfig().protections().antispam.time_between_same_messages, TimeUnit.SECONDS);
+				Sponge.getScheduler().createSyncExecutor(UChat.get().instance()).schedule(() -> {
+                    if (msgSpam.containsKey(nmsg)){
+                        msgSpam.remove(nmsg);
+                    }
+                },UChat.get().getConfig().protections().antispam.time_between_same_messages, TimeUnit.SECONDS);
 			} else {
 				msgSpam.put(msg, msgSpam.get(msg)+1);				
 				if (msgSpam.get(msg) >= UChat.get().getConfig().protections().antispam.count_of_same_message){
@@ -89,16 +85,16 @@ class UCChatProtection {
 				
 				String replaceby = word.getValue();
 				if (UChat.get().getConfig().protections().censor.replace_by_symbol){
-					replaceby = word.getKey().toString().replaceAll("(?s).", UChat.get().getConfig().protections().censor.by_symbol);
+					replaceby = word.getKey().replaceAll("(?s).", UChat.get().getConfig().protections().censor.by_symbol);
 				}
 				
 				if (!UChat.get().getConfig().protections().censor.replace_partial_word){
-					msg = msg.replaceAll("(?i)"+"\\b"+Pattern.quote(word.getKey().toString())+"\\b", replaceby);
+					msg = msg.replaceAll("(?i)"+"\\b"+Pattern.quote(word.getKey())+"\\b", replaceby);
 					if (UChat.get().getConfig().protections().censor.action.on_partial_words){
 						act++;
 					}
 				} else {
-					msg = msg.replaceAll("(?i)"+word.getKey().toString(), replaceby);
+					msg = msg.replaceAll("(?i)"+ word.getKey(), replaceby);
 					act++;
 				}				
 			}

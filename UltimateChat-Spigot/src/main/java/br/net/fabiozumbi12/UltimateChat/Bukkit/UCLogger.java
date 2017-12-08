@@ -8,7 +8,7 @@ public class UCLogger{
 		START, END
 	}
 	private long start = 0;
-	private UChat uchat;
+	private final UChat uchat;
 	 
 	public UCLogger(UChat uChat) {
 		this.uchat = uChat;

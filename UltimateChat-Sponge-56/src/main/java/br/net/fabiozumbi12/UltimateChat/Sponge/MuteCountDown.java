@@ -7,7 +7,7 @@ import java.util.function.Consumer;
 
 public class MuteCountDown implements Consumer<Task> {	
 	int time;
-	String p;
+	final String p;
 	MuteCountDown(String p, int t){
 		this.p = p;
 		this.time = t*60;

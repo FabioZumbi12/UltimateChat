@@ -17,7 +17,7 @@ public class UCUtil {
 		int lesserVersion = 0;
 		try {
 			lesserVersion = Integer.parseInt(version[2]);
-		} catch (NumberFormatException ex){				
+		} catch (NumberFormatException ignored){
 		}
 		return Integer.parseInt((version[0]+version[1]).substring(1)+lesserVersion);
     }
@@ -48,22 +48,17 @@ public class UCUtil {
 		    }
 		    fos.close();
 		    isReader.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
 	public static void performCommand(final Player to, final CommandSender sender, final String command) {
-		Bukkit.getScheduler().runTask(UChat.get(), new Runnable(){
-			@Override
-			public void run() {
-				if (to == null || (to != null && to.isOnline())){
-	        		UChat.get().getServer().dispatchCommand(sender, command);
-	        	}
-			}			
-		});
+		Bukkit.getScheduler().runTask(UChat.get(), () -> {
+            if (to == null || (to != null && to.isOnline())){
+                UChat.get().getServer().dispatchCommand(sender, command);
+            }
+        });
 	}
 	
 	public static void sendUmsg(CommandSender sender, String[] args){

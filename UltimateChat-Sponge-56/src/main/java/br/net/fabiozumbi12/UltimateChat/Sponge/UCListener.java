@@ -155,7 +155,7 @@ public class UCListener {
             UChat.get().getPlayerChannel(p).removeMember(p);
         }
 
-		List<String> toRemove = new ArrayList<String>();
+		List<String> toRemove = new ArrayList<>();
 		for (String play:UChat.tellPlayers.keySet()){
 			if (play.equals(p.getName()) || UChat.tellPlayers.get(play).equals(p.getName())){
 				toRemove.add(play);				
@@ -164,7 +164,7 @@ public class UCListener {
 		for (String remove:toRemove){
 			UChat.tellPlayers.remove(remove);
 		}
-		List<String> toRemove2 = new ArrayList<String>();
+		List<String> toRemove2 = new ArrayList<>();
 		for (String play:UChat.respondTell.keySet()){
 			if (play.equals(p.getName()) || UChat.respondTell.get(play).equals(p.getName())){
 				toRemove2.add(play);				

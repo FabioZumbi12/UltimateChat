@@ -15,11 +15,11 @@ import java.util.HashMap;
 import java.util.List;
 
 public class UCJedisLoader {
-	private JedisPool pool;
-	private String[] channels;
-	private ChatChannel channel;
-	protected HashMap<String, String> tellPlayers = new HashMap<String, String>();
-	private String thisId;
+	private final JedisPool pool;
+	private final String[] channels;
+	private final ChatChannel channel;
+	protected final HashMap<String, String> tellPlayers = new HashMap<>();
+	private final String thisId;
 	
 	protected JedisPool getPool(){
 		return this.pool;		

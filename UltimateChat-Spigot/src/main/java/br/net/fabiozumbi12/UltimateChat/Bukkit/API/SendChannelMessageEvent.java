@@ -17,7 +17,7 @@ public class SendChannelMessageEvent extends Event implements Cancellable{
 
 	private static final HandlerList handlers = new HandlerList();
 	private boolean cancelled;
-	private CommandSender sender;
+	private final CommandSender sender;
 	private String msg;
 	private UCChannel channel;
 	private String[] defBuilder;

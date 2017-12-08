@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class UCPerms {
 	
-	private static HashMap<String, Map<String, Boolean>> cachedPerm = new HashMap<String, Map<String, Boolean>>();
+	private static final HashMap<String, Map<String, Boolean>> cachedPerm = new HashMap<>();
 	
 	public static boolean hasPermission(CommandSender sender, String perm){
 		if (cachedPerm.containsKey(sender.getName())){
@@ -49,12 +49,8 @@ public class UCPerms {
 		return defCh.equals(ch) || hasPerm(p, "channel."+ch.getName().toLowerCase()+".write");
 	}
 	
-	static boolean canIgnore(CommandSender sender, Object toignore){
-		if (toignore instanceof CommandSender && isAdmin((CommandSender)toignore)){
-			return false;
-		} else {
-			return !hasPermission(sender, "uchat.cant-ignore."+ (toignore instanceof Player?((Player)toignore).getName():((UCChannel)toignore).getName()));
-		}
+	static boolean canIgnore(CommandSender sender, Object toignore) {
+		return (!(toignore instanceof CommandSender) || !isAdmin((CommandSender) toignore)) && !hasPermission(sender, "uchat.cant-ignore." + (toignore instanceof Player ? ((Player) toignore).getName() : ((UCChannel) toignore).getName()));
 	}
 	
 	static boolean hasPerm(CommandSender p, String perm){

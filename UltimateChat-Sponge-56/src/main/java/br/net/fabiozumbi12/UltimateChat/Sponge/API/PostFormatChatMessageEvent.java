@@ -20,9 +20,9 @@ import java.util.HashMap;
  */
 public class PostFormatChatMessageEvent extends AbstractEvent implements Cancellable, Event  {
 	private boolean cancelled;
-	private CommandSource sender;
-	private UCChannel channel;
-	private HashMap<CommandSource, Text> receivers;
+	private final CommandSource sender;
+	private final UCChannel channel;
+	private final HashMap<CommandSource, Text> receivers;
 	
 	public PostFormatChatMessageEvent(CommandSource sender, HashMap<CommandSource, Text> receivers, UCChannel channel){
 		this.sender = sender;

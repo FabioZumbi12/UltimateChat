@@ -14,16 +14,13 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.Text.Builder;
 import org.spongepowered.api.text.action.TextActions;
 
-import javax.annotation.Nullable;
-import java.io.File;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 public class UCCommands {
 
-    CommandManager manager;
+    final CommandManager manager;
 	
 	UCCommands(UChat plugin) {
 	    manager = Sponge.getCommandManager();
@@ -128,7 +125,7 @@ public class UCCommands {
 									return CommandResult.success();
 								}
 					    	} else {
-					    		Object recObj = args.<Object>getOne("receiver").get();
+					    		Object recObj = args.getOne("receiver").get();
 						    	if (src instanceof Player){
 						    		Player p = (Player) src;					    		
 						    		if (args.<String>getOne("message").isPresent()){
@@ -388,7 +385,7 @@ public class UCCommands {
 			    				UChat.get().getLang().sendMessage(src, "help.channels.send");
 								return CommandResult.success();
 							}
-				    		if (ch.isMember((Player) src)){
+				    		if (ch.isMember(src)){
 				    			UChat.tempChannels.put(src.getName(), ch.getAlias());
 				    			UChat.get().getLang().sendMessage(src, UChat.get().getLang().get("channel.alreadyon").replace("{channel}", ch.getName()));
 								return CommandResult.success();
@@ -397,7 +394,7 @@ public class UCCommands {
 								UChat.get().getLang().sendMessage(src, UChat.get().getLang().get("channel.password").replace("{channel}", ch.getAlias()));
 								return CommandResult.success();
 							}
-				    		ch.addMember((Player) src);
+				    		ch.addMember(src);
 				    		UChat.get().getLang().sendMessage(src, UChat.get().getLang().get("channel.entered").replace("{channel}", ch.getName()));	
 			    		}
 			    	} else if (args.<String>getOne("message").isPresent()){
@@ -418,7 +415,7 @@ public class UCCommands {
 	}
 	
 	private Map<String, String> getChKeys(){
-		Map<String, String> result = new HashMap<String, String>();
+		Map<String, String> result = new HashMap<>();
 		for (Object key:new UCChannel("keys","k","&b").getProperties().keySet()){
 			result.put(key.toString(), key.toString());
 		}
@@ -432,7 +429,7 @@ public class UCCommands {
 				.permission("uchat.cmd.delchannel")
 				.executor((src,args) -> {{
 					//uchat delchannel <channel>
-					Optional<UCChannel> optch = args.<UCChannel>getOne("channel");
+					Optional<UCChannel> optch = args.getOne("channel");
 					if (!optch.isPresent()){
 						throw new CommandException(UChat.get().getLang().getText("channel.dontexist"), true);
 					}
@@ -478,7 +475,7 @@ public class UCCommands {
 				.permission("uchat.cmd.chconfig")
 				.executor((src,args) -> {{
 					//uchat chconfig <channel> <key> <value>
-					Optional<UCChannel> optch = args.<UCChannel>getOne("channel");
+					Optional<UCChannel> optch = args.getOne("channel");
 					if (!optch.isPresent()){
 						throw new CommandException(UChat.get().getLang().getText("channel.dontexist"), true);
 					}
@@ -601,7 +598,7 @@ public class UCCommands {
 					if (src instanceof Player){
 						Player p = (Player) src;
 						//uchat ignore channel
-						Optional<UCChannel> optch = args.<UCChannel>getOne("channel");
+						Optional<UCChannel> optch = args.getOne("channel");
 						if (!optch.isPresent()){
 							throw new CommandException(UChat.get().getLang().getText("channel.dontexist"), true);
 						}
@@ -696,15 +693,15 @@ public class UCCommands {
 				.build();
 		
 		//uchat <args...>
-		CommandSpec uchat = CommandSpec.builder()
+		return CommandSpec.builder()
 			    .description(Text.of("Main command for uchat."))
-			    .executor((src, args) -> { {	    	
+			    .executor((src, args) -> { {
 			    	//no args
 			    	src.sendMessage(UCUtil.toText("&b---------------- "+UChat.get().instance().getName()+" "+UChat.get().instance().getVersion().get()+" ---------------"));
 			    	src.sendMessage(UCUtil.toText("&bDeveloped by &6" + UChat.get().instance().getAuthors().get(0) + "."));
 			    	src.sendMessage(UCUtil.toText("&bFor more information about the commands, type [" + "&6/uchat ?&b]."));
-			    	src.sendMessage(UCUtil.toText("&b---------------------------------------------------"));			         
-			    	return CommandResult.success();	
+			    	src.sendMessage(UCUtil.toText("&b---------------------------------------------------"));
+			    	return CommandResult.success();
 			    }})
 			    .child(help, "?")
 			    .child(chconfig, "chconfig")
@@ -721,8 +718,6 @@ public class UCCommands {
 			    .child(mute, "mute")
 			    .child(tempmute, "tempmute")
 			    .build();
-		
-		return uchat;
 	}
     
 	private void sendHelp(CommandSource p){	
@@ -787,7 +782,7 @@ public class UCCommands {
 		
 		boolean first = true;
 		for (UCChannel ch:UChat.get().getChannels().values()){
-			if (!(p instanceof Player) || UChat.get().getPerms().channelWritePerm((Player)p, ch)){
+			if (!(p instanceof Player) || UChat.get().getPerms().channelWritePerm(p, ch)){
 				Builder fancych = Text.builder();
 				if (first){
 					fancych.append(UCUtil.toText(" "+ch.getColor()+ch.getName()));

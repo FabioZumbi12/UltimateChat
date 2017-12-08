@@ -12,10 +12,9 @@ import org.spongepowered.api.util.Tristate;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.concurrent.ExecutionException;
 
 class UCPerms56 implements UCPerms{
-	private PermissionService permissionService;
+	private final PermissionService permissionService;
 
 	UCPerms56(){
 		this.permissionService = UChat.get().getGame().getServiceManager().getRegistration(PermissionService.class).get().getProvider();
@@ -50,20 +49,16 @@ class UCPerms56 implements UCPerms{
 		return defCh.equals(ch) || hasPerm(p, "channel."+ch.getName().toLowerCase()+".write");
 	}
 	
-	public boolean canIgnore(CommandSource sender, Object toignore){
-		if (toignore instanceof CommandSource && isAdmin((CommandSource)toignore)){
-			return false;
-		} else {
-			return !sender.hasPermission("uchat.cant-ignore."+ (toignore instanceof Player?((Player)toignore).getName():((UCChannel)toignore).getName()));
-		}
+	public boolean canIgnore(CommandSource sender, Object toignore) {
+		return (!(toignore instanceof CommandSource) || !isAdmin((CommandSource) toignore)) && !sender.hasPermission("uchat.cant-ignore." + (toignore instanceof Player ? ((Player) toignore).getName() : ((UCChannel) toignore).getName()));
 	}
 	
 	public boolean hasPerm(CommandSource p, String perm){
 		return (p instanceof ConsoleSource) || p.hasPermission("uchat."+perm) || p.hasPermission("uchat.admin");
 	}
 	
-	public Subject getGroupAndTag(User player) throws InterruptedException, ExecutionException{
-		HashMap<Integer, Subject> subs = new HashMap<Integer, Subject>();		
+	public Subject getGroupAndTag(User player) {
+		HashMap<Integer, Subject> subs = new HashMap<>();
 		for (Subject sub:player.getParents()){
 			if (sub.getContainingCollection().equals(getGroups()) && (sub.getIdentifier() != null)){
 				subs.put(sub.getParents().size(), sub);				

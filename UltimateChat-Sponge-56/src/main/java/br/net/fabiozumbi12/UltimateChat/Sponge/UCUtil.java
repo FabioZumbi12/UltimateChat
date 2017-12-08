@@ -95,7 +95,7 @@ public class UCUtil {
 		 if (url.toString().length() > 1){
 			 try {
 				fanci.onClick(TextActions.openUrl(new URL(url.toString().substring(1))));
-			} catch (MalformedURLException e) {}
+			} catch (MalformedURLException ignored) {}
 			 if (!silent){
 				 Sponge.getServer().getConsole().sendMessage(UCUtil.toText("&8> Url: &r"+url.toString().substring(1)));
 			 }				  

@@ -19,8 +19,8 @@ import java.util.Map.Entry;
 
 public class UCConfig{
 	
-	private File defConfig = new File(UChat.get().configDir(),"config.conf");	
-	private File defProt = new File(UChat.get().configDir(),"protections.conf");
+	private final File defConfig = new File(UChat.get().configDir(),"config.conf");
+	private final File defProt = new File(UChat.get().configDir(),"protections.conf");
 	
 	private CommentedConfigurationNode configRoot;
 	private ConfigurationLoader<CommentedConfigurationNode> cfgLoader;
@@ -141,7 +141,7 @@ public class UCConfig{
 	    //--------------------------------------- Load Aliases -----------------------------------//
         
 	    if (UChat.get().getChannels() == null){
-			UChat.get().setChannels(new HashMap<List<String>,UCChannel>());
+			UChat.get().setChannels(new HashMap<>());
 		}
 	    
         File[] listOfFiles = chfolder.listFiles();
@@ -187,7 +187,7 @@ public class UCConfig{
 				channelManager = HoconConfigurationLoader.builder().setFile(file).build();	
 				channel = channelManager.load();
 				    				
-				Map<String, Object> chProps = new HashMap<String, Object>();
+				Map<String, Object> chProps = new HashMap<>();
 				channel.getChildrenMap().forEach((key,value)->{
 					if (value.hasMapChildren()){
 						String rkey = key.toString();
@@ -206,10 +206,8 @@ public class UCConfig{
 	}
 	
 	public List<String> getTagList(){
-		List<String> tags = new ArrayList<String>();		
-		root.tags.keySet().forEach(key -> {
-			tags.add(key);
-		});	
+		List<String> tags = new ArrayList<>();
+		root.tags.keySet().forEach(tags::add);
 		return tags;
 	}
 	
@@ -270,9 +268,7 @@ public class UCConfig{
 				+ "  allow-server-cmds: false - Use this channel to send commands from discord > minecraft.\n"
 				+ "  channelID: '' - The ID of your Discord Channel. Enable debug on your discord to get the channel ID.\n");
 		
-		ch.getProperties().forEach((key,value)->{			
-			chFile.getNode((Object[])key.toString().split("\\.")).setValue(value);
-		});
+		ch.getProperties().forEach((key,value)-> chFile.getNode((Object[])key.toString().split("\\.")).setValue(value));
 		channelManager.save(chFile);
 		
 		if (UChat.get().getChannel(ch.getName()) != null){

@@ -49,15 +49,15 @@ public class UChat extends JavaPlugin {
 	private int index = 0;	
 
 	//public static HashMap<String,String> pChannels = new HashMap<String,String>();
-    HashMap<String,String> tempChannels = new HashMap<String,String>();
-	HashMap<String,String> tellPlayers = new HashMap<String,String>();
-	HashMap<String,String> tempTellPlayers = new HashMap<String,String>();
-	HashMap<String,String> respondTell = new HashMap<String,String>();
-	protected List<String> command = new ArrayList<String>();
-	HashMap<String,List<String>> ignoringPlayer = new HashMap<String,List<String>>();
-	List<String> mutes = new ArrayList<String>();
-	public List<String> isSpy = new ArrayList<String>();
-	HashMap<String, Integer> timeMute = new HashMap<String, Integer>();
+	final HashMap<String,String> tempChannels = new HashMap<>();
+	final HashMap<String,String> tellPlayers = new HashMap<>();
+	final HashMap<String,String> tempTellPlayers = new HashMap<>();
+	final HashMap<String,String> respondTell = new HashMap<>();
+	protected final List<String> command = new ArrayList<>();
+	final HashMap<String,List<String>> ignoringPlayer = new HashMap<>();
+	final List<String> mutes = new ArrayList<>();
+	public final List<String> isSpy = new ArrayList<>();
+	final HashMap<String, Integer> timeMute = new HashMap<>();
 	private UCListener listener;
 	
 	private HashMap<List<String>,UCChannel> channels;
@@ -250,7 +250,7 @@ public class UChat extends JavaPlugin {
 		this.getServer().getScheduler().cancelTasks(this);
 		try {
 			this.config = new UCConfig(this);
-		} catch (IOException | InvalidConfigurationException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		this.lang = new UCLang();
@@ -271,7 +271,7 @@ public class UChat extends JavaPlugin {
 			try {
 				this.jedis = new UCJedisLoader(getUCConfig().getString("jedis.ip"),
 						getUCConfig().getInt("jedis.port"),
-						getUCConfig().getString("jedis.pass"), new ArrayList<UCChannel>(getChannels().values()));
+						getUCConfig().getString("jedis.pass"), new ArrayList<>(getChannels().values()));
 			} catch (Exception e){
 				this.logger.warning("Could not connect to REDIS server! Check ip, password and port, and if the REDIS server is running.");
 			}			
@@ -350,41 +350,38 @@ public class UChat extends JavaPlugin {
 		int loop = getAMConfig().getInt("interval");
 		boolean silent = getAMConfig().getBoolean("silent");
 		
-		Bukkit.getScheduler().scheduleSyncRepeatingTask(uchat, new Runnable(){
-			@Override
-			public void run() {
-				if (getAMConfig().isConfigurationSection("messages."+index)){
-					int plays = getAMConfig().getInt("messages."+index+".minPlayers");
-					String text = getAMConfig().getString("messages."+index+".text", "");
-					String hover = getAMConfig().getString("messages."+index+".hover", "");
-					String onclick = getAMConfig().getString("messages."+index+".onclick", "");
-					String suggest = getAMConfig().getString("messages."+index+".suggest", "");
-					String url = getAMConfig().getString("messages."+index+".url", "");
-					
-					String cmd = text;
-					if (hover.length() > 1){
-						cmd = cmd+" "+ getUCConfig().getString("broadcast.on-hover")+hover;
-					}
-					if (onclick.length() > 1){
-						cmd = cmd+" "+ getUCConfig().getString("broadcast.on-click")+onclick;
-					}
-					if (suggest.length() > 1){
-						cmd = cmd+" "+ getUCConfig().getString("broadcast.suggest")+suggest;
-					}
-					if (url.length() > 1){
-						cmd = cmd+" "+ getUCConfig().getString("broadcast.url")+url;
-					}
-					if (plays == 0 || getServer().getOnlinePlayers().size() >= plays){						
-						UCUtil.sendBroadcast(getServer().getConsoleSender(), cmd.split(" "), silent);
-					}
-				}	
-				if (index+1 >= total){
-					index = 0;
-				} else {
-					index++;
-				}
-			}				
-		}, loop*20, loop*20);
+		Bukkit.getScheduler().scheduleSyncRepeatingTask(uchat, () -> {
+            if (getAMConfig().isConfigurationSection("messages."+index)){
+                int plays = getAMConfig().getInt("messages."+index+".minPlayers");
+                String text = getAMConfig().getString("messages."+index+".text", "");
+                String hover = getAMConfig().getString("messages."+index+".hover", "");
+                String onclick = getAMConfig().getString("messages."+index+".onclick", "");
+                String suggest = getAMConfig().getString("messages."+index+".suggest", "");
+                String url = getAMConfig().getString("messages."+index+".url", "");
+
+                String cmd = text;
+                if (hover.length() > 1){
+                    cmd = cmd+" "+ getUCConfig().getString("broadcast.on-hover")+hover;
+                }
+                if (onclick.length() > 1){
+                    cmd = cmd+" "+ getUCConfig().getString("broadcast.on-click")+onclick;
+                }
+                if (suggest.length() > 1){
+                    cmd = cmd+" "+ getUCConfig().getString("broadcast.suggest")+suggest;
+                }
+                if (url.length() > 1){
+                    cmd = cmd+" "+ getUCConfig().getString("broadcast.url")+url;
+                }
+                if (plays == 0 || getServer().getOnlinePlayers().size() >= plays){
+                    UCUtil.sendBroadcast(getServer().getConsoleSender(), cmd.split(" "), silent);
+                }
+            }
+            if (index+1 >= total){
+                index = 0;
+            } else {
+                index++;
+            }
+        }, loop*20, loop*20);
 	}	
 	
 	public void onDisable() {
@@ -410,9 +407,8 @@ public class UChat extends JavaPlugin {
         }
 	}
 	
-	private void registerAliases(String name, List<String> aliases) {  
-		List<String> aliases1 = new ArrayList<String>();
-		aliases1.addAll(aliases);
+	private void registerAliases(String name, List<String> aliases) {
+        List<String> aliases1 = new ArrayList<>(aliases);
 		
 		for (Command cmd:PluginCommandYamlParser.parse(uchat)){
 			if (cmd.getName().equals(name)){
@@ -444,8 +440,7 @@ public class UChat extends JavaPlugin {
 	}
 
 	List<String> getChAliases(){
-		List<String> aliases = new ArrayList<String>();
-		aliases.addAll(Arrays.asList(config.getString("general.channel-cmd-aliases").replace(" ", "").split(",")));
+        List<String> aliases = new ArrayList<>(Arrays.asList(config.getString("general.channel-cmd-aliases").replace(" ", "").split(",")));
 		for (List<String> alias:UChat.get().getChannels().keySet()){
 			aliases.addAll(alias);
 		}
@@ -465,7 +460,7 @@ public class UChat extends JavaPlugin {
 	void unMuteInAllChannels(String player){
 		for (UCChannel ch:UChat.get().getChannels().values()){
 			if (ch.isMuted(player)){				
-				ch.unMuteThis(player);;
+				ch.unMuteThis(player);
 			}
 		}
 	}
@@ -473,7 +468,7 @@ public class UChat extends JavaPlugin {
 	void muteInAllChannels(String player){
 		for (UCChannel ch:UChat.get().getChannels().values()){
 			if (!ch.isMuted(player)){				
-				ch.muteThis(player);;
+				ch.muteThis(player);
 			}
 		}
 	}
@@ -488,27 +483,18 @@ public class UChat extends JavaPlugin {
 		
 	private boolean checkJDA(){
     	Plugin p = Bukkit.getPluginManager().getPlugin("JDALibLoaderBukkit");
-    	if (p != null && p.isEnabled()){
-    		return true;
-    	}
-    	return false;
-    }
+		return p != null && p.isEnabled();
+	}
 	
 	//check if plugin Vault is installed
     private boolean checkVault(){
     	Plugin p = Bukkit.getPluginManager().getPlugin("Vault");
-    	if (p != null && p.isEnabled()){
-    		return true;
-    	}
-    	return false;
-    }
+		return p != null && p.isEnabled();
+	}
     
 	private boolean checkSC() {
 		Plugin p = Bukkit.getPluginManager().getPlugin("SimpleClans");
-    	if (p != null && p.isEnabled()){
-    		return true;
-    	}
-		return false;
+		return p != null && p.isEnabled();
 	}
 	
 	private boolean checkMR() {

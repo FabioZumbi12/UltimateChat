@@ -9,7 +9,7 @@ public class UCLogger{
 		START, END
 	}
 	private long start = 0;
-	private ConsoleSource console;
+	private final ConsoleSource console;
 	
 	UCLogger(Server serv){
 		this.console = serv.getConsole();

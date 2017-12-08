@@ -14,9 +14,9 @@ import java.util.concurrent.TimeUnit;
 
 public class UCLang {
 	
-	private static final HashMap<CommandSource, String> DelayedMessage = new HashMap<CommandSource, String>();
-	private static Properties BaseLang = new Properties();
-	private static Properties Lang = new Properties();
+	private static final HashMap<CommandSource, String> DelayedMessage = new HashMap<>();
+	private static final Properties BaseLang = new Properties();
+	private static final Properties Lang = new Properties();
     private static String pathLang;
     private static String resLang; 
         	
@@ -140,13 +140,11 @@ public class UCLang {
 		}		
 		
 		DelayedMessage.put(p,key);
-		Sponge.getScheduler().createSyncExecutor(UChat.get().instance()).schedule(new Runnable() { 
-			public void run() {
-				if (DelayedMessage.containsKey(p)){
-					DelayedMessage.remove(p);
-				}
-				} 
-			},1, TimeUnit.SECONDS);	
+		Sponge.getScheduler().createSyncExecutor(UChat.get().instance()).schedule(() -> {
+            if (DelayedMessage.containsKey(p)){
+                DelayedMessage.remove(p);
+            }
+            },1, TimeUnit.SECONDS);
 	}
 		
 }

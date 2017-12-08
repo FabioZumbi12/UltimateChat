@@ -4,7 +4,6 @@ import br.net.fabiozumbi12.UltimateChat.Bukkit.API.PostFormatChatMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.API.SendChannelMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.Bungee.UChatBungee;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UCLogger.timingType;
-import com.sun.jndi.toolkit.url.Uri;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import net.sacredlabyrinth.phaed.simpleclans.managers.SettingsManager;
@@ -21,7 +20,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -107,7 +105,7 @@ public class UCMessages {
 						if (!((Player)sender).canSee(receiver)){
 							vanish++;
 						}
-						if ((ch.neeFocus() && ch.isMember(receiver)) || !ch.neeFocus()){					
+						if (!ch.neeFocus() || ch.isMember(receiver)){
 							msgPlayers.put(receiver, sendMessage(sender, receiver, evmsg, ch, false));
 							receivers.add((Player)ent);
 						}
@@ -133,7 +131,7 @@ public class UCMessages {
 					} else {
 						noWorldReceived++;
 					}					
-					if ((ch.neeFocus() && ch.isMember(receiver)) || !ch.neeFocus()){
+					if (!ch.neeFocus() || ch.isMember(receiver)){
 						msgPlayers.put(receiver, sendMessage(sender, receiver, evmsg, ch, false));
 						receivers.add(receiver);
 					}				
@@ -318,12 +316,12 @@ public class UCMessages {
 					}
 				}
 							
-				String tooltip = "";
+				StringBuilder tooltip = new StringBuilder();
 				for (String tp:messages){
-					tooltip = tooltip+"\n"+tp;
+					tooltip.append("\n").append(tp);
 				}
 				if (tooltip.length() > 2){
-					tooltip = tooltip.substring(1);
+					tooltip = new StringBuilder(tooltip.substring(1));
 				}			
 							
 				if (execute != null && execute.length() > 0){
@@ -344,29 +342,29 @@ public class UCMessages {
                             new URL(arg);
                             fanci.clickOpenURL(formatTags(tag, arg, sender, receiver, msg, ch));
                             fanci.hoverShowText(UCUtil.colorize(formatTags(tag, UChat.get().getUCConfig().getString("general.URL-template").replace("{url}", arg), sender, receiver, msg, ch)));
-                        } catch (MalformedURLException e) {}
+                        } catch (MalformedURLException ignored) {}
                     }
                 }
 				
 				if (tag.equals("message") && (!msg.equals(mention(sender, (CommandSender)receiver, msg)) || msg.contains(UChat.get().getUCConfig().getString("general.item-hand.placeholder")))){
-					tooltip = formatTags("", tooltip, sender, receiver, msg, ch);	
+					tooltip = new StringBuilder(formatTags("", tooltip.toString(), sender, receiver, msg, ch));
 					format = formatTags(tag, format, sender, receiver, msg, ch);
 					
 					if (UChat.get().getUCConfig().getBoolean("general.item-hand.enable") && msg.contains(UChat.get().getUCConfig().getString("general.item-hand.placeholder")) && sender instanceof Player){
 						fanci.text(format).hoverShowItem(((Player)sender).getItemInHand()).next();
 					} else if (!msg.equals(mention(sender, (CommandSender)receiver, msg)) && UChat.get().getUCConfig().getString("mention.hover-message").length() > 0 && StringUtils.containsIgnoreCase(msg, ((CommandSender)receiver).getName())){
-						tooltip = formatTags("", UChat.get().getUCConfig().getString("mention.hover-message"), sender, receiver, msg, ch);
-						fanci.text(format).hoverShowText(tooltip).next();
+						tooltip = new StringBuilder(formatTags("", UChat.get().getUCConfig().getString("mention.hover-message"), sender, receiver, msg, ch));
+						fanci.text(format).hoverShowText(tooltip.toString()).next();
 					} else if (tooltip.length() > 0){	
-						fanci.text(format).hoverShowText(tooltip).next();
+						fanci.text(format).hoverShowText(tooltip.toString()).next();
 					} else {
 						fanci.text(format).next();						
 					}				
 				} else {					
 					format = formatTags(tag, format, sender, receiver, msg, ch);
-					tooltip = formatTags("", tooltip, sender, receiver, msg, ch);					
+					tooltip = new StringBuilder(formatTags("", tooltip.toString(), sender, receiver, msg, ch));
 					if (tooltip.length() > 0){		
-						fanci.text(format).hoverShowText(tooltip).next();
+						fanci.text(format).hoverShowText(tooltip.toString()).next();
 					} else {			
 						fanci.text(format).next();
 					}
@@ -378,21 +376,21 @@ public class UCMessages {
 			String format = UChat.get().getUCConfig().getString("tell.format");
 			List<String> messages = UChat.get().getUCConfig().getStringList("tell.hover-messages");
 						
-			String tooltip = "";
+			StringBuilder tooltip = new StringBuilder();
 			for (String tp:messages){
-				tooltip = tooltip+"\n"+tp;
+				tooltip.append("\n").append(tp);
 			}
 			if (tooltip.length() > 2){
-				tooltip = tooltip.substring(1);
+				tooltip = new StringBuilder(tooltip.substring(1));
 			}
 						
 			
 			prefix = formatTags("", prefix, sender, receiver, msg, ch);						
 			format = formatTags("tell", format, sender, receiver, msg, ch);
-			tooltip = formatTags("", tooltip, sender, receiver, msg, ch);
+			tooltip = new StringBuilder(formatTags("", tooltip.toString(), sender, receiver, msg, ch));
 			
 			if (tooltip.length() > 0){
-				fanci.text(format).hoverShowText(tooltip).next();
+				fanci.text(format).hoverShowText(tooltip.toString()).next();
 			} else {
 				fanci.text(prefix).next();
 			}			
@@ -404,7 +402,7 @@ public class UCMessages {
 	public static String mention(Object sender, CommandSender receiver, String msg) {
 		if (UChat.get().getUCConfig().getBoolean("mention.enable")){
 		    for (Player p:UChat.get().getServer().getOnlinePlayers()){			
-				if (!sender.equals(p) && Arrays.asList(msg.split(" ")).stream().anyMatch(p.getName()::equalsIgnoreCase)){
+				if (!sender.equals(p) && Arrays.stream(msg.split(" ")).anyMatch(p.getName()::equalsIgnoreCase)){
 					if (receiver instanceof Player && receiver.equals(p)){
 						
 						String mentionc = UChat.get().getUCConfig().getColorStr("mention.color-template").replace("{mentioned-player}", p.getName());
@@ -474,10 +472,10 @@ public class UCMessages {
 			}
 			text = text.replace(repl, registeredReplacers.get(repl));			
 		}		
-		String def = "";
+		StringBuilder def = new StringBuilder();
 		for (int i = 0; i < defFormat.length; i++){
 			text = text.replace("{default-format-"+i+"}", defFormat[i]);
-			def = def+" "+defFormat[i];
+			def.append(" ").append(defFormat[i]);
 		}		
 		if (def.length() > 0){
 			text = text.replace("{default-format-full}", def.substring(1));

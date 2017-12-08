@@ -18,9 +18,9 @@ import java.util.HashMap;
 public class PostFormatChatMessageEvent extends Event implements Cancellable  {
 	private static final HandlerList handlers = new HandlerList();
 	private boolean cancelled;
-	private CommandSender sender;
-	private UCChannel channel;
-	private HashMap<CommandSender, UltimateFancy> receivers;
+	private final CommandSender sender;
+	private final UCChannel channel;
+	private final HashMap<CommandSender, UltimateFancy> receivers;
 	private String raw;
 	
 	public PostFormatChatMessageEvent(CommandSender sender, HashMap<CommandSender, UltimateFancy> receivers, UCChannel channel, String raw){

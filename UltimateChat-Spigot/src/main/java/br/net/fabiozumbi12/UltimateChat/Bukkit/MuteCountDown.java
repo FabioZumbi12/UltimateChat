@@ -5,7 +5,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class MuteCountDown extends BukkitRunnable  {	
 	int time;
-	String p;
+	final String p;
 	MuteCountDown(String p, int t){
 		this.p = p;
 		this.time = t*60;

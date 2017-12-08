@@ -33,7 +33,7 @@ public class UltimateFancy {
 
 	private ChatColor lastColor = ChatColor.WHITE;
 	private JSONArray constructor;
-	private HashMap<String, Boolean> lastformats;
+	private final HashMap<String, Boolean> lastformats;
 	private List<JSONObject> workingGroup;
 	private List<ExtraElement> pendentElements;
 	
@@ -42,9 +42,9 @@ public class UltimateFancy {
 	 */
 	public UltimateFancy(){
 		constructor = new JSONArray();
-		workingGroup = new ArrayList<JSONObject>();
-		lastformats = new HashMap<String, Boolean>();
-		pendentElements = new ArrayList<ExtraElement>();
+		workingGroup = new ArrayList<>();
+		lastformats = new HashMap<>();
+		pendentElements = new ArrayList<>();
 	}
 	
 	/**Creates a new instance of UltimateFancy with an initial text.
@@ -52,9 +52,9 @@ public class UltimateFancy {
 	 */
 	public UltimateFancy(String text){
 		constructor = new JSONArray();
-		workingGroup = new ArrayList<JSONObject>();
-		lastformats = new HashMap<String, Boolean>();
-		pendentElements = new ArrayList<ExtraElement>();
+		workingGroup = new ArrayList<>();
+		lastformats = new HashMap<>();
+		pendentElements = new ArrayList<>();
 		text(text);
 	}
 	
@@ -94,7 +94,7 @@ public class UltimateFancy {
 	}
 	*/
 	private List<JSONObject> parseColors(String text){
-		List<JSONObject> jsonList = new ArrayList<JSONObject>();
+		List<JSONObject> jsonList = new ArrayList<>();
 		for (String part:text.split("(?="+ChatColor.COLOR_CHAR+")")){
 			JSONObject workingText = new JSONObject();	
 						
@@ -142,7 +142,7 @@ public class UltimateFancy {
 	 * @param text
 	 * @return instance of same {@link UltimateFancy}.
 	 */
-	public UltimateFancy textAtStart(String text){		
+	public void textAtStart(String text){
 		JSONArray jarray = new JSONArray();		
 		for (JSONObject jobj:parseColors(text)){
 			jarray.add(jobj);
@@ -151,7 +151,6 @@ public class UltimateFancy {
 			jarray.add(jobj);
 		}	
 		this.constructor = jarray;
-		return this;
 	}
 	
 	public UltimateFancy appendObject(JSONObject json){
@@ -159,7 +158,7 @@ public class UltimateFancy {
 		return this;
 	}
 	
-	public UltimateFancy appendString(String jsonObject){
+	public void appendString(String jsonObject){
 		Object obj = JSONValue.parse(jsonObject);
 		if (obj instanceof JSONObject){
 			workingGroup.add((JSONObject)obj);
@@ -174,7 +173,6 @@ public class UltimateFancy {
 				}
 			}			
 		}
-		return this;
 	}
 	
 	public List<JSONObject> getWorkingElements(){
@@ -205,17 +203,16 @@ public class UltimateFancy {
 		return this;
 	}
 	
-	public UltimateFancy appendAtFirst(JSONObject json){
+	public void appendAtFirst(JSONObject json){
 		JSONArray jarray = new JSONArray();
 		jarray.add(json);
 		for (JSONObject jobj:getStoredElements()){
 			jarray.add(jobj);
 		}		
 		this.constructor = jarray;
-		return this;
 	}
 	
-	public UltimateFancy appendAtEnd(String json){
+	public void appendAtEnd(String json){
 		Object obj = JSONValue.parse(json);
 		if (obj instanceof JSONObject){
 			appendAtEnd((JSONObject)obj);
@@ -226,12 +223,10 @@ public class UltimateFancy {
 				appendAtEnd((JSONObject)JSONValue.parse(object.toString()));			
 			}			
 		}
-		return this;
 	}
 	
 	public UltimateFancy appendAtEnd(JSONObject json){
-		List<JSONObject> jarray = new ArrayList<JSONObject>();		
-		jarray.addAll(getWorkingElements());
+        List<JSONObject> jarray = new ArrayList<>(getWorkingElements());
 		jarray.add(json);
 		this.workingGroup = jarray;
 		return this;
@@ -239,7 +234,7 @@ public class UltimateFancy {
 	
 	public List<UltimateFancy> getFancyElements(){
 		next();
-		List<UltimateFancy> list = new ArrayList<UltimateFancy>();
+		List<UltimateFancy> list = new ArrayList<>();
 		for (Object obj:this.constructor){
 			if (obj instanceof JSONObject){
 				list.add(new UltimateFancy().appendAtEnd((JSONObject)obj));
@@ -253,7 +248,7 @@ public class UltimateFancy {
 		return this;
 	}
 	
-	private JSONObject filterColors(JSONObject obj){
+	private void filterColors(JSONObject obj){
 		for (Entry<String, Boolean> format:lastformats.entrySet()){
 			obj.put(format.getKey(), format.getValue());
 		}
@@ -278,7 +273,6 @@ public class UltimateFancy {
 				obj.put(format, false);
 			}
 		}
-		return obj;
 	}
 	
 	/**Send the JSON message to a {@link CommandSender} via {@code tellraw}.
@@ -326,8 +320,8 @@ public class UltimateFancy {
 				}
 			}
 		}		
-		workingGroup = new ArrayList<JSONObject>();
-		pendentElements = new ArrayList<ExtraElement>();		
+		workingGroup = new ArrayList<>();
+		pendentElements = new ArrayList<>();
 		return this;
 	}
 	
@@ -344,18 +338,16 @@ public class UltimateFancy {
 	 * @param cmd {@link String}
 	 * @return instance of same {@link UltimateFancy}.
 	 */
-	public UltimateFancy clickSuggestCmd(String cmd){
+	public void clickSuggestCmd(String cmd){
 		pendentElements.add(new ExtraElement("clickEvent",parseJson("suggest_command", cmd)));
-		return this;
 	}
 	
 	/**URL to open on external browser when click this text.
 	 * @param url {@link String}
 	 * @return instance of same {@link UltimateFancy}.
 	 */
-	public UltimateFancy clickOpenURL(String url){
+	public void clickOpenURL(String url){
 		pendentElements.add(new ExtraElement("clickEvent",parseJson("open_url", url)));
-		return this;
 	}
 	
 	/**Text to show on hover the mouse under this text.
@@ -531,8 +523,8 @@ public class UltimateFancy {
 	 *
 	 */
 	public class ExtraElement{
-		private String action;
-		private JSONObject json;
+		private final String action;
+		private final JSONObject json;
 		
 		public ExtraElement(String action, JSONObject json){
 			this.action = action;

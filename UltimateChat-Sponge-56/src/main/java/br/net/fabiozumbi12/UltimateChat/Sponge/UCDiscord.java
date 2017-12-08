@@ -96,7 +96,7 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
 						}
 						try {
 							text.onClick(TextActions.openUrl(new URL(e.getMessage().getAttachments().get(0).getUrl())));
-						} catch (MalformedURLException e1) {}
+						} catch (MalformedURLException ignored) {}
 						text.onHover(TextActions.showText(Text.of(e.getMessage().getAttachments().get(0).getFileName())));
 					} else {
 						text.append(Text.of(message));
@@ -186,9 +186,9 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
 				Role role = e.getMember().getRoles().get(0);
 				if (role.getColor() != null){
 					format = format.replace("{dd-rolecolor}", fromRGB(
-							role.getColor().getRed(),
-							role.getColor().getGreen(),
-							role.getColor().getBlue()).toString());
+                            role.getColor().getRed(),
+                            role.getColor().getGreen(),
+                            role.getColor().getBlue()));
 				}
 				format = format.replace("{dd-rolename}", role.getName());			
 			}
@@ -212,7 +212,7 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
 	
 	/*   ------ color util --------   */
 	private static String fromRGB(int r, int g, int b) {
-		TreeMap<Integer, String> closest = new TreeMap<Integer, String>();		
+		TreeMap<Integer, String> closest = new TreeMap<>();
 		colorMap.forEach((color, set) -> {
 			int red = Math.abs(r - set.getRed());
 			int green = Math.abs(g - set.getGreen());
@@ -243,23 +243,23 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
 		}
 	}
 	
-	private static Map<String, ColorSet<Integer, Integer, Integer>> colorMap = new HashMap<String, ColorSet<Integer, Integer, Integer>>();
+	private static final Map<String, ColorSet<Integer, Integer, Integer>> colorMap = new HashMap<>();
 	static {
-		colorMap.put("&0", new ColorSet<Integer, Integer, Integer>(0, 0, 0));
-		colorMap.put("&1", new ColorSet<Integer, Integer, Integer>(0, 0, 170));
-		colorMap.put("&2", new ColorSet<Integer, Integer, Integer>(0, 170, 0));
-		colorMap.put("&3", new ColorSet<Integer, Integer, Integer>(0, 170, 170));
-		colorMap.put("&4", new ColorSet<Integer, Integer, Integer>(170, 0, 0));
-		colorMap.put("&5", new ColorSet<Integer, Integer, Integer>(170, 0, 170));
-		colorMap.put("&6", new ColorSet<Integer, Integer, Integer>(255, 170, 0));
-		colorMap.put("&7", new ColorSet<Integer, Integer, Integer>(170, 170, 170));
-		colorMap.put("&8", new ColorSet<Integer, Integer, Integer>(85, 85, 85));
-		colorMap.put("&9", new ColorSet<Integer, Integer, Integer>(85, 85, 255));
-		colorMap.put("&a", new ColorSet<Integer, Integer, Integer>(85, 255, 85));
-		colorMap.put("&b", new ColorSet<Integer, Integer, Integer>(85, 255, 255));
-		colorMap.put("&c", new ColorSet<Integer, Integer, Integer>(255, 85, 85));
-		colorMap.put("&d", new ColorSet<Integer, Integer, Integer>(255, 85, 255));
-		colorMap.put("&e", new ColorSet<Integer, Integer, Integer>(255, 255, 85));
-		colorMap.put("&f", new ColorSet<Integer, Integer, Integer>(255, 255, 255));
+		colorMap.put("&0", new ColorSet<>(0, 0, 0));
+		colorMap.put("&1", new ColorSet<>(0, 0, 170));
+		colorMap.put("&2", new ColorSet<>(0, 170, 0));
+		colorMap.put("&3", new ColorSet<>(0, 170, 170));
+		colorMap.put("&4", new ColorSet<>(170, 0, 0));
+		colorMap.put("&5", new ColorSet<>(170, 0, 170));
+		colorMap.put("&6", new ColorSet<>(255, 170, 0));
+		colorMap.put("&7", new ColorSet<>(170, 170, 170));
+		colorMap.put("&8", new ColorSet<>(85, 85, 85));
+		colorMap.put("&9", new ColorSet<>(85, 85, 255));
+		colorMap.put("&a", new ColorSet<>(85, 255, 85));
+		colorMap.put("&b", new ColorSet<>(85, 255, 255));
+		colorMap.put("&c", new ColorSet<>(255, 85, 85));
+		colorMap.put("&d", new ColorSet<>(255, 85, 255));
+		colorMap.put("&e", new ColorSet<>(255, 255, 85));
+		colorMap.put("&f", new ColorSet<>(255, 255, 255));
 	}
 }

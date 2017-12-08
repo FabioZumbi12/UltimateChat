@@ -3,6 +3,8 @@ package br.net.fabiozumbi12.UltimateChat.Bukkit;
 import me.clip.placeholderapi.external.EZPlaceholderHook;
 import org.bukkit.entity.Player;
 
+import java.util.Arrays;
+
 public class UCPlaceHolders extends EZPlaceholderHook {
 
 	public UCPlaceHolders(UChat plugin) {
@@ -25,7 +27,7 @@ public class UCPlaceHolders extends EZPlaceholderHook {
 			text = UChat.get().tellPlayers.get(p.getName());
 		}
 		if (arg.equals("player_ignoring") && UChat.get().ignoringPlayer.containsKey(p.getName())){
-			text = UChat.get().ignoringPlayer.get(p.getName()).toArray().toString();
+			text = Arrays.toString(UChat.get().ignoringPlayer.get(p.getName()).toArray());
 		}
 		if (arg.equals("default_channel")){
 			text = UChat.get().getDefChannel().getName();

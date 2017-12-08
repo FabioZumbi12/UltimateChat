@@ -18,13 +18,13 @@ import java.util.HashMap;
 public class SendChannelMessageEvent extends AbstractEvent implements Cancellable, Event {
 	
 	private boolean cancelled;
-	private CommandSource sender;
+	private final CommandSource sender;
 	private Text msg;
 	private UCChannel channel;
 	private String[] defBuilder;
 	private String[] defFormat;
 	private HashMap<String,String> registeredTags;
-	private boolean cancelIncoming;
+	private final boolean cancelIncoming;
 	
 	public SendChannelMessageEvent(HashMap<String,String> registeredReplacers, String[] defFormat, CommandSource sender, UCChannel channel, Text msg, boolean cancelIncoming){
 		this.sender = sender;

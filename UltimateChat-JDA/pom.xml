@@ -95,7 +95,6 @@
         <executions>
           <execution>
             <id>deploying</id>
-            <phase/>
           </execution>
         </executions>
        </plugin>

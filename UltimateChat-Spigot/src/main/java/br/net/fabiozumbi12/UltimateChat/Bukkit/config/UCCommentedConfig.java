@@ -7,13 +7,10 @@ import org.bukkit.configuration.InvalidConfigurationException;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class UCCommentedConfig {
-    private HashMap<String, String> comments;
+    private final HashMap<String, String> comments;
 
     UCCommentedConfig(){
         this.comments = new HashMap<>();
@@ -106,14 +103,14 @@ public class UCCommentedConfig {
                 "When finish, get the name of your tag and put on \"general.default-tag-build\" \n" +
                 "or on channel builder on \"channels\" folder.");
         setDefault("tags.group-prefix.format", "&7[{group-prefix}&7]&r", null);
-        setDefault("tags.group-prefix.hover-messages", Arrays.asList("&bRank: &e{prim-group}"), null);
+        setDefault("tags.group-prefix.hover-messages", Collections.singletonList("&bRank: &e{prim-group}"), null);
 
         setDefault("tags.playername.format", "{playername}", null);
         setDefault("tags.playername.click-cmd", "tpa {playername}", null);
-        setDefault("tags.playername.hover-messages", Arrays.asList("&7Click to send teleport request"), null);
+        setDefault("tags.playername.hover-messages", Collections.singletonList("&7Click to send teleport request"), null);
 
         setDefault("tags.nickname.format", "{nickname}", null);
-        setDefault("tags.nickname.hover-messages", Arrays.asList("&6Realname: {playername}"), null);
+        setDefault("tags.nickname.hover-messages", Collections.singletonList("&6Realname: {playername}"), null);
 
         setDefault("tags.group-suffix.format", "&r{group-suffix}: ", null);
 
@@ -138,12 +135,12 @@ public class UCCommentedConfig {
                 "&3Click for more info about this player"), null);
 
         setDefault("tags.marry-tag.format", "{marry-prefix}{marry-suffix}", null);
-        setDefault("tags.marry-tag.hover-messages", Arrays.asList("&cMarried with {marry-partner}"), null);
+        setDefault("tags.marry-tag.hover-messages", Collections.singletonList("&cMarried with {marry-partner}"), null);
 
         setDefault("tags.admin-chat.format", "&b[&r{playername}&b] ", null);
 
         setDefault("tags.bungee.format", "&7[{world}]{ch-color}[Bungee-{bungee-id}] {playername}: &7", null);
-        setDefault("tags.bungee.hover-messages", Arrays.asList("{ch-color}Sent from server -{bungee-id}-"), null);
+        setDefault("tags.bungee.hover-messages", Collections.singletonList("{ch-color}Sent from server -{bungee-id}-"), null);
 
         setDefault("tags.factions.format", "&7[{fac-relation-color}{fac-relation-name}&7]&r", null);
         setDefault("tags.factions.hover-messages", Arrays.asList("&7Faction name: {fac-relation-color}{fac-name}","&7Motd: &a{fac-motd}","&7Description: {fac-description}"), null);
@@ -328,40 +325,40 @@ public class UCCommentedConfig {
 
         for (String line:UChat.get().getConfig().getKeys(true)){
             String[] key = line.split("\\"+UChat.get().getConfig().options().pathSeparator());
-            String spaces = "";
+            StringBuilder spaces = new StringBuilder();
             for (int i = 0; i < key.length; i++){
                 if (i == 0) continue;
-                spaces = spaces+" ";
+                spaces.append(" ");
             }
             if (comments.containsKey(line)){
-                if (spaces.isEmpty()){
-                    b.append("\n# "+comments.get(line).replace("\n", "\n# ")).append('\n');
+                if (spaces.length() == 0){
+                    b.append("\n# ").append(comments.get(line).replace("\n", "\n# ")).append('\n');
                 } else {
-                    b.append(spaces+"# "+comments.get(line).replace("\n", "\n"+spaces+"# ")).append('\n');
+                    b.append(spaces).append("# ").append(comments.get(line).replace("\n", "\n" + spaces + "# ")).append('\n');
                 }
             }
             Object value = UChat.get().getConfig().get(line);
             if (!UChat.get().getConfig().isConfigurationSection(line)){
                 if (value instanceof String){
-                    b.append(spaces+key[key.length-1]+": '"+value+"'\n");
+                    b.append(spaces).append(key[key.length - 1]).append(": '").append(value).append("'\n");
                 } else if (value instanceof List<?>) {
                     if (((List<?>)value).isEmpty()){
-                        b.append(spaces+key[key.length-1]+": []\n");
+                        b.append(spaces).append(key[key.length - 1]).append(": []\n");
                     } else {
-                        b.append(spaces+key[key.length-1]+":\n");
+                        b.append(spaces).append(key[key.length - 1]).append(":\n");
                         for (Object lineCfg:(List<?>)value){
                             if (lineCfg instanceof String){
-                                b.append(spaces+"- '"+lineCfg+"'\n");
+                                b.append(spaces).append("- '").append(lineCfg).append("'\n");
                             } else {
-                                b.append(spaces+"- "+lineCfg+"\n");
+                                b.append(spaces).append("- ").append(lineCfg).append("\n");
                             }
                         }
                     }
                 } else {
-                    b.append(spaces+key[key.length-1]+": "+value+"\n");
+                    b.append(spaces).append(key[key.length - 1]).append(": ").append(value).append("\n");
                 }
             } else {
-                b.append(spaces+key[key.length-1]+":\n");
+                b.append(spaces).append(key[key.length - 1]).append(":\n");
             }
         }
 

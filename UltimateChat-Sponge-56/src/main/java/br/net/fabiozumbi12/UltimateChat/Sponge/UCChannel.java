@@ -23,10 +23,10 @@ import java.util.Map.Entry;
  *
  */
 public class UCChannel {
-	private List<String> ignoring = new ArrayList<>();
-	private List<String> mutes = new ArrayList<>();
+	private final List<String> ignoring = new ArrayList<>();
+	private final List<String> mutes = new ArrayList<>();
 	private List<String> members = new ArrayList<>();
-	private Properties properties = new Properties();
+	private final Properties properties = new Properties();
 	
 	private void addDefaults() {
 		properties.put("name", "");
@@ -97,9 +97,7 @@ public class UCChannel {
 	
 	public UCChannel(Map<String, Object> props) {
 		addDefaults();
-		properties.keySet().stream().filter((key)->props.containsKey(key)).forEach((nkey)->{
-			properties.put(nkey, props.get(nkey));
-		});
+		properties.keySet().stream().filter(props::containsKey).forEach((nkey)-> properties.put(nkey, props.get(nkey)));
 	}
 
 	public Properties getProperties(){
@@ -182,24 +180,24 @@ public class UCChannel {
 		return this.members;
 	}
 
-	public boolean addMember(CommandSource member) {
-		return addMember(member.getName());
+	public void addMember(CommandSource member) {
+		addMember(member.getName());
 	}
 
-	public boolean addMember(String member) {
+	public void addMember(String member) {
 		for (UCChannel ch:UChat.get().getChannels().values()){
 			ch.removeMember(member);
 		}
-		return this.members.add(member);
+		this.members.add(member);
 	}
 
-	public boolean removeMember(CommandSource member) {
-		return removeMember(member.getName());
+	public void removeMember(CommandSource member) {
+		removeMember(member.getName());
 	}
 
-    public boolean removeMember(String member) {
-        return this.members.remove(member);
-    }
+    public void removeMember(String member) {
+		this.members.remove(member);
+	}
 
 	public void clearMembers(){
 		this.members.clear();
@@ -346,7 +344,7 @@ public class UCChannel {
 		if (direct){
 			for (Player p:Sponge.getServer().getOnlinePlayers()){
 				UCChannel chp = UChat.get().getPlayerChannel(p);
-				if (UChat.get().getPerms().channelReadPerm(p, this) && !this.isIgnoring(p.getName()) && (this.neeFocus() && chp.equals(this) || !this.neeFocus())){
+				if (UChat.get().getPerms().channelReadPerm(p, this) && !this.isIgnoring(p.getName()) && (!this.neeFocus() || chp.equals(this))){
 					UChat.get().getLogger().timings(timingType.START, "UCChannel#sendMessage()|Direct Message");
 					p.sendMessage(message);					
 				}
@@ -379,7 +377,7 @@ public class UCChannel {
 		if (direct){			
 			for (Player p:Sponge.getServer().getOnlinePlayers()){
 				UCChannel chp = UChat.get().getPlayerChannel(p);
-				if (UChat.get().getPerms().channelReadPerm(p, this) && !this.isIgnoring(p.getName()) && (this.neeFocus() && chp.equals(this) || !this.neeFocus())){
+				if (UChat.get().getPerms().channelReadPerm(p, this) && !this.isIgnoring(p.getName()) && (!this.neeFocus() || chp.equals(this))){
 					UChat.get().getLogger().timings(timingType.START, "UCChannel#sendMessage()|Direct Message");
 					p.sendMessage(message);					
 				}

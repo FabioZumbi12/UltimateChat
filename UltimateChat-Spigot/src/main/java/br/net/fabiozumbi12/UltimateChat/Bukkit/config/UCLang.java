@@ -16,14 +16,14 @@ import java.util.TreeSet;
 
 public class UCLang {
 	
-	private static final HashMap<Player, String> DelayedMessage = new HashMap<Player, String>();
-	private static Properties BaseLang = new Properties();
-	private static Properties Lang = new Properties();
+	private static final HashMap<Player, String> DelayedMessage = new HashMap<>();
+	private static final Properties BaseLang = new Properties();
+	private static final Properties Lang = new Properties();
 	private String pathLang; 
 	private String resLang; 
 	
 	public SortedSet<String> helpStrings(){
-		SortedSet<String> values = new TreeSet<String>();
+		SortedSet<String> values = new TreeSet<>();
 		for (Object help:Lang.keySet()){
 			if (help.toString().startsWith("help.cmd.")){
 				String helpStr = help.toString().replace("help.cmd.", "");
@@ -137,17 +137,15 @@ public class UCLang {
 		}		
 		
 		DelayedMessage.put(p, key);
-		Bukkit.getScheduler().scheduleSyncDelayedTask(UChat.get(), new Runnable() { 
-			public void run() {
-				if (DelayedMessage.containsKey(p)){
-					DelayedMessage.remove(p);
-				}
-				} 
-			}, 20);		
+		Bukkit.getScheduler().scheduleSyncDelayedTask(UChat.get(), () -> {
+            if (DelayedMessage.containsKey(p)){
+                DelayedMessage.remove(p);
+            }
+            }, 20);
 	}
 	
 	public void sendMessage(CommandSender sender, String key){		
-		if (sender instanceof Player && DelayedMessage.containsKey((Player)sender) && DelayedMessage.get((Player)sender).equals(key)){
+		if (sender instanceof Player && DelayedMessage.containsKey(sender) && DelayedMessage.get(sender).equals(key)){
 			return;
 		}
 		
@@ -162,13 +160,11 @@ public class UCLang {
 		if (sender instanceof Player){
 			final Player p = (Player)sender;
 			DelayedMessage.put(p, key);
-			Bukkit.getScheduler().scheduleSyncDelayedTask(UChat.get(), new Runnable() { 
-				public void run() {
-					if (DelayedMessage.containsKey(p)){
-						DelayedMessage.remove(p);
-					}
-					} 
-				}, 20);	
+			Bukkit.getScheduler().scheduleSyncDelayedTask(UChat.get(), () -> {
+                if (DelayedMessage.containsKey(p)){
+                    DelayedMessage.remove(p);
+                }
+                }, 20);
 		}
 		
 	}

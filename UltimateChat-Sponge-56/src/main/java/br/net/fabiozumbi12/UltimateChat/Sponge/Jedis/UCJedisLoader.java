@@ -20,11 +20,11 @@ import java.util.HashMap;
 import java.util.List;
 
 public class UCJedisLoader {
-	private JedisPool pool;
-	private String[] channels;
-	private ChatChannel channel;
-	protected HashMap<String, String> tellPlayers = new HashMap<String, String>();
-	private String thisId;
+	private final JedisPool pool;
+	private final String[] channels;
+	private final ChatChannel channel;
+	protected final HashMap<String, String> tellPlayers = new HashMap<>();
+	private final String thisId;
 	
 	protected JedisPool getPool(){
 		return this.pool;
@@ -53,16 +53,13 @@ public class UCJedisLoader {
 		
 		try {
 			Jedis jedis = this.pool.getResource();
-			new Thread(new Runnable() {
-		        @Override
-		        public void run() {
-		            try {
-		            	jedis.subscribe(channel, newChannels);
-		            } catch (Exception e) {
-		                e.printStackTrace();
-		            }
-		        }
-		    }).start();   
+			new Thread(() -> {
+                try {
+                    jedis.subscribe(channel, newChannels);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }).start();
 		} catch (JedisConnectionException e){
 			UChat.get().getLogger().warning("JEDIS not conected! Try again with /chat reload, or check the status of your Redis server.");
 			return;
@@ -91,57 +88,48 @@ public class UCJedisLoader {
 		tellPlayers.put(tellReceiver, sender.getName());
 		
 		if (Arrays.asList(channels).contains("tellsend")){
-			Sponge.getScheduler().createAsyncExecutor(UChat.get()).execute(new Runnable(){
-				@Override
-				public void run() {
-					try {
-						Jedis jedis = pool.getResource();
-						//string 0 1 2
-						jedis.publish("tellsend", thisId+"$"+tellReceiver+"$"+TextSerializers.JSON.serialize(text.build()));
-						jedis.quit();
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}	    		
-	    	});
+			Sponge.getScheduler().createAsyncExecutor(UChat.get()).execute(() -> {
+                try {
+                    Jedis jedis = pool.getResource();
+                    //string 0 1 2
+                    jedis.publish("tellsend", thisId+"$"+tellReceiver+"$"+TextSerializers.JSON.serialize(text.build()));
+                    jedis.quit();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
 		}
 	}
 	
 	public void sendRawMessage(Text value){
 		
 		if (Arrays.asList(channels).contains("generic")){
-			Sponge.getScheduler().createAsyncExecutor(UChat.get()).execute(new Runnable(){
-				@Override
-				public void run() {
-					try {
-						Jedis jedis = pool.getResource();
-						//string 0 1
-						jedis.publish("generic", thisId+"$"+TextSerializers.JSON.serialize(value));
-						jedis.quit();
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}	    		
-	    	});
+			Sponge.getScheduler().createAsyncExecutor(UChat.get()).execute(() -> {
+                try {
+                    Jedis jedis = pool.getResource();
+                    //string 0 1
+                    jedis.publish("generic", thisId+"$"+TextSerializers.JSON.serialize(value));
+                    jedis.quit();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
 		}		
 	}
 	
 	public void sendMessage(String channel, Text value){
 		
 		if (Arrays.asList(channels).contains(channel)){
-			Sponge.getScheduler().createAsyncExecutor(UChat.get().instance()).execute(new Runnable(){
-				@Override
-				public void run() {
-					try {
-						Jedis jedis = pool.getResource();
-						//string 0 1
-						jedis.publish(channel, thisId+"$"+TextSerializers.JSON.serialize(value));
-						jedis.quit();
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}	    		
-	    	});
+			Sponge.getScheduler().createAsyncExecutor(UChat.get().instance()).execute(() -> {
+                try {
+                    Jedis jedis = pool.getResource();
+                    //string 0 1
+                    jedis.publish(channel, thisId+"$"+TextSerializers.JSON.serialize(value));
+                    jedis.quit();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
 		}		
 	}
 

@@ -20,8 +20,8 @@ import java.util.List;
 public class ChatMessageEvent extends Event implements Cancellable {
 	private static final HandlerList handlers = new HandlerList();
 	private boolean cancel = false;
-	private HashMap<String, String> tags;
-	private CommandSender sender;
+	private final HashMap<String, String> tags;
+	private final CommandSender sender;
 	private String message;
 	
 	public ChatMessageEvent(CommandSender sender, HashMap<String, String> tags, String message){
@@ -63,7 +63,7 @@ public class ChatMessageEvent extends Event implements Cancellable {
 	}
 	
 	public List<String> getTags(){
-		return new ArrayList<String>(tags.keySet());
+		return new ArrayList<>(tags.keySet());
 	}
 	
 	@Override

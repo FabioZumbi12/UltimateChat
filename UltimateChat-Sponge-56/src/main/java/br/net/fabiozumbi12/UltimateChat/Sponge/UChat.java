@@ -128,15 +128,15 @@ public class UChat {
 	@Inject
     public GuiceObjectMapperFactory factory;
 	
-	protected static HashMap<String,String> tempChannels = new HashMap<String,String>();
-	protected static HashMap<String,String> tellPlayers = new HashMap<String,String>();
-	protected static HashMap<String,String> tempTellPlayers = new HashMap<String,String>();
-	protected static HashMap<String,String> respondTell = new HashMap<String,String>();
-	protected static HashMap<String,List<String>> ignoringPlayer = new HashMap<String,List<String>>();
-	protected List<String> mutes = new ArrayList<String>();
-	public static List<String> isSpy = new ArrayList<String>();	
-	protected static List<String> command = new ArrayList<String>();
-	protected HashMap<String, Integer> timeMute = new HashMap<String, Integer>();
+	protected static final HashMap<String,String> tempChannels = new HashMap<>();
+	protected static final HashMap<String,String> tellPlayers = new HashMap<>();
+	protected static final HashMap<String,String> tempTellPlayers = new HashMap<>();
+	protected static final HashMap<String,String> respondTell = new HashMap<>();
+	protected static final HashMap<String,List<String>> ignoringPlayer = new HashMap<>();
+	protected final List<String> mutes = new ArrayList<>();
+	public static final List<String> isSpy = new ArrayList<>();
+	protected static final List<String> command = new ArrayList<>();
+	protected final HashMap<String, Integer> timeMute = new HashMap<>();
 
 	@Listener
     public void onServerStart(GamePostInitializationEvent event) {	
@@ -221,7 +221,7 @@ public class UChat {
 			try {
 				this.jedis = new UCJedisLoader(this.config.root().jedis.ip, 
 						this.config.root().jedis.port, 
-						this.config.root().jedis.pass, new ArrayList<UCChannel>(getChannels().values()));
+						this.config.root().jedis.pass, new ArrayList<>(getChannels().values()));
 			} catch (Exception e){
 				this.logger.warning("Could not connect to REDIS server! Check ip, password and port, and if the REDIS server is running.");
 			}
@@ -298,16 +298,16 @@ public class UChat {
 	public void unMuteInAllChannels(String player){
 		for (UCChannel ch:UChat.get().getChannels().values()){
 			if (ch.isMuted(player)){				
-				ch.unMuteThis(player);;
-			}
+				ch.unMuteThis(player);
+            }
 		}
 	}
 	
 	public void muteInAllChannels(String player){
 		for (UCChannel ch:UChat.get().getChannels().values()){
 			if (!ch.isMuted(player)){				
-				ch.muteThis(player);;
-			}
+				ch.muteThis(player);
+            }
 		}
 	}
 	
@@ -320,7 +320,7 @@ public class UChat {
 	}
 	
 	public List<String> getChAliases(){
-		List<String> aliases = new ArrayList<String>();
+		List<String> aliases = new ArrayList<>();
 		for (List<String> alias:UChat.get().getChannels().keySet()){
 			if (alias == null){
 				continue;

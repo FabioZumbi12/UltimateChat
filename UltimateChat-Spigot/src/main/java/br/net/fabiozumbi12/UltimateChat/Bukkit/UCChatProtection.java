@@ -13,9 +13,9 @@ import java.util.regex.Pattern;
 
 class UCChatProtection implements Listener{
 	
-	private HashMap<Player,String> chatSpam = new HashMap<Player,String>();
-	private HashMap<String,Integer> msgSpam = new HashMap<String,Integer>();
-	private HashMap<Player,Integer> UrlSpam = new HashMap<Player,Integer>();
+	private final HashMap<Player,String> chatSpam = new HashMap<>();
+	private final HashMap<String,Integer> msgSpam = new HashMap<>();
+	private final HashMap<Player,Integer> UrlSpam = new HashMap<>();
 
 	@EventHandler
 	public void onPlayerChat(SendChannelMessageEvent e){
@@ -45,13 +45,11 @@ class UCChatProtection implements Listener{
 			//check spam messages
 			if (!chatSpam.containsKey(p)){
 				chatSpam.put(p, msg);				
-				Bukkit.getScheduler().scheduleSyncDelayedTask(UChat.get(), new Runnable() { 
-					public void run() {
-						if (chatSpam.containsKey(p)){
-							chatSpam.remove(p);
-						}						
-					}						
-				},UChat.get().getUCConfig().getProtInt("chat-protection.antispam.time-between-messages")*20);
+				Bukkit.getScheduler().scheduleSyncDelayedTask(UChat.get(), () -> {
+                    if (chatSpam.containsKey(p)){
+                        chatSpam.remove(p);
+                    }
+                },UChat.get().getUCConfig().getProtInt("chat-protection.antispam.time-between-messages")*20);
 			} else if (!chatSpam.get(p).equalsIgnoreCase(msg)){				
 				UChat.get().getLang().sendMessage(p, UChat.get().getUCConfig().getProtMsg("chat-protection.antispam.cooldown-msg"));
 				e.setCancelled(true);
@@ -62,13 +60,11 @@ class UCChatProtection implements Listener{
 			if (!msgSpam.containsKey(msg)){
 				msgSpam.put(msg, 1);
 				final String nmsg = msg;
-				Bukkit.getScheduler().scheduleSyncDelayedTask(UChat.get(), new Runnable() { 
-					public void run() {
-						if (msgSpam.containsKey(nmsg)){
-							msgSpam.remove(nmsg);
-						}						
-					}						
-					},UChat.get().getUCConfig().getProtInt("chat-protection.antispam.time-between-same-messages")*20);
+				Bukkit.getScheduler().scheduleSyncDelayedTask(UChat.get(), () -> {
+                    if (msgSpam.containsKey(nmsg)){
+                        msgSpam.remove(nmsg);
+                    }
+                },UChat.get().getUCConfig().getProtInt("chat-protection.antispam.time-between-same-messages")*20);
 			} else {
 				msgSpam.put(msg, msgSpam.get(msg)+1);
 				e.setCancelled(true);				

@@ -4,28 +4,22 @@ import br.net.fabiozumbi12.UltimateChat.Bukkit.UCChannel;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UCUtil;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UChat;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.Map.Entry;
 
 public class UCConfig {
 
     private static UCCommentedConfig comConfig;
 	private static YamlConfiguration Prots = new YamlConfiguration();
-	private UChat plugin;
+	private final UChat plugin;
 		
-	public UCConfig(UChat plugin) throws IOException, InvalidConfigurationException {
+	public UCConfig(UChat plugin) throws IOException {
 	    this.plugin = plugin;
         File main = UChat.get().getDataFolder();
         File protections = new File(UChat.get().getDataFolder(),"protections.yml");
@@ -48,7 +42,7 @@ public class UCConfig {
         /*------------------------------------------------------------------------------------*/
 
         //load protections file
-        Prots = updateFile(protections, "assets/ultimatechat/protections.yml");
+        Prots = updateFile(protections);
 
         /* Load Channels */
         loadChannels();
@@ -70,14 +64,14 @@ public class UCConfig {
         } 
 		
 		if (UChat.get().getChannels() == null){
-			UChat.get().setChannels(new HashMap<List<String>,UCChannel>());
+			UChat.get().setChannels(new HashMap<>());
 		}
 		
         File[] listOfFiles = chfolder.listFiles();
         
         YamlConfiguration channel = new YamlConfiguration();
         
-        if (listOfFiles.length == 0){
+        if (Objects.requireNonNull(listOfFiles).length == 0){
         	//create default channels
         	File g = new File(chfolder, "global.yml"); 
         	channel = YamlConfiguration.loadConfiguration(g);
@@ -107,7 +101,7 @@ public class UCConfig {
         	listOfFiles = chfolder.listFiles();
         }
         
-		for (File file:listOfFiles){
+		for (File file: Objects.requireNonNull(listOfFiles)){
 			if (file.getName().endsWith(".yml")){
 				channel = YamlConfiguration.loadConfiguration(file);            				
 				UCChannel ch = new UCChannel(channel.getValues(true));
@@ -170,9 +164,7 @@ public class UCConfig {
 				+ "  allow-server-cmds: false - Use this channel to send commands from discord > minecraft.\n"
 				+ "  channelID: '' - The ID of your Discord Channel. Enable debug on your discord to get the channel ID.\n");
 		
-		ch.getProperties().entrySet().forEach((map)->{
-			chFile.set((String) map.getKey(), map.getValue());			
-		});
+		ch.getProperties().forEach((key, value) -> chFile.set((String) key, value));
 		chFile.save(defch);		
 		
 		if (UChat.get().getChannel(ch.getName()) != null){
@@ -181,9 +173,9 @@ public class UCConfig {
 		}
 		UChat.get().getChannels().put(Arrays.asList(ch.getName().toLowerCase(), ch.getAlias().toLowerCase()), ch);
 	}
-	
+
 	public List<String> getTagList(){
-		List<String> tags = new ArrayList<String>();
+		List<String> tags = new ArrayList<>();
 		for (String key:plugin.getConfig().getKeys(true)){
 			if (key.startsWith("tags.") && key.split("\\.").length == 2){
 				tags.add(key.replace("tags.", ""));
@@ -194,7 +186,7 @@ public class UCConfig {
 		}
 		return tags;
 	}
-		
+
 	public String[] getDefBuilder(){
 		return getString("general.default-tag-builder").replace(" ", "").split(",");
 	}
@@ -230,11 +222,11 @@ public class UCConfig {
     public List<String> getStringList(String key){		
 		return plugin.getConfig().getStringList(key);
 	}
-    
+    /*
     public Material getMaterial(String key){
     	return Material.getMaterial(plugin.getConfig().getString(key));
     }
-    
+    */
     public void save(){
     	try {
             comConfig.saveConfig();
@@ -261,10 +253,12 @@ public class UCConfig {
 		return Prots.getStringList(key);
 	}
 	
-    public boolean containsProtKey(String key){		
-		return Prots.contains(key);
-	}
-    
+// --Commented out by Inspection START (08/12/2017 10:44):
+//    public boolean containsProtKey(String key){
+//		return Prots.contains(key);
+//	}
+// --Commented out by Inspection STOP (08/12/2017 10:44)
+
 	public String getProtString(String key){
 		return Prots.getString(key);
 	}
@@ -277,13 +271,13 @@ public class UCConfig {
 		return ChatColor.translateAlternateColorCodes('&',plugin.getConfig().getString(key));
 	}
 	
-	private static YamlConfiguration updateFile(File saved, String resource){
+	private static YamlConfiguration updateFile(File saved){
 		YamlConfiguration finalyml = new YamlConfiguration();   
 		YamlConfiguration tempProts = new YamlConfiguration();
         try {
         	finalyml.load(saved);
         		      
-        	tempProts.load(new InputStreamReader(UChat.get().getResource(resource), "UTF-8"));
+        	tempProts.load(new InputStreamReader(UChat.get().getResource("assets/ultimatechat/protections.yml"), "UTF-8"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		} 
@@ -298,8 +292,10 @@ public class UCConfig {
         return finalyml;
 	}
 
-	public String getURLTemplate() {
-		return ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("general.URL-template"));
-	}
+// --Commented out by Inspection START (08/12/2017 10:44):
+//	public String getURLTemplate() {
+//		return ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("general.URL-template"));
+//	}
+// --Commented out by Inspection STOP (08/12/2017 10:44)
 }
    

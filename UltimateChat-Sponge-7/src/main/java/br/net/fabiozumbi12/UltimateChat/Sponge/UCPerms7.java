@@ -16,7 +16,7 @@ import java.util.HashSet;
 import java.util.concurrent.ExecutionException;
 
 class UCPerms7 implements UCPerms {
-	private PermissionService permissionService;
+	private final PermissionService permissionService;
 	
 	UCPerms7(){
 		this.permissionService = UChat.get().getGame().getServiceManager().getRegistration(PermissionService.class).get().getProvider();
@@ -50,12 +50,8 @@ class UCPerms7 implements UCPerms {
 		return defCh.equals(ch) || hasPerm(p, "channel."+ch.getName().toLowerCase()+".write");
 	}
 	
-	public boolean canIgnore(CommandSource sender, Object toignore){
-		if (toignore instanceof CommandSource && isAdmin((CommandSource)toignore)){
-			return false;
-		} else {
-			return !sender.hasPermission("uchat.cant-ignore."+ (toignore instanceof Player?((Player)toignore).getName():((UCChannel)toignore).getName()));
-		}
+	public boolean canIgnore(CommandSource sender, Object toignore) {
+		return (!(toignore instanceof CommandSource) || !isAdmin((CommandSource) toignore)) && !sender.hasPermission("uchat.cant-ignore." + (toignore instanceof Player ? ((Player) toignore).getName() : ((UCChannel) toignore).getName()));
 	}
 	
 	public boolean hasPerm(CommandSource p, String perm){
@@ -63,7 +59,7 @@ class UCPerms7 implements UCPerms {
 	}
 		
 	public Subject getGroupAndTag(User player) throws InterruptedException, ExecutionException{
-		HashMap<Integer, Subject> subs = new HashMap<Integer, Subject>();		
+		HashMap<Integer, Subject> subs = new HashMap<>();
 		for (SubjectReference sub:player.getParents()){
 			if (sub.getCollectionIdentifier().equals(getGroups().getIdentifier()) && (sub.getSubjectIdentifier() != null)){
 				Subject subj = sub.resolve().get();

@@ -6,14 +6,14 @@ import org.bukkit.entity.Player;
 import java.util.HashMap;
 
 public class UCVaultCache {
-	static HashMap<String, String[]> playerGroups = new HashMap<String, String[]>();
-	static HashMap<String, String> primaryGroups = new HashMap<String, String>();
+	static final HashMap<String, String[]> playerGroups = new HashMap<>();
+	static final HashMap<String, String> primaryGroups = new HashMap<>();
 	
-	static HashMap<String, String> playerSuffix = new HashMap<String, String>();
-	static HashMap<String, String> playerPrefix = new HashMap<String, String>();
+	static final HashMap<String, String> playerSuffix = new HashMap<>();
+	static final HashMap<String, String> playerPrefix = new HashMap<>();
 	
-	static HashMap<String, String> gSuffix = new HashMap<String, String>();
-	static HashMap<String, String> gPrefix = new HashMap<String, String>();
+	static final HashMap<String, String> gSuffix = new HashMap<>();
+	static final HashMap<String, String> gPrefix = new HashMap<>();
 	
 	public static VaultPerms getVaultPerms(Player sender){		
 		return new VaultPerms(sender);
@@ -25,7 +25,7 @@ public class UCVaultCache {
 }
 
 class VaultChat{
-	private Player sender;
+	private final Player sender;
 	VaultChat(Player sender){
 		this.sender = sender;
 	}
@@ -46,12 +46,7 @@ class VaultChat{
 	
 	private void setTempCacheGSuffix(String sender, String gps){
 		UCVaultCache.gSuffix.put(sender, gps);
-		Bukkit.getScheduler().runTaskLater(UChat.get(), new Runnable(){
-			@Override
-			public void run() {
-				UCVaultCache.gSuffix.remove(sender);
-			}			
-		}, 40);
+		Bukkit.getScheduler().runTaskLater(UChat.get(), () -> UCVaultCache.gSuffix.remove(sender), 40);
 	}
 	
 	
@@ -71,12 +66,7 @@ class VaultChat{
 	
 	private void setTempCacheGPrefix(String sender, String gps){
 		UCVaultCache.gPrefix.put(sender, gps);
-		Bukkit.getScheduler().runTaskLater(UChat.get(), new Runnable(){
-			@Override
-			public void run() {
-				UCVaultCache.gPrefix.remove(sender);
-			}			
-		}, 40);
+		Bukkit.getScheduler().runTaskLater(UChat.get(), () -> UCVaultCache.gPrefix.remove(sender), 40);
 	}
 	
 	
@@ -92,12 +82,7 @@ class VaultChat{
 	
 	private void setTempCacheSuffix(String sender, String suff){
 		UCVaultCache.playerSuffix.put(sender, suff);
-		Bukkit.getScheduler().runTaskLater(UChat.get(), new Runnable(){
-			@Override
-			public void run() {
-				UCVaultCache.playerSuffix.remove(sender);
-			}			
-		}, 40);
+		Bukkit.getScheduler().runTaskLater(UChat.get(), () -> UCVaultCache.playerSuffix.remove(sender), 40);
 	}
 	
 	
@@ -113,17 +98,12 @@ class VaultChat{
 	
 	private void getPlayerPrefix(String sender, String pref){
 		UCVaultCache.playerPrefix.put(sender, pref);
-		Bukkit.getScheduler().runTaskLater(UChat.get(), new Runnable(){
-			@Override
-			public void run() {
-				UCVaultCache.playerPrefix.remove(sender);
-			}			
-		}, 40);
+		Bukkit.getScheduler().runTaskLater(UChat.get(), () -> UCVaultCache.playerPrefix.remove(sender), 40);
 	}
 }
 
 class VaultPerms {	
-	private Player sender;
+	private final Player sender;
 	VaultPerms(Player sender){
 		this.sender = sender;
 	}	
@@ -150,21 +130,11 @@ class VaultPerms {
 	
 	private void setTempCacheGroups(String sender, String[] pgs){
 		UCVaultCache.playerGroups.put(sender, pgs);
-		Bukkit.getScheduler().runTaskLater(UChat.get(), new Runnable(){
-			@Override
-			public void run() {
-				UCVaultCache.playerGroups.remove(sender);
-			}			
-		}, 40);
+		Bukkit.getScheduler().runTaskLater(UChat.get(), () -> UCVaultCache.playerGroups.remove(sender), 40);
 	}
 	
 	private void setTempCachePrimary(String sender, String pmg){
 		UCVaultCache.primaryGroups.put(sender, pmg);
-		Bukkit.getScheduler().runTaskLater(UChat.get(), new Runnable(){
-			@Override
-			public void run() {
-				UCVaultCache.primaryGroups.remove(sender);
-			}			
-		}, 40);
+		Bukkit.getScheduler().runTaskLater(UChat.get(), () -> UCVaultCache.primaryGroups.remove(sender), 40);
 	}
 }
