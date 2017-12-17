@@ -204,7 +204,7 @@ public class UCChannel {
 	}
 
 	public boolean isMember(CommandSource p){
-		return this.members.contains(p);
+		return this.members.contains(p.getName());
 	}
 		
 	public boolean canLock(){

@@ -253,12 +253,6 @@ public class UCCommands {
 				    	if (src instanceof Player){
 				    		Player p = (Player) src;
 				    		if (!args.<UCChannel>getOne("channel").isPresent()){
-				    			StringBuilder channels = new StringBuilder();
-				    			for (UCChannel ch:UChat.get().getChannels().values()){
-				    				if (UChat.get().getPerms().channelWritePerm(p, ch)){
-				    					channels.append(", "+ch.getName());
-				    				}
-				    			}
 				    			throw new CommandException(getHelpChannel(src).build());
 				    		}
 				    		UCChannel ch = args.<UCChannel>getOne("channel").get();							
