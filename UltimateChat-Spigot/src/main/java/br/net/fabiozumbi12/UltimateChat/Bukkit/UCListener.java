@@ -790,7 +790,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 			UChat.get().getUCJDA().sendCommandsToDiscord(UChat.get().getLang().get("discord.command")
 					.replace("{player}", p.getName())
 					.replace("{cmd}", e.getMessage())
-					.replace("{time-now}",sdf.format(cal)));
+					.replace("{time-now}",sdf.format(cal.getTime())));
 		}
 	}
 	

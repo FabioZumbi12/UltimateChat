@@ -482,7 +482,7 @@ public class UCMessages {
 		if (text.contains("{time-now}")){
 			Calendar cal = Calendar.getInstance();
 			SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-			text = text.replace("{time-now}", sdf.format(cal));
+			text = text.replace("{time-now}", sdf.format(cal.getTime()));
 		}
 
 		if (cmdSender instanceof Player){

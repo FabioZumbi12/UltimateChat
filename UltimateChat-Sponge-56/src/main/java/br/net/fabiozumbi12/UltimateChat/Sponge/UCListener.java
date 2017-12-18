@@ -127,7 +127,7 @@ public class UCListener {
 			UChat.get().getUCJDA().sendCommandsToDiscord(UChat.get().getLang().get("discord.command")
 					.replace("{player}", p.getName())
 					.replace("{cmd}", "/"+e.getCommand()+" "+e.getArguments())
-                    .replace("{time-now}",sdf.format(cal)));
+                    .replace("{time-now}",sdf.format(cal.getTime())));
 		}		
 	}	
 	
