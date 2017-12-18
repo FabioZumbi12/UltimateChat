@@ -15,7 +15,9 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.channel.MutableMessageChannel;
 import org.spongepowered.api.text.serializer.TextSerializers;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 
@@ -120,7 +122,12 @@ public class UCListener {
 	@Listener(order = Order.POST)
 	public void onCommand(SendCommandEvent e, @First CommandSource p){
 		if (UChat.get().getUCJDA() != null){
-			UChat.get().getUCJDA().sendCommandsToDiscord(UChat.get().getLang().get("discord.command").replace("{player}", p.getName()).replace("{cmd}", "/"+e.getCommand()+" "+e.getArguments()));				
+            Calendar cal = Calendar.getInstance();
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+			UChat.get().getUCJDA().sendCommandsToDiscord(UChat.get().getLang().get("discord.command")
+					.replace("{player}", p.getName())
+					.replace("{cmd}", "/"+e.getCommand()+" "+e.getArguments())
+                    .replace("{time-now}",sdf.format(cal)));
 		}		
 	}	
 	

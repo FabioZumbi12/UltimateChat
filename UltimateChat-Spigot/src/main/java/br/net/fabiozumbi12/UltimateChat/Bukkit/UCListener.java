@@ -21,6 +21,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class UCListener implements CommandExecutor, Listener, TabCompleter {
@@ -784,7 +785,12 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 	public void onCommand(PlayerCommandPreprocessEvent e){
 		Player p = e.getPlayer();
 		if (UChat.get().getUCJDA() != null){
-			UChat.get().getUCJDA().sendCommandsToDiscord(UChat.get().getLang().get("discord.command").replace("{player}", p.getName()).replace("{cmd}", e.getMessage()));			
+			Calendar cal = Calendar.getInstance();
+			SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+			UChat.get().getUCJDA().sendCommandsToDiscord(UChat.get().getLang().get("discord.command")
+					.replace("{player}", p.getName())
+					.replace("{cmd}", e.getMessage())
+					.replace("{time-now}",sdf.format(cal)));
 		}
 	}
 	

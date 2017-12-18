@@ -21,10 +21,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.Map.Entry;
 
 public class UCMessages {
@@ -84,7 +82,7 @@ public class UCMessages {
 			List<Player> receivers = new ArrayList<>();
 			int noWorldReceived = 0;
 			int vanish = 0;
-			
+
 			//put sender
 			msgPlayers.put(sender, sendMessage(sender, sender, evmsg, ch, false));
 			
@@ -479,8 +477,14 @@ public class UCMessages {
 		}		
 		if (def.length() > 0){
 			text = text.replace("{default-format-full}", def.substring(1));
-		}		
-		
+		}
+
+		if (text.contains("{time-now}")){
+			Calendar cal = Calendar.getInstance();
+			SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+			text = text.replace("{time-now}", sdf.format(cal));
+		}
+
 		if (cmdSender instanceof Player){
 			Player sender = (Player)cmdSender;
 			

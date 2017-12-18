@@ -1,5 +1,6 @@
 package br.net.fabiozumbi12.UltimateChat.Sponge.config;
 
+import jdalib.jda.core.entities.Game;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
@@ -59,6 +60,10 @@ public class MainCategory {
 		public final boolean use = false;
 		@Setting(value="update-status")
 		public final boolean update_status = true;
+		@Setting(value="game-type", comment = "The default status of bot. Available status: DEFAULT, LISTENING, WATCHING and STREAMING")
+		public final String game_type = "DEFAULT";
+        @Setting(value="twitch", comment = "If game-type = STREAMING, set the twitch url.")
+        public final String twitch = "";
 		@Setting
 		public final String token = "";
 		@Setting(value="log-channel-id", comment="Channel id to send server start/stop and player join/leave messages")

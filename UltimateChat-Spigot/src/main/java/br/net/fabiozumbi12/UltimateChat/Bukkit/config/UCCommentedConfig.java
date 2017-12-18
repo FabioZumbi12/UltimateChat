@@ -44,6 +44,8 @@ public class UCCommentedConfig {
         setDefault("discord", null, "Enable the two way chat into discord and minecraft.\nGenerate your bot token following this instructions: https://goo.gl/utfRRv");
         setDefault("discord.use", false, null);
         setDefault("discord.update-status", true, null);
+        setDefault("discord.game-type", "DEFAULT", "The default status of bot. Available status: DEFAULT, LISTENING, WATCHING and STREAMING\"");
+        setDefault("discord.twitch", "", "If game-type = STREAMING, set the twitch url.");
         setDefault("discord.token", "", null);
         setDefault("discord.log-channel-id", "", null);
         setDefault("discord.tell-channel-id", "", "Channel id to spy private messages");
@@ -209,6 +211,7 @@ public class UCCommentedConfig {
                     + "#  - {hand-lore}: Item description (lore);\n"
                     + "#  - {hand-durability}: Item durability;\n"
                     + "#  - {hand-enchants}: Item enchantments;\n"
+                    + "#  - {time-now}: Prints the time now on server;\n"
                     + "\n"
                     + "# Vault:\n"
                     + "#  - {group-prefix}: Get group prefix;\n"
@@ -281,6 +284,7 @@ public class UCCommentedConfig {
                     + "#  - {hand-lore}: Descrição do item(lore);\n"
                     + "#  - {hand-durability}: Durabilidade do item;\n"
                     + "#  - {hand-enchants}: Encantamentos do item;\n"
+                    + "#  - {time-now}: Mostra a hora atual(real) no servidor;\n"
                     + "\n"
                     + "# Vault:\n"
                     + "#  - {group-prefix}: Prefixo do grupo do player;\n"

@@ -37,7 +37,13 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
 			jda = new JDABuilder(AccountType.BOT).setToken(this.uchat.getConfig().root().discord.token).buildBlocking();
 			jda.addEventListener(this);
 			if (plugin.getConfig().root().discord.update_status){
-				jda.getPresence().setGame(Game.of(plugin.getLang().get("discord.game").replace("{online}", String.valueOf(Sponge.getServer().getOnlinePlayers().size()))));
+				Game.GameType type = Game.GameType.valueOf(plugin.getConfig().root().discord.game_type.toUpperCase());
+				if (type.equals(Game.GameType.STREAMING) && Game.isValidStreamingUrl(plugin.getConfig().root().discord.twitch)){
+					jda.getPresence().setGame(Game.of(type, plugin.getLang().get("discord.game").replace("{online}", String.valueOf(Sponge.getServer().getOnlinePlayers().size())), plugin.getConfig().root().discord.twitch));
+				} else {
+					jda.getPresence().setGame(Game.of(type, plugin.getLang().get("discord.game").replace("{online}", String.valueOf(Sponge.getServer().getOnlinePlayers().size()))));
+				}
+
 			}			
 		} catch (LoginException e) {
 			uchat.getLogger().severe("The TOKEN is wrong or empty! Check you config and your token.");

@@ -77,6 +77,7 @@ public class UCConfig{
 					+ " - {hand-lore}: Item description (lore);\n"
 					+ " - {hand-durability}: Item durability;\n"
 					+ " - {hand-enchants}: Item enchantments;\n"
+					+ " - {time-now}: Prints the time now on server;\n"
 					+ "\n"    					
 					+ "Permissions Group Options:\n"
 					+ " - {option_group}: Get the group name;\n"

@@ -28,6 +28,7 @@ import org.spongepowered.api.text.serializer.TextSerializers;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
@@ -565,7 +566,13 @@ public class UCMessages {
 					.replace("{chat_footer}", defFormat[2])
 					.replace("{chat_all}", defFormat[0]+defFormat[1]+defFormat[2]);*/
 		}		
-				
+
+		if (text.contains("{time-now}")){
+            Calendar cal = Calendar.getInstance();
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+            text = text.replace("{time-now}", sdf.format(cal));
+        }
+
 		if (cmdSender instanceof Player){
 			Player sender = (Player)cmdSender;
 			
