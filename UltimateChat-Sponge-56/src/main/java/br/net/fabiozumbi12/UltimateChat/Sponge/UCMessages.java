@@ -506,7 +506,7 @@ public class UCMessages {
 		return msg;
 	}
 	
-	private static String formatTags(String tag, String text, Object cmdSender, Object receiver, String msg, UCChannel ch){	
+	public static String formatTags(String tag, String text, Object cmdSender, Object receiver, String msg, UCChannel ch){
 		if (receiver instanceof CommandSource && tag.equals("message")){			
 			text = text.replace("{message}", mention(cmdSender, receiver, msg));
 			if (UChat.get().getConfig().root().general.item_hand.enable){

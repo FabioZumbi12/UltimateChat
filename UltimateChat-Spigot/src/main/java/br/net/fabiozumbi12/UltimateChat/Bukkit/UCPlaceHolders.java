@@ -1,14 +1,15 @@
 package br.net.fabiozumbi12.UltimateChat.Bukkit;
 
-import me.clip.placeholderapi.external.EZPlaceholderHook;
+import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
 
-public class UCPlaceHolders extends EZPlaceholderHook {
+public class UCPlaceHolders extends PlaceholderExpansion {
 
+    private UChat plugin;
 	public UCPlaceHolders(UChat plugin) {
-		super(plugin, "uchat");
+	    this.plugin = plugin;
 	}
 
 	@Override
@@ -31,7 +32,36 @@ public class UCPlaceHolders extends EZPlaceholderHook {
 		}
 		if (arg.equals("default_channel")){
 			text = UChat.get().getDefChannel().getName();
-		}		
+		}
+        if (arg.startsWith("placeholder_")){
+            String ph = arg.replace("placeholder_","");
+            text = UCMessages.formatTags("", "{"+ph+"}", p, "", "", UChat.get().getPlayerChannel(p));
+        }
 		return text;
 	}
+
+    @Override
+    public boolean canRegister() {
+        return true;
+    }
+
+    @Override
+    public String getIdentifier() {
+        return "uchat";
+    }
+
+    @Override
+    public String getPlugin() {
+        return null;
+    }
+
+    @Override
+    public String getAuthor() {
+        return "FabioZumbi12";
+    }
+
+    @Override
+    public String getVersion() {
+        return this.plugin.getPDF().getVersion();
+    }
 }

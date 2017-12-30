@@ -1,6 +1,7 @@
 package br.net.fabiozumbi12.UltimateChat.Bukkit.API;
 
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UCChannel;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.UCMessages;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UChat;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
@@ -8,10 +9,7 @@ import net.milkbowl.vault.permission.Permission;
 import org.bukkit.entity.Player;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class uChatAPI{
 
@@ -73,5 +71,20 @@ public class uChatAPI{
 	
 	public Permission getVaultPerms(){
 		return UChat.get().getVaultPerms();
+	}
+
+    /**
+     * Get formated tag format from config with placeholders already parsed.
+     * @param tagname Tag name from {@code tags} config section.
+     * @param sender The player to be the sender/owner of parsed tag.
+     * @param receiver The player as receiver of tag. Use {@link Optional}.empty() to do not use a receiver.
+     * @return Formatted tag or {@code null} if the tag is not on config.
+     */
+	public String getTagFormat(String tagname, Player sender, Optional<Player> receiver){
+        if (UChat.get().getUCConfig().getString("tags."+tagname+".format") != null){
+            String format = UChat.get().getUCConfig().getString("tags."+tagname+".format");
+            return UCMessages.formatTags(tagname, format, sender, receiver.isPresent() ? receiver.get() : "", "", UChat.get().getPlayerChannel(sender));
+        }
+        return null;
 	}
 }

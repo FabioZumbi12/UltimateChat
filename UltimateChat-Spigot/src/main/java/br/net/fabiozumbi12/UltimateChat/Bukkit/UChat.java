@@ -121,7 +121,12 @@ public class UChat extends JavaPlugin {
 		}
 		return null;
 	}
-	
+
+	private boolean isRelation;
+	public boolean isRelation(){
+	    return this.isRelation;
+    }
+
 	private uChatAPI ucapi;
 	public uChatAPI getAPI(){
 		return this.ucapi;
@@ -168,8 +173,18 @@ public class UChat extends JavaPlugin {
             }
             
             if (PlaceHolderAPI){
-            	new UCPlaceHolders(this).hook();
-            	logger.info("PlaceHolderAPI found. Hooked and registered some chat placeholders.");
+                try {
+                    Class.forName("me.clip.placeholderapi.expansion.Relational");
+                    if (new UCPlaceHoldersRelational(this).register()){
+                        isRelation = true;
+                        logger.info("PlaceHolderAPI found. Hooked and registered some chat placeholders with relational tag feature.");
+                    }
+                } catch (ClassNotFoundException ex){
+                    if (new UCPlaceHolders(this).register()){
+                        isRelation = false;
+                        logger.info("PlaceHolderAPI found. Hooked and registered some chat placeholders.");
+                    }
+                }
             }
             
             if (MarryReloded){

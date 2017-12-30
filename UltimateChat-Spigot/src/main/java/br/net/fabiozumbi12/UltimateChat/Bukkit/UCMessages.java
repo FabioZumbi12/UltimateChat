@@ -487,7 +487,7 @@ public class UCMessages {
 
 		if (cmdSender instanceof Player){
 			Player sender = (Player)cmdSender;
-			
+
 			text = text.replace("{nickname}", sender.getDisplayName())					
 					.replace("{world}", sender.getWorld().getName());
 			
@@ -620,19 +620,20 @@ public class UCMessages {
 								.replace("{marry-prefix}", UChat.mm.config.GetPrefix().replace("<heart>", ChatColor.RED + "❤" + ChatColor.WHITE))
 								.replace("{marry-suffix}", UChat.mm.config.GetSuffix().replace("<heart>", ChatColor.RED + "❤" + ChatColor.WHITE));
 					}
-				}	
-			}					
-			if (UChat.PlaceHolderAPI){				
-				if (receiver instanceof Player){
-					while (text.contains("%rel_")){
-						text = PlaceholderAPI.setRelationalPlaceholders(sender, (Player)receiver, text);
-					}					
-				}
-				text = PlaceholderAPI.setPlaceholders(sender, text);
-				if (tag.equals("message")){					
-					text = composeColor(sender,text);
 				}
 			}
+
+            if (UChat.PlaceHolderAPI){
+                if (receiver instanceof Player && UChat.get().isRelation()){
+                    while (text.contains("%rel_")){
+                        text = PlaceholderAPI.setRelationalPlaceholders(sender, (Player)receiver, text);
+                    }
+                }
+                text = PlaceholderAPI.setPlaceholders(sender, text);
+                if (tag.equals("message")){
+                    text = composeColor(sender,text);
+                }
+            }
 		}		
 		
 		if (cmdSender instanceof CommandSender){

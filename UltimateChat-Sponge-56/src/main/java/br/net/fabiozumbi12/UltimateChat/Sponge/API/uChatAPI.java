@@ -1,15 +1,13 @@
 package br.net.fabiozumbi12.UltimateChat.Sponge.API;
 
 import br.net.fabiozumbi12.UltimateChat.Sponge.UCChannel;
+import br.net.fabiozumbi12.UltimateChat.Sponge.UCMessages;
 import br.net.fabiozumbi12.UltimateChat.Sponge.UChat;
 import br.net.fabiozumbi12.UltimateChat.Sponge.config.TagsCategory;
 import org.spongepowered.api.entity.living.player.Player;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class uChatAPI {
 	
@@ -57,5 +55,20 @@ public class uChatAPI {
 	
 	public Collection<UCChannel> getChannels(){
 		return UChat.get().getChannels().values();
+	}
+
+	/**
+	 * Get formated tag format from config with placeholders already parsed.
+	 * @param tagname Tag name from {@code tags} config section.
+	 * @param sender The player to be the sender/owner of parsed tag.
+	 * @param receiver The player as receiver of tag. Use {@link Optional}.empty() to do not use a receiver.
+	 * @return Formatted tag or {@code null} if the tag is not on config.
+	 */
+	public String getTagFormat(String tagname, Player sender, Optional<Player> receiver){
+		if (UChat.get().getConfig().root().tags.containsKey(tagname)){
+			String format = UChat.get().getConfig().root().tags.get(tagname).format;
+			return UCMessages.formatTags(tagname, format, sender, receiver.isPresent() ? receiver.get() : "", "", UChat.get().getPlayerChannel(sender));
+		}
+		return null;
 	}
 }
