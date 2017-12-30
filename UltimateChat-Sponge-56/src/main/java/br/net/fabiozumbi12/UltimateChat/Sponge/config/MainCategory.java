@@ -28,7 +28,7 @@ public class MainCategory {
 		public final boolean timings = false;
 	}
 	
-	@Setting(comment="Available languages: EN-US, PT-BR, FR, HU-HU, RU, ZH-CN")
+	@Setting(comment="Available languages: EN-US, PT-BR, FR, HU-HU, RU, SP-ES, ZH-CN")
 	public final String language = "EN-US";
 	
 	// jedis
