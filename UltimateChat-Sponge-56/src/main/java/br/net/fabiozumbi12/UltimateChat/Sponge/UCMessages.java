@@ -33,6 +33,7 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class UCMessages {
 
@@ -101,30 +102,35 @@ public class UCMessages {
 			msgPlayers.put(sender, sendMessage(sender, sender, srcText, ch, false));
 			msgCh.addMember(sender);			
 			
-			if (ch.getDistance() > 0 && sender instanceof Player){			
-				for (Entity ent:((Player)sender).getNearbyEntities(ch.getDistance())){
-					if (ent instanceof Player && UChat.get().getPerms().channelReadPerm((Player)ent, ch)){	
-						Player receiver = (Player) ent;				
-						if (sender.equals(receiver)){
+			if (ch.getDistance() > 0 && sender instanceof Player){
+			    UChat.get().getLogger().severe("ch.getDistance(): "+ch.getDistance());
+                UChat.get().getLogger().severe("size: "+((Player)sender).getNearbyEntities(ch.getDistance()).size());
+
+				for (Player play:((Player)sender).getNearbyEntities(ch.getDistance()).stream()
+                        .filter(ent -> ent instanceof Player)
+                        .map(p -> (Player)p)
+                        .collect(Collectors.toList())){
+					if (UChat.get().getPerms().channelReadPerm(play, ch)){
+						if (sender.equals(play)){
 							continue;
 						}
-						if (!ch.availableWorlds().isEmpty() && !ch.availableInWorld(receiver.getWorld())){
+						if (!ch.availableWorlds().isEmpty() && !ch.availableInWorld(play.getWorld())){
 							continue;
 						}
-						if (ch.isIgnoring(receiver.getName())){
+						if (ch.isIgnoring(play.getName())){
 							continue;
 						}
-						if (isIgnoringPlayers(receiver.getName(), sender.getName())){
+						if (isIgnoringPlayers(play.getName(), sender.getName())){
 							noWorldReceived++;
 							continue;
 						}
-						if (!((Player)sender).canSee(receiver)){
+						if (!((Player)sender).canSee(play)){
 							vanish++;
 						}
-						if (!ch.neeFocus() || ch.isMember(receiver)){
-							msgPlayers.put(receiver, sendMessage(sender, receiver, srcText, ch, false));
-							receivers.add(receiver);
-							msgCh.addMember(receiver);
+						if (!ch.neeFocus() || ch.isMember(play)){
+							msgPlayers.put(play, sendMessage(sender, play, srcText, ch, false));
+							receivers.add(play);
+							msgCh.addMember(play);
 						}
 					}				
 				}

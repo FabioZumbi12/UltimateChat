@@ -47,7 +47,7 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
 			}			
 		} catch (LoginException e) {
 			uchat.getLogger().severe("The TOKEN is wrong or empty! Check you config and your token.");
-		} catch (IllegalArgumentException | InterruptedException | RateLimitedException e) {
+		} catch (IllegalArgumentException | InterruptedException e) {
 			e.printStackTrace();
 		}
     }

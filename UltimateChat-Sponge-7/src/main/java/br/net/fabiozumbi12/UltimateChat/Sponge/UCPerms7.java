@@ -70,7 +70,7 @@ class UCPerms7 implements UCPerms {
 	}
 	
 	private static boolean isAdmin(CommandSource p){
-		return (p instanceof CommandSource) || p.hasPermission("uchat.admin");
+		return (p instanceof ConsoleSource) || p.hasPermission("uchat.admin");
 	}
 	
 	private SubjectCollection getGroups(){

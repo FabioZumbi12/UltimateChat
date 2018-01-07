@@ -915,7 +915,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 			fancy.coloredText(UChat.get().getLang().get("help.cmd.delchannel")+"\n");	
 		}
 		fancy.coloredText("&7------------------------------------------\n");
-		fancy.coloredText(UChat.get().getLang().get("help.channels.available").replace("{channels}","")).next();
+		fancy.coloredText(UChat.get().getLang().get("help.channels.available").replace("{channels}","") + " ").next();
 		boolean first = true;
 		for (UCChannel ch:UChat.get().getChannels().values()){
 			if (!(p instanceof Player) || UCPerms.channelReadPerm(p, ch)){
@@ -931,12 +931,15 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 			}
 		}
 		fancy.coloredText("\n&7------------------------------------------");
-		String jarversion = new java.io.File(UCListener.class.getProtectionDomain()
-				.getCodeSource()
-				.getLocation()
-				.getPath())
-				.getName();
-		fancy.coloredText("\n&8&o- UChat full version: "+jarversion).send(p);
+		if (UCPerms.hasPerm(p, "admin")){
+            String jarversion = new java.io.File(UCListener.class.getProtectionDomain()
+                    .getCodeSource()
+                    .getLocation()
+                    .getPath())
+                    .getName();
+            fancy.coloredText("\n&8&o- UChat full version: "+jarversion);
+        }
+        fancy.send(p);
 	}
 
 	private void sendChannelHelp(Player p) {

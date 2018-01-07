@@ -283,7 +283,7 @@ public class UCChannel {
 	}
 	
 	public String[] getBuilder(){
-		return properties.get("tag-builder").toString().split(",");
+		return properties.get("tag-builder").toString().replace(" ", "").split(",");
 	}
 	
 	public String getRawBuilder(){

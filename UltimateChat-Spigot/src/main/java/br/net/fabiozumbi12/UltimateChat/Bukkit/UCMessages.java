@@ -24,6 +24,7 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 public class UCMessages {
 
@@ -85,27 +86,28 @@ public class UCMessages {
 
 			//put sender
 			msgPlayers.put(sender, sendMessage(sender, sender, evmsg, ch, false));
-			
-			if (ch.getDistance() > 0 && sender instanceof Player){			
-				for (Entity ent:((Player)sender).getNearbyEntities(ch.getDistance(), ch.getDistance(), ch.getDistance())){
-					if (ent instanceof Player && UCPerms.channelReadPerm(ent, ch)){
-						Player receiver = (Player) ent;				
-						if (!ch.availableWorlds().isEmpty() && !ch.availableInWorld(receiver.getWorld())){
+			if (ch.getDistance() > 0 && sender instanceof Player){
+				for (Player play:((Player)sender).getNearbyEntities(ch.getDistance(), ch.getDistance(), ch.getDistance()).stream()
+						.filter(ent -> ent instanceof Player)
+						.map(ent -> (Player)ent)
+						.collect(Collectors.toList())){
+					if (UCPerms.channelReadPerm(play, ch)){
+						if (!ch.availableWorlds().isEmpty() && !ch.availableInWorld(play.getWorld())){
 							continue;
 						}
-						if (ch.isIgnoring(receiver.getName())){
+						if (ch.isIgnoring(play.getName())){
 							continue;
 						}
-						if (isIgnoringPlayers(receiver.getName(), sender.getName())){
+						if (isIgnoringPlayers(play.getName(), sender.getName())){
 							noWorldReceived++;
 							continue;
 						}
-						if (!((Player)sender).canSee(receiver)){
+						if (!((Player)sender).canSee(play)){
 							vanish++;
 						}
-						if (!ch.neeFocus() || ch.isMember(receiver)){
-							msgPlayers.put(receiver, sendMessage(sender, receiver, evmsg, ch, false));
-							receivers.add((Player)ent);
+						if (!ch.neeFocus() || ch.isMember(play)){
+							msgPlayers.put(play, sendMessage(sender, play, evmsg, ch, false));
+							receivers.add(play);
 						}
 					}				
 				}

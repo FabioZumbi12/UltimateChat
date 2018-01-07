@@ -772,7 +772,7 @@ public class UCCommands {
 	private Builder getHelpChannel(CommandSource p){
 		Builder fancy = Text.builder();
 		fancy.append(UCUtil.toText("&7------------------------------------------\n"));
-		fancy.append(UCUtil.toText(UChat.get().getLang().get("help.channels.available").replace("{channels}", "")));
+		fancy.append(UCUtil.toText(UChat.get().getLang().get("help.channels.available").replace("{channels}", "") + " "));
 		
 		boolean first = true;
 		for (UCChannel ch:UChat.get().getChannels().values()){
@@ -790,9 +790,10 @@ public class UCCommands {
 			}
 		}
 		fancy.append(UCUtil.toText("\n&7------------------------------------------ "));
-
-		String jarversion = UChat.get().instance().getSource().get().toFile().getName();
-		fancy.append(UCUtil.toText("\n&8&o- UChat full version: "+jarversion));
+		if (UChat.get().getPerms().hasPerm(p,"admin")){
+			String jarversion = UChat.get().instance().getSource().get().toFile().getName();
+			fancy.append(UCUtil.toText("\n&8&o- UChat full version: "+jarversion));
+		}
 		return fancy;
 	}
 	
