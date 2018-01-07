@@ -428,9 +428,11 @@ public class UCCommands {
 						throw new CommandException(UChat.get().getLang().getText("channel.dontexist"), true);
 					}
 					UCChannel ch = optch.get();
-                    for (String m:ch.getMembers()){
-                        UChat.get().getDefChannel().addMember(m);
-                    }
+
+					List<String> toAdd = new ArrayList<>();
+					toAdd.addAll(ch.getMembers());
+					toAdd.forEach(m -> UChat.get().getDefChannel().addMember(m));
+
 					UChat.get().getConfig().delChannel(ch);
 					UChat.get().getLang().sendMessage(src, UChat.get().getLang().get("cmd.delchannel.success").replace("{channel}", ch.getName()));
 			    	return CommandResult.success();

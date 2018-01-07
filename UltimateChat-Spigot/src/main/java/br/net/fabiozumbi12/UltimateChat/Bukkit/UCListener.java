@@ -252,10 +252,11 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 						 if (ch == null){
 							 UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.dontexist").replace("{channel}", args[1]));
 							 return true;
-						 }						 
-						 for (String m:ch.getMembers()){
-							 UChat.get().getDefChannel().addMember(m);
-						 }						 
+						 }
+						 List<String> toAdd = new ArrayList<>();
+						 toAdd.addAll(ch.getMembers());
+						 toAdd.forEach(m -> UChat.get().getDefChannel().addMember(m));
+
 						 UChat.get().getUCConfig().delChannel(ch);
 						 UChat.get().registerAliases();
 						 UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("cmd.delchannel.success").replace("{channel}", ch.getName()));

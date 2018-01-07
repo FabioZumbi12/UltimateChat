@@ -37,6 +37,13 @@ public class UCPlaceHolders extends PlaceholderExpansion {
             String ph = arg.replace("placeholder_","");
             text = UCMessages.formatTags("", "{"+ph+"}", p, "", "", UChat.get().getPlayerChannel(p));
         }
+		if (arg.startsWith("tag_")){
+			String tag = arg.replace("tag_","");
+			if (UChat.get().getUCConfig().getString("tags."+tag+".format") != null){
+				String format = UChat.get().getUCConfig().getString("tags."+tag+".format");
+				text = UCMessages.formatTags(tag, format, p, "", "", UChat.get().getPlayerChannel(p));
+			}
+		}
 		return text;
 	}
 
