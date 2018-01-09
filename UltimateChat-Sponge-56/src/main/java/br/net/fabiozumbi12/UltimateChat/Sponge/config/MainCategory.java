@@ -110,6 +110,9 @@ public class MainCategory {
 		
 		@Setting(value="format-console-messages")
 		public final boolean format_console_messages = false;
+		@Setting(value="sponge-api", comment = "Change this if using SpongeVanilla or some issues to UChat detect the API versions.\n" +
+				"- Available: 5, 6, 7")
+		public final int sponge_api = 7;
 	}
 	
 	//general
