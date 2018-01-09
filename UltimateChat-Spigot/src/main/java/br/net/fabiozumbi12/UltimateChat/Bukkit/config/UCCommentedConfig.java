@@ -74,6 +74,7 @@ public class UCCommentedConfig {
         setDefault("general.json-events", true, "False if your server don't support json or if /tellraw is not available.");
         setDefault("general.default-channel", "l", "Set the default channel for new players or when players join on server.");
         setDefault("general.spy-format", "&c&o[Spy] {output}", "Chat spy format.");
+        setDefault("general.spy-enable-onjoin", true, "Enable Spy on join?");
         setDefault("general.use-channel-tag-builder", true, "Use the tag builder from channel configuration and ignore this tag builder.");
         setDefault("general.default-tag-builder", "world,marry-tag,ch-tags,clan-tag,factions,group-prefix,nickname,group-suffix,message", "" +
                 "This is the main tag builder.\n" +

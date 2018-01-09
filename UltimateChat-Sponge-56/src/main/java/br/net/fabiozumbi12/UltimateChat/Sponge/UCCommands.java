@@ -429,8 +429,7 @@ public class UCCommands {
 					}
 					UCChannel ch = optch.get();
 
-					List<String> toAdd = new ArrayList<>();
-					toAdd.addAll(ch.getMembers());
+					List<String> toAdd = new ArrayList<>(ch.getMembers());
 					toAdd.forEach(m -> UChat.get().getDefChannel().addMember(m));
 
 					UChat.get().getConfig().delChannel(ch);

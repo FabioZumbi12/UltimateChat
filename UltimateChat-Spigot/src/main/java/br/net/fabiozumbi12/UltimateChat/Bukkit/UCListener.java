@@ -253,8 +253,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 							 UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.dontexist").replace("{channel}", args[1]));
 							 return true;
 						 }
-						 List<String> toAdd = new ArrayList<>();
-						 toAdd.addAll(ch.getMembers());
+						 List<String> toAdd = new ArrayList<>(ch.getMembers());
 						 toAdd.forEach(m -> UChat.get().getDefChannel().addMember(m));
 
 						 UChat.get().getUCConfig().delChannel(ch);
@@ -808,6 +807,10 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 			if (UChat.get().getUCConfig().getBoolean("discord.update-status")){
 				UChat.get().getUCJDA().updateGame(UChat.get().getLang().get("discord.game").replace("{online}", String.valueOf(UChat.get().getServer().getOnlinePlayers().size())));
 			}
+		}
+		if (UChat.get().getUCConfig().getBoolean("general.spy-enable-onjoin") && p.hasPermission("uchat.cmd.spy") && !UChat.get().isSpy.contains(p.getName())){
+			UChat.get().isSpy.add(p.getName());
+			UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("cmd.spy.enabled"));
 		}
 	}
 	

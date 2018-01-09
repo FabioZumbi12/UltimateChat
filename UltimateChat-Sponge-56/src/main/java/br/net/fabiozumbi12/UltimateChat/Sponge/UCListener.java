@@ -152,6 +152,10 @@ public class UCListener {
 				UChat.get().getUCJDA().updateGame(UChat.get().getLang().get("discord.game").replace("{online}", String.valueOf(Sponge.getServer().getOnlinePlayers().size())));
 			}
 		}
+		if (UChat.get().getConfig().root().general.spy_enabled_onjoin && p.hasPermission("uchat.cmd.spy") && !UChat.isSpy.contains(p.getName())){
+			UChat.isSpy.add(p.getName());
+			UChat.get().getLang().sendMessage(p, "cmd.spy.enabled");
+		}
 	}
 		
 	@Listener

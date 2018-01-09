@@ -135,6 +135,8 @@ public class MainCategory {
 		public final String default_channel = "l";
 		@Setting(value="spy-format", comment="Chat spy format.")
 		public final String spy_format = "&c[Spy] {output}";
+		@Setting(value="spy-enabled-onjoin", comment="Enable spy on join?")
+		public final boolean spy_enabled_onjoin = true;
 		@Setting(value="enable-tags-on-messages", comment="Enable to allow parse tags and placeholders on messages.")
 		public final boolean enable_tags_on_messages = false;
 		@Setting(value="nick-symbol")
