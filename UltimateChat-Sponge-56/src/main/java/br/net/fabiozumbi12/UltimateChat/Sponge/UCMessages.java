@@ -103,9 +103,6 @@ public class UCMessages {
 			msgCh.addMember(sender);			
 			
 			if (ch.getDistance() > 0 && sender instanceof Player){
-			    UChat.get().getLogger().severe("ch.getDistance(): "+ch.getDistance());
-                UChat.get().getLogger().severe("size: "+((Player)sender).getNearbyEntities(ch.getDistance()).size());
-
 				for (Player play:((Player)sender).getNearbyEntities(ch.getDistance()).stream()
                         .filter(ent -> ent instanceof Player)
                         .map(p -> (Player)p)
