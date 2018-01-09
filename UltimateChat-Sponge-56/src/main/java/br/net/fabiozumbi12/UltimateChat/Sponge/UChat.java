@@ -186,7 +186,7 @@ public class UChat {
         }
 	}
 
-	private void setCompatperms() throws ClassNotFoundException {
+	private void setCompatperms() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         //init perms
         try {
             String v = this.game.getPlatform().getContainer(Component.API).getVersion().get();
