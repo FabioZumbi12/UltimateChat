@@ -262,7 +262,8 @@ public class UChat {
 				this.UCJDA = new UCDiscord(this);
                 if (!this.UCJDA.JDAAvailable()){
                     this.UCJDA = null;
-                    this.logger.info("JDA is not available due errors before...");
+                    this.logger.info("JDA is not available due errors before.\n" +
+                            "Hint: If you updated UChat, check if you need to update JDALibLoader too!");
                 } else {
                     this.logger.info("JDA connected and ready to use!");
                 }

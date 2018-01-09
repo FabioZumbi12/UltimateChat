@@ -52,7 +52,7 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface{
     public void onMessageReceived(MessageReceivedEvent e) {
 		if (e.getAuthor().getId().equals(e.getJDA().getSelfUser().getId()) || e.getMember().getUser().isFake())return;
 		
-		String message = e.getMessage().getRawContent();
+		String message = e.getMessage().getContentRaw();
 		int used = 0;
 		
 		for (UCChannel ch:this.uchat.getChannels().values()){
@@ -128,7 +128,7 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface{
 	}
 	
 	public void updateGame(String text){
-		this.jda.getPresence().setGame(Game.of(text));
+		this.jda.getPresence().setGame(Game.of(Game.GameType.DEFAULT, text));
 	}
 	
 	public void sendTellToDiscord(String text){
@@ -181,7 +181,7 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface{
 		if (e != null){
 			format = format.replace("{sender}", e.getMember().getEffectiveName())				
 					.replace("{dd-channel}", e.getChannel().getName())				
-					.replace("{message}", e.getMessage().getRawContent());
+					.replace("{message}", e.getMessage().getContentRaw());
 			if (!e.getMember().getRoles().isEmpty()){
 				Role role = e.getMember().getRoles().get(0);
 				if (role.getColor() != null){
