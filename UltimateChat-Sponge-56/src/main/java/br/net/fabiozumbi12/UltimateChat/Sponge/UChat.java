@@ -147,7 +147,7 @@ public class UChat {
         	//init logger
         	this.logger = new UCLogger(this.serv);
         	//init config
-        	this.config = new UCConfig(factory);
+        	this.config = new UCConfig(this.factory);
     		//init lang
         	this.lang = new UCLang();
 

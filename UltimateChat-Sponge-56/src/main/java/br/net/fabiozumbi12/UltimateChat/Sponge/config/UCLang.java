@@ -21,14 +21,15 @@ public class UCLang {
     private static String resLang; 
         	
 	public UCLang() {
-		pathLang = UChat.get().configDir() + File.separator + "lang" + UChat.get().getConfig().root().language + ".properties"; 
 		resLang = "lang" + UChat.get().getConfig().root().language + ".properties";
-		
-		File lang = new File(pathLang);			
+		pathLang = UChat.get().configDir() + File.separator + resLang;
+
+		File lang = new File(pathLang);
+		UChat.get().getLogger().severe("lang: "+lang);
 		if (!lang.exists()) {
 			if (!UChat.get().instance().getAsset(resLang).isPresent()){
 				resLang = "langEN-US.properties";	
-				pathLang = UChat.get().configDir() + File.separator + "langEN-US.properties";
+				pathLang = UChat.get().configDir() + File.separator + resLang;
 			}
 			try {
 				UChat.get().instance().getAsset(resLang).get().copyToDirectory(UChat.get().configDir().toPath());
@@ -40,7 +41,7 @@ public class UCLang {
 		
 		loadLang();
 		loadBaseLang();
-		UChat.get().getLogger().info("Language file loaded - Using: "+  UChat.get().getConfig().root().language);	
+		UChat.get().getLogger().info("Language file loaded - Using: "+  UChat.get().getConfig().root().language);
 	}
 	
 	private void loadBaseLang(){
