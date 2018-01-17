@@ -1,9 +1,11 @@
 package br.net.fabiozumbi12.UltimateChat.Sponge.config;
 
+import br.net.fabiozumbi12.UltimateChat.Sponge.UCMessages;
 import br.net.fabiozumbi12.UltimateChat.Sponge.UCUtil;
 import br.net.fabiozumbi12.UltimateChat.Sponge.UChat;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 
 import java.io.*;
@@ -25,7 +27,6 @@ public class UCLang {
 		pathLang = UChat.get().configDir() + File.separator + resLang;
 
 		File lang = new File(pathLang);
-		UChat.get().getLogger().severe("lang: "+lang);
 		if (!lang.exists()) {
 			if (!UChat.get().instance().getAsset(resLang).isPresent()){
 				resLang = "langEN-US.properties";	
@@ -76,10 +77,10 @@ public class UCLang {
 	}
 	
 	private void updateLang(){
-	    for (Entry<Object, Object> linha : BaseLang.entrySet()) {	    	
-	      if (!Lang.containsKey(linha.getKey())) {
-	    	  Lang.put(linha.getKey(), linha.getValue());
-	      }
+	    for (Entry<Object, Object> linha : BaseLang.entrySet()) {
+            if (!Lang.containsKey(linha.getKey())) {
+                Lang.put(linha.getKey(), linha.getValue());
+            }
 	    }
 		if (!Lang.containsKey("_lang.version")){
 			Lang.put("_lang.version", UChat.get().instance().getVersion().get());
@@ -89,42 +90,29 @@ public class UCLang {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	  }
+	}
+
+	public String get(CommandSource player, String key){
+		return UCMessages.formatTags("", get(key), player, "", "", UChat.get().getPlayerChannel(player));
+	}
 	
 	public String get(String key){		
-		String FMsg = "";
+		String FMsg;
 
 		if (Lang.get(key) == null){
 			FMsg = "&c&oMissing language string for &4"+ key;
 		} else {
 			FMsg = Lang.get(key).toString();
 		}
-		
 		return FMsg;
 	}
 	
-	public Text getText(String key, String additional){	
-		String FMsg = "";
-
-		if (Lang.get(key) == null){
-			FMsg = "&c&oMissing language string for &4"+ key;
-		} else {
-			FMsg = Lang.get(key).toString();
-		}
-		
-		return UCUtil.toText(FMsg+additional);
+	public Text getText(String key, String additional){
+		return UCUtil.toText(get(key)+additional);
 	}
 	
-	public Text getText(String key){		
-		String FMsg = "";
-
-		if (Lang.get(key) == null){
-			FMsg = "&c&oMissing language string for &4"+ key;
-		} else {
-			FMsg = Lang.get(key).toString();
-		}
-		
-		return UCUtil.toText(FMsg);
+	public Text getText(String key){
+		return UCUtil.toText(get(key));
 	}
 	
 	public void sendMessage(final CommandSource p, String key){
@@ -133,11 +121,11 @@ public class UCLang {
 		}
 		
 		if (Lang.get(key) == null){
-			p.sendMessage(UCUtil.toText(get("_UChat.prefix")+ " " + key));
+			p.sendMessage(UCUtil.toText(get(p,"_UChat.prefix")+ " " + get(p, key)));
 		} else if (get(key).equalsIgnoreCase("")){
 			return;
 		} else {
-			p.sendMessage(UCUtil.toText(get("_UChat.prefix")+ " " + get(key)));
+			p.sendMessage(UCUtil.toText(get(p,"_UChat.prefix")+ " " + get(p, key)));
 		}		
 		
 		DelayedMessage.put(p,key);

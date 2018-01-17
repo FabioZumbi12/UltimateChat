@@ -11,6 +11,7 @@ import org.spongepowered.api.Game;
 import org.spongepowered.api.Platform.Component;
 import org.spongepowered.api.Server;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
@@ -354,7 +355,7 @@ public class UChat {
 		return aliases;
 	}
 	
-	public UCChannel getPlayerChannel(Player p){
+	public UCChannel getPlayerChannel(CommandSource p){
 		for (UCChannel ch:UChat.get().getChannels().values()){
 			if (ch.isMember(p)){
 				return ch;

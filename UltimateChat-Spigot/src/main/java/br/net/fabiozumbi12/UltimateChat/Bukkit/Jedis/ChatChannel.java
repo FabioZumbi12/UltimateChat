@@ -21,7 +21,7 @@ public class ChatChannel extends JedisPubSub {
 	
     @Override
     public void onMessage(String channel, String message) {
-    	if (!UChat.get().getUCConfig().getBoolean("debug.messages") && message.startsWith(this.thisId)) return;
+    	if (!UChat.get().getUCConfig().getBoolean("debug.messages") && message.split("\\$")[0].equals(this.thisId)) return;
     	
     	if (Arrays.asList(channels).contains(channel)){
     		Bukkit.getScheduler().runTaskAsynchronously(UChat.get(), () -> {

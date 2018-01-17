@@ -1,5 +1,6 @@
 package br.net.fabiozumbi12.UltimateChat.Bukkit.config;
 
+import br.net.fabiozumbi12.UltimateChat.Bukkit.UCMessages;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UCUtil;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UChat;
 import org.bukkit.Bukkit;
@@ -108,9 +109,13 @@ public class UCLang {
 			e.printStackTrace();
 		}
 	}
-	
+
+    public String get(CommandSender player, String key){
+        return UCMessages.formatTags("",get(key), player, "", "",UChat.get().getPlayerChannel(player));
+    }
+
 	public String get(String key){		
-		String FMsg = "";
+		String FMsg;
 
 		if (!Lang.containsKey(key)){
 			FMsg = "&c&oMissing language string for "+ ChatColor.GOLD + key;
@@ -129,11 +134,11 @@ public class UCLang {
 		}
 		
 		if (!Lang.containsKey(key)){
-			p.sendMessage(get("_UChat.prefix")+ " " + ChatColor.translateAlternateColorCodes('&', key));
+			p.sendMessage(get(p, "_UChat.prefix")+ " " + UCMessages.formatTags("", ChatColor.translateAlternateColorCodes('&', key), p, "", "",UChat.get().getPlayerChannel(p)));
 		} else if (get(key).isEmpty()){
 			return;
 		} else {
-			p.sendMessage(get("_UChat.prefix")+ " " + get(key));
+			p.sendMessage(get(p, "_UChat.prefix")+ " " + get(p, key));
 		}		
 		
 		DelayedMessage.put(p, key);
@@ -150,11 +155,11 @@ public class UCLang {
 		}
 		
 		if (Lang.get(key) == null){
-			sender.sendMessage(get("_UChat.prefix")+ " " + ChatColor.translateAlternateColorCodes('&', key));
+			sender.sendMessage(get(sender, "_UChat.prefix")+ " " + UCMessages.formatTags("", ChatColor.translateAlternateColorCodes('&', key), sender, "", "",UChat.get().getPlayerChannel(sender)));
 		} else if (get(key).equalsIgnoreCase("")){
 			return;
 		} else {
-			sender.sendMessage(get("_UChat.prefix")+ " " + get(key));
+			sender.sendMessage(get(sender, "_UChat.prefix")+ " " + get(sender, key));
 		}		
 		
 		if (sender instanceof Player){
@@ -166,7 +171,6 @@ public class UCLang {
                 }
                 }, 20);
 		}
-		
 	}
 	
 	public boolean containsValue(String value){

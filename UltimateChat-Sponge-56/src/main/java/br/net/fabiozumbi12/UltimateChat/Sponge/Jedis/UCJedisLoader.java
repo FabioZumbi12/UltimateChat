@@ -92,7 +92,7 @@ public class UCJedisLoader {
                 try {
                     Jedis jedis = pool.getResource();
                     //string 0 1 2
-                    jedis.publish("tellsend", thisId+"$"+tellReceiver+"$"+TextSerializers.JSON.serialize(text.build()));
+                    jedis.publish("tellsend", this.thisId+"$"+tellReceiver+"$"+TextSerializers.JSON.serialize(text.build()));
                     jedis.quit();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -108,7 +108,7 @@ public class UCJedisLoader {
                 try {
                     Jedis jedis = pool.getResource();
                     //string 0 1
-                    jedis.publish("generic", thisId+"$"+TextSerializers.JSON.serialize(value));
+                    jedis.publish("generic", this.thisId+"$"+TextSerializers.JSON.serialize(value));
                     jedis.quit();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -124,7 +124,7 @@ public class UCJedisLoader {
                 try {
                     Jedis jedis = pool.getResource();
                     //string 0 1
-                    jedis.publish(channel, thisId+"$"+TextSerializers.JSON.serialize(value));
+                    jedis.publish(channel, this.thisId+"$"+TextSerializers.JSON.serialize(value));
                     jedis.quit();
                 } catch (Exception e) {
                     e.printStackTrace();

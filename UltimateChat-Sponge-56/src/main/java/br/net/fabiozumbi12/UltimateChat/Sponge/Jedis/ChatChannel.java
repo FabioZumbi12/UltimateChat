@@ -21,7 +21,7 @@ public class ChatChannel extends JedisPubSub {
 	
     @Override
     public void onMessage(String channel, final String message) {
-    	if (!UChat.get().getConfig().root().debug.messages && message.startsWith(this.thisId)) return;
+    	if (!UChat.get().getConfig().root().debug.messages && message.split("\\$")[0].equals(this.thisId)) return;
     	
     	if (Arrays.asList(channels).contains(channel)){
     		Sponge.getScheduler().createAsyncExecutor(UChat.get()).execute(() -> {
