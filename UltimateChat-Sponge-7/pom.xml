@@ -46,72 +46,8 @@
           <scope>compile</scope>
         </dependency>      
   </dependencies>
-  
-  <build>
-    <finalName>DONT-DOWNLOAD-SpongeAPI7-Reference</finalName>
-    <plugins>
-               
-        <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>2.4.3</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                        <artifactSet>                          
-                          <includes>
-                            <include>br.net.fabiozumbi12.UltimateChat:UltimateChat-Bungee</include>
-                            <include>br.net.fabiozumbi12.UltimateChat:UltimateChat-Spigot</include>
-  	                        <include>br.net.fabiozumbi12.UltimateChat:UltimateChat-Sponge-5.0-6.0</include>  
-  	                        <include>redis.clients:jedis</include>
-                            <include>org.apache.commons:commons-pool2</include>                   
-                          </includes>                          
-                        </artifactSet>                        
-                        <relocations>
-                            <relocation>
-                                <pattern>redis.clients</pattern>
-                                <shadedPattern>br.net.fabiozumbi12.UltimateChat.jedis</shadedPattern>
-                            </relocation>
-                            <relocation>
-                                <pattern>org.apache.commons.pool2</pattern>
-                                <shadedPattern>br.net.fabiozumbi12.UltimateChat.apache.commons.pool2</shadedPattern>
-                            </relocation>
-                        </relocations>
-                        <filters> 
-                           <filter>
-                              <artifact>br.net.fabiozumbi12.UltimateChat:*</artifact>
-                              <includes>
-                              <include>**</include>
-                              </includes>
-                           </filter>    
-                           <filter>
-                              <artifact>redis.clients:jedis</artifact>
-                              <includes>
-                              <include>**</include>
-                              </includes>
-                           </filter>  
-                           <filter>
-                              <artifact>org.apache.commons:commons-pool2</artifact>
-                              <includes>
-                              <include>**</include>
-                              </includes>
-                           </filter>                                          
-                        </filters>  
-                        <outputFile>${project.basedir}/target/UltimateChat-${project.version}-b${BUILD_NUMBER}-Universal.jar</outputFile>           
-                        </configuration>
-                    </execution>
-                </executions>
-                <configuration>
-                    <createDependencyReducedPom>false</createDependencyReducedPom>                    
-                </configuration>
-            </plugin>
-            
-    </plugins>
-  </build>
-    
+    <build>
+        <finalName>DONT-DOWNLOAD-SpongeAPI7-Reference</finalName>
+    </build>
    
 </project>
