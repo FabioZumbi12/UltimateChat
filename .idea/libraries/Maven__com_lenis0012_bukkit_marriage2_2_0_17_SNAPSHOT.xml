@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.lenis0012.bukkit:marriage2:2.0.17-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/lenis0012/bukkit/marriage2/2.0.17-SNAPSHOT/marriage2-2.0.17-SNAPSHOT.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/lenis0012/bukkit/marriage2/2.0.17-SNAPSHOT/marriage2-2.0.17-SNAPSHOT-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/lenis0012/bukkit/marriage2/2.0.17-SNAPSHOT/marriage2-2.0.17-SNAPSHOT-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
