@@ -121,7 +121,7 @@ public class UCLang {
 		}
 		
 		if (Lang.get(key) == null){
-			p.sendMessage(UCUtil.toText(get(p,"_UChat.prefix")+ " " + get(p, key)));
+			p.sendMessage(UCUtil.toText(get(p,"_UChat.prefix")+ " " + UCMessages.formatTags("", key, p, "", "", UChat.get().getPlayerChannel(p))));
 		} else if (get(key).equalsIgnoreCase("")){
 			return;
 		} else {
