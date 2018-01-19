@@ -128,7 +128,12 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface{
 	}
 	
 	public void updateGame(String text){
-		this.jda.getPresence().setGame(Game.of(Game.GameType.DEFAULT, text));
+		Game.GameType type = Game.GameType.valueOf(uchat.getUCConfig().getString("discord.game-type").toUpperCase());
+		if (type.equals(Game.GameType.STREAMING) && Game.isValidStreamingUrl(uchat.getUCConfig().getString("discord.twitch"))){
+			jda.getPresence().setGame(Game.of(type, uchat.getLang().get("discord.game").replace("{online}", String.valueOf(uchat.getServer().getOnlinePlayers().size())), uchat.getUCConfig().getString("discord.twitch")));
+		} else {
+			jda.getPresence().setGame(Game.of(type, uchat.getLang().get("discord.game").replace("{online}", String.valueOf(uchat.getServer().getOnlinePlayers().size()))));
+		}
 	}
 	
 	public void sendTellToDiscord(String text){
