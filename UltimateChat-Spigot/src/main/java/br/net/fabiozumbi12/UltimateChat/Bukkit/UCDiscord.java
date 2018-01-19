@@ -51,14 +51,17 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface{
 	@Override
     public void onMessageReceived(MessageReceivedEvent e) {
 		if (e.getAuthor().getId().equals(e.getJDA().getSelfUser().getId()) || e.getMember().getUser().isFake())return;
-		
+
 		String message = e.getMessage().getContentRaw();
 		int used = 0;
 		
 		for (UCChannel ch:this.uchat.getChannels().values()){
-			if (ch.isListenDiscord() && ch.matchDiscordID(e.getChannel().getId())){				
+			if (ch.isListenDiscord() && ch.matchDiscordID(e.getChannel().getId())){
+                if (e.getMember().getUser().isBot() && !ch.AllowBot()){
+                    continue;
+                }
 				//check if is cmd
-				if (message.startsWith(this.uchat.getUCConfig().getString("discord.server-commands.alias")) && ch.getDiscordAllowCmds()){
+                if (message.startsWith(this.uchat.getUCConfig().getString("discord.server-commands.alias")) && ch.getDiscordAllowCmds()){
 					message = message.replace(this.uchat.getUCConfig().getString("discord.server-commands.alias")+" ", "");
 					if (!this.uchat.getUCConfig().getStringList("discord.server-commands.whitelist").isEmpty()){
 						int count = 0;

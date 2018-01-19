@@ -49,6 +49,7 @@ public class UCChannel {
 		properties.put("available-worlds", new ArrayList<String>());
 		properties.put("discord.channelID", "");
 		properties.put("discord.mode", "none");
+		properties.put("discord.allow-bot", true);
 		properties.put("discord.hover", "&3Discord Channel: &a{dd-channel}\n&3Role Name: {dd-rolecolor}{dd-rolename}");
 		properties.put("discord.allow-server-cmds", false);
 		properties.put("discord.format-to-mc", "{ch-color}[{ch-alias}]&b{dd-rolecolor}[{dd-rolename}]{sender}&r: ");
@@ -115,7 +116,10 @@ public class UCChannel {
 			}	
 		}
 	}
-	
+
+	public boolean AllowBot(){
+		return (boolean) properties.get("allow-bot");
+	}
 	public void setPassword(String pass){
 		properties.put("password", pass);
 	}

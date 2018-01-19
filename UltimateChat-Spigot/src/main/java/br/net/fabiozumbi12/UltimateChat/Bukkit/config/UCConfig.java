@@ -15,97 +15,97 @@ import java.util.Map.Entry;
 
 public class UCConfig {
 
-    private static UCCommentedConfig comConfig;
+	private static UCCommentedConfig comConfig;
 	private static YamlConfiguration Prots = new YamlConfiguration();
 	private final UChat plugin;
-		
+
 	public UCConfig(UChat plugin) throws IOException {
-	    this.plugin = plugin;
-        File main = UChat.get().getDataFolder();
-        File protections = new File(UChat.get().getDataFolder(),"protections.yml");
+		this.plugin = plugin;
+		File main = UChat.get().getDataFolder();
+		File protections = new File(UChat.get().getDataFolder(), "protections.yml");
 
-        if (!main.exists()) {
-            main.mkdir();
-            plugin.getUCLogger().info("Created folder: " +UChat.get().getDataFolder());
-        }
+		if (!main.exists()) {
+			main.mkdir();
+			plugin.getUCLogger().info("Created folder: " + UChat.get().getDataFolder());
+		}
 
-        if (!protections.exists()) {
-            UCUtil.saveResource("/assets/ultimatechat/protections.yml", new File(UChat.get().getDataFolder(),"protections.yml"));
-            plugin.getUCLogger().info("Created protections file: " + protections.getPath());
-        }
+		if (!protections.exists()) {
+			UCUtil.saveResource("/assets/ultimatechat/protections.yml", new File(UChat.get().getDataFolder(), "protections.yml"));
+			plugin.getUCLogger().info("Created protections file: " + protections.getPath());
+		}
 
-        //------------------------------ Add default Values ----------------------------//
+		//------------------------------ Add default Values ----------------------------//
 
-        comConfig = new UCCommentedConfig();
-        comConfig.addDefaults();
+		comConfig = new UCCommentedConfig();
+		comConfig.addDefaults();
 
-        /*------------------------------------------------------------------------------------*/
+		/*------------------------------------------------------------------------------------*/
 
-        //load protections file
-        Prots = updateFile(protections);
+		//load protections file
+		Prots = updateFile(protections);
 
-        /* Load Channels */
-        loadChannels();
+		/* Load Channels */
+		loadChannels();
 
-        /*------------------------------------------------------------------------------------*/
+		/*------------------------------------------------------------------------------------*/
 
-        //----------------------------------------------------------------------------------------//
-        save();
-        plugin.getUCLogger().info("All configurations loaded!");
+		//----------------------------------------------------------------------------------------//
+		save();
+		plugin.getUCLogger().info("All configurations loaded!");
 	}
-    
+
 	/* Channels */
-	private void loadChannels() throws IOException{
-		File chfolder = new File(UChat.get().getDataFolder(),"channels");
-		
+	private void loadChannels() throws IOException {
+		File chfolder = new File(UChat.get().getDataFolder(), "channels");
+
 		if (!chfolder.exists()) {
-        	chfolder.mkdir();
-        	UChat.get().getUCLogger().info("Created folder: " +chfolder.getPath());
-        } 
-		
-		if (UChat.get().getChannels() == null){
+			chfolder.mkdir();
+			UChat.get().getUCLogger().info("Created folder: " + chfolder.getPath());
+		}
+
+		if (UChat.get().getChannels() == null) {
 			UChat.get().setChannels(new HashMap<>());
 		}
-		
-        File[] listOfFiles = chfolder.listFiles();
-        
-        YamlConfiguration channel = new YamlConfiguration();
-        
-        if (Objects.requireNonNull(listOfFiles).length == 0){
-        	//create default channels
-        	File g = new File(chfolder, "global.yml"); 
-        	channel = YamlConfiguration.loadConfiguration(g);
-        	channel.set("name", "Global");
-        	channel.set("alias", "g");
-        	channel.set("color", "&2");
-        	channel.set("jedis", true);
-        	channel.save(g);
-        	
-        	File l = new File(chfolder, "local.yml");
-        	channel = YamlConfiguration.loadConfiguration(l);
-        	channel.set("name", "Local");
-        	channel.set("alias", "l");
-        	channel.set("color", "&e");
-        	channel.set("across-worlds", false);
-        	channel.set("distance", 40);
-        	channel.save(l);
-        	
-        	File ad = new File(chfolder, "admin.yml");
-        	channel = YamlConfiguration.loadConfiguration(ad);
-        	channel.set("name", "Admin");
-        	channel.set("alias", "ad");
-        	channel.set("color", "&b");
-        	channel.set("jedis", true);
-        	channel.save(ad);
-        	
-        	listOfFiles = chfolder.listFiles();
-        }
-        
-		for (File file: Objects.requireNonNull(listOfFiles)){
-			if (file.getName().endsWith(".yml")){
-				channel = YamlConfiguration.loadConfiguration(file);            				
+
+		File[] listOfFiles = chfolder.listFiles();
+
+		YamlConfiguration channel = new YamlConfiguration();
+
+		if (Objects.requireNonNull(listOfFiles).length == 0) {
+			//create default channels
+			File g = new File(chfolder, "global.yml");
+			channel = YamlConfiguration.loadConfiguration(g);
+			channel.set("name", "Global");
+			channel.set("alias", "g");
+			channel.set("color", "&2");
+			channel.set("jedis", true);
+			channel.save(g);
+
+			File l = new File(chfolder, "local.yml");
+			channel = YamlConfiguration.loadConfiguration(l);
+			channel.set("name", "Local");
+			channel.set("alias", "l");
+			channel.set("color", "&e");
+			channel.set("across-worlds", false);
+			channel.set("distance", 40);
+			channel.save(l);
+
+			File ad = new File(chfolder, "admin.yml");
+			channel = YamlConfiguration.loadConfiguration(ad);
+			channel.set("name", "Admin");
+			channel.set("alias", "ad");
+			channel.set("color", "&b");
+			channel.set("jedis", true);
+			channel.save(ad);
+
+			listOfFiles = chfolder.listFiles();
+		}
+
+		for (File file : Objects.requireNonNull(listOfFiles)) {
+			if (file.getName().endsWith(".yml")) {
+				channel = YamlConfiguration.loadConfiguration(file);
 				UCChannel ch = new UCChannel(channel.getValues(true));
-				
+
 				try {
 					addChannel(ch);
 				} catch (IOException e) {
@@ -114,22 +114,22 @@ public class UCConfig {
 			}
 		}
 	}
-	
+
 	public void delChannel(UCChannel ch) {
-		for (Entry<List<String>, UCChannel> ch0:UChat.get().getChannels().entrySet()){
-			if (ch0.getValue().equals(ch)){
+		for (Entry<List<String>, UCChannel> ch0 : UChat.get().getChannels().entrySet()) {
+			if (ch0.getValue().equals(ch)) {
 				UChat.get().getChannels().remove(ch0.getKey());
 				break;
 			}
 		}
-		File defch = new File(UChat.get().getDataFolder(),"channels"+File.separator+ch.getName().toLowerCase()+".yml");	
-		if (defch.exists()){
+		File defch = new File(UChat.get().getDataFolder(), "channels" + File.separator + ch.getName().toLowerCase() + ".yml");
+		if (defch.exists()) {
 			defch.delete();
 		}
 	}
-	
-	public void addChannel(UCChannel ch) throws IOException{	
-		File defch = new File(UChat.get().getDataFolder(),"channels"+File.separator+ch.getName().toLowerCase()+".yml");		
+
+	public void addChannel(UCChannel ch) throws IOException {
+		File defch = new File(UChat.get().getDataFolder(), "channels" + File.separator + ch.getName().toLowerCase() + ".yml");
 		YamlConfiguration chFile = YamlConfiguration.loadConfiguration(defch);
 		chFile.options().header(""
 				+ "###################################################\n"
@@ -163,139 +163,122 @@ public class UCConfig {
 				+ "  format-to-dd: :thought_balloon: **{sender}**: {message} \n"
 				+ "  allow-server-cmds: false - Use this channel to send commands from discord > minecraft.\n"
 				+ "  channelID: '' - The ID of your Discord Channel. Enable debug on your discord to get the channel ID.\n");
-		
+
 		ch.getProperties().forEach((key, value) -> chFile.set((String) key, value));
-		chFile.save(defch);		
-		
-		if (UChat.get().getChannel(ch.getName()) != null){
+		chFile.save(defch);
+
+		if (UChat.get().getChannel(ch.getName()) != null) {
 			ch.setMembers(UChat.get().getChannel(ch.getName()).getMembers());
 			UChat.get().getChannels().remove(Arrays.asList(ch.getName().toLowerCase(), ch.getAlias().toLowerCase()));
 		}
 		UChat.get().getChannels().put(Arrays.asList(ch.getName().toLowerCase(), ch.getAlias().toLowerCase()), ch);
 	}
 
-	public List<String> getTagList(){
+	public List<String> getTagList() {
 		List<String> tags = new ArrayList<>();
-		for (String key:plugin.getConfig().getKeys(true)){
-			if (key.startsWith("tags.") && key.split("\\.").length == 2){
+		for (String key : plugin.getConfig().getKeys(true)) {
+			if (key.startsWith("tags.") && key.split("\\.").length == 2) {
 				tags.add(key.replace("tags.", ""));
-			}			
+			}
 		}
-		for (String str:getStringList("general.custom-tags")){
+		for (String str : getStringList("general.custom-tags")) {
 			tags.add(str);
 		}
 		return tags;
 	}
 
-	public String[] getDefBuilder(){
+	public String[] getDefBuilder() {
 		return getString("general.default-tag-builder").replace(" ", "").split(",");
 	}
-		
+
 	public List<String> getBroadcastAliases() {
 		return Arrays.asList(plugin.getConfig().getString("broadcast.aliases").replace(" ", "").split(","));
 	}
-	
+
 	public List<String> getTellAliases() {
 		return Arrays.asList(plugin.getConfig().getString("tell.cmd-aliases").replace(" ", "").split(","));
 	}
-	
+
 	public List<String> getMsgAliases() {
 		return Arrays.asList(plugin.getConfig().getString("general.umsg-cmd-aliases").replace(" ", "").split(","));
 	}
-	
-    public boolean getBoolean(String key){		
+
+	public boolean getBoolean(String key) {
 		return plugin.getConfig().getBoolean(key, false);
 	}
-    
-    public void setConfig(String key, Object value){
-    	plugin.getConfig().set(key, value);
-    }
-    
-    public String getString(String key){		
+
+	public void setConfig(String key, Object value) {
+		plugin.getConfig().set(key, value);
+	}
+
+	public String getString(String key) {
 		return plugin.getConfig().getString(key);
 	}
-    
-    public int getInt(String key){		
+
+	public int getInt(String key) {
 		return plugin.getConfig().getInt(key);
 	}
-    
-    public List<String> getStringList(String key){		
+
+	public List<String> getStringList(String key) {
 		return plugin.getConfig().getStringList(key);
 	}
-    /*
-    public Material getMaterial(String key){
-    	return Material.getMaterial(plugin.getConfig().getString(key));
-    }
-    */
-    public void save(){
-    	try {
-            comConfig.saveConfig();
-			Prots.save(new File(UChat.get().getDataFolder(),"protections.yml"));
+
+	public void save() {
+		try {
+			comConfig.saveConfig();
+			Prots.save(new File(UChat.get().getDataFolder(), "protections.yml"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-    }
-    
-    //protection methods
-    public ConfigurationSection getProtReplecements() {
+	}
+
+	//protection methods
+	public ConfigurationSection getProtReplecements() {
 		return Prots.getConfigurationSection("chat-protection.censor.replace-words");
 	}
-    
-	public int getProtInt(String key){
+
+	public int getProtInt(String key) {
 		return Prots.getInt(key);
 	}
-	
-	public boolean getProtBool(String key){
+
+	public boolean getProtBool(String key) {
 		return Prots.getBoolean(key);
 	}
-	
-	public List<String> getProtStringList(String key){
+
+	public List<String> getProtStringList(String key) {
 		return Prots.getStringList(key);
 	}
-	
-// --Commented out by Inspection START (08/12/2017 10:44):
-//    public boolean containsProtKey(String key){
-//		return Prots.contains(key);
-//	}
-// --Commented out by Inspection STOP (08/12/2017 10:44)
 
-	public String getProtString(String key){
+	public String getProtString(String key) {
 		return Prots.getString(key);
 	}
-	
-	public String getProtMsg(String key){
-		return ChatColor.translateAlternateColorCodes('&',Prots.getString(key));
-	}
-	
-	public String getColorStr(String key){
-		return ChatColor.translateAlternateColorCodes('&',plugin.getConfig().getString(key));
-	}
-	
-	private static YamlConfiguration updateFile(File saved){
-		YamlConfiguration finalyml = new YamlConfiguration();   
-		YamlConfiguration tempProts = new YamlConfiguration();
-        try {
-        	finalyml.load(saved);
-        		      
-        	tempProts.load(new InputStreamReader(UChat.get().getResource("assets/ultimatechat/protections.yml"), "UTF-8"));
-		} catch (Exception e) {
-			e.printStackTrace();
-		} 
-        
-        for (String key:tempProts.getKeys(true)){    
-        	Object obj = tempProts.get(key);
-        	if (finalyml.get(key) != null){
-        		obj = finalyml.get(key);
-        	}
-        	finalyml.set(key, obj);    	            	   	            	
-        }  
-        return finalyml;
+
+	public String getProtMsg(String key) {
+		return ChatColor.translateAlternateColorCodes('&', Prots.getString(key));
 	}
 
-// --Commented out by Inspection START (08/12/2017 10:44):
-//	public String getURLTemplate() {
-//		return ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("general.URL-template"));
-//	}
-// --Commented out by Inspection STOP (08/12/2017 10:44)
+	public String getColorStr(String key) {
+		return ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString(key));
+	}
+
+	private static YamlConfiguration updateFile(File saved) {
+		YamlConfiguration finalyml = new YamlConfiguration();
+		YamlConfiguration tempProts = new YamlConfiguration();
+		try {
+			finalyml.load(saved);
+
+			tempProts.load(new InputStreamReader(UChat.get().getResource("assets/ultimatechat/protections.yml"), "UTF-8"));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		for (String key : tempProts.getKeys(true)) {
+			Object obj = tempProts.get(key);
+			if (finalyml.get(key) != null) {
+				obj = finalyml.get(key);
+			}
+			finalyml.set(key, obj);
+		}
+		return finalyml;
+	}
 }
-   
