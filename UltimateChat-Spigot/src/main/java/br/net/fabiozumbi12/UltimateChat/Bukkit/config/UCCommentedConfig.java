@@ -31,7 +31,7 @@ public class UCCommentedConfig {
         setDefault("debug.messages", false, null);
         setDefault("debug.timings", false, null);
 
-        setDefault("language", "EN-US", "Available languages: EN-US, PT-BR, FR, HU-HU, RU, SP-ES and ZH-CN");
+        setDefault("language", "EN-US", "Available languages: EN-US, PT-BR, FR-FR, FR-ES, HU-HU, RU, SP-ES and ZH-CN");
 
         setDefault("jedis", null, "Jedis configuration.\nUse Jedis to send messages between other servers running Jedis.\nConsider a replecement as Bungeecoord.");
         setDefault("jedis.enable", false, null);
