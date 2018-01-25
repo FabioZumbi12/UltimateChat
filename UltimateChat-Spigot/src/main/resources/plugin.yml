@@ -14,8 +14,10 @@ commands:
     description: "Tell command"
   ubroadcast:
     description: "Broadcast command"
+    aliases: [ubroadcast]
   umsg:
     description: "Send a message to player"
+    aliases: [umsg]
 permissions:
   uchat.admin:
     description: "All admin commands."

@@ -333,14 +333,16 @@ public class UCMessages {
 				}
 				
 				if (url != null && url.length() > 0){
-					fanci.clickOpenURL(formatTags(tag, url, sender, receiver, msg, ch));
+					try{
+						fanci.clickOpenURL(new URL(formatTags(tag, url, sender, receiver, msg, ch)));
+					} catch (MalformedURLException ignored){}
+
 				}
 
 				if (tag.equals("message") && UCPerms.hasPerm(sender, "chat.click-urls")){
 				    for (String arg:msg.split(" ")){
                         try{
-                            new URL(arg);
-                            fanci.clickOpenURL(formatTags(tag, arg, sender, receiver, msg, ch));
+                            fanci.clickOpenURL(new URL(formatTags(tag, arg, sender, receiver, msg, ch)));
                             fanci.hoverShowText(UCUtil.colorize(formatTags(tag, UChat.get().getUCConfig().getString("general.URL-template").replace("{url}", arg), sender, receiver, msg, ch)));
                         } catch (MalformedURLException ignored) {}
                     }
@@ -673,5 +675,5 @@ public class UCMessages {
 			return UChat.get().getLang().get("tag.notset");
 		}
 		return tag;
-	}	
+	}
 }

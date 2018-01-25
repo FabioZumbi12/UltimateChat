@@ -6,6 +6,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class UCUtil {
 		
@@ -55,34 +57,43 @@ public class UCUtil {
 	
 	public static void performCommand(final Player to, final CommandSender sender, final String command) {
 		Bukkit.getScheduler().runTask(UChat.get(), () -> {
-            if (to == null || (to != null && to.isOnline())){
+            if (to == null || to.isOnline()){
                 UChat.get().getServer().dispatchCommand(sender, command);
             }
         });
 	}
 	
-	public static void sendUmsg(CommandSender sender, String[] args){
+	public static boolean sendUmsg(CommandSender sender, String[] args){
 		if (args.length < 2){
 			sender.sendMessage(UChat.get().getLang().get("help.cmd.umsg"));
-			return;
+			return false;
 		}
 		
 		Player receiver = Bukkit.getPlayer(args[0]);
 		if (receiver == null){
 			sender.sendMessage(UChat.get().getLang().get("listener.invalidplayer"));
-			return;
+			return true;
 		}
-		StringBuilder ssmsgs = new StringBuilder();	
-		for (String st:args){
-			ssmsgs.append(st+" ");
-		}		
-		String msgs = UCUtil.colorize(ssmsgs.toString().substring((args[0]).length()+1));
-		
-		receiver.sendMessage(msgs);
-		Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_GRAY+"> Private to "+ChatColor.GOLD+receiver.getName()+ChatColor.DARK_GRAY+": "+ChatColor.RESET+msgs);
+
+		UltimateFancy fancy = new UltimateFancy();
+		boolean first = true;
+		for (String arg:args){
+		    if (first) {first = false; continue;}
+
+			fancy.coloredText(arg+" ");
+			try{
+				fancy.clickOpenURL(new URL(arg));
+				fancy.hoverShowText(UCUtil.colorize(arg));
+			} catch (MalformedURLException ignored) {}
+			fancy.next();
+		}
+
+		fancy.send(receiver);
+		Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_GRAY+"> Private to "+ChatColor.GOLD+receiver.getName()+ChatColor.DARK_GRAY+": "+ChatColor.RESET+fancy.toOldFormat());
+		return true;
 	}
 	
-	public static boolean sendBroadcast(CommandSender sender, String[] args, boolean silent){
+	public static boolean sendBroadcast(String[] args, boolean silent){
 		StringBuilder message = new StringBuilder();
 		 StringBuilder hover = new StringBuilder();
 		 StringBuilder cmdline = new StringBuilder();
@@ -166,10 +177,12 @@ public class UCUtil {
 			 }				 
 			 
 			 if (url.toString().length() > 1){
-				 fanci.clickOpenURL(url.toString().substring(1));
-				 if (!silent){
-					 Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_GRAY+"> Url: "+ChatColor.RESET+url.toString().substring(1));
-				 }				  
+			 	try{
+					fanci.clickOpenURL(new URL(url.toString().substring(1)));
+					if (!silent){
+						Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_GRAY+"> Url: "+ChatColor.RESET+url.toString().substring(1));
+					}
+				} catch (MalformedURLException ignore){}
 			 }	
 			 
 			 for (Player p:Bukkit.getOnlinePlayers()){

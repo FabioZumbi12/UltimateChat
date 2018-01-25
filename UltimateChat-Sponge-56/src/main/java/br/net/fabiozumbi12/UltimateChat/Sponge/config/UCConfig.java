@@ -19,8 +19,8 @@ import java.util.Map.Entry;
 
 public class UCConfig{
 	
-	private final File defConfig = new File(UChat.get().configDir(),"config.conf");
-	private final File defProt = new File(UChat.get().configDir(),"protections.conf");
+	private File defConfig = new File(UChat.get().configDir(),"config.conf");
+	private File defProt = new File(UChat.get().configDir(),"protections.conf");
 	
 	private CommentedConfigurationNode configRoot;
 	private ConfigurationLoader<CommentedConfigurationNode> cfgLoader;
@@ -37,7 +37,6 @@ public class UCConfig{
 	}
 	
 	public UCConfig(GuiceObjectMapperFactory factory) throws IOException {
-		
 		UChat.get().getLogger().info("-> Config module");
 		try {
 			Files.createDirectories(UChat.get().configDir().toPath());
@@ -108,8 +107,8 @@ public class UCConfig{
 					+ " - {clan_player_isowner}: Get if this player os owner of this Clan;\n"
 					+ "Jedis (Redis):\n"
 					+ "- {jedis-id} - The ID of this server;\n"
-					+ "\n";			
-			
+					+ "\n";
+
 			cfgLoader = HoconConfigurationLoader.builder().setFile(defConfig).build();	
 			configRoot = cfgLoader.load(ConfigurationOptions.defaults().setObjectMapperFactory(factory).setShouldCopyDefaults(true).setHeader(header));			
 			root = configRoot.getValue(TypeToken.of(MainCategory.class), new MainCategory());			

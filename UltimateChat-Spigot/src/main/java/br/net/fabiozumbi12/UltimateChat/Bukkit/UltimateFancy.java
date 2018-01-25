@@ -16,6 +16,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -84,15 +85,7 @@ public class UltimateFancy {
 		text = ChatColor.translateAlternateColorCodes('&', text);
 		return this.text(text);
 	}
-	/*
-	private JSONObject checkUrl(JSONObject json, String text){
-		String regex = "((http:\\/\\/|https:\\/\\/)?(www.)?(([a-zA-Z0-9-]){2,}\\.){1,4}([a-zA-Z]){2,6}(\\/([a-zA-Z-_\\/\\.0-9#:?=&;,]*)?)?)";
-		if (Pattern.compile(regex).matcher(text).find()){
-			json.put("clickEvent", parseJson("open_url", Pattern.compile(regex).matcher(text).group(1)));
-		}
-		return json;
-	}
-	*/
+
 	private List<JSONObject> parseColors(String text){
 		List<JSONObject> jsonList = new ArrayList<>();
 		for (String part:text.split("(?="+ChatColor.COLOR_CHAR+")")){
@@ -117,10 +110,7 @@ public class UltimateFancy {
 									
 			//fix colors after
 			filterColors(workingText);
-			
-			//check if url
-			//workingText = checkUrl(workingText, part);
-			
+
 			if (!workingText.containsKey("color")){
 				workingText.put("color", "white");
 			}					
@@ -346,8 +336,8 @@ public class UltimateFancy {
 	 * @param url {@link String}
 	 * @return instance of same {@link UltimateFancy}.
 	 */
-	public void clickOpenURL(String url){
-		pendentElements.add(new ExtraElement("clickEvent",parseJson("open_url", url)));
+	public void clickOpenURL(URL url){
+		pendentElements.add(new ExtraElement("clickEvent",parseJson("open_url", url.toString())));
 	}
 	
 	/**Text to show on hover the mouse under this text.

@@ -129,15 +129,15 @@ public class UChat {
 	@Inject
     public GuiceObjectMapperFactory factory;
 	
-	protected static final HashMap<String,String> tempChannels = new HashMap<>();
-	protected static final HashMap<String,String> tellPlayers = new HashMap<>();
-	protected static final HashMap<String,String> tempTellPlayers = new HashMap<>();
-	protected static final HashMap<String,String> respondTell = new HashMap<>();
-	protected static final HashMap<String,List<String>> ignoringPlayer = new HashMap<>();
-	protected final List<String> mutes = new ArrayList<>();
-	public static final List<String> isSpy = new ArrayList<>();
-	protected static final List<String> command = new ArrayList<>();
-	protected final HashMap<String, Integer> timeMute = new HashMap<>();
+	protected static HashMap<String,String> tempChannels = new HashMap<>();
+	protected static HashMap<String,String> tellPlayers = new HashMap<>();
+	protected static HashMap<String,String> tempTellPlayers = new HashMap<>();
+	protected static HashMap<String,String> respondTell = new HashMap<>();
+	protected static HashMap<String,List<String>> ignoringPlayer = new HashMap<>();
+	protected List<String> mutes = new ArrayList<>();
+	public static List<String> isSpy = new ArrayList<>();
+	protected static List<String> command = new ArrayList<>();
+	protected HashMap<String, Integer> timeMute = new HashMap<>();
 
 	@Listener
     public void onServerStart(GamePostInitializationEvent event) {	

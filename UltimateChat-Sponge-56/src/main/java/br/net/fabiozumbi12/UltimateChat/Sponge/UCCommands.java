@@ -14,6 +14,8 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.Text.Builder;
 import org.spongepowered.api.text.action.TextActions;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -287,8 +289,20 @@ public class UCCommands {
 				    .executor((src, args) -> { {
 				    	Player receiver = args.<Player>getOne("player").get();
 				    	String msg = args.<String>getOne("message").get();
-				    	receiver.sendMessage(UCUtil.toText(msg));
-						Sponge.getServer().getConsole().sendMessage(UCUtil.toText("&8> Private to &6"+receiver.getName()+"&8: &r"+msg));
+
+						Builder txtBuilder = Text.builder();
+						for (String arg:msg.split(" ")){
+                            Builder argBuilder = Text.builder();
+                            argBuilder.append(UCUtil.toText(arg+" "));
+							try{
+                                argBuilder.onClick(TextActions.openUrl(new URL(arg)));
+                                argBuilder.onHover(TextActions.showText(UCUtil.toText(arg)));
+							} catch (MalformedURLException ignored) {}
+                            argBuilder.applyTo(txtBuilder);
+						}
+
+				    	receiver.sendMessage(txtBuilder.build());
+						Sponge.getServer().getConsole().sendMessage(UCUtil.toText("&8> Private to &6"+receiver.getName()+"&8: &r"+txtBuilder.build().toPlain()));
 				    	return CommandResult.success();	
 				    }})
 				    .build(), msga);

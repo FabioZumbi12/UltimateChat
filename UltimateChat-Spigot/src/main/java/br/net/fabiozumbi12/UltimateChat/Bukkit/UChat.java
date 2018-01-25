@@ -388,7 +388,7 @@ public class UChat extends JavaPlugin {
                     cmd = cmd+" "+ getUCConfig().getString("broadcast.url")+url;
                 }
                 if (plays == 0 || getServer().getOnlinePlayers().size() >= plays){
-                    UCUtil.sendBroadcast(getServer().getConsoleSender(), cmd.split(" "), silent);
+                    UCUtil.sendBroadcast(cmd.split(" "), silent);
                 }
             }
             if (index+1 >= total){
@@ -414,28 +414,33 @@ public class UChat extends JavaPlugin {
 	 * 
 	 */
 	void registerAliases(){
-		registerAliases("channel",getChAliases());
-        registerAliases("tell",config.getTellAliases());
-        registerAliases("umsg",config.getMsgAliases());
-        if (config.getBoolean("broadcast.enable")){
-        	registerAliases("ubroadcast",config.getBroadcastAliases());
-        }
+		registerAliases("channel",getChAliases(), true);
+        registerAliases("tell",config.getTellAliases(), true);
+        registerAliases("umsg",config.getMsgAliases(), true);
+        registerAliases("ubroadcast",config.getBroadcastAliases(), config.getBoolean("broadcast.enable"));
 	}
 	
-	private void registerAliases(String name, List<String> aliases) {
+	private void registerAliases(String name, List<String> aliases, boolean shouldReg) {
         List<String> aliases1 = new ArrayList<>(aliases);
 		
 		for (Command cmd:PluginCommandYamlParser.parse(uchat)){
 			if (cmd.getName().equals(name)){
-				cmd.setAliases(aliases1);
-				cmd.setLabel(name);
+                if (shouldReg){
+                    getServer().getPluginCommand(name).setExecutor(listener);
+                    cmd.setAliases(aliases1);
+                    cmd.setLabel(name);
+                }
 				try {		        			        	
 		        	Field field = SimplePluginManager.class.getDeclaredField("commandMap");
 		            field.setAccessible(true);
-		            CommandMap commandMap = (CommandMap)(field.get(getServer().getPluginManager()));		            
-		            Method register = commandMap.getClass().getMethod("register", String.class, Command.class);
-		            register.invoke(commandMap, cmd.getName(),cmd);
-		            ((PluginCommand) cmd).setExecutor(listener);
+		            CommandMap commandMap = (CommandMap)(field.get(getServer().getPluginManager()));
+		            if (shouldReg){
+                        Method register = commandMap.getClass().getMethod("register", String.class, Command.class);
+                        register.invoke(commandMap, cmd.getName(),cmd);
+                        ((PluginCommand) cmd).setExecutor(listener);
+                    } else if (getServer().getPluginCommand(name).isRegistered()){
+                        getServer().getPluginCommand(name).unregister(commandMap);
+                    }
 		        } catch(Exception e) {
 		            e.printStackTrace();
 		        }

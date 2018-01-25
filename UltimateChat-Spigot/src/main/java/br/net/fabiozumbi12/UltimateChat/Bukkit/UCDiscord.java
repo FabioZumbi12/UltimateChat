@@ -15,6 +15,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import javax.security.auth.login.LoginException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -95,13 +97,15 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface{
 					
 					//format message							
 					if (!e.getMessage().getAttachments().isEmpty()){
-						if (message.isEmpty()){
-							fancy.text("- Attachment -");
-						} else {
-							fancy.text(message);
-						}
-						fancy.clickOpenURL(e.getMessage().getAttachments().get(0).getUrl());
-						fancy.hoverShowText(e.getMessage().getAttachments().get(0).getFileName());
+						try{
+							fancy.clickOpenURL(new URL(e.getMessage().getAttachments().get(0).getUrl()));
+							fancy.hoverShowText(e.getMessage().getAttachments().get(0).getFileName());
+							if (message.isEmpty()){
+								fancy.text("- Attachment -");
+							} else {
+								fancy.text(message);
+							}
+						} catch (MalformedURLException ignore){}
 					} else {
 						fancy.text(message);	
 					}
@@ -231,9 +235,9 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface{
 	}
 	
 	private static class ColorSet<R, G, B> {
-		R red = null;
-		G green = null;
-		B blue = null;
+		R red;
+		G green;
+		B blue;
 
 		ColorSet(R red, G green, B blue) {
 			this.red = red;

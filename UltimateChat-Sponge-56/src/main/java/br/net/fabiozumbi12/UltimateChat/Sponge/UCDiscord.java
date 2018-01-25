@@ -98,15 +98,15 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
 									
 					//format message							
 					if (!e.getMessage().getAttachments().isEmpty()){
-						if (message.isEmpty()){
-							text.append(Text.of("- Attachment -"));
-						} else {
-							text.append(Text.of(message));
-						}
 						try {
 							text.onClick(TextActions.openUrl(new URL(e.getMessage().getAttachments().get(0).getUrl())));
+							text.onHover(TextActions.showText(Text.of(e.getMessage().getAttachments().get(0).getFileName())));
+							if (message.isEmpty()){
+								text.append(Text.of("- Attachment -"));
+							} else {
+								text.append(Text.of(message));
+							}
 						} catch (MalformedURLException ignored) {}
-						text.onHover(TextActions.showText(Text.of(e.getMessage().getAttachments().get(0).getFileName())));
 					} else {
 						text.append(Text.of(message));
 					}
@@ -237,9 +237,9 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
 	}
 	
 	private static class ColorSet<R, G, B> {
-		R red = null;
-		G green = null;
-		B blue = null;
+		R red;
+		G green;
+		B blue;
 
 		ColorSet(R red, G green, B blue) {
 			this.red = red;

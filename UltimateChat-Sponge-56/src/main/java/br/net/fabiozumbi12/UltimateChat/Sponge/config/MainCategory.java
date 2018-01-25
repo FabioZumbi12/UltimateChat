@@ -1,6 +1,5 @@
 package br.net.fabiozumbi12.UltimateChat.Sponge.config;
 
-import jdalib.jda.core.entities.Game;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
