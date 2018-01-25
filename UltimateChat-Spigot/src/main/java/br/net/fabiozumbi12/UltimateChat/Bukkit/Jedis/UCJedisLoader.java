@@ -39,11 +39,13 @@ public class UCJedisLoader {
 		
 		this.channels = newChannels;
 		channel = new ChatChannel(newChannels);
-		
+		JedisPoolConfig poolCfg = new JedisPoolConfig();
+		poolCfg.setTestOnBorrow(true);
+
 		if (auth.isEmpty()){
-			this.pool = new JedisPool(ip, port);
+			this.pool = new JedisPool(poolCfg, ip, port, 0);
 		} else {
-			this.pool = new JedisPool(new JedisPoolConfig(), ip, port, 10000, auth);
+			this.pool = new JedisPool(poolCfg, ip, port, 0, auth);
 		}	    
 		
 		try {
