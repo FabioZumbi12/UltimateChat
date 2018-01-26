@@ -7,9 +7,9 @@
   <name>UltimateChat</name>
   <version>1.8.5</version>
   <description>Ultimate Chat is an advanced chat hooking into most used plugins to show more info on player chat.</description>
-  
+
   <!-- Jedis -->
-  <dependencies>  
+  <dependencies>
     <dependency>
       <groupId>redis.clients</groupId>
       <artifactId>jedis</artifactId>

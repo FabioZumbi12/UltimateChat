@@ -282,12 +282,13 @@ public class UChat extends JavaPlugin {
 			this.jedis = null;
 		}
 		if (getUCConfig().getBoolean("jedis.enable")){
-			this.logger.info("Init JEDIS...");			
+			this.logger.info("Init REDIS...");
 			try {
 				this.jedis = new UCJedisLoader(getUCConfig().getString("jedis.ip"),
 						getUCConfig().getInt("jedis.port"),
 						getUCConfig().getString("jedis.pass"), new ArrayList<>(getChannels().values()));
 			} catch (Exception e){
+				e.printStackTrace();
 				this.logger.warning("Could not connect to REDIS server! Check ip, password and port, and if the REDIS server is running.");
 			}			
 		}		

@@ -20,11 +20,15 @@ import java.util.HashMap;
 import java.util.List;
 
 public class UCJedisLoader {
-	private final JedisPool pool;
-	private final String[] channels;
-	private final ChatChannel channel;
-	protected final HashMap<String, String> tellPlayers = new HashMap<>();
-	private final String thisId;
+	private JedisPool pool;
+	private String[] channels;
+	private ChatChannel channel;
+	protected HashMap<String, String> tellPlayers = new HashMap<>();
+	private String thisId;
+	private String ip;
+    private int port;
+    private String auth;
+    private JedisPoolConfig poolCfg;
 	
 	protected JedisPool getPool(){
 		return this.pool;
@@ -32,7 +36,10 @@ public class UCJedisLoader {
 	
 	public UCJedisLoader(String ip, int port, String auth, List<UCChannel> channels){
 		this.thisId = UChat.get().getConfig().root().jedis.server_id.replace("$", "");
-		
+		this.ip = ip;
+		this.port = port;
+		this.auth = auth;
+
 		channels.add(new UCChannel("generic"));
 		channels.add(new UCChannel("tellsend"));
 		channels.add(new UCChannel("tellresponse"));
@@ -44,31 +51,44 @@ public class UCJedisLoader {
 		
 		this.channels = newChannels;
 		channel = new ChatChannel(newChannels);
-		JedisPoolConfig poolCfg = new JedisPoolConfig();
+		poolCfg = new JedisPoolConfig();
 		poolCfg.setTestOnBorrow(true);
 
-		if (auth.isEmpty()){
-			this.pool = new JedisPool(poolCfg, ip, port, 0);
-		} else {
-			this.pool = new JedisPool(poolCfg, ip, port, 0, auth);
-		}
+		//connect
+        if (!connectPool()){
+            return;
+        }
 
-		try {
-			Jedis jedis = this.pool.getResource();
-			new Thread(() -> {
-                try {
-                    jedis.subscribe(channel, newChannels);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }).start();
-		} catch (JedisConnectionException e){
-			UChat.get().getLogger().warning("JEDIS not conected! Try again with /chat reload, or check the status of your Redis server.");
-			return;
-		}				
-		UChat.get().getLogger().info("JEDIS conected.");
+		UChat.get().getLogger().info("REDIS conected.");
 	}	
-		
+
+	private boolean connectPool(){
+	    if (this.pool == null || this.pool.isClosed()){
+            if (auth.isEmpty()){
+                this.pool = new JedisPool(poolCfg, ip, port, 0);
+            } else {
+                this.pool = new JedisPool(poolCfg, ip, port, 0, auth);
+            }
+
+            try {
+                Jedis jedis = this.pool.getResource();
+                jedis.configSet("timeout", "0");
+                new Thread(() -> {
+                    try {
+                        jedis.subscribe(channel, channels);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }).start();
+            } catch (JedisConnectionException e){
+                e.printStackTrace();
+                UChat.get().getLogger().warning("REDIS not conected! Try again with /chat reload, or check the status of your Redis server.");
+                return false;
+            }
+        }
+        return true;
+    }
+
 	public void sendTellMessage(CommandSource sender, String tellReceiver, Text msg){
 		Builder text = Text.builder();
 		text.append(UCUtil.toText(this.thisId));
@@ -92,6 +112,7 @@ public class UCJedisLoader {
 		if (Arrays.asList(channels).contains("tellsend")){
 			Sponge.getScheduler().createAsyncExecutor(UChat.get()).execute(() -> {
                 try {
+                    connectPool();
                     Jedis jedis = pool.getResource();
                     //string 0 1 2
                     jedis.publish("tellsend", this.thisId+"$"+tellReceiver+"$"+TextSerializers.JSON.serialize(text.build()));
@@ -108,6 +129,7 @@ public class UCJedisLoader {
 		if (Arrays.asList(channels).contains("generic")){
 			Sponge.getScheduler().createAsyncExecutor(UChat.get()).execute(() -> {
                 try {
+                    connectPool();
                     Jedis jedis = pool.getResource();
                     //string 0 1
                     jedis.publish("generic", this.thisId+"$"+TextSerializers.JSON.serialize(value));
@@ -124,6 +146,7 @@ public class UCJedisLoader {
 		if (Arrays.asList(channels).contains(channel)){
 			Sponge.getScheduler().createAsyncExecutor(UChat.get().instance()).execute(() -> {
                 try {
+                    connectPool();
                     Jedis jedis = pool.getResource();
                     //string 0 1
                     jedis.publish(channel, this.thisId+"$"+TextSerializers.JSON.serialize(value));
@@ -136,11 +159,11 @@ public class UCJedisLoader {
 	}
 
 	public void closePool(){
-		UChat.get().getLogger().info("Closing JEDIS...");
+		UChat.get().getLogger().info("Closing REDIS...");
 		if (this.channel.isSubscribed()){
 			this.channel.unsubscribe();
 		}		
 		this.pool.destroy();
-		UChat.get().getLogger().info("JEDIS closed.");
+		UChat.get().getLogger().info("REDIS closed.");
 	}	
 }
