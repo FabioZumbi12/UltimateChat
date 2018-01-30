@@ -83,7 +83,7 @@ public class UCUtil {
 			fancy.coloredText(arg+" ");
 			try{
 				fancy.clickOpenURL(new URL(arg));
-				fancy.hoverShowText(UCUtil.colorize(arg));
+				fancy.hoverShowText(UCUtil.colorize(UChat.get().getUCConfig().getString("general.URL-template").replace("{url}", arg)));
 			} catch (MalformedURLException ignored) {}
 		}
 

@@ -290,17 +290,13 @@ public class UCCommands {
 				    	Player receiver = args.<Player>getOne("player").get();
 				    	String msg = args.<String>getOne("message").get();
 
-						Builder txtBuilder = Text.builder();
+						Builder txtBuilder = Text.builder().append(UCUtil.toText(msg));
 						for (String arg:msg.split(" ")){
-                            Builder argBuilder = Text.builder();
-                            argBuilder.append(UCUtil.toText(arg+" "));
 							try{
-                                argBuilder.onClick(TextActions.openUrl(new URL(arg)));
-                                argBuilder.onHover(TextActions.showText(UCUtil.toText(arg)));
+								txtBuilder.onClick(TextActions.openUrl(new URL(arg)));
+								txtBuilder.onHover(TextActions.showText(UCUtil.toText(UChat.get().getConfig().root().general.URL_template.replace("{url}", arg))));
 							} catch (MalformedURLException ignored) {}
-                            argBuilder.applyTo(txtBuilder);
 						}
-
 				    	receiver.sendMessage(txtBuilder.build());
 						Sponge.getServer().getConsole().sendMessage(UCUtil.toText("&8> Private to &6"+receiver.getName()+"&8: &r"+txtBuilder.build().toPlain()));
 				    	return CommandResult.success();	
@@ -318,7 +314,7 @@ public class UCCommands {
 					.permission("uchat.cmd.broadcast")
 				    .description(Text.of("Command to send broadcast to server."))
 				    .executor((src, args) -> { {
-				    	if (!UCUtil.sendBroadcast(src, args.<String>getOne("message").get().split(" "), false)){
+				    	if (!UCUtil.sendBroadcast(args.<String>getOne("message").get().split(" "), false)){
 							sendHelp(src);
 						}  
 				    	return CommandResult.success();	

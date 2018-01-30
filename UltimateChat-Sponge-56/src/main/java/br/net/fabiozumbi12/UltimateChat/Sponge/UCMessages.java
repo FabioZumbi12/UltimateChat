@@ -353,7 +353,7 @@ public class UCMessages {
 				}
 					
 				StringBuilder tooltip = new StringBuilder();
-				if (messages != null){
+				if (messages != null && !messages.isEmpty()){
 					for (String tp:messages){
 						tooltip.append("\n").append(tp);
 					}
@@ -362,16 +362,16 @@ public class UCMessages {
 					}	
 				}		
 
-				if (suggest != null && suggest.length() > 0){
+				if (suggest != null && !suggest.isEmpty()){
 					tagBuilder.onClick(TextActions.suggestCommand(formatTags(tag, "/"+suggest, sender, receiver, msg, ch)));
 				}
 				
-				if (execute != null && execute.length() > 0){
+				if (execute != null && !execute.isEmpty()){
 					tagBuilder.onClick(TextActions.runCommand(formatTags(tag, "/"+execute, sender, receiver, msg, ch)));
 				}
 
 
-				if (url != null && url.length() > 0){
+				if (url != null && !url.isEmpty()){
 					try {
 						tagBuilder.onClick(TextActions.openUrl(new URL(formatTags(tag, url, sender, receiver, msg, ch))));
 					} catch (MalformedURLException e) {
@@ -379,7 +379,7 @@ public class UCMessages {
 					}
 				}
 
-				if (tag.equals("message") && UChat.get().getPerms().hasPerm(sender, "chat.click-urls")){
+				if (!tag.equals("message") || UChat.get().getPerms().hasPerm(sender, "chat.click-urls")){
 					for (String arg:msg.split(" ")){
 						try{
 							tagBuilder.onClick(TextActions.openUrl(new URL(formatTags(tag, arg, sender, receiver, msg, ch))));

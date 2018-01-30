@@ -324,22 +324,22 @@ public class UCMessages {
 					tooltip = new StringBuilder(tooltip.substring(1));
 				}			
 							
-				if (execute != null && execute.length() > 0){
+				if (execute != null  && !execute.isEmpty()){
 					fanci.clickRunCmd(formatTags(tag, "/"+execute, sender, receiver, msg, ch));
 				}
 				
-				if (suggest != null && suggest.length() > 0){
+				if (suggest != null && !suggest.isEmpty()){
 					fanci.clickSuggestCmd(formatTags(tag, suggest, sender, receiver, msg, ch));
 				}
 				
-				if (url != null && url.length() > 0){
+				if (url != null && !url.isEmpty()){
 					try{
 						fanci.clickOpenURL(new URL(formatTags(tag, url, sender, receiver, msg, ch)));
 					} catch (MalformedURLException ignored){}
 
 				}
 
-				if (tag.equals("message") && UCPerms.hasPerm(sender, "chat.click-urls")){
+				if (!tag.equals("message") || UCPerms.hasPerm(sender, "chat.click-urls")){
 				    for (String arg:msg.split(" ")){
                         try{
                             fanci.clickOpenURL(new URL(formatTags(tag, arg, sender, receiver, msg, ch)));

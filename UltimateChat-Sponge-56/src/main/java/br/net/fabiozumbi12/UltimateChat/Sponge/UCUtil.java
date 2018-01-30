@@ -26,7 +26,7 @@ public class UCUtil {
 		return str.replaceAll("(&([a-fk-or0-9]))", "");
 	}
 	
-	static boolean sendBroadcast(CommandSource sender, String[] args, boolean silent){
+	static boolean sendBroadcast(String[] args, boolean silent){
 		StringBuilder message = new StringBuilder();
 		 StringBuilder hover = new StringBuilder();
 		 StringBuilder cmdline = new StringBuilder();
