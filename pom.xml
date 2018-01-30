@@ -36,11 +36,8 @@
         <snapshots>
             <enabled>true</enabled>
         </snapshots>
-    </repository>  
-    <repository>
-            <id>kitteh-repo</id>
-            <url>http://repo.kitteh.org/content/groups/public</url>
     </repository>
+
       <repository>
           <id>nucleus-api</id>
           <url>http://repo.drnaylor.co.uk/artifactory/list/minecraft</url>
@@ -86,8 +83,9 @@
      <!-- Marriage repo -->
      <repository>
             <id>Marriage</id>
-            <url>http://ci.lenis0012.com/plugin/repository/everything</url>
-     </repository> 
+            <url>https://ci.lucko.me/plugin/repository/everything</url>
+     </repository>
+
   </repositories>
   
   <scm>

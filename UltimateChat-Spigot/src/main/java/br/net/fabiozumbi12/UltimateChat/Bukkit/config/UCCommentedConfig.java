@@ -69,7 +69,7 @@ public class UCCommentedConfig {
         setDefault("general.remove-from-chat", Arrays.asList("[]","&7[]","&7[&7]"), "Remove this from chat (like empty tags)");
         setDefault("general.remove-unnused-placeholderapi", true, "Remove not converted PlaceholdersAPI from tags.");
         setDefault("general.channel-cmd-aliases", "channel, ch", null);
-        setDefault("general.umsg-cmd-aliases", "umsg, pv", "Aliases to send commands from system to players (without any format, good to send messages from other plugins direct to players)");
+        setDefault("general.umsg-cmd-aliases", "upv", "Aliases to send commands from system to players (without any format, good to send messages from other plugins direct to players)");
         setDefault("general.json-events", true, "False if your server don't support json or if /tellraw is not available.");
         setDefault("general.default-channel", "l", "Set the default channel for new players or when players join on server.");
         setDefault("general.spy-format", "&c&o[Spy] {output}", "Chat spy format.");
@@ -85,7 +85,7 @@ public class UCCommentedConfig {
         setDefault("general.item-hand.format", "&6[{hand-amount} {hand-type}]{group-suffix}", "Text to show on chat.");
         setDefault("general.item-hand.placeholder", "@hand", "Placeholder to use on chat by players to show your item in hand.");
 
-        setDefault("tell.cmd-aliases", "tell,t,w,m,msg,private,priv,r", null);
+        setDefault("tell.cmd-aliases", "t,w,m,msg,private,priv,r", null);
         setDefault("tell.prefix", "&6[&c{playername} &6-> &c{receivername}&6]: ", null);
         setDefault("tell.format", "{message}", null);
         setDefault("tell.hover-messages", new ArrayList<>(), null);

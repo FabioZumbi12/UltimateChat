@@ -57,7 +57,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="Maven: com.lenis0012.bukkit:marriage2:2.0.17-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.lenis0012.bukkit:marriage2:2.0.15" level="project" />
     <orderEntry type="library" name="Maven: net.milkbowl.vault:VaultAPI:1.6" level="project" />
     <orderEntry type="library" name="Maven: org.bukkit:bukkit:1.9-R0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.avaje:ebean:2.8.1" level="project" />
