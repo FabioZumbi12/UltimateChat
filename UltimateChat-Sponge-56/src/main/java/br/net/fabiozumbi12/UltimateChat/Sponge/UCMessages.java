@@ -4,6 +4,8 @@ import br.net.fabiozumbi12.UltimateChat.Sponge.API.PostFormatChatMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.Sponge.API.SendChannelMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.Sponge.UCLogger.timingType;
 import io.github.nucleuspowered.nucleus.api.NucleusAPI;
+import me.rojo8399.placeholderapi.PlaceholderService;
+import me.rojo8399.placeholderapi.impl.utils.TextUtils;
 import nl.riebie.mcclans.api.ClanPlayer;
 import nl.riebie.mcclans.api.ClanService;
 import org.apache.commons.lang3.StringUtils;
@@ -20,6 +22,7 @@ import org.spongepowered.api.service.economy.account.UniqueAccount;
 import org.spongepowered.api.service.permission.Subject;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.Text.Builder;
+import org.spongepowered.api.text.TextTemplate;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.channel.MessageChannel;
 import org.spongepowered.api.text.channel.MutableMessageChannel;
@@ -163,7 +166,7 @@ public class UCMessages {
 			if (!sender.hasPermission("uchat.chat-spy.bypass")){
 				for (Player receiver:Sponge.getServer().getOnlinePlayers()){			
 					if (!receiver.equals(sender) && !receivers.contains(receiver) && !receivers.contains(sender) && 
-							UChat.isSpy.contains(receiver.getName()) && UChat.get().getPerms().hasSpyPerm(receiver, ch.getName())){	
+							UChat.get().isSpy.contains(receiver.getName()) && UChat.get().getPerms().hasSpyPerm(receiver, ch.getName())){
 						String spyformat = UChat.get().getConfig().root().general.spy_format;
 						spyformat = spyformat.replace("{output}", UCUtil.stripColor(sendMessage(sender, receiver, srcText, ch, true).toPlain()));					
 						receiver.sendMessage(UCUtil.toText(spyformat));
@@ -190,7 +193,7 @@ public class UCMessages {
 			if (!sender.hasPermission("uchat.chat-spy.bypass")){
 				for (Player receiver:Sponge.getServer().getOnlinePlayers()){			
 					if (!receiver.equals(tellReceiver) && !receiver.equals(sender) && 
-							UChat.isSpy.contains(receiver.getName()) && UChat.get().getPerms().hasSpyPerm(receiver, "private")){
+							UChat.get().isSpy.contains(receiver.getName()) && UChat.get().getPerms().hasSpyPerm(receiver, "private")){
 						String spyformat = UChat.get().getConfig().root().general.spy_format;
 						if (isIgnoringPlayers(tellReceiver.getName(), sender.getName())){
 							spyformat = UChat.get().getLang().get("chat.ignored")+spyformat;
@@ -270,28 +273,28 @@ public class UCMessages {
 	
 	static boolean isIgnoringPlayers(String p, String victim){
 		List<String> list = new ArrayList<>();
-		if (UChat.ignoringPlayer.containsKey(p)){
-			list.addAll(UChat.ignoringPlayer.get(p));			
+		if (UChat.get().ignoringPlayer.containsKey(p)){
+			list.addAll(UChat.get().ignoringPlayer.get(p));
 		}
 		return list.contains(victim);
 	}
 	
 	static void ignorePlayer(String p, String victim){
 		List<String> list = new ArrayList<>();
-		if (UChat.ignoringPlayer.containsKey(p)){
-			list.addAll(UChat.ignoringPlayer.get(p));
+		if (UChat.get().ignoringPlayer.containsKey(p)){
+			list.addAll(UChat.get().ignoringPlayer.get(p));
 		}
 		list.add(victim);
-		UChat.ignoringPlayer.put(p, list);
+		UChat.get().ignoringPlayer.put(p, list);
 	}
 	
 	static void unIgnorePlayer(String p, String victim){
 		List<String> list = new ArrayList<>();
-		if (UChat.ignoringPlayer.containsKey(p)){
-			list.addAll(UChat.ignoringPlayer.get(p));
+		if (UChat.get().ignoringPlayer.containsKey(p)){
+			list.addAll(UChat.get().ignoringPlayer.get(p));
 		}
 		list.remove(victim);
-		UChat.ignoringPlayer.put(p, list);
+		UChat.get().ignoringPlayer.put(p, list);
 	}
 	
 	public static Text sendMessage(CommandSource sender, Object receiver, Text srcTxt, UCChannel ch, boolean isSpy){
@@ -698,7 +701,21 @@ public class UCMessages {
 								.replace("{clan_player_isowner}", String.valueOf(cp.getClan().getOwner().equals(cp)));
 					}				
 				}
-			}			
+			}
+
+			if (Sponge.getPluginManager().getPlugin("placeholderapi").isPresent()){
+                Optional<PlaceholderService> phapiOpt = Sponge.getServiceManager().provide(PlaceholderService.class);
+                Pattern p = Pattern.compile("\\%([^\\%]*)\\%");
+                if (phapiOpt.isPresent() && p.matcher(text).find()){
+                    PlaceholderService phapi = phapiOpt.get();
+
+                    //fix last color from string
+                    String lastcolor = text.length() > 1 ? text.substring(text.length()-2, text.length()) : "";
+                    if (!Pattern.compile("(&([a-fk-or0-9]))").matcher(lastcolor).find()) lastcolor = "";
+
+                    text = TextSerializers.FORMATTING_CODE.serialize(phapi.replacePlaceholders(text, sender, receiver, p))+lastcolor;
+                }
+            }
 		}		
 		
 		text = text.replace("{option_suffix}", "&r: ");

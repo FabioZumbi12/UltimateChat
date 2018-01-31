@@ -39,6 +39,7 @@ authors="FabioZumbi12",
 description="Complete and advanced chat plugin",
 dependencies={
 		@Dependency(id = "jdalibraryloader", optional = true),
+		@Dependency(id = "placeholderapi", optional = true),
 		@Dependency(id = "nucleus", optional = true)})
 public class UChat {
 	
@@ -129,14 +130,14 @@ public class UChat {
 	@Inject
     public GuiceObjectMapperFactory factory;
 	
-	protected static HashMap<String,String> tempChannels = new HashMap<>();
-	protected static HashMap<String,String> tellPlayers = new HashMap<>();
-	protected static HashMap<String,String> tempTellPlayers = new HashMap<>();
-	protected static HashMap<String,String> respondTell = new HashMap<>();
-	protected static HashMap<String,List<String>> ignoringPlayer = new HashMap<>();
+	protected HashMap<String,String> tempChannels = new HashMap<>();
+	protected HashMap<String,String> tellPlayers = new HashMap<>();
+	protected HashMap<String,String> tempTellPlayers = new HashMap<>();
+	protected HashMap<String,String> respondTell = new HashMap<>();
+	protected HashMap<String,List<String>> ignoringPlayer = new HashMap<>();
 	protected List<String> mutes = new ArrayList<>();
-	public static List<String> isSpy = new ArrayList<>();
-	protected static List<String> command = new ArrayList<>();
+	public List<String> isSpy = new ArrayList<>();
+	protected List<String> command = new ArrayList<>();
 	protected HashMap<String, Integer> timeMute = new HashMap<>();
 
 	@Listener
@@ -168,6 +169,11 @@ public class UChat {
     		
     		logger.info("Init API module...");
             this.ucapi = new uChatAPI();
+
+            //register placeholdersapi
+            if (Sponge.getPluginManager().getPlugin("placeholderapi").isPresent()){
+                new UCPlaceHoldersRelational(this);
+            }
 
             getLogger().logClear("\n"
             		+ "&b  _    _ _ _   _                 _        _____ _           _  \n"

@@ -97,7 +97,7 @@ public class UCJedisLoader {
 		if (!sender.hasPermission("uchat.chat-spy.bypass")){
 			for (Player receiver:Sponge.getServer().getOnlinePlayers()){			
 				if (!receiver.getName().equals(tellReceiver) && !receiver.equals(sender) && 
-						UChat.isSpy.contains(receiver.getName()) && UChat.get().getPerms().hasSpyPerm(receiver, "private")){
+						UChat.get().isSpy.contains(receiver.getName()) && UChat.get().getPerms().hasSpyPerm(receiver, "private")){
 					String spyformat = UChat.get().getConfig().root().general.spy_format;
 					
 					spyformat = spyformat.replace("{output}", UCUtil.stripColor(UCMessages.sendMessage(sender, tellReceiver, msg, new UCChannel("tell"), true).toPlain()));					

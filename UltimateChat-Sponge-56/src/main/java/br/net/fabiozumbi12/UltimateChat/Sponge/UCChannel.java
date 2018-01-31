@@ -367,7 +367,7 @@ public class UCChannel {
 					false);
 			UChat.get().getLogger().timings(timingType.START, "UCChannel#sendMessage()|Fire MessageChannelEvent");
 			if (!Sponge.getEventManager().post(event)){
-				UChat.tempChannels.put(src.getName(), this.getAlias());
+				UChat.get().tempChannels.put(src.getName(), this.getAlias());
 			}
 		}
 	}

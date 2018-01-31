@@ -86,13 +86,13 @@ public class UCCommands {
 					    .executor((src, args) -> { {
 					    	if (src instanceof Player){
 					    		Player p = (Player) src;						
-					    		if (UChat.respondTell.containsKey(p.getName())){
-					    			String recStr = UChat.respondTell.get(p.getName());	
+					    		if (UChat.get().respondTell.containsKey(p.getName())){
+					    			String recStr = UChat.get().respondTell.get(p.getName());	
 					    			Text msg = Text.of(args.<String>getOne("message").get());	
 					    			
 					    			if (recStr.equals("CONSOLE")){
-										UChat.respondTell.put("CONSOLE", p.getName());
-										UChat.command.add(p.getName());
+										UChat.get().respondTell.put("CONSOLE", p.getName());
+										UChat.get().command.add(p.getName());
 										sendPreTell(p, Sponge.getServer().getConsole(), msg);										
 									} else {
 										Optional<Player> optRec = Sponge.getServer().getPlayer(recStr);
@@ -100,8 +100,8 @@ public class UCCommands {
 											throw new CommandException(UChat.get().getLang().getText("cmd.tell.nonetorespond"));
 										} else {
 											Player receiver = optRec.get();
-											UChat.respondTell.put(receiver.getName(), p.getName());
-											UChat.command.add(p.getName());
+											UChat.get().respondTell.put(receiver.getName(), p.getName());
+											UChat.get().command.add(p.getName());
 											sendPreTell(p, receiver, msg);	
 										}																			
 									}
@@ -120,9 +120,9 @@ public class UCCommands {
 					    .permission("uchat.cmd.tell")
 					    .executor((src, args) -> { {					    	
 					    	if (!args.hasAny("receiver")){
-					    		if (UChat.tellPlayers.containsKey(src.getName())){
-									String tp = UChat.tellPlayers.get(src.getName());
-									UChat.tellPlayers.remove(src.getName());
+					    		if (UChat.get().tellPlayers.containsKey(src.getName())){
+									String tp = UChat.get().tellPlayers.get(src.getName());
+									UChat.get().tellPlayers.remove(src.getName());
 									UChat.get().getLang().sendMessage(src, UChat.get().getLang().get("cmd.tell.unlocked").replace("{player}", tp));
 									return CommandResult.success();
 								}
@@ -151,16 +151,16 @@ public class UCCommands {
 												return CommandResult.success();
 											}
 											
-											UChat.tempTellPlayers.put(p.getName(), receiver.getName());
-											UChat.command.add(p.getName());										
+											UChat.get().tempTellPlayers.put(p.getName(), receiver.getName());
+											UChat.get().command.add(p.getName());										
 											
 											sendPreTell(p, receiver, msg);
 						    			} 
 						    			
 						    			//if receiver as console
 						    			else if (recObj.toString().equalsIgnoreCase("console")){
-						    				UChat.tempTellPlayers.put(p.getName(), "CONSOLE");
-											UChat.command.add(p.getName());
+						    				UChat.get().tempTellPlayers.put(p.getName(), "CONSOLE");
+											UChat.get().command.add(p.getName());
 											sendPreTell(p, Sponge.getServer().getConsole(), msg);
 						    			} 
 						    			
@@ -188,11 +188,11 @@ public class UCCommands {
 											throw new CommandException(UChat.get().getLang().getText("cmd.tell.self"), true);
 										}
 										
-										if (UChat.tellPlayers.containsKey(p.getName()) && UChat.tellPlayers.get(p.getName()).equals(receiver.getName())){
-											UChat.tellPlayers.remove(p.getName());
+										if (UChat.get().tellPlayers.containsKey(p.getName()) && UChat.get().tellPlayers.get(p.getName()).equals(receiver.getName())){
+											UChat.get().tellPlayers.remove(p.getName());
 											UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("cmd.tell.unlocked").replace("{player}", receiver.getName()));
 										} else {
-											UChat.tellPlayers.put(p.getName(), receiver.getName());
+											UChat.get().tellPlayers.put(p.getName(), receiver.getName());
 											UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("cmd.tell.locked").replace("{player}", receiver.getName()));
 										}
 										return CommandResult.success();	
@@ -207,8 +207,8 @@ public class UCCommands {
 										return CommandResult.success();
 									}
 						    		
-						    		UChat.tempTellPlayers.put("CONSOLE", receiver.getName());
-									UChat.command.add("CONSOLE");
+						    		UChat.get().tempTellPlayers.put("CONSOLE", receiver.getName());
+									UChat.get().command.add("CONSOLE");
 									
 						    		sendPreTell(Sponge.getServer().getConsole(), receiver, Text.of(msg));		
 						    		return CommandResult.success();	
@@ -367,7 +367,7 @@ public class UCCommands {
 								return CommandResult.success();
 							}
 			    			
-			    			UChat.tempChannels.put(src.getName(), ch.getAlias());
+			    			UChat.get().tempChannels.put(src.getName(), ch.getAlias());
 
                             UChat.get().getLogger().timings(UCLogger.timingType.START, "UCListener#sendPreTell()|Fire AsyncPlayerChatEvent");
 
@@ -390,7 +390,7 @@ public class UCCommands {
 								return CommandResult.success();
 							}
 				    		if (ch.isMember(src)){
-				    			UChat.tempChannels.put(src.getName(), ch.getAlias());
+				    			UChat.get().tempChannels.put(src.getName(), ch.getAlias());
 				    			UChat.get().getLang().sendMessage(src, UChat.get().getLang().get("channel.alreadyon").replace("{channel}", ch.getName()));
 								return CommandResult.success();
 							}
@@ -557,11 +557,11 @@ public class UCCommands {
 					if (src instanceof Player){
 						Player p = (Player) src;
 						//uchat spy
-						if (!UChat.isSpy.contains(p.getName())){
-							UChat.isSpy.add(p.getName());
+						if (!UChat.get().isSpy.contains(p.getName())){
+							UChat.get().isSpy.add(p.getName());
 							UChat.get().getLang().sendMessage(src, "cmd.spy.enabled");
 						} else {
-							UChat.isSpy.remove(p.getName());
+							UChat.get().isSpy.remove(p.getName());
 							UChat.get().getLang().sendMessage(src, "cmd.spy.disabled");
 						}
 					}					

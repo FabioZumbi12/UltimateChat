@@ -3,7 +3,7 @@
   <parent>
     <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
     <artifactId>UltimateChat</artifactId>
-    <version>1.8.5</version>
+    <version>1.8.6</version>
   </parent>
   <artifactId>UltimateChat-Sponge-5.0-6.0</artifactId>
   
@@ -34,6 +34,7 @@
 		<systemPath>${project.basedir}/libs/MCClans-API-1.2.jar</systemPath>
 	</dependency>
 
+      <!-- nucleus api -->
       <dependency>
           <groupId>io.github.nucleuspowered</groupId>
           <artifactId>nucleus-api</artifactId>
@@ -41,6 +42,13 @@
           <scope>provided</scope>
       </dependency>
 
+      <!-- PlaceholdersAPI -->
+      <dependency>
+          <groupId>com.github.rojo8399</groupId>
+          <artifactId>PlaceholderAPI</artifactId>
+          <version>LATEST</version>
+          <scope>provided</scope>
+      </dependency>
 	
 	<!-- Discord bridge -->
         <dependency>

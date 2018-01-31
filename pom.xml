@@ -5,7 +5,7 @@
   <artifactId>UltimateChat</artifactId>
   <packaging>pom</packaging>
   <name>UltimateChat</name>
-  <version>1.8.5</version>
+  <version>1.8.6</version>
   <description>Ultimate Chat is an advanced chat hooking into most used plugins to show more info on player chat.</description>
 
   <!-- Jedis -->
@@ -41,6 +41,11 @@
       <repository>
           <id>nucleus-api</id>
           <url>http://repo.drnaylor.co.uk/artifactory/list/minecraft</url>
+      </repository>
+
+      <repository>
+          <id>jitpack.io</id>
+          <url>https://jitpack.io</url>
       </repository>
      
     <!-- Spigot repos -->

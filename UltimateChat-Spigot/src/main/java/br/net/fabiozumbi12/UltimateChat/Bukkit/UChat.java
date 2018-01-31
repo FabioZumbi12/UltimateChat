@@ -48,16 +48,15 @@ public class UChat extends JavaPlugin {
 	private FileConfiguration amConfig;
 	private int index = 0;	
 
-	//public static HashMap<String,String> pChannels = new HashMap<String,String>();
-	final HashMap<String,String> tempChannels = new HashMap<>();
-	final HashMap<String,String> tellPlayers = new HashMap<>();
-	final HashMap<String,String> tempTellPlayers = new HashMap<>();
-	final HashMap<String,String> respondTell = new HashMap<>();
-	protected final List<String> command = new ArrayList<>();
-	final HashMap<String,List<String>> ignoringPlayer = new HashMap<>();
-	final List<String> mutes = new ArrayList<>();
-	public final List<String> isSpy = new ArrayList<>();
-	final HashMap<String, Integer> timeMute = new HashMap<>();
+	 HashMap<String,String> tempChannels = new HashMap<>();
+	 HashMap<String,String> tellPlayers = new HashMap<>();
+	 HashMap<String,String> tempTellPlayers = new HashMap<>();
+	 HashMap<String,String> respondTell = new HashMap<>();
+	protected  List<String> command = new ArrayList<>();
+	 HashMap<String,List<String>> ignoringPlayer = new HashMap<>();
+	 List<String> mutes = new ArrayList<>();
+	public  List<String> isSpy = new ArrayList<>();
+	 HashMap<String, Integer> timeMute = new HashMap<>();
 	private UCListener listener;
 	
 	private HashMap<List<String>,UCChannel> channels;

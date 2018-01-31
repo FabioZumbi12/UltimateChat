@@ -30,7 +30,7 @@ public class UCListener {
 			UChat.get().getLang().sendMessage(sender, "listener.invalidplayer");
 			return;
 		}
-		UChat.respondTell.put(receiver.get().getName(),sender.getName());
+		UChat.get().respondTell.put(receiver.get().getName(),sender.getName());
 		UCMessages.sendFancyMessage(new String[0], msg, null, sender, receiver.get());			
 	}
 	
@@ -39,49 +39,49 @@ public class UCListener {
 
         UChat.get().getLogger().timings(UCLogger.timingType.START, "UCListener#onChat()|Listening AsyncPlayerChatEvent");
 
-		if (UChat.tellPlayers.containsKey(p.getName()) && (!UChat.tempTellPlayers.containsKey("CONSOLE") || !UChat.tempTellPlayers.get("CONSOLE").equals(p.getName()))){		
-			String recStr = UChat.tellPlayers.get(p.getName());
+		if (UChat.get().tellPlayers.containsKey(p.getName()) && (!UChat.get().tempTellPlayers.containsKey("CONSOLE") || !UChat.get().tempTellPlayers.get("CONSOLE").equals(p.getName()))){		
+			String recStr = UChat.get().tellPlayers.get(p.getName());
 			Optional<CommandSource> tellreceiver = Optional.ofNullable(Sponge.getServer().getPlayer(recStr).orElse(null));	
 			sendTell(p, tellreceiver, e.getRawMessage());
 			e.setMessageCancelled(true);			
 		}
 
-		else if (UChat.command.contains(p.getName()) || UChat.command.contains("CONSOLE")){
-			if (UChat.tempTellPlayers.containsKey("CONSOLE")){
-				String recStr = UChat.tempTellPlayers.get("CONSOLE");	
+		else if (UChat.get().command.contains(p.getName()) || UChat.get().command.contains("CONSOLE")){
+			if (UChat.get().tempTellPlayers.containsKey("CONSOLE")){
+				String recStr = UChat.get().tempTellPlayers.get("CONSOLE");	
 				Optional<CommandSource> pRec = Optional.ofNullable(Sponge.getServer().getPlayer(recStr).orElse(null));
 				if (pRec.isPresent() && p.equals(pRec.get())){
 					sendTell(Sponge.getServer().getConsole(), pRec, e.getRawMessage());
-					UChat.tempTellPlayers.remove("CONSOLE");
-					UChat.command.remove("CONSOLE");
+					UChat.get().tempTellPlayers.remove("CONSOLE");
+					UChat.get().command.remove("CONSOLE");
 				}				
-			} else if (UChat.tempTellPlayers.containsKey(p.getName())){
-				String recStr = UChat.tempTellPlayers.get(p.getName());
+			} else if (UChat.get().tempTellPlayers.containsKey(p.getName())){
+				String recStr = UChat.get().tempTellPlayers.get(p.getName());
 				if (recStr.equals("CONSOLE")){
 					sendTell(p, Optional.of(Sponge.getServer().getConsole()), e.getRawMessage());
 				} else {
 					sendTell(p, Optional.ofNullable(Sponge.getServer().getPlayer(recStr).orElse(null)), e.getRawMessage());
 				}		
-				UChat.tempTellPlayers.remove(p.getName());
-				UChat.command.remove(p.getName());
-			} else if (UChat.respondTell.containsKey(p.getName())){
-				String recStr = UChat.respondTell.get(p.getName());
+				UChat.get().tempTellPlayers.remove(p.getName());
+				UChat.get().command.remove(p.getName());
+			} else if (UChat.get().respondTell.containsKey(p.getName())){
+				String recStr = UChat.get().respondTell.get(p.getName());
 				if (recStr.equals("CONSOLE")){
 					sendTell(p, Optional.of(Sponge.getServer().getConsole()), e.getRawMessage());
 				} else {
 					sendTell(p, Optional.ofNullable(Sponge.getServer().getPlayer(recStr).orElse(null)), e.getRawMessage());
 				}
-				//UChat.respondTell.remove(p.getName());
-				UChat.command.remove(p.getName());
+				//UChat.get().respondTell.remove(p.getName());
+				UChat.get().command.remove(p.getName());
 			}
 			e.setMessageCancelled(true);
 		} 
 		
 		else {
 			UCChannel ch = UChat.get().getPlayerChannel(p);
-			if (UChat.tempChannels.containsKey(p.getName()) && !UChat.tempChannels.get(p.getName()).equals(ch.getAlias())){
-				ch = UChat.get().getChannel(UChat.tempChannels.get(p.getName()));
-				UChat.tempChannels.remove(p.getName());
+			if (UChat.get().tempChannels.containsKey(p.getName()) && !UChat.get().tempChannels.get(p.getName()).equals(ch.getAlias())){
+				ch = UChat.get().getChannel(UChat.get().tempChannels.get(p.getName()));
+				UChat.get().tempChannels.remove(p.getName());
 			}
 			
 			if (UChat.get().mutes.contains(p.getName()) || ch.isMuted(p.getName())){
@@ -152,8 +152,8 @@ public class UCListener {
 				UChat.get().getUCJDA().updateGame(UChat.get().getLang().get("discord.game").replace("{online}", String.valueOf(Sponge.getServer().getOnlinePlayers().size())));
 			}
 		}
-		if (UChat.get().getConfig().root().general.spy_enabled_onjoin && p.hasPermission("uchat.cmd.spy") && !UChat.isSpy.contains(p.getName())){
-			UChat.isSpy.add(p.getName());
+		if (UChat.get().getConfig().root().general.spy_enabled_onjoin && p.hasPermission("uchat.cmd.spy") && !UChat.get().isSpy.contains(p.getName())){
+			UChat.get().isSpy.add(p.getName());
 			UChat.get().getLang().sendMessage(p, "cmd.spy.enabled");
 		}
 	}
@@ -167,25 +167,25 @@ public class UCListener {
         }
 
 		List<String> toRemove = new ArrayList<>();
-		for (String play:UChat.tellPlayers.keySet()){
-			if (play.equals(p.getName()) || UChat.tellPlayers.get(play).equals(p.getName())){
+		for (String play:UChat.get().tellPlayers.keySet()){
+			if (play.equals(p.getName()) || UChat.get().tellPlayers.get(play).equals(p.getName())){
 				toRemove.add(play);				
 			}
 		}	
 		for (String remove:toRemove){
-			UChat.tellPlayers.remove(remove);
+			UChat.get().tellPlayers.remove(remove);
 		}
 		List<String> toRemove2 = new ArrayList<>();
-		for (String play:UChat.respondTell.keySet()){
-			if (play.equals(p.getName()) || UChat.respondTell.get(play).equals(p.getName())){
+		for (String play:UChat.get().respondTell.keySet()){
+			if (play.equals(p.getName()) || UChat.get().respondTell.get(play).equals(p.getName())){
 				toRemove2.add(play);				
 			}
 		}	
 		for (String remove:toRemove2){
-			UChat.respondTell.remove(remove);
+			UChat.get().respondTell.remove(remove);
 		}
-        if (UChat.tempChannels.containsKey(p.getName())){
-            UChat.tempChannels.remove(p.getName());
+        if (UChat.get().tempChannels.containsKey(p.getName())){
+            UChat.get().tempChannels.remove(p.getName());
         }
 		if (UChat.get().getUCJDA() != null){
 			UChat.get().getUCJDA().sendRawToDiscord(UChat.get().getLang().get("discord.leave").replace("{player}", p.getName()));
