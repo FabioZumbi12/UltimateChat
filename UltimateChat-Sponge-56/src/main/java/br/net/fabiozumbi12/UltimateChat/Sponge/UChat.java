@@ -17,6 +17,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.GameReloadEvent;
 import org.spongepowered.api.event.game.state.GamePostInitializationEvent;
+import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppedServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 import org.spongepowered.api.event.service.ChangeServiceProviderEvent;
@@ -191,6 +192,13 @@ public class UChat {
         } catch (Exception e){
         	e.printStackTrace();
         }
+	}
+
+	@Listener
+	public void onServerStart(GameStartedServerEvent event) {
+		if (this.UCJDA != null){
+			this.UCJDA.sendRawToDiscord(lang.get("discord.online"));
+		}
 	}
 
 	private void setCompatperms() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
