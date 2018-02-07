@@ -1,6 +1,7 @@
 package br.net.fabiozumbi12.UltimateChat.Bukkit;
 
 import at.pcgamingfreaks.MarriageMaster.Bukkit.MarriageMaster;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.API.UChatReloadEvent;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.API.uChatAPI;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.Bungee.UChatBungee;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.Jedis.UCJedisLoader;
@@ -273,6 +274,10 @@ public class UChat extends JavaPlugin {
 		this.registerJDA();
 		this.registerJedis();
 		this.initAutomessage();
+
+		//ping other plugins when uchat reload
+		UChatReloadEvent reloadEvent = new UChatReloadEvent();
+		Bukkit.getPluginManager().callEvent(reloadEvent);
 	}
 
 	private void registerJedis(){
