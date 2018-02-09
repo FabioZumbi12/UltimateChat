@@ -106,7 +106,7 @@ public class ProtectionsCategory {
 			public boolean replace_partial_word = false;
             @Setting(value="use-pre-actions", comment = "Use uchat pre-actions regex or your custom regex on replace-words?")
             public boolean use_pre_actions = true;
-			@Setting(value="replace-words")
+			@Setting(value="replace-words", comment = "List of words to replace (case insensitive). Accept regex. When using regex, add an extra \"\\\" for each \"\\\" or will break your configuration'.")
 			public HashMap<String, String> replace_words = createMap();
             private HashMap<String, String> createMap(){
                 HashMap<String,String> myMap = new HashMap<>();

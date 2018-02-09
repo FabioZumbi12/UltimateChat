@@ -60,7 +60,7 @@ chat-protection:
     # If true, consider censor word 'ass', this will replace 'kickass' by 'kick***'.
     # If false, consider censor word 'ass', will replace only 'ass' by '***' and not 'kick***'.
     replace-partial-word: false
-    # List of words to replace (case insensitive).
+    # List of words to replace (case insensitive). Accept regex. When using regex, add an extra \"\\" for each \"\\" or will break your configuration'.
     replace-words:
       fuck: '*flower*'
       ass: '*finger*'
