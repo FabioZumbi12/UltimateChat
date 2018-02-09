@@ -83,23 +83,28 @@ class UCChatProtection implements Listener{
 				&& (ch == null || !UChat.get().getUCConfig().getProtStringList("chat-protection.censor.disable-on-channels").contains(ch.getName()))){
 			int act = 0;
 			for (String word:UChat.get().getUCConfig().getProtReplecements().getKeys(false)){
-				if (!StringUtils.containsIgnoreCase(msg, word)){
+				if (!Pattern.compile(word).matcher(msg).find()){
 					continue;
 				} 				
 				String replaceby = UChat.get().getUCConfig().getProtString("chat-protection.censor.replace-words."+word);
 				if (UChat.get().getUCConfig().getProtBool("chat-protection.censor.replace-by-symbol")){
 					replaceby = word.replaceAll("(?s).", UChat.get().getUCConfig().getProtString("chat-protection.censor.by-symbol"));
 				}
-				
-				if (!UChat.get().getUCConfig().getProtBool("chat-protection.censor.replace-partial-word")){
-					msg = msg.replaceAll("(?i)"+"\\b"+Pattern.quote(word)+"\\b", replaceby);
-					if (UChat.get().getUCConfig().getProtBool("chat-protection.censor.action.on-partial-words")){
+
+				if (UChat.get().getUCConfig().getProtBool("chat-protection.censor.use-pre-actions")){
+					if (!UChat.get().getUCConfig().getProtBool("chat-protection.censor.replace-partial-word")){
+						msg = msg.replaceAll("(?i)"+"\\b"+Pattern.quote(word)+"\\b", replaceby);
+						if (UChat.get().getUCConfig().getProtBool("chat-protection.censor.action.on-partial-words")){
+							act++;
+						}
+					} else {
+						msg = msg.replaceAll("(?i)"+word, replaceby);
 						act++;
 					}
 				} else {
-					msg = msg.replaceAll("(?i)"+word, replaceby);		
+					msg = msg.replaceAll(word, replaceby);
 					act++;
-				}				
+				}
 			}
 			if (act > 0){
 				String action = UChat.get().getUCConfig().getProtString("chat-protection.censor.action.cmd");

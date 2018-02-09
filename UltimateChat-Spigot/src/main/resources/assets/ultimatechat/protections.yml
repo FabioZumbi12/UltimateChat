@@ -64,6 +64,8 @@ chat-protection:
     replace-words:
       fuck: '*flower*'
       ass: '*finger*'
+    # Use uchat pre-actions regex or your custom regex on replace-words?
+    use-pre-actions: true
     # Actions. Add a command to execute when a player write some of this words.
     action:
       # Action to use when replace a word. Use {player} on command to get the player name or '' to disable.

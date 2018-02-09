@@ -513,7 +513,7 @@ public class UCMessages {
 					if (meta.hasLore()){
 						StringBuilder lorestr = new StringBuilder();
 						for (String lore:meta.getLore()){
-							lorestr.append("\n "+lore);							
+							lorestr.append("\n ").append(lore);
 						}	
 						if (lorestr.length() >= 2){
 							text = text.replace("{hand-lore}", lorestr.toString().substring(0, lorestr.length()-1));
@@ -522,7 +522,7 @@ public class UCMessages {
 					if (meta.hasEnchants()){
 						StringBuilder str = new StringBuilder();
 						for (Entry<Enchantment, Integer> enchant:meta.getEnchants().entrySet()){
-							str.append("\n "+enchant.getKey().getName()+": "+enchant.getValue());
+							str.append("\n ").append(enchant.getKey().getName()).append(": ").append(enchant.getValue());
 						}	
 						if (str.length() >= 2){
 							text = text.replace("{hand-enchants}", str.toString().substring(0, str.length()-1));
@@ -557,7 +557,7 @@ public class UCMessages {
 				if (pgs.length > 0){
 					StringBuilder groups = new StringBuilder();
 					for (String g:pgs){
-						groups.append(g+",");
+						groups.append(g).append(",");
 					}
 					text = text.replace("{player-groups}", groups.toString().substring(0, groups.length()-1));
 					

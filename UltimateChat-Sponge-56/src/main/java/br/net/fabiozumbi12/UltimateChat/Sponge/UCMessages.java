@@ -565,12 +565,6 @@ public class UCMessages {
 				all.append(defFormat[i]);
 			}
 			text = text.replace("{chat_all}", all.toString());
-
-			/*
-			text = text.replace("{chat_header}", defFormat[0])
-					.replace("{chat_body}", defFormat[1])
-					.replace("{chat_footer}", defFormat[2])
-					.replace("{chat_all}", defFormat[0]+defFormat[1]+defFormat[2]);*/
 		}		
 
 		if (text.contains("{time-now}")){
@@ -616,7 +610,7 @@ public class UCMessages {
 				if(item.get(Keys.ITEM_LORE).isPresent()){
 					StringBuilder lorestr = new StringBuilder();
 					for (Text line:item.get(Keys.ITEM_LORE).get()){
-						lorestr.append("\n "+line.toPlain());
+						lorestr.append("\n ").append(line.toPlain());
 					}		
 					if (lorestr.length() >= 2){
 						text = text.replace("{hand-lore}", lorestr.toString().substring(0, lorestr.length()-1));

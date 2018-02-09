@@ -27,12 +27,14 @@ public class uChatAPI{
 	
 	public boolean registerNewChannel(UCChannel channel) throws IOException{	
 		UChat.get().getUCConfig().addChannel(channel);
+		UChat.get().reload();
 		return true;
 	}
 	
 	public boolean registerNewChannel(Map<String, Object> properties) throws IOException{
 		UCChannel ch = new UCChannel(properties);		
 		UChat.get().getUCConfig().addChannel(ch);
+		UChat.get().reload();
 		return true;
 	}
 			
@@ -46,6 +48,7 @@ public class uChatAPI{
 		}
 		UCChannel ch = new UCChannel(chName, chAlias, crossWorlds, distance, color, tagBuilder, needFocus, receiverMsg, cost, bungee, false, false, "player", "", new ArrayList<>(), "", ddmode, ddmcformat, mcddformat, ddhover, ddallowcmds, true);
 		UChat.get().getUCConfig().addChannel(ch);
+		UChat.get().reload();
 		return true;
 	}	
 	

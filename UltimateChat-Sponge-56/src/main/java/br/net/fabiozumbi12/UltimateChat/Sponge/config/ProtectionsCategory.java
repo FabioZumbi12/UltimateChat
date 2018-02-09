@@ -94,24 +94,26 @@ public class ProtectionsCategory {
 		
 		@ConfigSerializable
 		public static class CensorCat{
-			
-			public CensorCat(){
-				replace_words.put("fuck", "*flower*");
-				replace_words.put("ass", "*finger*");
-			}
-			
 			@Setting
 			public boolean enable = true;
 			@Setting(value="disable-on-channels")
 			public List<String> disable_on_channels = new ArrayList<>();
-			@Setting(value="replace-by-symbol")
+			@Setting(value="replace-by-symbol", comment = "Disable to use the replace-words list.")
 			public boolean replace_by_symbol = true;
 			@Setting(value="by-symbol")
 			public String by_symbol = "*";
-			@Setting(value="replace-partial-word")
+			@Setting(value="replace-partial-word", comment = "Use uchat pre actions to replace partial words?")
 			public boolean replace_partial_word = false;
+            @Setting(value="use-pre-actions", comment = "Use uchat pre-actions regex or your custom regex on replace-words?")
+            public boolean use_pre_actions = true;
 			@Setting(value="replace-words")
-			public HashMap<String, String> replace_words = new HashMap<>();
+			public HashMap<String, String> replace_words = createMap();
+            private HashMap<String, String> createMap(){
+                HashMap<String,String> myMap = new HashMap<>();
+                myMap.put("fuck", "*flower*");
+                myMap.put("ass", "*finger*");
+                return myMap;
+            }
 			
 			//action
 			@Setting

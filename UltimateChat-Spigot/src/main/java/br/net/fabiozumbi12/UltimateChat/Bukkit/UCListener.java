@@ -1,6 +1,7 @@
 package br.net.fabiozumbi12.UltimateChat.Bukkit;
 
 import br.com.devpaulo.legendchat.api.events.ChatMessageEvent;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.API.PlayerChangeChannelEvent;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.API.SendChannelMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UCLogger.timingType;
 import org.bukkit.Bukkit;
@@ -50,27 +51,34 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 			 if (cmd.getName().equalsIgnoreCase("channel")){
 				 if (args.length == 0){
 					 UCChannel ch = UChat.get().getChannel(label);
-					 if (ch != null){							
-							if (!UCPerms.channelReadPerm(p, ch) && !UCPerms.channelWritePerm(p, ch)){
-								UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.nopermission").replace("{channel}", ch.getName()));
-								return true;
-							}
-							if (!ch.canLock()){
-								UChat.get().getLang().sendMessage(p, "help.channels.send");
-								return true;
-							}
-							if (ch.isMember(p)){
-								UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.alreadyon").replace("{channel}", ch.getName()));
-								return true;
-							} 
-							if (!ch.getPassword().isEmpty()){
-								UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.password").replace("{channel}", ch.getAlias()));
-								return true;
-							}
-							ch.addMember(p);
-							UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.entered").replace("{channel}", ch.getName()));
+					 if (ch != null){
+                         if (!UCPerms.channelReadPerm(p, ch) && !UCPerms.channelWritePerm(p, ch)){
+                             UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.nopermission").replace("{channel}", ch.getName()));
+                             return true;
+                         }
+                         if (!ch.canLock()){
+                             UChat.get().getLang().sendMessage(p, "help.channels.send");
+                             return true;
+                         }
+                         if (ch.isMember(p)){
+                             UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.alreadyon").replace("{channel}", ch.getName()));
+                             return true;
+                         }
+                         if (!ch.getPassword().isEmpty()){
+                             UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.password").replace("{channel}", ch.getAlias()));
+                             return true;
+                         }
+
+                         //listen change channel event
+                         PlayerChangeChannelEvent postEvent = new PlayerChangeChannelEvent(p, UChat.get().getPlayerChannel(p), ch);
+                         Bukkit.getPluginManager().callEvent(postEvent);
+                         if (postEvent.isCancelled()){
+                             return true;
+                         }
+                         ch.addMember(p);
+                         UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.entered").replace("{channel}", ch.getName()));
 					 } else {
-							UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.dontexist").replace("{channel}", label));						
+					     UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.dontexist").replace("{channel}", label));
 					 }
 					 return true;
 				 }
@@ -107,6 +115,13 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 									UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("chat.nopermission"));
 									return true;
 								}
+
+                                //listen change channel event
+                                PlayerChangeChannelEvent postEvent = new PlayerChangeChannelEvent(p, UChat.get().getPlayerChannel(p), ch);
+                                Bukkit.getPluginManager().callEvent(postEvent);
+                                if (postEvent.isCancelled()){
+                                    return true;
+                                }
 								ch.addMember(p);
 								UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.entered").replace("{channel}", ch.getName()));								
 								return true;
@@ -173,7 +188,14 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 								UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.password").replace("{channel}", ch.getAlias()));
 								return true;
 							}
-							ch.addMember(p);
+
+							//listen change channel event
+                            PlayerChangeChannelEvent postEvent = new PlayerChangeChannelEvent(p, UChat.get().getPlayerChannel(p), ch);
+                            Bukkit.getPluginManager().callEvent(postEvent);
+                            if (postEvent.isCancelled()){
+                                return true;
+                            }
+                            ch.addMember(p);
 							UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.entered").replace("{channel}", ch.getName()));
 							UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.entered").replace("{channel}", ch.getName()));
 							return true;

@@ -117,7 +117,7 @@ public class UCConfig {
 
 	public void delChannel(UCChannel ch) {
 		for (Entry<List<String>, UCChannel> ch0 : UChat.get().getChannels().entrySet()) {
-			if (ch0.getValue().equals(ch)) {
+			if (ch0.getValue().getName().equals(ch.getName())) {
 				UChat.get().getChannels().remove(ch0.getKey());
 				break;
 			}
@@ -181,9 +181,7 @@ public class UCConfig {
 				tags.add(key.replace("tags.", ""));
 			}
 		}
-		for (String str : getStringList("general.custom-tags")) {
-			tags.add(str);
-		}
+        tags.addAll(getStringList("general.custom-tags"));
 		return tags;
 	}
 

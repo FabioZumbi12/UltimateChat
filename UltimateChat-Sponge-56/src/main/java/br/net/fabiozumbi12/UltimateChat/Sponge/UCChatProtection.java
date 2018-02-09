@@ -79,7 +79,7 @@ class UCChatProtection {
 				&& (chan == null || !UChat.get().getConfig().protections().censor.disable_on_channels.contains(chan.getName()))){
 			int act = 0;
 			for (Entry<String, String> word:UChat.get().getConfig().protections().censor.replace_words.entrySet()){
-				if (!StringUtils.containsIgnoreCase(msg, word.getKey())){
+				if (!Pattern.compile(word.getKey()).matcher(msg).find()){
 					continue;
 				} 				
 				
@@ -87,16 +87,21 @@ class UCChatProtection {
 				if (UChat.get().getConfig().protections().censor.replace_by_symbol){
 					replaceby = word.getKey().replaceAll("(?s).", UChat.get().getConfig().protections().censor.by_symbol);
 				}
-				
-				if (!UChat.get().getConfig().protections().censor.replace_partial_word){
-					msg = msg.replaceAll("(?i)"+"\\b"+Pattern.quote(word.getKey())+"\\b", replaceby);
-					if (UChat.get().getConfig().protections().censor.action.on_partial_words){
+
+				if (UChat.get().getConfig().protections().censor.use_pre_actions){
+					if (!UChat.get().getConfig().protections().censor.replace_partial_word){
+						msg = msg.replaceAll("(?i)"+"\\b"+Pattern.quote(word.getKey())+"\\b", replaceby);
+						if (UChat.get().getConfig().protections().censor.action.on_partial_words){
+							act++;
+						}
+					} else {
+						msg = msg.replaceAll("(?i)"+ word.getKey(), replaceby);
 						act++;
 					}
 				} else {
-					msg = msg.replaceAll("(?i)"+ word.getKey(), replaceby);
+					msg = msg.replaceAll(word.getKey(), replaceby);
 					act++;
-				}				
+				}
 			}
 			if (act > 0){
 				String action = UChat.get().getConfig().protections().censor.action.cmd;
