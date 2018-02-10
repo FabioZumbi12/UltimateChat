@@ -148,9 +148,6 @@ public class UCListener {
 
 		if (UChat.get().getUCJDA() != null){
 			UChat.get().getUCJDA().sendRawToDiscord(UChat.get().getLang().get("discord.join").replace("{player}", p.getName()));
-			if (UChat.get().getConfig().root().discord.update_status){
-				UChat.get().getUCJDA().updateGame(UChat.get().getLang().get("discord.game").replace("{online}", String.valueOf(Sponge.getServer().getOnlinePlayers().size())));
-			}
 		}
 		if (UChat.get().getConfig().root().general.spy_enabled_onjoin && p.hasPermission("uchat.cmd.spy") && !UChat.get().isSpy.contains(p.getName())){
 			UChat.get().isSpy.add(p.getName());
@@ -189,9 +186,6 @@ public class UCListener {
         }
 		if (UChat.get().getUCJDA() != null){
 			UChat.get().getUCJDA().sendRawToDiscord(UChat.get().getLang().get("discord.leave").replace("{player}", p.getName()));
-			if (UChat.get().getConfig().root().discord.update_status){
-				UChat.get().getUCJDA().updateGame(UChat.get().getLang().get("discord.game").replace("{online}", String.valueOf(Sponge.getServer().getOnlinePlayers().size()-1)));
-			}
 		}
 	}			
 }

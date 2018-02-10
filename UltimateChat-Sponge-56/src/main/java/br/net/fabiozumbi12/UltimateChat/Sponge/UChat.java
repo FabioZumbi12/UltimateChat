@@ -273,7 +273,8 @@ public class UChat {
 	protected void registerJDA(){
 		if (checkJDA()){
 			this.logger.info("JDA LibLoader is present...");
-			if (this.UCJDA != null){			
+			if (this.UCJDA != null){
+				Sponge.getScheduler().getTaskById(this.UCJDA.getTaskId()).get().cancel();
 				this.UCJDA.shutdown();
 				this.UCJDA = null;
 			}

@@ -29,7 +29,11 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface{
     }
 
 	private UChat uchat;
-	
+	private int taskId;
+	public int getTaskId(){
+	    return this.taskId;
+    }
+
 	public UCDiscord(UChat plugin){
 		this.uchat = plugin;
 		try {
@@ -47,6 +51,11 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface{
 			uchat.getLogger().severe("The TOKEN is wrong or empty! Check you config and your token.");
 		} catch (IllegalArgumentException | InterruptedException e) {
 			e.printStackTrace();
+		}
+
+		if (UChat.get().getUCConfig().getBoolean("discord.update-status")){
+            taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () ->
+                    updateGame(UChat.get().getLang().get("discord.game").replace("{online}", String.valueOf(UChat.get().getServer().getOnlinePlayers().size()))), 40, 40);
 		}
     }
 	
@@ -167,14 +176,13 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface{
 				text = text.replace("@everyone", "everyone")
 						.replace("@here", "here");
 			}
-			text = text.replaceAll("([&"+ChatColor.COLOR_CHAR+"]([a-fk-or0-9]))", "");
 			text = formatTags(ch.getMCtoDiscordFormat(), ch, null, sender.getName(), text);
-					
 			sendToChannel(ch.getDiscordChannelID(), text);
 		}		
 	}
 	
 	public void sendToChannel(String id, String text){
+		text = text.replaceAll("([&"+ChatColor.COLOR_CHAR+"]([a-fk-or0-9]))", "");
 		TextChannel ch = jda.getTextChannelById(id);
 		try {
 			ch.sendMessage(text).queue();

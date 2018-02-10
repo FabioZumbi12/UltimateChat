@@ -828,9 +828,6 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 
 		if (UChat.get().getUCJDA() != null){
 			UChat.get().getUCJDA().sendRawToDiscord(UChat.get().getLang().get("discord.join").replace("{player}", p.getName()));
-			if (UChat.get().getUCConfig().getBoolean("discord.update-status")){
-				UChat.get().getUCJDA().updateGame(UChat.get().getLang().get("discord.game").replace("{online}", String.valueOf(UChat.get().getServer().getOnlinePlayers().size())));
-			}
 		}
 		if (UChat.get().getUCConfig().getBoolean("general.spy-enable-onjoin") && p.hasPermission("uchat.cmd.spy") && !UChat.get().isSpy.contains(p.getName())){
 			UChat.get().isSpy.add(p.getName());
@@ -886,9 +883,6 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 		}
 		if (UChat.get().getUCJDA() != null){
 			UChat.get().getUCJDA().sendRawToDiscord(UChat.get().getLang().get("discord.leave").replace("{player}", p.getName()));
-			if (UChat.get().getUCConfig().getBoolean("discord.update-status")){
-				UChat.get().getUCJDA().updateGame(UChat.get().getLang().get("discord.game").replace("{online}", String.valueOf(UChat.get().getServer().getOnlinePlayers().size()-1)));
-			}
 		}
 	}
 		

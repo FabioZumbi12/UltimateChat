@@ -301,7 +301,8 @@ public class UChat extends JavaPlugin {
 	private void registerJDA(){
 		if (checkJDA()){
 			this.logger.info("JDA LibLoader is present...");
-			if (this.UCJDA != null){			
+			if (this.UCJDA != null){
+				Bukkit.getScheduler().cancelTask(this.UCJDA.getTaskId());
 				this.UCJDA.shutdown();
 				this.UCJDA = null;
 			}

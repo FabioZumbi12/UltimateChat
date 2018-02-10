@@ -2,6 +2,8 @@ package br.net.fabiozumbi12.UltimateChat.Sponge;
 
 import org.spongepowered.api.command.CommandSource;
 
+import java.util.UUID;
+
 public interface UCDInterface {
 	boolean JDAAvailable();
 
@@ -14,6 +16,8 @@ public interface UCDInterface {
 	void updateGame(String text);
 	
 	void sendCommandsToDiscord(String text);
-	
+
+    UUID getTaskId();
+
 	void shutdown();
 }

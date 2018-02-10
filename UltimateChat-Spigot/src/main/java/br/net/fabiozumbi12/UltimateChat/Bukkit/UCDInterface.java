@@ -14,6 +14,8 @@ public interface UCDInterface {
 	void updateGame(String text);
 	
 	void sendCommandsToDiscord(String text);
+
+	int getTaskId();
 	
 	void shutdown();
 }
