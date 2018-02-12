@@ -276,7 +276,13 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 							 return true;
 						 }
 						 List<String> toAdd = new ArrayList<>(ch.getMembers());
-						 toAdd.forEach(m -> UChat.get().getDefChannel().addMember(m));
+						 toAdd.forEach(m -> {
+						 	UChat.get().getDefChannel().addMember(m);
+
+							 //listen change channel event
+							 PlayerChangeChannelEvent postEvent = new PlayerChangeChannelEvent(p, null, UChat.get().getDefChannel());
+							 Bukkit.getPluginManager().callEvent(postEvent);
+						 });
 
 						 UChat.get().getUCConfig().delChannel(ch);
 						 UChat.get().registerAliases();

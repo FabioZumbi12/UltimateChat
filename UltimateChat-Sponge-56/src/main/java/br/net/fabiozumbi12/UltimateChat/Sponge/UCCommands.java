@@ -1,5 +1,7 @@
 package br.net.fabiozumbi12.UltimateChat.Sponge;
 
+import br.net.fabiozumbi12.UltimateChat.Sponge.API.PlayerChangeChannelEvent;
+import br.net.fabiozumbi12.UltimateChat.Sponge.API.UChatReloadEvent;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.*;
 import org.spongepowered.api.command.args.*;
@@ -269,6 +271,14 @@ public class UCCommands {
 								UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.password").replace("{channel}", ch.getAlias()));
 								return CommandResult.success();
 							}
+
+                            //fire event
+                            PlayerChangeChannelEvent event = new PlayerChangeChannelEvent(p, UChat.get().getPlayerChannel(src), ch);
+                            Sponge.getEventManager().post(event);
+                            if (event.isCancelled()){
+                                return CommandResult.success();
+                            }
+
 							ch.addMember(p);
 							UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.entered").replace("{channel}", ch.getName()));
 				    	} 
@@ -362,6 +372,14 @@ public class UCCommands {
 									UChat.get().getLang().sendMessage(src, UChat.get().getLang().get("chat.nopermission"));
 									return CommandResult.success();
 								}
+
+								//fire event
+								PlayerChangeChannelEvent event = new PlayerChangeChannelEvent((Player)src, UChat.get().getPlayerChannel(src), ch);
+								Sponge.getEventManager().post(event);
+								if (event.isCancelled()){
+									return CommandResult.success();
+								}
+
 								ch.addMember(src);
 								UChat.get().getLang().sendMessage(src, UChat.get().getLang().get("channel.entered").replace("{channel}", ch.getName()));								
 								return CommandResult.success();
@@ -398,6 +416,14 @@ public class UCCommands {
 								UChat.get().getLang().sendMessage(src, UChat.get().getLang().get("channel.password").replace("{channel}", ch.getAlias()));
 								return CommandResult.success();
 							}
+
+							//fire event
+							PlayerChangeChannelEvent event = new PlayerChangeChannelEvent((Player)src, UChat.get().getPlayerChannel(src), ch);
+							Sponge.getEventManager().post(event);
+							if (event.isCancelled()){
+								return CommandResult.success();
+							}
+
 				    		ch.addMember(src);
 				    		UChat.get().getLang().sendMessage(src, UChat.get().getLang().get("channel.entered").replace("{channel}", ch.getName()));	
 			    		}
@@ -440,7 +466,14 @@ public class UCCommands {
 					UCChannel ch = optch.get();
 
 					List<String> toAdd = new ArrayList<>(ch.getMembers());
-					toAdd.forEach(m -> UChat.get().getDefChannel().addMember(m));
+					toAdd.forEach(m -> {
+					    UChat.get().getDefChannel().addMember(m);
+                        //fire event
+                        if (Sponge.getServer().getPlayer(m).isPresent()){
+                            PlayerChangeChannelEvent event = new PlayerChangeChannelEvent(Sponge.getServer().getPlayer(m).get(), null, UChat.get().getDefChannel());
+                            Sponge.getEventManager().post(event);
+                        }
+                    });
 
 					UChat.get().getConfig().delChannel(ch);
 					UChat.get().getLang().sendMessage(src, UChat.get().getLang().get("cmd.delchannel.success").replace("{channel}", ch.getName()));

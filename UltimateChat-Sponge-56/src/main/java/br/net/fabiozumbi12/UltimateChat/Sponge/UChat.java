@@ -1,5 +1,7 @@
 package br.net.fabiozumbi12.UltimateChat.Sponge;
 
+import br.net.fabiozumbi12.UltimateChat.Sponge.API.SendChannelMessageEvent;
+import br.net.fabiozumbi12.UltimateChat.Sponge.API.UChatReloadEvent;
 import br.net.fabiozumbi12.UltimateChat.Sponge.API.uChatAPI;
 import br.net.fabiozumbi12.UltimateChat.Sponge.Jedis.UCJedisLoader;
 import br.net.fabiozumbi12.UltimateChat.Sponge.config.UCConfig;
@@ -237,7 +239,7 @@ public class UChat {
         }
     }
 	
-	protected void reload() throws IOException{
+	public void reload() throws IOException{
 		this.cmds.removeCmds();
 		this.config = new UCConfig(factory);
 		this.lang = new UCLang();
@@ -251,6 +253,10 @@ public class UChat {
 				
 		registerJedis();
 		registerJDA();
+
+		//fire event
+        UChatReloadEvent event = new UChatReloadEvent();
+        Sponge.getEventManager().post(event);
 	}
 	
 	protected void registerJedis(){

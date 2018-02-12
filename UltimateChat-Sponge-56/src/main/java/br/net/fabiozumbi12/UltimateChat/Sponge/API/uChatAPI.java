@@ -1,6 +1,7 @@
 package br.net.fabiozumbi12.UltimateChat.Sponge.API;
 
 import br.net.fabiozumbi12.UltimateChat.Sponge.UCChannel;
+import br.net.fabiozumbi12.UltimateChat.Sponge.UCChatProtection;
 import br.net.fabiozumbi12.UltimateChat.Sponge.UCMessages;
 import br.net.fabiozumbi12.UltimateChat.Sponge.UChat;
 import br.net.fabiozumbi12.UltimateChat.Sponge.config.TagsCategory;
@@ -24,6 +25,7 @@ public class uChatAPI {
 	public boolean registerNewChannel(UCChannel channel) throws IOException{
 		UChat.get().getConfig().addChannel(channel);
 		UChat.get().getCmds().registerChannelAliases();
+        UChat.get().reload();
 		return true;
 	}
 	
@@ -41,7 +43,8 @@ public class uChatAPI {
 			tagBuilder = UChat.get().getConfig().root().general.default_tag_builder;			
 		}
 		UCChannel ch = new UCChannel(chName, chAlias, crossWorlds, distance, color, tagBuilder, needFocus, receiverMsg, cost, bungee, false, false, "player", "", new ArrayList<>(), "", ddmode, ddmcformat, mcddformat, ddhover, ddallowcmds, true);
-		UChat.get().getConfig().addChannel(ch);		
+		UChat.get().getConfig().addChannel(ch);
+        UChat.get().reload();
 		return true;
 	}	
 	
@@ -55,6 +58,17 @@ public class uChatAPI {
 	
 	public Collection<UCChannel> getChannels(){
 		return UChat.get().getChannels().values();
+	}
+
+	/**
+	 * Filter your message strings by using uchat protections with this method.
+	 * @param receiver The receiver
+	 * @param message String message
+	 * @param channel Receiver channel
+	 * @return Filtered message as string.
+	 */
+	public String filterChatMessage(Player receiver, String message, UCChannel channel){
+		return UCChatProtection.filterChatMessage(receiver, message, channel);
 	}
 
 	/**

@@ -1,6 +1,5 @@
 package br.net.fabiozumbi12.UltimateChat.Sponge;
 
-import org.apache.commons.lang3.StringUtils;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
@@ -12,7 +11,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
-class UCChatProtection {
+public class UCChatProtection {
 	
 	private static final HashMap<Player,String> chatSpam = new HashMap<>();
 	private static final HashMap<String,Integer> msgSpam = new HashMap<>();

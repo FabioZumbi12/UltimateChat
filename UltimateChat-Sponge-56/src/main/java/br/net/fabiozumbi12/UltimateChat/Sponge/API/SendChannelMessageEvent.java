@@ -35,17 +35,7 @@ public class SendChannelMessageEvent extends AbstractEvent implements Cancellabl
 		this.registeredTags = registeredReplacers;
 		this.cancelIncoming = cancelIncoming;
 	}
-	
-	public SendChannelMessageEvent(HashMap<String,String> registeredReplacers, String[] defFormat, CommandSource sender, UCChannel channel, String msg, boolean cancelIncoming){
-		this.sender = sender;
-		this.msg = Text.of(msg);
-		this.channel = channel;
-		this.defBuilder = UChat.get().getConfig().getDefBuilder();
-		this.defFormat = defFormat;
-		this.registeredTags = registeredReplacers;
-		this.cancelIncoming = cancelIncoming;
-	}
-	
+
 	public CommandSource getSender(){
 		return this.sender;
 	}

@@ -132,7 +132,7 @@ public class UltimateFancy {
 	 * @param text
 	 * @return instance of same {@link UltimateFancy}.
 	 */
-	public void textAtStart(String text){
+	public UltimateFancy textAtStart(String text){
 		JSONArray jarray = new JSONArray();		
 		for (JSONObject jobj:parseColors(text)){
 			jarray.add(jobj);
@@ -141,6 +141,7 @@ public class UltimateFancy {
 			jarray.add(jobj);
 		}	
 		this.constructor = jarray;
+		return this;
 	}
 	
 	public UltimateFancy appendObject(JSONObject json){
@@ -148,7 +149,7 @@ public class UltimateFancy {
 		return this;
 	}
 	
-	public void appendString(String jsonObject){
+	public UltimateFancy appendString(String jsonObject){
 		Object obj = JSONValue.parse(jsonObject);
 		if (obj instanceof JSONObject){
 			workingGroup.add((JSONObject)obj);
@@ -163,6 +164,7 @@ public class UltimateFancy {
 				}
 			}			
 		}
+		return this;
 	}
 	
 	public List<JSONObject> getWorkingElements(){
@@ -193,16 +195,15 @@ public class UltimateFancy {
 		return this;
 	}
 	
-	public void appendAtFirst(JSONObject json){
+	public UltimateFancy appendAtFirst(JSONObject json){
 		JSONArray jarray = new JSONArray();
 		jarray.add(json);
-		for (JSONObject jobj:getStoredElements()){
-			jarray.add(jobj);
-		}		
+		jarray.addAll(getStoredElements());
 		this.constructor = jarray;
+		return this;
 	}
 	
-	public void appendAtEnd(String json){
+	public UltimateFancy appendAtEnd(String json){
 		Object obj = JSONValue.parse(json);
 		if (obj instanceof JSONObject){
 			appendAtEnd((JSONObject)obj);
@@ -213,6 +214,7 @@ public class UltimateFancy {
 				appendAtEnd((JSONObject)JSONValue.parse(object.toString()));			
 			}			
 		}
+		return this;
 	}
 	
 	public UltimateFancy appendAtEnd(JSONObject json){
@@ -328,16 +330,18 @@ public class UltimateFancy {
 	 * @param cmd {@link String}
 	 * @return instance of same {@link UltimateFancy}.
 	 */
-	public void clickSuggestCmd(String cmd){
+	public UltimateFancy clickSuggestCmd(String cmd){
 		pendentElements.add(new ExtraElement("clickEvent",parseJson("suggest_command", cmd)));
+        return this;
 	}
 	
 	/**URL to open on external browser when click this text.
 	 * @param url {@link String}
 	 * @return instance of same {@link UltimateFancy}.
 	 */
-	public void clickOpenURL(URL url){
+	public UltimateFancy clickOpenURL(URL url){
 		pendentElements.add(new ExtraElement("clickEvent",parseJson("open_url", url.toString())));
+        return this;
 	}
 	
 	/**Text to show on hover the mouse under this text.
@@ -366,32 +370,35 @@ public class UltimateFancy {
 		for (Object mjson:constructor){	
 			JSONObject json = (JSONObject)mjson;
 			if (!json.containsKey("text")) continue;	
-			
-			//get color
-			String colorStr = json.get("color").toString();
-			if (ChatColor.valueOf(colorStr.toUpperCase()) != null){				
-				ChatColor color = ChatColor.valueOf(colorStr.toUpperCase());
-				if (color.equals(ChatColor.WHITE)){
-					result.append(String.valueOf(ChatColor.RESET));
-				} else {
-					result.append(String.valueOf(color));
-				}
-			}
-			
-			//get format
-			for (ChatColor frmt:ChatColor.values()){
-				if (frmt.isColor()) continue;
-				String frmtStr = frmt.name().toLowerCase();
-				if (frmt.equals(ChatColor.MAGIC)){
-					frmtStr = "obfuscated";
-				}
-				if (frmt.equals(ChatColor.UNDERLINE)){
-					frmtStr = "underlined";
-				}
-				if (json.containsKey(frmtStr)){
-					result.append(String.valueOf(frmt));
-				}
-			}
+
+			try{
+                //get color
+                String colorStr = json.get("color").toString();
+                if (ChatColor.valueOf(colorStr.toUpperCase()) != null){
+                    ChatColor color = ChatColor.valueOf(colorStr.toUpperCase());
+                    if (color.equals(ChatColor.WHITE)){
+                        result.append(String.valueOf(ChatColor.RESET));
+                    } else {
+                        result.append(String.valueOf(color));
+                    }
+                }
+
+                //get format
+                for (ChatColor frmt:ChatColor.values()){
+                    if (frmt.isColor()) continue;
+                    String frmtStr = frmt.name().toLowerCase();
+                    if (frmt.equals(ChatColor.MAGIC)){
+                        frmtStr = "obfuscated";
+                    }
+                    if (frmt.equals(ChatColor.UNDERLINE)){
+                        frmtStr = "underlined";
+                    }
+                    if (json.containsKey(frmtStr)){
+                        result.append(String.valueOf(frmt));
+                    }
+                }
+            } catch (Exception ignored){}
+
 			result.append(json.get("text").toString());				
 		}
 		return result.toString();

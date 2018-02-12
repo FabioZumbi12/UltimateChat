@@ -1,6 +1,7 @@
 package br.net.fabiozumbi12.UltimateChat.Bukkit.API;
 
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UCChannel;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.UCChatProtection;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UCMessages;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UChat;
 import net.milkbowl.vault.chat.Chat;
@@ -33,9 +34,7 @@ public class uChatAPI{
 	
 	public boolean registerNewChannel(Map<String, Object> properties) throws IOException{
 		UCChannel ch = new UCChannel(properties);		
-		UChat.get().getUCConfig().addChannel(ch);
-		UChat.get().reload();
-		return true;
+		return registerNewChannel(ch);
 	}
 			
 	@Deprecated
@@ -74,6 +73,17 @@ public class uChatAPI{
 	
 	public Permission getVaultPerms(){
 		return UChat.get().getVaultPerms();
+	}
+
+    /**
+     * Filter your message strings by using uchat protections with this method.
+     * @param receiver The receiver
+     * @param message String message
+     * @param channel Receiver channel
+     * @return Filtered message as string.
+     */
+	public String filterMessage(Player receiver, String message, UCChannel channel){
+		return UCChatProtection.filterChatMessage(receiver, message, channel);
 	}
 
     /**
