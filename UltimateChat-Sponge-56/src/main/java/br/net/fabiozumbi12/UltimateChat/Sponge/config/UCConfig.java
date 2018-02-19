@@ -266,8 +266,9 @@ public class UCConfig{
 				+ "  format-to-mc: {ch-color}[{ch-alias}]&b{dd-rolecolor}[{dd-rolename}]{sender}&r: \n"
 				+ "  format-to-dd: :thought_balloon: **{sender}**: {message} \n"
 				+ "  allow-server-cmds: false - Use this channel to send commands from discord > minecraft.\n"
-				+ "  channelID: '' - The ID of your Discord Channel. Enable debug on your discord to get the channel ID.\n");
-		
+				+ "  channelID: '' - The IDs of your Discord Channels. Enable debug on your discord to get the channel ID.\n"
+				+ "  Note: You can add more than one discord id, just separate by \",\" like: 13246579865498,3216587898754\n");
+
 		ch.getProperties().forEach((key,value)-> chFile.getNode((Object[])key.toString().split("\\.")).setValue(value));
 		channelManager.save(chFile);
 		
