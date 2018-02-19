@@ -630,8 +630,11 @@ public class UCMessages {
 				text = text.replace("{hand-name}", UChat.get().getLang().get("chat.emptyslot"));
 				text = text.replace("{hand-type}", "Air");
 			}
-			
-			text = text.replace("{world}", sender.getWorld().getName());
+
+			if (text.contains("{world}")){
+				String world = sender.getWorld().getName();
+				text = text.replace("{world}", UChat.get().getConfig().root().general.world_names.getOrDefault(world, world));
+			}
 			
 			if (text.contains("{balance}") && UChat.get().getEco() != null){
 				UniqueAccount acc = UChat.get().getEco().getOrCreateAccount(sender.getUniqueId()).get();

@@ -86,6 +86,11 @@ public class UCCommentedConfig {
         setDefault("general.item-hand.format", "&6[{hand-amount} {hand-type}]{group-suffix}", "Text to show on chat.");
         setDefault("general.item-hand.placeholder", "@hand", "Placeholder to use on chat by players to show your item in hand.");
 
+        setDefault("general.world-names", null, "Example alias for rename world name to other name. Support color codes.");
+        if (!UChat.get().getConfig().contains("general.world-names")){
+            setDefault("general.world-names.my-nether", "&4Hell&r", null);
+            setDefault("general.world-names.my-end", "&5The-End&r", null);
+        }
         setDefault("tell.cmd-aliases", "t,w,m,msg,private,priv,r", null);
         setDefault("tell.prefix", "&6[&c{playername} &6-> &c{receivername}&6]: ", null);
         setDefault("tell.format", "{message}", null);
@@ -117,7 +122,7 @@ public class UCCommentedConfig {
 
         setDefault("tags.group-suffix.format", "&r{group-suffix}: ", null);
 
-        setDefault("tags.world.format", "&7[{world}]&r", null);
+        setDefault("tags.world.format", "&7[{world}&7]&r", null);
         setDefault("tags.world.hover-messages", "&7[{world}]&r", null);
 
         setDefault("tags.message.format", "{message}", null);

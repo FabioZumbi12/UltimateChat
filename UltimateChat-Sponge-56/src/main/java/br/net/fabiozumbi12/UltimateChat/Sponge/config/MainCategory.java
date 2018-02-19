@@ -149,6 +149,14 @@ public class MainCategory {
 		public boolean persist_channels = true;
 		@Setting(value="item-hand")
 		public ItemHandCat item_hand = new ItemHandCat();
+		@Setting(value = "world-names", comment = "Example alias for rename world name to other name. Support color codes.")
+		public Map<String, String> world_names = createMapWorlds();
+        private HashMap<String, String> createMapWorlds(){
+            HashMap<String,String> myMap = new HashMap<>();
+            myMap.put("my-end", "&5The-End&r");
+            myMap.put("my-nether", "&4Hell&r");
+            return myMap;
+        }
 
 		@ConfigSerializable
 		public static class ItemHandCat{
@@ -232,7 +240,7 @@ public class MainCategory {
 		tags.put("nickname", new TagsCategory("{nick-symbol}{nickname}", null, Arrays.asList("&3Player: &f{playername}","&3Money: &7{balance}"), null, null, null, null));
 		tags.put("playername", new TagsCategory("{playername}", null, Arrays.asList("&3Player: &f{playername}","&3Money: &7{balance}"), null, null, null, null));		
 		tags.put("suffix", new TagsCategory("{option_suffix}", null, null, null, null, null, null));		
-		tags.put("world", new TagsCategory("&7[{world}]&r", null, Collections.singletonList("&7Sent from world &8{world}"), null, null, null, null));
+		tags.put("world", new TagsCategory("&7[{world}&7]&r", null, Collections.singletonList("&7Sent from world &8{world}"), null, null, null, null));
 		tags.put("message", new TagsCategory("{message}", null, null, null, null, null, null));		
 		tags.put("ch-tags", new TagsCategory("{ch-color}[{ch-alias}]&r", "ch {ch-alias}", Arrays.asList("&3Channel name: {ch-color}{ch-name}","&bClick to join this channel"), null, null, null, null));		
 		tags.put("admin-chat", new TagsCategory("&b[&r{playername}&b]&r: &b", null, null, null, null, null, null));
