@@ -145,8 +145,8 @@ public class UCChannel {
 		return properties.get("name").toString().equals("tell");		
 	}
 	
-	public String getDiscordChannelID(){
-		return properties.get("discord.channelID").toString();
+	public List<String> getDiscordChannelID(){
+		return Arrays.asList(properties.get("discord.channelID").toString().split(","));
 	}
 	
 	public String getDiscordMode(){
@@ -154,7 +154,7 @@ public class UCChannel {
 	}
 	
 	public boolean matchDiscordID(String id){
-		return getDiscordChannelID().equals(id);
+		return getDiscordChannelID().contains(id);
 	}
 	
 	public boolean isSendingDiscord(){

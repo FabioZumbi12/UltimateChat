@@ -49,6 +49,7 @@ public class UCCommentedConfig {
         setDefault("discord.log-channel-id", "", null);
         setDefault("discord.tell-channel-id", "", "Channel id to spy private messages");
         setDefault("discord.commands-channel-id", "", "Channel id to send commands issued by players.");
+        setDefault("discord.vanish-perm", "essentials.vanish", "Set your vanish plugin pemrissions here to do not announce player join/leave players with this permission.");
         setDefault("discord.server-commands", null, "Put the id on 'commands-channel-id' option or/and enable server commands on channel configuration to use this.");
         setDefault("discord.server-commands.alias", "!cmd", "This alias is not needed if using the channel set on 'commands-channel-id' option.");
         setDefault("discord.server-commands.whitelist", new ArrayList<String>(), null);

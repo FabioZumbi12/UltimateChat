@@ -41,7 +41,7 @@
     <orderEntry type="library" name="Maven: org.hamcrest:hamcrest-core:1.1" level="project" />
     <orderEntry type="library" name="Maven: net.md-5:bungeecord-chat:1.12-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.spigotmc:spigot-api:javadoc:1.12.2-R0.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: me.clip:placeholderapi:2.8.2" level="project" />
+    <orderEntry type="library" name="Maven: me.clip:placeholderapi:2.8.3" level="project" />
     <orderEntry type="module-library">
       <library name="Maven: SimpleClans:SimpleClans:v1">
         <CLASSES>
@@ -79,10 +79,7 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="Maven: com.lenis0012.bukkit:marriage2:2.0.15" level="project" />
-    <orderEntry type="library" name="Maven: net.milkbowl.vault:VaultAPI:1.6" level="project" />
-    <orderEntry type="library" name="Maven: org.bukkit:bukkit:1.9-R0.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: org.avaje:ebean:2.8.1" level="project" />
-    <orderEntry type="library" name="Maven: javax.persistence:persistence-api:1.0" level="project" />
+    <orderEntry type="library" name="Maven: org.natrolite:vault-api:1.6.1" level="project" />
     <orderEntry type="library" name="Maven: net.ess3:Essentials:2.14-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.comphenix.protocol:ProtocolLib-API:4.4.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: cglib:cglib-nodep:3.2.5" level="project" />

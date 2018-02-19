@@ -65,6 +65,8 @@ public class MainCategory {
         public String twitch = "";
 		@Setting
 		public String token = "";
+		@Setting(value = "vanish-perm", comment = "Set your vanish plugin permissions here to do not announce player join/leave players with this permission.")
+		public String vanish_perm = "nucleus.vanish.onlogin";
 		@Setting(value="log-channel-id", comment="Channel id to send server start/stop and player join/leave messages")
 		public String log_channel_id = "";
 		@Setting(value="tell-channel-id", comment="Channel id to spy private messages")

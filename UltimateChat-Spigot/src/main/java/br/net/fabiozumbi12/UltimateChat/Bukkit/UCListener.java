@@ -806,7 +806,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 	@EventHandler
 	public void onDeath(PlayerDeathEvent e){
 		Player p = e.getEntity();	
-		if (UChat.get().getUCJDA() != null){
+		if (UChat.get().getUCJDA() != null && !p.hasPermission(UChat.get().getUCConfig().getString("discord.vanish-perm"))){
 			UChat.get().getUCJDA().sendRawToDiscord(UChat.get().getLang().get("discord.death").replace("{player}", p.getName()));			
 		}
 	}
@@ -832,7 +832,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 			UChat.get().getDefChannel().addMember(p);
 		}
 
-		if (UChat.get().getUCJDA() != null){
+		if (UChat.get().getUCJDA() != null && !p.hasPermission(UChat.get().getUCConfig().getString("discord.vanish-perm"))){
 			UChat.get().getUCJDA().sendRawToDiscord(UChat.get().getLang().get("discord.join").replace("{player}", p.getName()));
 		}
 		if (UChat.get().getUCConfig().getBoolean("general.spy-enable-onjoin") && p.hasPermission("uchat.cmd.spy") && !UChat.get().isSpy.contains(p.getName())){
@@ -887,7 +887,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 		if (UChat.get().command.contains(p.getName())){
 			UChat.get().command.remove(p.getName());
 		}
-		if (UChat.get().getUCJDA() != null){
+		if (UChat.get().getUCJDA() != null && !p.hasPermission(UChat.get().getUCConfig().getString("discord.vanish-perm"))){
 			UChat.get().getUCJDA().sendRawToDiscord(UChat.get().getLang().get("discord.leave").replace("{player}", p.getName()));
 		}
 	}

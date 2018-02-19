@@ -177,7 +177,9 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface{
 						.replace("@here", "here");
 			}
 			text = formatTags(ch.getMCtoDiscordFormat(), ch, null, sender.getName(), text);
-			sendToChannel(ch.getDiscordChannelID(), text);
+			for (String ddid:ch.getDiscordChannelID()){
+				sendToChannel(ddid, text);
+			}
 		}		
 	}
 	
