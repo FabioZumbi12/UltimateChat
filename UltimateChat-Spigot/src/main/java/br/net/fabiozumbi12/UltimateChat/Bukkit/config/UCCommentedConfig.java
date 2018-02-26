@@ -91,6 +91,11 @@ public class UCCommentedConfig {
             setDefault("general.world-names.my-nether", "&4Hell&r", null);
             setDefault("general.world-names.my-end", "&5The-End&r", null);
         }
+        setDefault("general.group-names", null, "Example alias for rename Group name to other name. Support color codes.");
+        if (!UChat.get().getConfig().contains("general.group-names")){
+            setDefault("general.group-names.my-admin", "&4Admin&r", null);
+            setDefault("general.group-names.my-moderation", "&2Mod&r", null);
+        }
         setDefault("tell.cmd-aliases", "t,w,m,msg,private,priv,r", null);
         setDefault("tell.prefix", "&6[&c{playername} &6-> &c{receivername}&6]: ", null);
         setDefault("tell.format", "{message}", null);

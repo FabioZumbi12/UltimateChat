@@ -566,8 +566,9 @@ public class UCMessages {
 					text = text.replace("{player-groups}", groups.toString().substring(0, groups.length()-1));
 					
 				}
-				text = text
-						.replace("{prim-group}", UCVaultCache.getVaultPerms(sender).getPrimaryGroup());
+				String primGroup = UCVaultCache.getVaultPerms(sender).getPrimaryGroup();
+                String group = UChat.get().getUCConfig().getString("general.group-names."+primGroup);
+				text = text.replace("{prim-group}", group == null ? primGroup : group);
 						
 			}
 			if (text.contains("{clan-") && UChat.SClans){		
