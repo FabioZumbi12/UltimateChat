@@ -19,11 +19,11 @@ public class UCUtil {
     }
 
 	public static String toColor(String str){
-    	return str.replaceAll("(&([a-fk-or0-9]))", "§$2"); 
+    	return str.replaceAll("(&([A-Fa-fK-Ok-oRr0-9]))", "§$2");
     }
 	
 	public static String stripColor(String str) {
-		return str.replaceAll("(&([a-fk-or0-9]))", "");
+		return str.replaceAll("(&([A-Fa-fK-Ok-oRr0-9]))", "");
 	}
 	
 	static boolean sendBroadcast(String[] args, boolean silent){

@@ -248,23 +248,23 @@ public class UCMessages {
 	
 	private static String composeColor(CommandSource sender, String evmsg){
 		if (sender instanceof Player){			
-			Pattern mat1 = Pattern.compile("(?i)&([a-f0-9r])");
-			Pattern mat2 = Pattern.compile("(?i)&([l-o])");
-			Pattern mat3 = Pattern.compile("(?i)&([k])");
+			Pattern mat1 = Pattern.compile("(?i)&([A-Fa-f0-9Rr])");
+			Pattern mat2 = Pattern.compile("(?i)&([L-Ol-o])");
+			Pattern mat3 = Pattern.compile("(?i)&([Kk])");
 			
 			if (!UChat.get().getPerms().hasPerm(sender, "chat.color")){
 				while (mat1.matcher(evmsg).find()){
-					evmsg = evmsg.replaceAll("(?i)&([a-f0-9r])", "");
+					evmsg = evmsg.replaceAll(mat1.pattern(), "");
 				}				
 			}			
 			if (!UChat.get().getPerms().hasPerm(sender, "chat.color.formats")){
 				while (mat2.matcher(evmsg).find()){
-					evmsg = evmsg.replaceAll("(?i)&([l-o])", "");
+					evmsg = evmsg.replaceAll(mat2.pattern(), "");
 				}				
 			}			
 			if (!UChat.get().getPerms().hasPerm(sender, "chat.color.magic")){
 				while (mat3.matcher(evmsg).find()){
-					evmsg = evmsg.replaceAll("(?i)&([k])", "");
+					evmsg = evmsg.replaceAll(mat3.pattern(), "");
 				}				
 			}					
 		}	
@@ -475,7 +475,7 @@ public class UCMessages {
 	private static String getLastColor(String str){
 		if (str.length() > 2){
 			str = str.substring(str.length()-2);
-			if (str.matches("(&([a-fk-or0-9]))")){
+			if (str.matches("(&([A-Fa-fK-Ok-oRr0-9]))")){
 				return str;
 			}
 		}
@@ -708,7 +708,7 @@ public class UCMessages {
 
                     //fix last color from string
                     String lastcolor = text.length() > 1 ? text.substring(text.length()-2, text.length()) : "";
-                    if (!Pattern.compile("(&([a-fk-or0-9]))").matcher(lastcolor).find()) lastcolor = "";
+                    if (!Pattern.compile("(&([A-Fa-fK-Ok-oRr0-9]))").matcher(lastcolor).find()) lastcolor = "";
 
                     text = TextSerializers.FORMATTING_CODE.serialize(phapi.replacePlaceholders(text, sender, receiver, p))+lastcolor;
                 }
