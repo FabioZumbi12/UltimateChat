@@ -13,10 +13,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 
-class UCPerms56 implements UCPerms{
+public class UCPerms56 implements UCPerms{
 	private final PermissionService permissionService;
 
-	UCPerms56(){
+	public UCPerms56(){
 		this.permissionService = UChat.get().getGame().getServiceManager().getRegistration(PermissionService.class).get().getProvider();
 		this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "uchat.channel.local.read", Tristate.TRUE);
 		this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "uchat.channel.local.write", Tristate.TRUE);

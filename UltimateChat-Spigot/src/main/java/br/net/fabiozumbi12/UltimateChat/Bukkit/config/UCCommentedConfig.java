@@ -37,7 +37,7 @@ public class UCCommentedConfig {
         setDefault("jedis.enable", false, null);
         setDefault("jedis.server-id", "&e[ChangeThis]&r ", "Change to a unique identification and use on tags with {jedis-id}.");
         setDefault("jedis.ip", "localhost", null);
-        setDefault("jedis.port", "6379", null);
+        setDefault("jedis.port", 6379, null);
         setDefault("jedis.pass", "", null);
 
         setDefault("discord", null, "Enable the two way chat into discord and minecraft.\nGenerate your bot token following this instructions: https://goo.gl/utfRRv");
