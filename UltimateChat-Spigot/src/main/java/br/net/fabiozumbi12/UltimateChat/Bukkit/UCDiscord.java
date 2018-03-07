@@ -184,7 +184,7 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface{
 	}
 	
 	public void sendToChannel(String id, String text){
-		text = text.replaceAll("([&"+ChatColor.COLOR_CHAR+"]([a-fk-or0-9]))", "");
+		text = text.replaceAll("([&"+ChatColor.COLOR_CHAR+"]([a-fA-Fk-oK-ORr0-9]))", "");
 		TextChannel ch = jda.getTextChannelById(id);
 		try {
 			ch.sendMessage(text).queue();

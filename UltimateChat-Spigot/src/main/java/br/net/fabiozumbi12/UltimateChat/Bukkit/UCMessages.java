@@ -233,13 +233,13 @@ public class UCMessages {
 		evmsg = ChatColor.translateAlternateColorCodes('&', evmsg);	
 		if (sender instanceof Player){			
 			if (!UCPerms.hasPerm(sender, "chat.color")){
-				evmsg = evmsg.replaceAll("(?i)§([a-f0-9r])", "&$1");
+				evmsg = evmsg.replaceAll("(?i)§([a-fA-F0-9Rr])", "&$1");
 			}
 			if (!UCPerms.hasPerm(sender, "chat.color.formats")){
-				evmsg = evmsg.replaceAll("(?i)§([l-o])", "&$1");
+				evmsg = evmsg.replaceAll("(?i)§([l-oL-O])", "&$1");
 			}
 			if (!UCPerms.hasPerm(sender, "chat.color.magic")){
-				evmsg = evmsg.replaceAll("(?i)§([k])", "&$1");
+				evmsg = evmsg.replaceAll("(?i)§([kK])", "&$1");
 			}
 		}	
 		return evmsg;

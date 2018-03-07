@@ -94,7 +94,7 @@ public class UltimateFancy {
 			//fix colors before
 			filterColors(workingText);
 			
-			Matcher match = Pattern.compile("^"+ChatColor.COLOR_CHAR+"([0-9a-fk-or]).*$").matcher(part);
+			Matcher match = Pattern.compile("^"+ChatColor.COLOR_CHAR+"([0-9a-fA-Fk-oK-ORr]).*$").matcher(part);
 			if (match.find()){
 				lastColor = ChatColor.getByChar(match.group(1).charAt(0));
 				//fix colors from latest
@@ -489,9 +489,9 @@ public class UltimateFancy {
 	private JSONArray addColorToArray(String text){
 		JSONArray extraArr = new JSONArray();
 		ChatColor color = ChatColor.WHITE;
-		for (String part:text.split("(?="+ChatColor.COLOR_CHAR+"[0-9a-fk-or])")){	
+		for (String part:text.split("(?="+ChatColor.COLOR_CHAR+"[0-9a-fA-Fk-oK-ORr])")){
 			JSONObject objExtraTxt = new JSONObject();
-			Matcher match = Pattern.compile("^"+ChatColor.COLOR_CHAR+"([0-9a-fk-or]).*$").matcher(part);			
+			Matcher match = Pattern.compile("^"+ChatColor.COLOR_CHAR+"([0-9a-fA-Fk-oK-ORr]).*$").matcher(part);
 			if (match.find()){
 				color = ChatColor.getByChar(match.group(1).charAt(0));
 				if (part.length() == 2) continue;
