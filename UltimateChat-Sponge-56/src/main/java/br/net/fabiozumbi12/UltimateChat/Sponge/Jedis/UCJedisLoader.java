@@ -162,7 +162,11 @@ public class UCJedisLoader {
 		UChat.get().getLogger().info("Closing REDIS...");
 		if (this.channel.isSubscribed()){
 			this.channel.unsubscribe();
-		}		
+		}
+		try {
+			this.pool.getResource().close();
+		} catch (Exception ignored){}
+        this.pool.close();
 		this.pool.destroy();
 		UChat.get().getLogger().info("REDIS closed.");
 	}	

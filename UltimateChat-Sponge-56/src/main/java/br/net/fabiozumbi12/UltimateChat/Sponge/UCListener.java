@@ -7,6 +7,8 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.command.SendCommandEvent;
 import org.spongepowered.api.event.entity.DestructEntityEvent;
+import org.spongepowered.api.event.entity.MoveEntityEvent;
+import org.spongepowered.api.event.entity.SpawnEntityEvent;
 import org.spongepowered.api.event.filter.Getter;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.event.message.MessageChannelEvent;
@@ -14,6 +16,7 @@ import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.channel.MutableMessageChannel;
 import org.spongepowered.api.text.serializer.TextSerializers;
+import org.spongepowered.api.world.World;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -139,9 +142,7 @@ public class UCListener {
 	}
 	
 	@Listener
-	public void onJoin(ClientConnectionEvent.Join e){
-		Player p = e.getTargetEntity();
-
+	public void onJoin(ClientConnectionEvent.Join e, @Getter("getTargetEntity") Player p){
 		if (!UChat.get().getConfig().root().general.persist_channels){
 			UChat.get().getDefChannel().addMember(p);
 		}
@@ -156,9 +157,7 @@ public class UCListener {
 	}
 		
 	@Listener
-	public void onQuit(ClientConnectionEvent.Disconnect e){
-		Player p = e.getTargetEntity();
-
+	public void onQuit(ClientConnectionEvent.Disconnect e, @Getter("getTargetEntity") Player p){
         if (!UChat.get().getConfig().root().general.persist_channels){
             UChat.get().getPlayerChannel(p).removeMember(p);
         }
@@ -187,5 +186,35 @@ public class UCListener {
 		if (UChat.get().getUCJDA() != null && !p.hasPermission(UChat.get().getConfig().root().discord.vanish_perm)){
 			UChat.get().getUCJDA().sendRawToDiscord(UChat.get().getLang().get("discord.leave").replace("{player}", p.getName()));
 		}
-	}			
+	}
+
+	@Listener
+	public void onChangeWorld(MoveEntityEvent.Teleport e, @Getter("getTargetEntity") Player p){
+	    if (!UChat.get().getConfig().root().general.check_channel_change_world) return;
+
+	    World tw = e.getToTransform().getExtent();
+        UCChannel pch = UChat.get().getPlayerChannel(p);
+
+        String toCh = "";
+        if (!pch.availableInWorld(tw)){
+            if (UChat.get().getDefChannel().availableInWorld(tw)){
+                UChat.get().getDefChannel().addMember(p);
+                toCh = UChat.get().getDefChannel().getName();
+            } else {
+                for (UCChannel ch:UChat.get().getChannels().values()){
+                    if (ch.availableInWorld(tw)) {
+                        ch.addMember(p);
+                        toCh = ch.getName();
+                        break;
+                    }
+                }
+            }
+        }
+        if (!toCh.isEmpty()){
+            UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.entered").replace("{channel}", toCh));
+        } else if (!pch.availableInWorld(tw)){
+            pch.removeMember(p);
+            UChat.get().getLang().sendMessage(p, "channel.world.none");
+        }
+	}
 }

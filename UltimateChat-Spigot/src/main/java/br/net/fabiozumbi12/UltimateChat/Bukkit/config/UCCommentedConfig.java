@@ -96,6 +96,8 @@ public class UCCommentedConfig {
             setDefault("general.group-names.my-admin", "&4Admin&r", null);
             setDefault("general.group-names.my-moderation", "&2Mod&r", null);
         }
+        setDefault("general.check-channel-change-world", false, "This will make a check if the player channel is available on destination world and put on the world channel if is not available.");
+
         setDefault("tell.cmd-aliases", "t,w,m,msg,private,priv,r", null);
         setDefault("tell.prefix", "&6[&c{playername} &6-> &c{receivername}&6]: ", null);
         setDefault("tell.format", "{message}", null);

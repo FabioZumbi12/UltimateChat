@@ -450,32 +450,37 @@ public class UltimateFancy {
 			}
 			
 			//enchants
-			if (meta instanceof PotionMeta){
-				StringBuilder itemEnch = new StringBuilder();
-				itemEnch.append("CustomPotionEffects:[");
-				if (UCUtil.getBukkitVersion() >= 190){
-					PotionData pot = ((PotionMeta)meta).getBasePotionData();
-					itemEnch.append("{Id:"+pot.getType().getEffectType().getId()+",Duration:"+pot.getType().getEffectType().getDurationModifier()+",Ambient:true,},");					
-				} else {
-					Potion pot = Potion.fromItemStack(item);
-					itemEnch.append("{Id:"+pot.getType().getEffectType().getId()+",Duration:"+pot.getType().getEffectType().getDurationModifier()+",Ambient:true,},");
+			try{
+				if (meta instanceof PotionMeta){
+					StringBuilder itemEnch = new StringBuilder();
+					itemEnch.append("CustomPotionEffects:[");
+					if (UCUtil.getBukkitVersion() >= 190){
+						PotionData pot = ((PotionMeta)meta).getBasePotionData();
+						itemEnch.append("{Id:"+pot.getType().getEffectType().getId()+",Duration:"+pot.getType().getEffectType().getDurationModifier()+",Ambient:true,},");
+					} else {
+						Potion pot = Potion.fromItemStack(item);
+						itemEnch.append("{Id:"+pot.getType().getEffectType().getId()+",Duration:"+pot.getType().getEffectType().getDurationModifier()+",Ambient:true,},");
+					}
+					itemTag.append(itemEnch.toString().substring(0, itemEnch.length()-1)+"],");
+				} else if (meta instanceof EnchantmentStorageMeta){
+					StringBuilder itemEnch = new StringBuilder();
+					itemEnch.append("ench:[");
+					for (Entry<Enchantment, Integer> ench:((EnchantmentStorageMeta)meta).getStoredEnchants().entrySet()){
+						itemEnch.append("{id:"+ench.getKey().getId()+",lvl:"+ench.getValue()+"},");
+					}
+					itemTag.append(itemEnch.toString().substring(0, itemEnch.length()-1)+"],");
+				} else if (meta.hasEnchants()){
+					StringBuilder itemEnch = new StringBuilder();
+					itemEnch.append("ench:[");
+					for (Entry<Enchantment, Integer> ench:meta.getEnchants().entrySet()){
+						itemEnch.append("{id:"+ench.getKey().getId()+",lvl:"+ench.getValue()+"},");
+					}
+					itemTag.append(itemEnch.toString().substring(0, itemEnch.length()-1)+"],");
 				}
-				itemTag.append(itemEnch.toString().substring(0, itemEnch.length()-1)+"],");						
-			} else if (meta instanceof EnchantmentStorageMeta){
-				StringBuilder itemEnch = new StringBuilder();
-				itemEnch.append("ench:[");
-				for (Entry<Enchantment, Integer> ench:((EnchantmentStorageMeta)meta).getStoredEnchants().entrySet()){
-					itemEnch.append("{id:"+ench.getKey().getId()+",lvl:"+ench.getValue()+"},");
-				}
-				itemTag.append(itemEnch.toString().substring(0, itemEnch.length()-1)+"],");				
-			} else if (meta.hasEnchants()){
-				StringBuilder itemEnch = new StringBuilder();
-				itemEnch.append("ench:[");
-				for (Entry<Enchantment, Integer> ench:meta.getEnchants().entrySet()){
-					itemEnch.append("{id:"+ench.getKey().getId()+",lvl:"+ench.getValue()+"},");
-				}
-				itemTag.append(itemEnch.toString().substring(0, itemEnch.length()-1)+"],");
-			}			
+			} catch (Exception ex){
+				ex.printStackTrace();
+				UChat.get().getUCLogger().severe("Error on parse item hand for " + item.toString());
+			}
 		}		
 		if (itemTag.length() > 0){
 			itemBuild.append("tag:{"+itemTag.toString().substring(0, itemTag.length()-1)+"},");

@@ -1,8 +1,8 @@
 package br.net.fabiozumbi12.UltimateChat.Bukkit.Jedis;
 
 import br.net.fabiozumbi12.UltimateChat.Bukkit.*;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import redis.clients.jedis.Jedis;
@@ -95,7 +95,7 @@ public class UCJedisLoader {
 						UChat.get().isSpy.contains(receiver.getName()) && UCPerms.hasSpyPerm(receiver, "private")){
 					String spyformat = UChat.get().getUCConfig().getString("general.spy-format");
 					
-					spyformat = spyformat.replace("{output}", ChatColor.stripColor(UCMessages.sendMessage(sender, tellReceiver, msg, new UCChannel("tell"), true).toOldFormat()));					
+					spyformat = spyformat.replace("{output}", ChatColor.stripColor(UCMessages.sendMessage(sender, tellReceiver, msg, new UCChannel("tell"), true).toOldFormat()));
 					receiver.sendMessage(ChatColor.translateAlternateColorCodes('&', spyformat));
 				}
 			}
@@ -153,7 +153,11 @@ public class UCJedisLoader {
 		UChat.get().getUCLogger().info("Closing REDIS...");
 		if (this.channel.isSubscribed()){
 			this.channel.unsubscribe();
-		}		
+		}
+		try {
+            this.pool.getResource().close();
+        } catch (Exception ignored){}
+		this.pool.close();
 		this.pool.destroy();
 		UChat.get().getUCLogger().info("REDIS closed.");
 	}

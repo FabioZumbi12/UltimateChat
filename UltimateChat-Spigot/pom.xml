@@ -21,6 +21,13 @@
           <version>${mineVersion}</version>
           <classifier>javadoc</classifier>
         </dependency>
+
+      <!-- bukkit snapshots
+      <dependency>
+          <groupId>org.bukkit</groupId>
+          <artifactId>bukkit</artifactId>
+          <version>18w03b-R0.1-SNAPSHOT</version>
+      </dependency> -->
         
         <dependency>
          <groupId>me.clip</groupId>

@@ -4,8 +4,10 @@ import br.com.devpaulo.legendchat.api.events.ChatMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.API.PlayerChangeChannelEvent;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.API.SendChannelMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UCLogger.timingType;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.config.UCLang;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -15,10 +17,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.event.server.ServerCommandEvent;
 
 import java.io.IOException;
@@ -451,7 +450,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 							 return true;
 						 }							 
 						 String color = args[3];
-						 if (color.length() != 2 || !color.matches("(&([a-fk-or0-9]))$")){
+						 if (color.length() != 2 || !color.matches("(&([A-Fa-fK-Ok-oRr0-9]))$")){
 							 UChat.get().getLang().sendMessage(p, "channel.invalidcolor");
 							 return true;
 						 }
@@ -503,7 +502,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 					
 					StringBuilder msgb = new StringBuilder();
 					for (String arg:args){
-						msgb.append(" "+arg);
+						msgb.append(" ").append(arg);
 					}
 					String msg = msgb.toString().substring(1);
 					
@@ -709,7 +708,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 	private void sendTell(CommandSender sender, CommandSender receiver, String msg){
 		if (receiver == null 
 				|| (receiver instanceof Player && (!((Player)receiver).isOnline() 
-				|| (sender instanceof Player && receiver instanceof Player && !((Player)sender).canSee((Player)receiver))))
+				|| (sender instanceof Player && !((Player)sender).canSee((Player)receiver))))
 				){
 			UChat.get().getLang().sendMessage(sender, UChat.get().getLang().get("listener.invalidplayer"));
 			return;
@@ -891,8 +890,40 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 			UChat.get().getUCJDA().sendRawToDiscord(UChat.get().getLang().get("discord.leave").replace("{player}", p.getName()));
 		}
 	}
+
+	@EventHandler
+	public void onChangeWorld(PlayerChangedWorldEvent e){
+	    if (!UChat.get().getUCConfig().getBoolean("general.check-channel-change-world")) return;
+
+	    Player p = e.getPlayer();
+	    World tw = p.getWorld();
+
+	    UCChannel pch = UChat.get().getPlayerChannel(p);
+
+	    String toCh = "";
+	    if (!pch.availableInWorld(tw)){
+	        if (UChat.get().getDefChannel().availableInWorld(tw)){
+                UChat.get().getDefChannel().addMember(p);
+                toCh = UChat.get().getDefChannel().getName();
+            } else {
+                for (UCChannel ch:UChat.get().getChannels().values()){
+                    if (ch.availableInWorld(tw)) {
+                        ch.addMember(p);
+                        toCh = ch.getName();
+                        break;
+                    }
+                }
+            }
+        }
+        if (!toCh.isEmpty()){
+            UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.entered").replace("{channel}", toCh));
+        } else if (!pch.availableInWorld(tw)){
+	        pch.removeMember(p);
+            UChat.get().getLang().sendMessage(p, "channel.world.none");
+        }
+	}
 		
-	public void sendHelp(CommandSender p){	
+	private void sendHelp(CommandSender p){
 		UltimateFancy fancy = new UltimateFancy();
 		fancy.coloredText("\n&7--------------- "+UChat.get().getLang().get("_UChat.prefix")+" Help &7---------------\n");		
 		fancy.coloredText(UChat.get().getLang().get("help.channels.enter")+"\n");	

@@ -69,7 +69,7 @@ public class UCConfig {
 
 		File[] listOfFiles = chfolder.listFiles();
 
-		YamlConfiguration channel = new YamlConfiguration();
+		YamlConfiguration channel;
 
 		if (Objects.requireNonNull(listOfFiles).length == 0) {
 			//create default channels

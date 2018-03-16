@@ -217,7 +217,8 @@ public class UCChannel {
 	
 	@SuppressWarnings("unchecked")
 	public boolean availableInWorld(World w){
-		return ((List<String>)properties.get("available-worlds")).contains(w.getName());
+		List<String> channels = ((List<String>)properties.get("available-worlds"));
+		return channels.isEmpty() || ((List<String>)properties.get("available-worlds")).contains(w.getName());
 	}
 	
 	@SuppressWarnings("unchecked")
