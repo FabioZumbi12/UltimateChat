@@ -11,6 +11,7 @@ import org.spongepowered.api.event.entity.MoveEntityEvent;
 import org.spongepowered.api.event.entity.SpawnEntityEvent;
 import org.spongepowered.api.event.filter.Getter;
 import org.spongepowered.api.event.filter.cause.First;
+import org.spongepowered.api.event.filter.cause.Root;
 import org.spongepowered.api.event.message.MessageChannelEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.text.Text;
@@ -38,7 +39,7 @@ public class UCListener {
 	}
 	
 	@Listener(order = Order.LATE)
-	public void onChat(MessageChannelEvent.Chat e, @First Player p){
+	public void onChat(MessageChannelEvent.Chat e, @Root Player p){
 
         UChat.get().getLogger().timings(UCLogger.timingType.START, "UCListener#onChat()|Listening AsyncPlayerChatEvent");
 
