@@ -41,6 +41,39 @@ public class UCListener {
 	@Listener(order = Order.LATE)
 	public void onChat(MessageChannelEvent.Chat e, @Root Player p){
 
+        //check channel char
+        UChat.get().getLogger().debug("MessageChannelEvent.Chat: "+e.getMessage().toPlain());
+        UChat.get().getLogger().debug("MessageChannelEvent.Chat raw: "+e.getRawMessage().toPlain());
+
+        String[] args = e.getRawMessage().toPlain().split(" ");
+        if (args.length == 1){
+            for (UCChannel ch : UChat.get().getChannels().values()) {
+                if (ch.getCharAlias().equalsIgnoreCase(args[0])) {
+                    UCCommands.addPlayerToChannel(ch, p);
+                    e.setMessageCancelled(true);
+                    return;
+                }
+            }
+        } else if (args.length >= 2){
+            for (UCChannel ch : UChat.get().getChannels().values()) {
+                if (ch.getCharAlias().equalsIgnoreCase(args[0])) {
+                    StringBuilder msgBuild = new StringBuilder();
+                    boolean first = true;
+                    for (String arg:args){
+                        if (first) {
+                            first = false;
+                            continue;
+                        }
+                        msgBuild.append(" ").append(arg);
+                    }
+                    String msg = msgBuild.toString().substring(1);
+                    UCCommands.sendMessageToPlayer(p, ch, msg);
+                    e.setMessageCancelled(true);
+                    return;
+                }
+            }
+        }
+
         UChat.get().getLogger().timings(UCLogger.timingType.START, "UCListener#onChat()|Listening AsyncPlayerChatEvent");
 
 		if (UChat.get().tellPlayers.containsKey(p.getName()) && (!UChat.get().tempTellPlayers.containsKey("CONSOLE") || !UChat.get().tempTellPlayers.get("CONSOLE").equals(p.getName()))){		

@@ -27,6 +27,7 @@ public class UCChannel {
 	private void addDefaults(){
 		properties.put("name", "");
 		properties.put("alias", "");
+		properties.put("char-alias", "");
 		properties.put("color", "&b");
 		properties.put("across-worlds", true);
 		properties.put("distance", 0);
@@ -112,6 +113,10 @@ public class UCChannel {
 			}	
 		}			
 	}
+
+	public String getCharAlias(){
+	    return this.properties.get("char-alias").toString();
+    }
 
 	public boolean AllowBot(){
 	    return (boolean) properties.get("allow-bot");

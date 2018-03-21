@@ -332,7 +332,89 @@ public class UCCommands {
 				    .build(), brod);
 		}
 	}
-	
+
+	public static void sendMessageToPlayer(Player src, UCChannel ch, String msg){
+		if (UChat.get().mutes.contains(src.getName()) || ch.isMuted(src.getName())){
+			if (UChat.get().timeMute.containsKey(src.getName())) {
+				UChat.get().getLang().sendMessage(src, UChat.get().getLang().get("channel.tempmuted").replace("{time}", String.valueOf(UChat.get().timeMute.get(src.getName()))));
+			} else {
+				UChat.get().getLang().sendMessage(src, "channel.muted");
+			}
+			return;
+		}
+
+		if (!UChat.get().getPerms().channelWritePerm(src, ch)){
+			UChat.get().getLang().sendMessage(src, UChat.get().getLang().get("channel.nopermission").replace("{channel}", ch.getName()));
+			return;
+		}
+
+		if (!ch.getPassword().isEmpty() && !ch.isMember(src)){
+			if (msg.split(" ").length != 1 || !ch.getPassword().equals(msg.split(" ")[0])){
+				UChat.get().getLang().sendMessage(src, UChat.get().getLang().get("channel.password").replace("{channel}", ch.getAlias()));
+				return;
+			}
+			if (!UChat.get().getPerms().hasPerm(src, "password")){
+				UChat.get().getLang().sendMessage(src, UChat.get().getLang().get("chat.nopermission"));
+				return;
+			}
+
+			//fire event
+			PlayerChangeChannelEvent event = new PlayerChangeChannelEvent((Player)src, UChat.get().getPlayerChannel(src), ch);
+			Sponge.getEventManager().post(event);
+			if (event.isCancelled()){
+				return;
+			}
+
+			ch.addMember(src);
+			UChat.get().getLang().sendMessage(src, UChat.get().getLang().get("channel.entered").replace("{channel}", ch.getName()));
+			return;
+		}
+
+		UChat.get().tempChannels.put(src.getName(), ch.getAlias());
+
+		UChat.get().getLogger().timings(UCLogger.timingType.START, "UCListener#sendPreTell()|Fire AsyncPlayerChatEvent");
+
+		//run sponge chat event
+		Text msgt = Text.of(msg);
+		MessageChannelEvent.Chat event = SpongeEventFactory.createMessageChannelEventChat(
+				UChat.get().getVHelper().getCause(src),
+				src.getMessageChannel(),
+				Optional.of(src.getMessageChannel()),
+				new MessageEvent.MessageFormatter(Text.builder("<" + src.getName() + "> ")
+						.onShiftClick(TextActions.insertText(src.getName()))
+						.onClick(TextActions.suggestCommand("/msg " + src.getName()))
+						.build(), msgt),
+				msgt,
+				false);
+		Sponge.getEventManager().post(event);
+	}
+
+	public static void addPlayerToChannel(UCChannel ch, Player src){
+		if (!ch.canLock()){
+			UChat.get().getLang().sendMessage(src, "help.channels.send");
+			return;
+		}
+		if (ch.isMember(src)){
+			UChat.get().tempChannels.put(src.getName(), ch.getAlias());
+			UChat.get().getLang().sendMessage(src, UChat.get().getLang().get("channel.alreadyon").replace("{channel}", ch.getName()));
+			return;
+		}
+		if (!ch.getPassword().isEmpty()){
+			UChat.get().getLang().sendMessage(src, UChat.get().getLang().get("channel.password").replace("{channel}", ch.getAlias()));
+			return;
+		}
+
+		//fire event
+		PlayerChangeChannelEvent event = new PlayerChangeChannelEvent((Player)src, UChat.get().getPlayerChannel(src), ch);
+		Sponge.getEventManager().post(event);
+		if (event.isCancelled()){
+			return;
+		}
+
+		ch.addMember(src);
+		UChat.get().getLang().sendMessage(src, UChat.get().getLang().get("channel.entered").replace("{channel}", ch.getName()));
+	}
+
 	private void registerChannelAlias(String cha){
 		unregisterCmd(cha);
 		UCChannel ch = UChat.get().getChannel(cha);
@@ -348,84 +430,10 @@ public class UCCommands {
 			    .executor((src, args) -> { {				    	
 			    	if (src instanceof Player){
 			    		if (args.<String>getOne("message").isPresent()){
-			    			if (UChat.get().mutes.contains(src.getName()) || ch.isMuted(src.getName())){
-			    				if (UChat.get().timeMute.containsKey(src.getName())) {
-									UChat.get().getLang().sendMessage(src, UChat.get().getLang().get("channel.tempmuted").replace("{time}", String.valueOf(UChat.get().timeMute.get(src.getName()))));
-								} else {
-									UChat.get().getLang().sendMessage(src, "channel.muted");
-								}	
-			    				return CommandResult.success();
-			    			}
-			    			
-			    			if (!UChat.get().getPerms().channelWritePerm(src, ch)){
-			    				UChat.get().getLang().sendMessage(src, UChat.get().getLang().get("channel.nopermission").replace("{channel}", ch.getName()));
-			    				return CommandResult.success();
-			    			}
-			    			
-			    			String arg = args.<String>getOne("message").get();
-			    			if (!ch.getPassword().isEmpty() && !ch.isMember(src)){
-								if (arg.split(" ").length != 1 || !ch.getPassword().equals(arg.split(" ")[0])){
-									UChat.get().getLang().sendMessage(src, UChat.get().getLang().get("channel.password").replace("{channel}", ch.getAlias()));
-									return CommandResult.success();
-								}
-								if (!UChat.get().getPerms().hasPerm(src, "password")){									
-									UChat.get().getLang().sendMessage(src, UChat.get().getLang().get("chat.nopermission"));
-									return CommandResult.success();
-								}
-
-								//fire event
-								PlayerChangeChannelEvent event = new PlayerChangeChannelEvent((Player)src, UChat.get().getPlayerChannel(src), ch);
-								Sponge.getEventManager().post(event);
-								if (event.isCancelled()){
-									return CommandResult.success();
-								}
-
-								ch.addMember(src);
-								UChat.get().getLang().sendMessage(src, UChat.get().getLang().get("channel.entered").replace("{channel}", ch.getName()));								
-								return CommandResult.success();
-							}
-			    			
-			    			UChat.get().tempChannels.put(src.getName(), ch.getAlias());
-
-                            UChat.get().getLogger().timings(UCLogger.timingType.START, "UCListener#sendPreTell()|Fire AsyncPlayerChatEvent");
-
-			    			//run sponge chat event
-			    			Text msg = Text.of(args.<String>getOne("message").get());				    			
-			    			MessageChannelEvent.Chat event = SpongeEventFactory.createMessageChannelEventChat(
-			    					UChat.get().getVHelper().getCause(src), 
-	    							src.getMessageChannel(), 
-	    							Optional.of(src.getMessageChannel()), 				    							
-	    							new MessageEvent.MessageFormatter(Text.builder("<" + src.getName() + "> ")
-	    									.onShiftClick(TextActions.insertText(src.getName()))
-	    									.onClick(TextActions.suggestCommand("/msg " + src.getName()))
-	    									.build(), msg),
-	    							msg,  
-	    							false);
-			    			Sponge.getEventManager().post(event);
+							String arg = args.<String>getOne("message").get();
+							sendMessageToPlayer((Player)src, ch, arg);
 			    		} else {
-			    			if (!ch.canLock()){
-			    				UChat.get().getLang().sendMessage(src, "help.channels.send");
-								return CommandResult.success();
-							}
-				    		if (ch.isMember(src)){
-				    			UChat.get().tempChannels.put(src.getName(), ch.getAlias());
-				    			UChat.get().getLang().sendMessage(src, UChat.get().getLang().get("channel.alreadyon").replace("{channel}", ch.getName()));
-								return CommandResult.success();
-							}
-				    		if (!ch.getPassword().isEmpty()){
-								UChat.get().getLang().sendMessage(src, UChat.get().getLang().get("channel.password").replace("{channel}", ch.getAlias()));
-								return CommandResult.success();
-							}
-
-							//fire event
-							PlayerChangeChannelEvent event = new PlayerChangeChannelEvent((Player)src, UChat.get().getPlayerChannel(src), ch);
-							Sponge.getEventManager().post(event);
-							if (event.isCancelled()){
-								return CommandResult.success();
-							}
-
-				    		ch.addMember(src);
-				    		UChat.get().getLang().sendMessage(src, UChat.get().getLang().get("channel.entered").replace("{channel}", ch.getName()));	
+							addPlayerToChannel(ch, (Player)src);
 			    		}
 			    	} else if (args.<String>getOne("message").isPresent()){
 			    		UCMessages.sendFancyMessage(new String[0], Text.of(args.<String>getOne("message").get()), ch, src, null);  
