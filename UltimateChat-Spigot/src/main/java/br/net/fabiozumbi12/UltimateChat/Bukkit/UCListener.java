@@ -738,32 +738,20 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 		Player p = e.getPlayer();
 
         //check channel char
-        String[] args = e.getMessage().split(" ");
-        if (args.length == 1){
-            for (UCChannel ch : UChat.get().getChannels().values()) {
-                if (ch.getCharAlias().equalsIgnoreCase(args[0])) {
-                    addPlayerToChannel(ch, p);
-                    e.setCancelled(true);
-                    return;
-                }
+        String rawMsg = e.getMessage();
+        for (UCChannel ch : UChat.get().getChannels().values()) {
+            if (ch.getCharAlias().isEmpty()) continue;
+
+            if (ch.getCharAlias().length() == rawMsg.length() && rawMsg.equalsIgnoreCase(ch.getCharAlias())){
+                addPlayerToChannel(ch, p);
+                e.setCancelled(true);
+                return;
             }
-        } else if (args.length >= 2){
-            for (UCChannel ch : UChat.get().getChannels().values()) {
-                if (ch.getCharAlias().equalsIgnoreCase(args[0])) {
-                    StringBuilder msgBuild = new StringBuilder();
-                    boolean first = true;
-                    for (String arg:args){
-                        if (first) {
-                            first = false;
-                            continue;
-                        }
-                        msgBuild.append(" ").append(arg);
-                    }
-                    String msg = msgBuild.toString().substring(1);
-                    sendMessageToPlayer(ch, p, args, msg);
-                    e.setCancelled(true);
-                    return;
-                }
+            if (rawMsg.startsWith(ch.getCharAlias())) {
+                String msg = rawMsg.substring(ch.getCharAlias().length());
+                sendMessageToPlayer(ch, p, e.getMessage().split(" "), msg);
+                e.setCancelled(true);
+                return;
             }
         }
 		

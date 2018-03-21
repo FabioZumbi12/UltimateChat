@@ -45,32 +45,20 @@ public class UCListener {
         UChat.get().getLogger().debug("MessageChannelEvent.Chat: "+e.getMessage().toPlain());
         UChat.get().getLogger().debug("MessageChannelEvent.Chat raw: "+e.getRawMessage().toPlain());
 
-        String[] args = e.getRawMessage().toPlain().split(" ");
-        if (args.length == 1){
-            for (UCChannel ch : UChat.get().getChannels().values()) {
-                if (ch.getCharAlias().equalsIgnoreCase(args[0])) {
-                    UCCommands.addPlayerToChannel(ch, p);
-                    e.setMessageCancelled(true);
-                    return;
-                }
+        String rawMsg = e.getRawMessage().toPlain();
+        for (UCChannel ch : UChat.get().getChannels().values()) {
+            if (ch.getCharAlias().isEmpty()) continue;
+
+            if (ch.getCharAlias().length() == rawMsg.length() && rawMsg.equalsIgnoreCase(ch.getCharAlias())){
+                UCCommands.addPlayerToChannel(ch, p);
+                e.setMessageCancelled(true);
+                return;
             }
-        } else if (args.length >= 2){
-            for (UCChannel ch : UChat.get().getChannels().values()) {
-                if (ch.getCharAlias().equalsIgnoreCase(args[0])) {
-                    StringBuilder msgBuild = new StringBuilder();
-                    boolean first = true;
-                    for (String arg:args){
-                        if (first) {
-                            first = false;
-                            continue;
-                        }
-                        msgBuild.append(" ").append(arg);
-                    }
-                    String msg = msgBuild.toString().substring(1);
-                    UCCommands.sendMessageToPlayer(p, ch, msg);
-                    e.setMessageCancelled(true);
-                    return;
-                }
+            if (rawMsg.startsWith(ch.getCharAlias())) {
+                String msg = rawMsg.substring(ch.getCharAlias().length());
+                UCCommands.sendMessageToPlayer(p, ch, msg);
+                e.setMessageCancelled(true);
+                return;
             }
         }
 
