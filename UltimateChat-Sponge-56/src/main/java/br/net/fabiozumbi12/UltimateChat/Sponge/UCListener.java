@@ -104,9 +104,9 @@ public class UCListener {
 					start = start.substring(1);
 				}
 				if (ch.getAliasSender().equalsIgnoreCase("console")){
-					Sponge.getCommandManager().process(Sponge.getServer().getConsole(),start+" "+e.getRawMessage());
+					Sponge.getCommandManager().process(Sponge.getServer().getConsole(),start+" "+e.getRawMessage().toPlain());
 				} else {
-					Sponge.getCommandManager().process(p, start+" "+e.getRawMessage());
+					Sponge.getCommandManager().process(p, start+" "+e.getRawMessage().toPlain());
 				}				
 				e.setMessageCancelled(true);
 			} else {
