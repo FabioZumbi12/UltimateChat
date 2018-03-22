@@ -42,8 +42,7 @@ public class UCListener {
 	public void onChat(MessageChannelEvent.Chat e, @Root Player p){
 
         //check channel char
-        UChat.get().getLogger().debug("MessageChannelEvent.Chat: "+e.getMessage().toPlain());
-        UChat.get().getLogger().debug("MessageChannelEvent.Chat raw: "+e.getRawMessage().toPlain());
+        UChat.get().getLogger().debug("MessageChannelEvent.Chat: "+e.getRawMessage().toPlain());
 
         String rawMsg = e.getRawMessage().toPlain();
         for (UCChannel ch : UChat.get().getChannels().values()) {

@@ -88,12 +88,12 @@ public class UCChatProtection implements Listener{
 				&& (ch == null || !UChat.get().getUCConfig().getProtStringList("chat-protection.censor.disable-on-channels").contains(ch.getName()))){
 			int act = 0;
 			for (String word:UChat.get().getUCConfig().getProtReplecements().getKeys(false)){
-				if (!Pattern.compile(word).matcher(msg).find()){
+				if (!Pattern.compile("(?i)"+word).matcher(msg).find()){
 					continue;
 				}
 				String replaceby = UChat.get().getUCConfig().getProtString("chat-protection.censor.replace-words."+word);
 				if (UChat.get().getUCConfig().getProtBool("chat-protection.censor.replace-by-symbol")){
-					replaceby = word.replaceAll("(?s).", UChat.get().getUCConfig().getProtString("chat-protection.censor.by-symbol"));
+					replaceby = word.replaceAll("(?i).", UChat.get().getUCConfig().getProtString("chat-protection.censor.by-symbol"));
 				}
 
 				if (UChat.get().getUCConfig().getProtBool("chat-protection.censor.use-pre-actions")){

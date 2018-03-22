@@ -78,13 +78,13 @@ public class UCChatProtection {
 				&& (chan == null || !UChat.get().getConfig().protections().censor.disable_on_channels.contains(chan.getName()))){
 			int act = 0;
 			for (Entry<String, String> word:UChat.get().getConfig().protections().censor.replace_words.entrySet()){
-				if (!Pattern.compile(word.getKey()).matcher(msg).find()){
+				if (!Pattern.compile("(?i)"+word.getKey()).matcher(msg).find()){
 					continue;
 				} 				
 				
 				String replaceby = word.getValue();
 				if (UChat.get().getConfig().protections().censor.replace_by_symbol){
-					replaceby = word.getKey().replaceAll("(?s).", UChat.get().getConfig().protections().censor.by_symbol);
+					replaceby = word.getKey().replaceAll("(?i).", UChat.get().getConfig().protections().censor.by_symbol);
 				}
 
 				if (UChat.get().getConfig().protections().censor.use_pre_actions){

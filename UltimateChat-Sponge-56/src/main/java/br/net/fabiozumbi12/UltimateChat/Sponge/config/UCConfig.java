@@ -229,7 +229,7 @@ public class UCConfig{
 	public void addChannel(UCChannel ch) throws IOException{
 		CommentedConfigurationNode chFile;	
     	ConfigurationLoader<CommentedConfigurationNode> channelManager;		
-		File defch = new File(UChat.get().configDir(),"channels"+File.separator+ch.getName().toLowerCase()+".conf");	
+		File defch = new File(UChat.get().configDir(),"channels" + File.separator + ch.getName().toLowerCase() + ".conf");
 		
 		channelManager = HoconConfigurationLoader.builder().setFile(defch).build();	
 		chFile = channelManager.load();
