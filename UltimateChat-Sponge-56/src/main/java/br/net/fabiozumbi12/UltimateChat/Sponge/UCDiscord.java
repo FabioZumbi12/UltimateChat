@@ -28,10 +28,6 @@ import java.util.concurrent.TimeUnit;
 public class UCDiscord extends ListenerAdapter implements UCDInterface {	
 	private JDA jda;
 	private UChat uchat;
-	private UUID taskId;
-	public UUID getTaskId(){
-	    return this.taskId;
-    }
 
     public boolean JDAAvailable(){
         return this.jda != null;

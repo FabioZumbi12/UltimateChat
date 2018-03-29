@@ -17,7 +17,5 @@ public interface UCDInterface {
 	
 	void sendCommandsToDiscord(String text);
 
-    UUID getTaskId();
-
 	void shutdown();
 }

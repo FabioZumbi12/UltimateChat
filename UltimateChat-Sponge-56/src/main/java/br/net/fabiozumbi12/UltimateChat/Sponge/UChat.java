@@ -249,6 +249,7 @@ public class UChat {
 	
 	public void reload() throws IOException{
 		this.cmds.removeCmds();
+		this.channels = null;
 		this.config = new UCConfig(factory);
 		this.lang = new UCLang();
 
@@ -288,7 +289,6 @@ public class UChat {
 		if (checkJDA()){
 			this.logger.info("JDA LibLoader is present...");
 			if (this.UCJDA != null){
-				Sponge.getScheduler().getTaskById(this.UCJDA.getTaskId()).get().cancel();
 				this.UCJDA.shutdown();
 				this.UCJDA = null;
 			}

@@ -263,6 +263,10 @@ public class UCCommands {
 							if (!UChat.get().getPerms().channelReadPerm(p, ch) && !UChat.get().getPerms().channelWritePerm(p, ch)){
 								throw new CommandException(UCUtil.toText(UChat.get().getLang().get("channel.nopermission").replace("{channel}", ch.getName())));	
 							}
+							if (ch.availableInWorld(p.getWorld())){
+								UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.notavailable").replace("{channel}", ch.getName()));
+								return CommandResult.success();
+							}
 							if (ch.isMember(p)){
 								UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.alreadyon").replace("{channel}", ch.getName()));
 								return CommandResult.success();	
@@ -345,6 +349,11 @@ public class UCCommands {
 
 		if (!UChat.get().getPerms().channelWritePerm(src, ch)){
 			UChat.get().getLang().sendMessage(src, UChat.get().getLang().get("channel.nopermission").replace("{channel}", ch.getName()));
+			return;
+		}
+
+		if (ch.availableInWorld(src.getWorld())){
+			UChat.get().getLang().sendMessage(src, UChat.get().getLang().get("channel.notavailable").replace("{channel}", ch.getName()));
 			return;
 		}
 
@@ -828,7 +837,7 @@ public class UCCommands {
 		
 		boolean first = true;
 		for (UCChannel ch:UChat.get().getChannels().values()){
-			if (!(p instanceof Player) || UChat.get().getPerms().channelWritePerm(p, ch)){
+			if (!(p instanceof Player) || UChat.get().getPerms().channelWritePerm(p, ch) && ch.availableInWorld(((Player) p).getWorld())){
 				Builder fancych = Text.builder();
 				if (first){
 					fancych.append(UCUtil.toText(" "+ch.getColor()+ch.getName()));

@@ -31,6 +31,10 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
             UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.nopermission").replace("{channel}", ch.getName()));
             return;
         }
+		if (ch.availableInWorld(p.getWorld())){
+			UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.notavailable").replace("{channel}", ch.getName()));
+			return;
+		}
         if (!ch.canLock()){
             UChat.get().getLang().sendMessage(p, "help.channels.send");
             return;
@@ -156,7 +160,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 								fancy.coloredText(UChat.get().getLang().get("help.channels.available").replace("{channels}","")).next();
 								boolean first = true;
 								for (UCChannel ch:UChat.get().getChannels().values()){
-									if (!(p instanceof Player) || UCPerms.channelReadPerm(p, ch)){
+									if (UCPerms.channelReadPerm(p, ch) && ch.availableInWorld(p.getWorld())){
 										if (first){
 											fancy.coloredText(ch.getColor()+ch.getName()+"&a");
 											first = false;
@@ -179,6 +183,10 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 							}
 							if (!UCPerms.channelReadPerm(p, ch) && !UCPerms.channelWritePerm(p, ch)){
 								UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.nopermission").replace("{channel}", ch.getName()));
+								return true;
+							}
+							if (ch.availableInWorld(p.getWorld())){
+								UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.notavailable").replace("{channel}", ch.getName()));
 								return true;
 							}
 							if (!ch.canLock()){
