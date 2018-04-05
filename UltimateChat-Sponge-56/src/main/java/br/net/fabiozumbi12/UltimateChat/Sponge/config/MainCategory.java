@@ -157,6 +157,15 @@ public class MainCategory {
             myMap.put("my-nether", "&4Hell&r");
             return myMap;
         }
+		@Setting(value = "group-names", comment = "Example alias for rename group name to other name. Support color codes.")
+		public Map<String, String> group_names = createMapWorlds();
+		private HashMap<String, String> createMapGroup(){
+			HashMap<String,String> myMap = new HashMap<>();
+			myMap.put("my-admin", "&4Admin&r");
+			myMap.put("my-moderator", "&2MOD&r");
+			return myMap;
+		}
+
 		@Setting(value="check-channel-change-world", comment = "This will make a check if the player channel is available on destination world and put on the world channel if is not available.")
 		public boolean check_channel_change_world = false;
 

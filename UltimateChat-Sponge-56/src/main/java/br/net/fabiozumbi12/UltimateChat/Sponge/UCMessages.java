@@ -665,12 +665,12 @@ public class UCMessages {
 				Subject sub = UChat.get().getPerms().getGroupAndTag(sender);
 				if (sub != null){
 					
-					text = text.replace("{option_group}", sub.getIdentifier());
+					text = text.replace("{option_group}", UChat.get().getConfig().root().general.group_names.getOrDefault(sub.getIdentifier(), sub.getIdentifier()));
 					
 					if (sub.getOption("display_name").isPresent()){
 						text = text.replace("{option_display_name}", sub.getOption("display_name").get());
 					} else {
-						text = text.replace("{option_display_name}", sub.getIdentifier());
+						text = text.replace("{option_display_name}", UChat.get().getConfig().root().general.group_names.getOrDefault(sub.getIdentifier(), sub.getIdentifier()));
 					}
 					
 					Pattern gp = Pattern.compile("\\{option_(.+?)\\}");
