@@ -394,7 +394,7 @@ public class UChat extends JavaPlugin {
                     cmd = cmd+" "+ getUCConfig().getString("broadcast.url")+url;
                 }
                 if (plays == 0 || getServer().getOnlinePlayers().size() >= plays){
-                    UCUtil.sendBroadcast(cmd.split(" "), silent);
+                    UCUtil.sendBroadcast(Bukkit.getConsoleSender(), cmd.split(" "), silent);
                 }
             }
             if (index+1 >= total){

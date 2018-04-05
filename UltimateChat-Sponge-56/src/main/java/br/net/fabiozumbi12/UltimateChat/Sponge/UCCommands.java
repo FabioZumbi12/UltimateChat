@@ -328,7 +328,7 @@ public class UCCommands {
 					.permission("uchat.cmd.broadcast")
 				    .description(Text.of("Command to send broadcast to server."))
 				    .executor((src, args) -> { {
-				    	if (!UCUtil.sendBroadcast(args.<String>getOne("message").get().split(" "), false)){
+				    	if (!UCUtil.sendBroadcast(src, args.<String>getOne("message").get().split(" "), false)){
 							sendHelp(src);
 						}  
 				    	return CommandResult.success();	

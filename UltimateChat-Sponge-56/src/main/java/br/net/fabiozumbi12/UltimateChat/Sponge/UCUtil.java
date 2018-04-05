@@ -26,7 +26,7 @@ public class UCUtil {
 		return str.replaceAll("(&([A-Fa-fK-Ok-oRr0-9]))", "");
 	}
 	
-	static boolean sendBroadcast(String[] args, boolean silent){
+	static boolean sendBroadcast(CommandSource src, String[] args, boolean silent){
 		StringBuilder message = new StringBuilder();
 		 StringBuilder hover = new StringBuilder();
 		 StringBuilder cmdline = new StringBuilder();
@@ -79,8 +79,6 @@ public class UCUtil {
 		 }		 
 		 			 
 		 Builder fanci = Text.builder();
-		 fanci.append(UCUtil.toText(message.toString().substring(1)));
-		 
 		 if (hover.toString().length() > 1){
 			 fanci.onHover(TextActions.showText(UCUtil.toText(hover.toString().substring(1))));
 			 if (!silent){
@@ -105,6 +103,7 @@ public class UCUtil {
 			 if (cmdline.toString().length() > 1){
 				 fanci.onClick(TextActions.runCommand("/"+cmdline.toString().substring(1).replace("{clicked}", p.getName())));						 
 			 }
+			 fanci.append(UCUtil.toText(UCMessages.formatTags("", message.toString().substring(1), src, p, message.toString().substring(1), new UCChannel("broadcast"))));
 			 p.sendMessage(fanci.build());
 		 }
 		 return true;

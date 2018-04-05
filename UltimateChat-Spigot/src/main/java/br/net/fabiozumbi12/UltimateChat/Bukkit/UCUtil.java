@@ -92,7 +92,7 @@ public class UCUtil {
 		return true;
 	}
 	
-	public static boolean sendBroadcast(String[] args, boolean silent){
+	public static boolean sendBroadcast(CommandSender src, String[] args, boolean silent){
 		StringBuilder message = new StringBuilder();
 		 StringBuilder hover = new StringBuilder();
 		 StringBuilder cmdline = new StringBuilder();
@@ -162,8 +162,6 @@ public class UCUtil {
 		 			 
 		 if (UChat.get().getUCConfig().getBoolean("general.json-events")){
 			 UltimateFancy fanci = new UltimateFancy();
-			 fanci.text(message.toString().substring(1));
-			 
 			 if (hover.toString().length() > 1){
 				 fanci.hoverShowText(hover.toString().substring(1));
 				 if (!silent){
@@ -191,6 +189,7 @@ public class UCUtil {
 				 if (suggest.toString().length() > 1){
 					 fanci.clickSuggestCmd(suggest.toString().substring(1).replace("{clicked}", p.getName()));						 
 				 }
+				 fanci.text(UCMessages.formatTags("", message.toString().substring(1), src, p, message.toString().substring(1), new UCChannel("broadcast")));
 				 fanci.send(p);
 				 if (UChat.get().getJedis() != null){
 					 UChat.get().getJedis().sendRawMessage(fanci);
@@ -198,7 +197,7 @@ public class UCUtil {
 			 }
 		 } else {
 			 for (Player p:Bukkit.getOnlinePlayers()){
-				 p.sendMessage(message.toString().substring(1));
+				 p.sendMessage(UCMessages.formatTags("", message.toString().substring(1), src, p, message.toString().substring(1), new UCChannel("broadcast")));
 			 }				 
 		 }
 		 return true;

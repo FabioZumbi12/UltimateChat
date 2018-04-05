@@ -527,7 +527,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 		 }
 		 
 		 if (cmd.getName().equalsIgnoreCase("ubroadcast") && UCPerms.cmdPerm(sender, "broadcast")){
-			 if (!UCUtil.sendBroadcast(args, false)){
+			 if (!UCUtil.sendBroadcast(sender, args, false)){
 				 sendHelp(sender);
 			 }
 			 return true;

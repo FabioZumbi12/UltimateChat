@@ -41,7 +41,7 @@
     <orderEntry type="library" name="Maven: org.hamcrest:hamcrest-core:1.1" level="project" />
     <orderEntry type="library" name="Maven: net.md-5:bungeecord-chat:1.12-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.spigotmc:spigot-api:javadoc:1.12.2-R0.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: me.clip:placeholderapi:2.8.4" level="project" />
+    <orderEntry type="library" name="Maven: me.clip:placeholderapi:2.8.5" level="project" />
     <orderEntry type="module-library">
       <library name="Maven: SimpleClans:SimpleClans:v1">
         <CLASSES>
