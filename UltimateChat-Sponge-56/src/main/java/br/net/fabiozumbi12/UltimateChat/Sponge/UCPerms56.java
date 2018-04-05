@@ -28,6 +28,7 @@ public class UCPerms56 implements UCPerms{
 		this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "uchat.cmd.ignore.channel", Tristate.TRUE);
 		this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "uchat.cmd.ignore.player", Tristate.TRUE);
 		this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "uchat.cmd.clear", Tristate.TRUE);
+		this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "uchat.cmd.msgtoggle", Tristate.TRUE);
 		this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "uchat.password", Tristate.TRUE);
 	}
 	

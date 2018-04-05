@@ -25,10 +25,12 @@ public class UCPerms78 implements UCPerms {
 		this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "uchat.channel.global.read", Tristate.TRUE);
 		this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "uchat.channel.global.write", Tristate.TRUE);
 		this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "uchat.cmd.tell", Tristate.TRUE);
+		this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "uchat.chat.click-urls", Tristate.TRUE);
 		this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "uchat.cant-ignore.local", Tristate.TRUE);
 		this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "uchat.cmd.ignore.channel", Tristate.TRUE);
 		this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "uchat.cmd.ignore.player", Tristate.TRUE);
 		this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "uchat.cmd.clear", Tristate.TRUE);
+		this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "uchat.cmd.msgtoggle", Tristate.TRUE);
 		this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "uchat.password", Tristate.TRUE);
 	}
 	
