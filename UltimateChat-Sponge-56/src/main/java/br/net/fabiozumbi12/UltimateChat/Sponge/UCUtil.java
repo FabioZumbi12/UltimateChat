@@ -36,21 +36,21 @@ public class UCUtil {
 		 boolean isUrl = false;
 		 for (String arg:args){
 			 if (arg.contains(UChat.get().getConfig().root().broadcast.on_hover)){
-				 hover.append(" "+arg.replace(UChat.get().getConfig().root().broadcast.on_hover, ""));
+				 hover.append(" ").append(arg.replace(UChat.get().getConfig().root().broadcast.on_hover, ""));
 				 isHover = true;
 				 isCmd = false;
 				 isUrl = false;
 				 continue;
 			 }
 			 if (arg.contains(UChat.get().getConfig().root().broadcast.on_click)){
-				 cmdline.append(" "+arg.replace(UChat.get().getConfig().root().broadcast.on_click, ""));
+				 cmdline.append(" ").append(arg.replace(UChat.get().getConfig().root().broadcast.on_click, ""));
 				 isCmd = true;
 				 isHover = false;
 				 isUrl = false;
 				 continue;
 			 }
 			 if (arg.contains(UChat.get().getConfig().root().broadcast.url)){
-				 url.append(" "+arg.replace(UChat.get().getConfig().root().broadcast.url, ""));
+				 url.append(" ").append(arg.replace(UChat.get().getConfig().root().broadcast.url, ""));
 				 isCmd = false;
 				 isHover = false;
 				 isUrl = true;
@@ -58,15 +58,15 @@ public class UCUtil {
 			 }
 			 
 			 if (isCmd){
-				 cmdline.append(" "+arg);
+				 cmdline.append(" ").append(arg);
 			 } else
 			 if (isHover){
-				 hover.append(" "+arg);
+				 hover.append(" ").append(arg);
 			 } else
 			 if (isUrl){
-				 url.append(" "+arg);
+				 url.append(" ").append(arg);
 			 } else {
-				 message.append(" "+arg);
+				 message.append(" ").append(arg);
 			 }
 		 }
 		 

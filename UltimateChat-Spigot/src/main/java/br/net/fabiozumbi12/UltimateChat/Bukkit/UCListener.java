@@ -295,7 +295,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 
 				 	 //chat msgtoggle <player>
 					 if (args[0].equalsIgnoreCase("msgtoggle")) {
-						 if (!UCPerms.cmdPerm(p, "msgtoggle.others")) {
+						 if (!UCPerms.hasPerm(p, "msgtoggle.others")) {
 							 UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("cmd.nopermission"));
 							 return true;
 						 }

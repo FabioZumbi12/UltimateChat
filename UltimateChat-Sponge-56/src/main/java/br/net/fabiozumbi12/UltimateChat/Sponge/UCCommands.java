@@ -59,9 +59,7 @@ public class UCCommands {
 		}
 		for (String cmd:UChat.get().getChAliases()){
 			Optional<? extends CommandMapping> cmdo = manager.get(cmd);
-			if (cmdo.isPresent()) {
-                manager.removeMapping(cmdo.get());
-            }
+			cmdo.ifPresent(manager::removeMapping);
 		}		
 		for (String cmd:UChat.get().getConfig().getMsgAliases()){
             manager.removeMapping(manager.get(cmd).get());
@@ -472,7 +470,9 @@ public class UCCommands {
 	
 	private CommandCallable uchat() {
 		CommandSpec msgtoggle = CommandSpec.builder()
-				.arguments(GenericArguments.optional(GenericArguments.requiringPermission(GenericArguments.player(Text.of("player")), "uchat.cmd.msgtoggle.others")))
+				.arguments(GenericArguments.optional(
+						GenericArguments.requiringPermission(
+								GenericArguments.player(Text.of("player")), "uchat.msgtoggle.others")))
 				.description(Text.of("Disable private messages."))
 				.permission("uchat.cmd.msgtoggle")
 				.executor((src,args) -> {{
@@ -806,6 +806,7 @@ public class UCCommands {
 			    		.build(), "ignore")
 			    .child(mute, "mute")
 			    .child(tempmute, "tempmute")
+				.child(msgtoggle, "msgtoggle")
 			    .build();
 	}
     

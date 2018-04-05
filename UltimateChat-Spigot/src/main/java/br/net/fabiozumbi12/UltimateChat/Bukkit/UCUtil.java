@@ -29,9 +29,9 @@ public class UCUtil {
 		text = text.replace("_", " ");
 		for (String t:text.split(" ")){
 			if (t.length() > 2){
-				cap.append(t.substring(0, 1).toUpperCase() + t.substring(1).toLowerCase()+" ");
+				cap.append(t.substring(0, 1).toUpperCase()).append(t.substring(1).toLowerCase()).append(" ");
 			} else {
-				cap.append(t+" ");
+				cap.append(t).append(" ");
 			}						
 		}
 		return cap.substring(0, cap.length()-1);
@@ -104,7 +104,7 @@ public class UCUtil {
 		 boolean isSug = false;
 		 for (String arg:args){
 			 if (arg.contains(UChat.get().getUCConfig().getString("broadcast.on-hover"))){
-				 hover.append(" "+ChatColor.translateAlternateColorCodes('&', arg.replace(UChat.get().getUCConfig().getString("broadcast.on-hover"), "")));
+				 hover.append(" ").append(ChatColor.translateAlternateColorCodes('&', arg.replace(UChat.get().getUCConfig().getString("broadcast.on-hover"), "")));
 				 isHover = true;
 				 isCmd = false;
 				 isUrl = false;
@@ -112,7 +112,7 @@ public class UCUtil {
 				 continue;
 			 }
 			 if (arg.contains(UChat.get().getUCConfig().getString("broadcast.on-click"))){
-				 cmdline.append(" "+ChatColor.translateAlternateColorCodes('&', arg.replace(UChat.get().getUCConfig().getString("broadcast.on-click"), "")));
+				 cmdline.append(" ").append(ChatColor.translateAlternateColorCodes('&', arg.replace(UChat.get().getUCConfig().getString("broadcast.on-click"), "")));
 				 isCmd = true;
 				 isHover = false;
 				 isUrl = false;
@@ -120,7 +120,7 @@ public class UCUtil {
 				 continue;
 			 }
 			 if (arg.contains(UChat.get().getUCConfig().getString("broadcast.url"))){
-				 url.append(" "+ChatColor.translateAlternateColorCodes('&', arg.replace(UChat.get().getUCConfig().getString("broadcast.url"), "")));
+				 url.append(" ").append(ChatColor.translateAlternateColorCodes('&', arg.replace(UChat.get().getUCConfig().getString("broadcast.url"), "")));
 				 isCmd = false;
 				 isHover = false;
 				 isUrl = true;
@@ -128,7 +128,7 @@ public class UCUtil {
 				 continue;
 			 }
 			 if (arg.contains(UChat.get().getUCConfig().getString("broadcast.suggest"))){
-				 suggest.append(" "+ChatColor.translateAlternateColorCodes('&', arg.replace(UChat.get().getUCConfig().getString("broadcast.suggest"), "")));
+				 suggest.append(" ").append(ChatColor.translateAlternateColorCodes('&', arg.replace(UChat.get().getUCConfig().getString("broadcast.suggest"), "")));
 				 isCmd = false;
 				 isHover = false;
 				 isUrl = false;
@@ -137,18 +137,18 @@ public class UCUtil {
 			 }
 			 
 			 if (isCmd){
-				 cmdline.append(" "+ChatColor.translateAlternateColorCodes('&', arg));
+				 cmdline.append(" ").append(ChatColor.translateAlternateColorCodes('&', arg));
 			 } else
 			 if (isHover){
-				 hover.append(" "+ChatColor.translateAlternateColorCodes('&', arg));
+				 hover.append(" ").append(ChatColor.translateAlternateColorCodes('&', arg));
 			 } else
 			 if (isUrl){
-				 url.append(" "+ChatColor.translateAlternateColorCodes('&', arg));
+				 url.append(" ").append(ChatColor.translateAlternateColorCodes('&', arg));
 			 } else 
 		     if (isSug){
-		    	 suggest.append(" "+ChatColor.translateAlternateColorCodes('&', arg));
+		    	 suggest.append(" ").append(ChatColor.translateAlternateColorCodes('&', arg));
 			 } else {
-				 message.append(" "+ChatColor.translateAlternateColorCodes('&', arg));
+				 message.append(" ").append(ChatColor.translateAlternateColorCodes('&', arg));
 			 }
 		 }
 		 
@@ -189,8 +189,10 @@ public class UCUtil {
 				 if (suggest.toString().length() > 1){
 					 fanci.clickSuggestCmd(suggest.toString().substring(1).replace("{clicked}", p.getName()));						 
 				 }
-				 fanci.text(UCMessages.formatTags("", message.toString().substring(1), src, p, message.toString().substring(1), new UCChannel("broadcast")));
-				 fanci.send(p);
+
+				 UltimateFancy newFanci = fanci.clone();
+				 newFanci.text(UCMessages.formatTags("", message.toString().substring(1), src, p, message.toString().substring(1), new UCChannel("broadcast")));
+				 newFanci.send(p);
 				 if (UChat.get().getJedis() != null){
 					 UChat.get().getJedis().sendRawMessage(fanci);
 				 }

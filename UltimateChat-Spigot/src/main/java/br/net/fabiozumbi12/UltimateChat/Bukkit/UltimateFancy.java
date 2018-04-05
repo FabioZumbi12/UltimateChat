@@ -540,4 +540,18 @@ public class UltimateFancy {
 		}
 	}
 
+	public void setContructor(JSONArray array){
+		this.constructor = array;
+	}
+
+	@Override
+	public UltimateFancy clone(){
+		UltimateFancy newFanci = new UltimateFancy();
+		newFanci.constructor.addAll(this.constructor);
+		newFanci.pendentElements.addAll(this.pendentElements);
+		newFanci.workingGroup.addAll(this.workingGroup);
+		newFanci.lastformats.putAll(this.lastformats);
+		return newFanci;
+	}
+
 }
