@@ -5,6 +5,7 @@ import me.rojo8399.placeholderapi.PlaceholderService;
 import me.rojo8399.placeholderapi.Source;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.entity.living.player.Player;
 
 import java.util.Arrays;
 
@@ -59,6 +60,6 @@ public class UCPlaceHoldersRelational {
 
     @Placeholder(id = "uchat-defaultchannel")
     public String defaultChannel(@Source CommandSource p){
-        return UChat.get().getDefChannel().getName();
+        return UChat.get().getDefChannel(p instanceof  Player ? ((Player)p).getWorld().getName() : null).getName();
     }
 }

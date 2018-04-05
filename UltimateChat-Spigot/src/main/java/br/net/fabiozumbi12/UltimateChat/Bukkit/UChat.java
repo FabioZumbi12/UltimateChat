@@ -15,10 +15,12 @@ import net.milkbowl.vault.permission.Permission;
 import net.sacredlabyrinth.phaed.simpleclans.SimpleClans;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.command.*;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -481,7 +483,7 @@ public class UChat extends JavaPlugin {
 				return ch;
 			}
 		}
-		return getDefChannel();
+		return p instanceof Player ? getDefChannel(((Player)p).getWorld().getName()) : getDefChannel(null);
 	}
 
 
@@ -501,10 +503,15 @@ public class UChat extends JavaPlugin {
 		}
 	}
 
-	UCChannel getDefChannel(){
-		UCChannel ch = getChannel(config.getString("general.default-channel"));
-		if (ch == null){
-			UChat.get().getLogger().severe("Default channel not found with alias '"+config.getString("general.default-channel")+"'. Fix this setting to a valid channel alias.");			
+	UCChannel getDefChannel(String world){
+		UCChannel ch = getChannel(config.getString("general.default-channels.default-channel"));
+		if (world != null){
+			UCChannel wch = getChannel(config.getString("general.default-channels.worlds."+world+".channel"));
+			if (wch == null){
+				UChat.get().getLogger().severe("Default channel not found with alias '"+config.getString("general.default-channels.worlds."+ world)+"'. Fix this setting to a valid channel alias.");
+			} else {
+				ch = wch;
+			}
 		}
 		return ch;
 	}

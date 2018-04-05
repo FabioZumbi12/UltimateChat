@@ -10,6 +10,8 @@ import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import ninja.leaping.configurate.objectmapping.GuiceObjectMapperFactory;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.world.World;
 
 import java.io.File;
 import java.io.IOException;
@@ -111,13 +113,28 @@ public class UCConfig{
 
 			cfgLoader = HoconConfigurationLoader.builder().setFile(defConfig).build();	
 			configRoot = cfgLoader.load(ConfigurationOptions.defaults().setObjectMapperFactory(factory).setShouldCopyDefaults(true).setHeader(header));			
-			root = configRoot.getValue(TypeToken.of(MainCategory.class), new MainCategory());			
-			
+			root = configRoot.getValue(TypeToken.of(MainCategory.class), new MainCategory());
+
+			//update old configs
+			double update = 0;
+			if (configRoot.getNode("_config-version").getDouble() < 1.2D){
+				configRoot.getNode("_config-version").setValue(1.2D);
+
+				configRoot.getNode("general", "default-channel").setValue(null);
+				configRoot.getNode("debug-messages").setValue(null);
+
+				update = 1.2D;
+			}
+
+			if (update > 0){
+				UChat.get().getLogger().warning("Configuration updated to "+update);
+			}
+
 			/*--------------------- protections.conf ---------------------------*/
 			protLoader = HoconConfigurationLoader.builder().setFile(defProt).build();	
 			protsRoot = protLoader.load(ConfigurationOptions.defaults().setObjectMapperFactory(factory).setShouldCopyDefaults(true));
 			protections = protsRoot.getValue(TypeToken.of(ProtectionsCategory.class), new ProtectionsCategory());
-					
+
 		} catch (IOException | ObjectMappingException e) {
 			e.printStackTrace();
 		}

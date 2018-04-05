@@ -4,6 +4,7 @@ import br.net.fabiozumbi12.UltimateChat.Sponge.API.SendChannelMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.Sponge.API.UChatReloadEvent;
 import br.net.fabiozumbi12.UltimateChat.Sponge.API.uChatAPI;
 import br.net.fabiozumbi12.UltimateChat.Sponge.Jedis.UCJedisLoader;
+import br.net.fabiozumbi12.UltimateChat.Sponge.config.MainCategory;
 import br.net.fabiozumbi12.UltimateChat.Sponge.config.UCConfig;
 import br.net.fabiozumbi12.UltimateChat.Sponge.config.UCLang;
 import br.net.fabiozumbi12.UltimateChat.Sponge.config.VersionData;
@@ -370,10 +371,15 @@ public class UChat {
 		}
 	}
 	
-	public UCChannel getDefChannel(){
-		UCChannel ch = getChannel(getConfig().root().general.default_channel);
-		if (ch == null){
-			UChat.get().getLogger().warning("Defalt channel not found with alias '"+getConfig().root().general.default_channel+"'. Fix this setting to a valid channel alias.");
+	public UCChannel getDefChannel(String world){
+		UCChannel ch = getChannel(getConfig().root().general.default_channels.default_channel);
+		if (world != null){
+			UCChannel wch = getChannel(getConfig().root().general.default_channels.worlds.get(world).channel);
+			if (wch == null){
+				UChat.get().getLogger().warning("Defalt channel not found with alias '"+getConfig().root().general.default_channels.worlds.get(world).channel+"'. Fix this setting to a valid channel alias.");
+			} else {
+				ch = wch;
+			}
 		}
 		return ch;
 	}
@@ -395,7 +401,7 @@ public class UChat {
 				return ch;
 			}
 		}
-		return getDefChannel();
+		return  p instanceof Player ? getDefChannel(((Player)p).getWorld().getName()) : getDefChannel(null);
 	}
 	
 }

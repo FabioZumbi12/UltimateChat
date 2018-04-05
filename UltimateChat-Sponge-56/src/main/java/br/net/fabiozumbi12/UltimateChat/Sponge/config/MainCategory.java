@@ -1,7 +1,11 @@
 package br.net.fabiozumbi12.UltimateChat.Sponge.config;
 
+import br.net.fabiozumbi12.UltimateChat.Sponge.UChat;
+import com.google.common.collect.Maps;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.world.World;
 
 import java.util.*;
 
@@ -135,8 +139,6 @@ public class MainCategory {
 		public String channel_cmd_aliases = "channel, ch";
 		@Setting(value="umsg-cmd-aliases", comment="Aliases to send commands from system to players (without any format, good to send messages from other plugins direct to players).")
 		public String umsg_cmd_aliases = "umsg";
-		@Setting(value="default-channel", comment="Set the default channel for new players or when players join on server.")
-		public String default_channel = "l";
 		@Setting(value="spy-format", comment="Chat spy format.")
 		public String spy_format = "&c[Spy] {output}";
 		@Setting(value="spy-enabled-onjoin", comment="Enable spy on join?")
@@ -158,12 +160,35 @@ public class MainCategory {
             return myMap;
         }
 		@Setting(value = "group-names", comment = "Example alias for rename group name to other name. Support color codes.")
-		public Map<String, String> group_names = createMapWorlds();
-		private HashMap<String, String> createMapGroup(){
-			HashMap<String,String> myMap = new HashMap<>();
+		public Map<String, String> group_names = createMapGroup();
+		private Map<String, String> createMapGroup(){
+			Map<String,String> myMap = Maps.newHashMap();
 			myMap.put("my-admin", "&4Admin&r");
 			myMap.put("my-moderator", "&2MOD&r");
 			return myMap;
+		}
+		@Setting(value="default-channels")
+		public DefaultChannels default_channels = new DefaultChannels();
+
+		@ConfigSerializable
+		public static class DefaultChannels{
+
+			public DefaultChannels(){
+				defaultWorldInfo();
+			}
+
+			@Setting(value = "default-channel", comment = "Default channel for new added worlds")
+			public String default_channel = "l";
+
+			@Setting
+			public Map<String, WorldInfo> worlds = new HashMap<>();
+
+			private void defaultWorldInfo(){
+				WorldInfo wi = new WorldInfo("l", false);
+				for (World w:Sponge.getServer().getWorlds()){
+					worlds.put(w.getName(), wi);
+				}
+			}
 		}
 
 		@Setting(value="check-channel-change-world", comment = "This will make a check if the player channel is available on destination world and put on the world channel if is not available.")
@@ -258,5 +283,21 @@ public class MainCategory {
 		tags.put("custom-tag", new TagsCategory("&7[&2MyTag&7]", "say I created an awesome tag!", Collections.singletonList("You discovered me :P"), "any-name-perm.custom-tag", Collections.singletonList("world-show"), Collections.singletonList("world-hide"), "www.google.com"));
 		tags.put("vanilla-chat", new TagsCategory("{chat_header}{chat_body}", null, null, null, null, null, null));	
 		tags.put("jedis", new TagsCategory("{server-id}", null, Arrays.asList("&7Server: {jedis-id}","&cChange me on configuration!"), null, null, null, null));
-	}		
+	}
+
+	@ConfigSerializable
+	public static class WorldInfo {
+		public WorldInfo(){}
+
+		public WorldInfo(String ch, boolean force){
+			this.channel = ch;
+			this.force = force;
+		}
+
+		@Setting
+		public String channel  ="l";
+
+		@Setting
+		public boolean force = false;
+	}
 }

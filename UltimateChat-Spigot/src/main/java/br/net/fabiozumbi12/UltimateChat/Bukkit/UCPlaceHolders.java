@@ -31,7 +31,7 @@ public class UCPlaceHolders extends PlaceholderExpansion {
 			text = Arrays.toString(UChat.get().ignoringPlayer.get(p.getName()).toArray());
 		}
 		if (arg.equals("default_channel")){
-			text = UChat.get().getDefChannel().getName();
+			text = UChat.get().getDefChannel(p.getWorld().getName()).getName();
 		}
         if (arg.startsWith("placeholder_")){
             String ph = arg.replace("placeholder_","");

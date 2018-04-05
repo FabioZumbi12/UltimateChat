@@ -190,23 +190,27 @@ public class UCChannel {
 		this.members.clear();
 	}
 	
-	public void addMember(CommandSender p){
+	public UCChannel addMember(CommandSender p){
 		addMember(p.getName());
+		return this;
 	}
 
-	public void addMember(String p){
+	public UCChannel addMember(String p){
         for (UCChannel ch:UChat.get().getChannels().values()){
             ch.removeMember(p);
         }
 		this.members.add(p);
+        return this;
 	}
 	
-	public void removeMember(CommandSender p){
+	public UCChannel removeMember(CommandSender p){
 		removeMember(p.getName());
+		return this;
 	}
 
-    public void removeMember(String p){
+    public UCChannel removeMember(String p){
 		this.members.remove(p);
+		return this;
 	}
 
 	

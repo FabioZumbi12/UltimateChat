@@ -1,5 +1,6 @@
 package br.net.fabiozumbi12.UltimateChat.Sponge;
 
+import br.net.fabiozumbi12.UltimateChat.Sponge.config.MainCategory;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
@@ -14,6 +15,7 @@ import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.event.filter.cause.Root;
 import org.spongepowered.api.event.message.MessageChannelEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
+import org.spongepowered.api.event.world.LoadWorldEvent;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.channel.MutableMessageChannel;
 import org.spongepowered.api.text.serializer.TextSerializers;
@@ -37,7 +39,15 @@ public class UCListener {
 		UChat.get().respondTell.put(receiver.get().getName(),sender.getName());
 		UCMessages.sendFancyMessage(new String[0], msg, null, sender, receiver.get());			
 	}
-	
+
+	@Listener
+	public void onWorldLoad(LoadWorldEvent e){
+		if (!UChat.get().getConfig().root().general.default_channels.worlds.containsKey(e.getTargetWorld().getName())){
+			UChat.get().getConfig().root().general.default_channels.worlds.put(
+					e.getTargetWorld().getName(), new MainCategory.WorldInfo(UChat.get().getConfig().root().general.default_channels.default_channel, false));
+		}
+	}
+
 	@Listener(order = Order.LATE)
 	public void onChat(MessageChannelEvent.Chat e, @Root Player p){
 
@@ -165,7 +175,7 @@ public class UCListener {
 	@Listener
 	public void onJoin(ClientConnectionEvent.Join e, @Getter("getTargetEntity") Player p){
 		if (!UChat.get().getConfig().root().general.persist_channels){
-			UChat.get().getDefChannel().addMember(p);
+			UChat.get().getDefChannel(p.getWorld().getName()).addMember(p);
 		}
 
 		if (UChat.get().getUCJDA() != null && !p.hasPermission(UChat.get().getConfig().root().discord.vanish_perm)){
@@ -218,9 +228,9 @@ public class UCListener {
 
         String toCh = "";
         if (!pch.availableInWorld(tw)){
-            if (UChat.get().getDefChannel().availableInWorld(tw)){
-                UChat.get().getDefChannel().addMember(p);
-                toCh = UChat.get().getDefChannel().getName();
+            if (UChat.get().getDefChannel(tw.getName()).availableInWorld(tw)){
+                UChat.get().getDefChannel(tw.getName()).addMember(p);
+                toCh = UChat.get().getDefChannel(tw.getName()).getName();
             } else {
                 for (UCChannel ch:UChat.get().getChannels().values()){
                     if (ch.availableInWorld(tw)) {

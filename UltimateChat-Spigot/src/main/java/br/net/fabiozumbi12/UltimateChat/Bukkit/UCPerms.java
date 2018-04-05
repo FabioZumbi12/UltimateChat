@@ -40,12 +40,12 @@ public class UCPerms {
 	}
 	
 	public static boolean channelReadPerm(CommandSender p, UCChannel ch){
-		UCChannel defCh = UChat.get().getDefChannel();
+		UCChannel defCh = UChat.get().getDefChannel(p instanceof  Player ? ((Player)p).getWorld().getName() : null);
 		return defCh.equals(ch) || hasPerm(p, "channel."+ch.getName().toLowerCase()+".read");
 	}
 	
 	static boolean channelWritePerm(CommandSender p, UCChannel ch){
-		UCChannel defCh = UChat.get().getDefChannel();
+		UCChannel defCh = UChat.get().getDefChannel(p instanceof  Player ? ((Player)p).getWorld().getName() : null);
 		return defCh.equals(ch) || hasPerm(p, "channel."+ch.getName().toLowerCase()+".write");
 	}
 	

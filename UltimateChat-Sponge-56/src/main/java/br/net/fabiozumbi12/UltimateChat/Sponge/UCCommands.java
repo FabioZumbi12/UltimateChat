@@ -518,10 +518,10 @@ public class UCCommands {
 
 					List<String> toAdd = new ArrayList<>(ch.getMembers());
 					toAdd.forEach(m -> {
-					    UChat.get().getDefChannel().addMember(m);
+					    UChat.get().getDefChannel(src instanceof Player ? ((Player)src).getWorld().getName() : null).addMember(m);
                         //fire event
                         if (Sponge.getServer().getPlayer(m).isPresent()){
-                            PlayerChangeChannelEvent event = new PlayerChangeChannelEvent(Sponge.getServer().getPlayer(m).get(), null, UChat.get().getDefChannel());
+                            PlayerChangeChannelEvent event = new PlayerChangeChannelEvent(Sponge.getServer().getPlayer(m).get(), null, UChat.get().getDefChannel(src instanceof Player ? ((Player)src).getWorld().getName() : null));
                             Sponge.getEventManager().post(event);
                         }
                     });

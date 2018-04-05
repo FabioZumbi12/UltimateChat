@@ -3,11 +3,14 @@ package br.net.fabiozumbi12.UltimateChat.Bukkit.config;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UChat;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.configuration.InvalidConfigurationException;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class UCCommentedConfig {
     private final HashMap<String, String> comments;
@@ -72,7 +75,22 @@ public class UCCommentedConfig {
         setDefault("general.channel-cmd-aliases", "channel, ch", null);
         setDefault("general.umsg-cmd-aliases", "upv", "Aliases to send commands from system to players (without any format, good to send messages from other plugins direct to players)");
         setDefault("general.json-events", true, "False if your server don't support json or if /tellraw is not available.");
-        setDefault("general.default-channel", "l", "Set the default channel for new players or when players join on server.");
+
+        //add def channels to worlds
+        if (UChat.get().getConfig().contains("general.default-channel")){
+            String def = UChat.get().getConfig().getString("general.default-channel");
+            setDefault("general.default-channels.default-channel", def, "Default channel for new added worlds");
+            UChat.get().getConfig().set("general.default-channel", null);
+        }
+        setDefault("general.default-channels.default-channel", "l", "Default channel for new added worlds");
+
+        setDefault("general.default-channels.worlds", null, "Default channel for each world. The channel must exist.");
+        for (World w:Bukkit.getWorlds()){
+            String def = UChat.get().getConfig().getString("general.default-channels.default-channel");
+            setDefault("general.default-channels.worlds."+w.getName()+".channel", def, null);
+            setDefault("general.default-channels.worlds."+w.getName()+".force", false, "Force player to join this channel on change world?");
+        }
+
         setDefault("general.spy-format", "&c&o[Spy] {output}", "Chat spy format.");
         setDefault("general.spy-enable-onjoin", true, "Enable Spy on join?");
         setDefault("general.use-channel-tag-builder", true, "Use the tag builder from channel configuration and ignore this tag builder.");

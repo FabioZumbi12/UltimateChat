@@ -19,12 +19,14 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.server.ServerCommandEvent;
+import org.bukkit.event.world.WorldLoadEvent;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class UCListener implements CommandExecutor, Listener, TabCompleter {
+
 
     private void addPlayerToChannel(UCChannel ch, Player p){
         if (!UCPerms.channelReadPerm(p, ch) && !UCPerms.channelWritePerm(p, ch)){
@@ -104,6 +106,14 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
             UChat.get().getServer().getPluginManager().callEvent(event);
         });
     }
+
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void onWorldLoad(WorldLoadEvent e){
+		if (!UChat.get().getConfig().contains("general.default-channels.worlds."+e.getWorld().getName())){
+			UChat.get().getConfig().set("general.default-channels.worlds."+e.getWorld().getName()+".channel", UChat.get().getConfig().contains("general.default-channels.default-channel"));
+			UChat.get().getConfig().set("general.default-channels.worlds."+e.getWorld().getName()+".force", false);
+		}
+	}
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -325,10 +335,10 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 						 }
 						 List<String> toAdd = new ArrayList<>(ch.getMembers());
 						 toAdd.forEach(m -> {
-						 	UChat.get().getDefChannel().addMember(m);
+						 	UChat.get().getDefChannel(p.getWorld().getName()).addMember(m);
 
 							 //listen change channel event
-							 PlayerChangeChannelEvent postEvent = new PlayerChangeChannelEvent(p, null, UChat.get().getDefChannel());
+							 PlayerChangeChannelEvent postEvent = new PlayerChangeChannelEvent(p, null, UChat.get().getDefChannel(p.getWorld().getName()));
 							 Bukkit.getPluginManager().callEvent(postEvent);
 						 });
 
@@ -898,7 +908,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 		Player p = e.getPlayer();
 
 		if (!UChat.get().getUCConfig().getBoolean("general.persist-channels")){
-			UChat.get().getDefChannel().addMember(p);
+			UChat.get().getDefChannel(p.getWorld().getName()).addMember(p);
 		}
 
 		if (UChat.get().getUCJDA() != null && !p.hasPermission(UChat.get().getUCConfig().getString("discord.vanish-perm"))){
@@ -963,28 +973,35 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 
 	@EventHandler
 	public void onChangeWorld(PlayerChangedWorldEvent e){
-	    if (!UChat.get().getUCConfig().getBoolean("general.check-channel-change-world")) return;
 
 	    Player p = e.getPlayer();
 	    World tw = p.getWorld();
+		String toCh = "";
 
-	    UCChannel pch = UChat.get().getPlayerChannel(p);
+	    if (UChat.get().getUCConfig().getBoolean("general.default-channels.worlds."+tw.getName()+".force")){
+			UChat.get().getDefChannel(tw.getName()).addMember(p);
+		}
 
-	    String toCh = "";
-	    if (!pch.availableInWorld(tw)){
-	        if (UChat.get().getDefChannel().availableInWorld(tw)){
-                UChat.get().getDefChannel().addMember(p);
-                toCh = UChat.get().getDefChannel().getName();
-            } else {
-                for (UCChannel ch:UChat.get().getChannels().values()){
-                    if (ch.availableInWorld(tw)) {
-                        ch.addMember(p);
-                        toCh = ch.getName();
-                        break;
-                    }
-                }
-            }
-        }
+		UCChannel pch = UChat.get().getPlayerChannel(p);
+
+		if (!UChat.get().getUCConfig().getBoolean("general.check-channel-change-world")){
+			if (!pch.availableInWorld(tw)){
+				if (UChat.get().getDefChannel(tw.getName()).availableInWorld(tw)){
+					pch = UChat.get().getDefChannel(tw.getName()).addMember(p);
+					toCh = pch.getName();
+				} else {
+					for (UCChannel ch:UChat.get().getChannels().values()){
+						if (ch.availableInWorld(tw)) {
+							pch  = ch.addMember(p);
+							toCh = ch.getName();
+							break;
+						}
+					}
+				}
+			}
+		}
+
+
         if (!toCh.isEmpty()){
             UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.entered").replace("{channel}", toCh));
         } else if (!pch.availableInWorld(tw)){
