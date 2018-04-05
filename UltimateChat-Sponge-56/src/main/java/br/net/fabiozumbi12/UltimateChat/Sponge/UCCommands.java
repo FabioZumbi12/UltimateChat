@@ -15,6 +15,7 @@ import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.Text.Builder;
 import org.spongepowered.api.text.action.TextActions;
+import org.spongepowered.api.text.format.TextColors;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -470,6 +471,39 @@ public class UCCommands {
 	}
 	
 	private CommandCallable uchat() {
+		CommandSpec msgtoggle = CommandSpec.builder()
+				.arguments(GenericArguments.optional(GenericArguments.requiringPermission(GenericArguments.player(Text.of("player")), "uchat.cmd.msgtoggle.others")))
+				.description(Text.of("Disable private messages."))
+				.permission("uchat.cmd.msgtoggle")
+				.executor((src,args) -> {{
+
+					if (args.<Player>getOne("player").isPresent()){
+						Player p = args.<Player>getOne("player").get();
+						if (UChat.get().msgTogglePlayers.contains(p.getName())){
+							UChat.get().msgTogglePlayers.remove(p.getName());
+							UChat.get().getLang().sendMessage(p, "cmd.msgtoggle.enabled");
+						} else {
+							UChat.get().msgTogglePlayers.add(p.getName());
+							UChat.get().getLang().sendMessage(p, "cmd.msgtoggle.disabled");
+						}
+						return CommandResult.success();
+					}
+
+					if (src instanceof Player){
+						Player p = (Player)src;
+						if (UChat.get().msgTogglePlayers.contains(p.getName())){
+							UChat.get().msgTogglePlayers.remove(p.getName());
+							UChat.get().getLang().sendMessage(p, "cmd.msgtoggle.enabled");
+						} else {
+							UChat.get().msgTogglePlayers.add(p.getName());
+							UChat.get().getLang().sendMessage(p, "cmd.msgtoggle.disabled");
+						}
+					} else {
+						throw new CommandException(Text.of("Only players can use this command or add a player name as last argument."), true);
+					}
+					return CommandResult.success();
+				}}).build();
+
 		CommandSpec delchannel = CommandSpec.builder()
 				.arguments(new ChannelCommandElement(Text.of("channel")))
 				.description(Text.of("Deletes a channel."))

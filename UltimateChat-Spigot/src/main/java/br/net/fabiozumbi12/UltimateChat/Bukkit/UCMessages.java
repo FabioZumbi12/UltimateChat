@@ -163,6 +163,12 @@ public class UCMessages {
 			
 		} else {						
 			//send tell
+
+			if (UChat.get().msgTogglePlayers.contains(tellReceiver.getName()) && !sender.hasPermission("uchat.msgtoggle.exempt")){
+				UChat.get().getLang().sendMessage(sender, "cmd.msgtoggle.msgdisabled");
+				return cancel;
+			}
+
 			channel = new UCChannel("tell");
 			
 			//send spy			

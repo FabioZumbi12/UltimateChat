@@ -144,6 +144,7 @@ public class UChat {
 	public List<String> isSpy = new ArrayList<>();
 	protected List<String> command = new ArrayList<>();
 	protected HashMap<String, Integer> timeMute = new HashMap<>();
+	public List<String> msgTogglePlayers = new ArrayList<>();
 
 	@Listener
     public void onServerStart(GamePostInitializationEvent event) {	

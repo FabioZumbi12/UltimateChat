@@ -46,6 +46,7 @@ permissions:
       uchat.cmd.ignore.channel: true
       uchat.cant-ignore.local: true
       uchat.cmd.tell: true
+      uchat.cmd.msgtoggle: true
       uchat.cmd.clear: true
       uchat.chat.click-urls: true
       uchat.channel.global.read: true

@@ -226,7 +226,22 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 						 sendHelp(sender);
 						 return true;
 					 }
-									 
+
+					 if (args[0].equalsIgnoreCase("msgtoggle")) {
+						 if (!UCPerms.cmdPerm(p, "msgtoggle")) {
+							 UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("cmd.nopermission"));
+							 return true;
+						 }
+						 if (UChat.get().msgTogglePlayers.contains(p.getName())){
+							 UChat.get().msgTogglePlayers.remove(p.getName());
+							 UChat.get().getLang().sendMessage(p, "cmd.msgtoggle.enabled");
+						 } else {
+							 UChat.get().msgTogglePlayers.add(p.getName());
+							 UChat.get().getLang().sendMessage(p, "cmd.msgtoggle.disabled");
+						 }
+						 return true;
+					 }
+
 					 if (args[0].equalsIgnoreCase("clear")){	
 						 if (!UCPerms.cmdPerm(p, "clear")){
 							 UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("cmd.nopermission"));
@@ -277,6 +292,26 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 				 }
 				 
 				 if (args.length == 2){
+
+				 	 //chat msgtoggle <player>
+					 if (args[0].equalsIgnoreCase("msgtoggle")) {
+						 if (!UCPerms.cmdPerm(p, "msgtoggle.others")) {
+							 UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("cmd.nopermission"));
+							 return true;
+						 }
+						 Player vict = Bukkit.getPlayer(args[1]);
+						 if (vict != null){
+							 if (UChat.get().msgTogglePlayers.contains(vict.getName())){
+								 UChat.get().msgTogglePlayers.remove(vict.getName());
+								 UChat.get().getLang().sendMessage(vict, "cmd.msgtoggle.enabled");
+							 } else {
+								 UChat.get().msgTogglePlayers.add(vict.getName());
+								 UChat.get().getLang().sendMessage(vict, "cmd.msgtoggle.disabled");
+							 }
+							 return true;
+						 }
+					 }
+
 					 //chat delchannel <channel-name>
 					 if (args[0].equalsIgnoreCase("delchannel")){
 						 if (!UCPerms.cmdPerm(p, "delchannel")){
@@ -995,6 +1030,9 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 		}
 		if (UCPerms.cmdPerm(p, "ignore.channel")){
 			fancy.coloredText(UChat.get().getLang().get("help.cmd.ignore.channel")+"\n");	
+		}
+		if (UCPerms.cmdPerm(p, "msgtoggle")){
+			fancy.coloredText(UChat.get().getLang().get("help.cmd.msgtoggle")+"\n");
 		}
 		if (UCPerms.cmdPerm(p, "cmd.reload")){
 			fancy.coloredText(UChat.get().getLang().get("help.cmd.reload")+"\n");	
