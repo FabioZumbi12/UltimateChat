@@ -262,7 +262,7 @@ public class UCCommands {
 							if (!UChat.get().getPerms().channelReadPerm(p, ch) && !UChat.get().getPerms().channelWritePerm(p, ch)){
 								throw new CommandException(UCUtil.toText(UChat.get().getLang().get("channel.nopermission").replace("{channel}", ch.getName())));	
 							}
-							if (ch.availableInWorld(p.getWorld())){
+							if (!ch.availableInWorld(p.getWorld())){
 								UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.notavailable").replace("{channel}", ch.getName()));
 								return CommandResult.success();
 							}
@@ -351,7 +351,7 @@ public class UCCommands {
 			return;
 		}
 
-		if (ch.availableInWorld(src.getWorld())){
+		if (!ch.availableInWorld(src.getWorld())){
 			UChat.get().getLang().sendMessage(src, UChat.get().getLang().get("channel.notavailable").replace("{channel}", ch.getName()));
 			return;
 		}

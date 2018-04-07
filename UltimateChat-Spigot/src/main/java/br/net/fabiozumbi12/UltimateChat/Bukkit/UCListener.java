@@ -33,7 +33,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
             UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.nopermission").replace("{channel}", ch.getName()));
             return;
         }
-		if (ch.availableInWorld(p.getWorld())){
+		if (!ch.availableInWorld(p.getWorld())){
 			UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.notavailable").replace("{channel}", ch.getName()));
 			return;
 		}
@@ -195,7 +195,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 								UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.nopermission").replace("{channel}", ch.getName()));
 								return true;
 							}
-							if (ch.availableInWorld(p.getWorld())){
+							if (!ch.availableInWorld(p.getWorld())){
 								UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.notavailable").replace("{channel}", ch.getName()));
 								return true;
 							}
