@@ -103,6 +103,9 @@ public class UCChannel {
 	}
 	
 	public void setProperty(String key, String value){
+		if (value.contains(",")){
+			properties.put(key, Arrays.asList(value.split(",")));
+		} else
 		if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")){
 			properties.put(key, Boolean.getBoolean(value));
 		} else {
