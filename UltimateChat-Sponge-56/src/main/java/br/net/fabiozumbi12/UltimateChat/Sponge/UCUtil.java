@@ -73,12 +73,16 @@ public class UCUtil {
 		 if (message.toString().length() <= 1){			 
 			 return false;
 		 }
-		 
+
+		 String finalMsg = UCMessages.formatTags("", message.toString().substring(1), src, src, message.toString().substring(1), new UCChannel("broadcast"));
+
 		 if (!silent){
-			 Sponge.getServer().getConsole().sendMessage(UCUtil.toText("> Broadcast: &r"+message.toString().substring(1)));
+			 Sponge.getServer().getConsole().sendMessage(UCUtil.toText("> Broadcast: &r"+finalMsg));
 		 }		 
 		 			 
 		 Builder fanci = Text.builder();
+		 fanci.append(UCUtil.toText(finalMsg));
+
 		 if (hover.toString().length() > 1){
 			 fanci.onHover(TextActions.showText(UCUtil.toText(hover.toString().substring(1))));
 			 if (!silent){
@@ -103,7 +107,6 @@ public class UCUtil {
 			 if (cmdline.toString().length() > 1){
 				 fanci.onClick(TextActions.runCommand("/"+cmdline.toString().substring(1).replace("{clicked}", p.getName())));						 
 			 }
-			 fanci.append(UCUtil.toText(UCMessages.formatTags("", message.toString().substring(1), src, p, message.toString().substring(1), new UCChannel("broadcast"))));
 			 p.sendMessage(fanci.build());
 		 }
 		 return true;

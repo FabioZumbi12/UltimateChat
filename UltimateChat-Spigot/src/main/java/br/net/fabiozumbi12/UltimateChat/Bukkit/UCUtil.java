@@ -155,13 +155,17 @@ public class UCUtil {
 		 if (message.toString().length() <= 1){			 
 			 return false;
 		 }
-		 
+
+		 String finalMsg = UCMessages.formatTags("", message.toString().substring(1), src, src, message.toString().substring(1), new UCChannel("broadcast"));
+
 		 if (!silent){
-			 Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_GRAY+"> Broadcast: "+ChatColor.RESET+message.toString().substring(1));
+			 Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_GRAY+"> Broadcast: "+ChatColor.RESET+finalMsg);
 		 }		 
 		 			 
 		 if (UChat.get().getUCConfig().getBoolean("general.json-events")){
 			 UltimateFancy fanci = new UltimateFancy();
+			 fanci.coloredText(finalMsg);
+
 			 if (hover.toString().length() > 1){
 				 fanci.hoverShowText(hover.toString().substring(1));
 				 if (!silent){
@@ -190,16 +194,14 @@ public class UCUtil {
 					 fanci.clickSuggestCmd(suggest.toString().substring(1).replace("{clicked}", p.getName()));						 
 				 }
 
-				 UltimateFancy newFanci = fanci.clone();
-				 newFanci.text(UCMessages.formatTags("", message.toString().substring(1), src, p, message.toString().substring(1), new UCChannel("broadcast")));
-				 newFanci.send(p);
+				 fanci.send(p);
 				 if (UChat.get().getJedis() != null){
-					 UChat.get().getJedis().sendRawMessage(newFanci);
+					 UChat.get().getJedis().sendRawMessage(fanci);
 				 }
 			 }
 		 } else {
 			 for (Player p:Bukkit.getOnlinePlayers()){
-				 p.sendMessage(UCMessages.formatTags("", message.toString().substring(1), src, p, message.toString().substring(1), new UCChannel("broadcast")));
+				 p.sendMessage(finalMsg);
 			 }				 
 		 }
 		 return true;
