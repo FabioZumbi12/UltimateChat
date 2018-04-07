@@ -194,7 +194,7 @@ public class UCUtil {
 				 newFanci.text(UCMessages.formatTags("", message.toString().substring(1), src, p, message.toString().substring(1), new UCChannel("broadcast")));
 				 newFanci.send(p);
 				 if (UChat.get().getJedis() != null){
-					 UChat.get().getJedis().sendRawMessage(fanci);
+					 UChat.get().getJedis().sendRawMessage(newFanci);
 				 }
 			 }
 		 } else {

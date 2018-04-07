@@ -34,7 +34,7 @@ public class UltimateFancy {
 
 	private ChatColor lastColor = ChatColor.WHITE;
 	private JSONArray constructor;
-	private final HashMap<String, Boolean> lastformats;
+	private HashMap<String, Boolean> lastformats;
 	private List<JSONObject> workingGroup;
 	private List<ExtraElement> pendentElements;
 	
@@ -547,10 +547,10 @@ public class UltimateFancy {
 	@Override
 	public UltimateFancy clone(){
 		UltimateFancy newFanci = new UltimateFancy();
-		newFanci.constructor.addAll(this.constructor);
-		newFanci.pendentElements.addAll(this.pendentElements);
-		newFanci.workingGroup.addAll(this.workingGroup);
-		newFanci.lastformats.putAll(this.lastformats);
+		newFanci.constructor = this.constructor;
+		newFanci.pendentElements = this.pendentElements;
+		newFanci.workingGroup = this.workingGroup;
+		newFanci.lastformats = this.lastformats;
 		return newFanci;
 	}
 
