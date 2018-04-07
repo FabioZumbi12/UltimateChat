@@ -107,17 +107,20 @@ public class UCChannel {
 	}
 	
 	public void setProperty(String key, String value){
-		if (value.contains(",")){
+		if (properties.get(key) instanceof List){
 			properties.put(key, Arrays.asList(value.split(",")));
-		} else
-		if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")){
+		} else if (properties.get(key) instanceof Boolean){
 			properties.put(key, Boolean.getBoolean(value));
-		} else {
-			try {
+		} else if (properties.get(key) instanceof Integer) {
+			try{
 				properties.put(key, Integer.parseInt(value));
-			} catch (Exception ex){
-				properties.put(key, value);
-			}	
+			} catch (NumberFormatException ex){
+				ex.printStackTrace();
+			}
+		} else if (properties.get(key) instanceof String[]){
+			properties.put(key, value.split(","));
+		} else {
+			properties.put(key, value);
 		}
 	}
 
