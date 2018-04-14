@@ -216,6 +216,8 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface{
 			}
 			if (e.getMember().getNickname() != null){
 				format = format.replace("{nickname}", e.getMember().getNickname());
+			} else {
+				format = format.replace("{nickname}", e.getMember().getEffectiveName());
 			}
 		}		
 		//if not filtered 

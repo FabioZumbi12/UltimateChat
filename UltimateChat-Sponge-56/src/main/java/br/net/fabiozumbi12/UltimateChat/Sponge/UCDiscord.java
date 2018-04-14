@@ -201,7 +201,7 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
 				.replace("{ch-alias}", ch.getAlias())
 				.replace("{ch-name}", ch.getName());				
 		if (e != null){
-			format = format.replace("{sender}", e.getMember().getEffectiveName())				
+			format = format.replace("{sender}", e.getMember().getEffectiveName())
 					.replace("{dd-channel}", e.getChannel().getName())				
 					.replace("{message}", e.getMessage().getContentRaw());
 			if (!e.getMember().getRoles().isEmpty()){
@@ -216,6 +216,8 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
 			}
 			if (e.getMember().getNickname() != null){
 				format = format.replace("{nickname}", e.getMember().getNickname());
+			} else {
+				format = format.replace("{nickname}", e.getMember().getEffectiveName());
 			}
 		}		
 		//if not filtered 
