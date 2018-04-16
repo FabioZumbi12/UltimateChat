@@ -107,7 +107,7 @@ public class UCMessages {
 			
 			if (ch.getDistance() > 0 && sender instanceof Player){
 				for (Player play:Sponge.getServer().getOnlinePlayers().stream().filter(p -> p.getWorld().equals(((Player) sender).getWorld())
-						&& p.getLocation().getPosition().distance(((Player) sender).getLocation().getPosition()) <= ch.getDistance())
+						&& p.getLocation().getPosition().distanceSquared(((Player) sender).getLocation().getPosition()) <= ch.getDistance())
 						.collect(Collectors.toList())){
 					if (UChat.get().getPerms().channelReadPerm(play, ch)){
 						if (sender.equals(play)){
