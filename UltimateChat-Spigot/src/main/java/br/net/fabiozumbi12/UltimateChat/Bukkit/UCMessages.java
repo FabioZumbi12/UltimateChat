@@ -104,6 +104,8 @@ public class UCMessages {
 						}
 						if (!((Player)sender).canSee(play)){
 							vanish++;
+						} else {
+							noWorldReceived++;
 						}
 						if (!ch.neeFocus() || ch.isMember(play)){
 							msgPlayers.put(play, sendMessage(sender, play, evmsg, ch, false));

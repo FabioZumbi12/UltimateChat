@@ -1,10 +1,10 @@
 package br.net.fabiozumbi12.UltimateChat.Sponge;
 
-import br.net.fabiozumbi12.UltimateChat.Sponge.API.SendChannelMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.Sponge.API.UChatReloadEvent;
 import br.net.fabiozumbi12.UltimateChat.Sponge.API.uChatAPI;
 import br.net.fabiozumbi12.UltimateChat.Sponge.Jedis.UCJedisLoader;
-import br.net.fabiozumbi12.UltimateChat.Sponge.config.MainCategory;
+import br.net.fabiozumbi12.UltimateChat.Sponge.Listeners.UCListener;
+import br.net.fabiozumbi12.UltimateChat.Sponge.Listeners.UCPixelmonListener;
 import br.net.fabiozumbi12.UltimateChat.Sponge.config.UCConfig;
 import br.net.fabiozumbi12.UltimateChat.Sponge.config.UCLang;
 import br.net.fabiozumbi12.UltimateChat.Sponge.config.VersionData;
@@ -31,7 +31,6 @@ import org.spongepowered.api.service.economy.EconomyService;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -46,6 +45,7 @@ description="Complete and advanced chat plugin",
 dependencies={
 		@Dependency(id = "jdalibraryloader", optional = true),
 		@Dependency(id = "placeholderapi", optional = true),
+		@Dependency(id = "pixelmon", optional = true),
 		@Dependency(id = "nucleus", optional = true)})
 public class UChat {
 	
@@ -136,15 +136,15 @@ public class UChat {
 	@Inject
     public GuiceObjectMapperFactory factory;
 	
-	protected HashMap<String,String> tempChannels = new HashMap<>();
-	protected HashMap<String,String> tellPlayers = new HashMap<>();
-	protected HashMap<String,String> tempTellPlayers = new HashMap<>();
-	protected HashMap<String,String> respondTell = new HashMap<>();
+	public HashMap<String,String> tempChannels = new HashMap<>();
+	public HashMap<String,String> tellPlayers = new HashMap<>();
+	public HashMap<String,String> tempTellPlayers = new HashMap<>();
+	public HashMap<String,String> respondTell = new HashMap<>();
 	protected HashMap<String,List<String>> ignoringPlayer = new HashMap<>();
-	protected List<String> mutes = new ArrayList<>();
+	public List<String> mutes = new ArrayList<>();
 	public List<String> isSpy = new ArrayList<>();
-	protected List<String> command = new ArrayList<>();
-	protected HashMap<String, Integer> timeMute = new HashMap<>();
+	public List<String> command = new ArrayList<>();
+	public HashMap<String, Integer> timeMute = new HashMap<>();
 	public List<String> msgTogglePlayers = new ArrayList<>();
 
 	@Listener
@@ -167,7 +167,7 @@ public class UChat {
     		this.cmds = new UCCommands(this);
     		
     		game.getEventManager().registerListeners(plugin, new UCListener());
-    		
+
     		//init other features    		
     		//Jedis
     		registerJedis();    		
@@ -286,15 +286,25 @@ public class UChat {
 			}
 		}		
 	}
-	
+
+	private UCPixelmonListener pixelListener;
 	protected void registerJDA(){
 		if (checkJDA()){
 			this.logger.info("JDA LibLoader is present...");
 			if (this.UCJDA != null){
 				this.UCJDA.shutdown();
 				this.UCJDA = null;
+				if (Sponge.getPluginManager().getPlugin("pixelmon").isPresent()){
+					game.getEventManager().unregisterListeners(pixelListener);
+				}
 			}
 			if (config.root().discord.use){
+				if (Sponge.getPluginManager().getPlugin("pixelmon").isPresent()){
+					pixelListener = new UCPixelmonListener(this);
+					game.getEventManager().registerListeners(plugin, pixelListener);
+					logger.info("Pixelmon Legendary announces enabled!");
+				}
+
 				this.UCJDA = new UCDiscord(this);
                 if (!this.UCJDA.JDAAvailable()){
                     this.UCJDA = null;

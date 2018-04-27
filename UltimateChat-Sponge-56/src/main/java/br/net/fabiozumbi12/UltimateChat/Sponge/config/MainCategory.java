@@ -77,6 +77,18 @@ public class MainCategory {
 		public String tell_channel_id = "";
 		@Setting(value="commands-channel-id", comment="Channel id to send commands issued by players")
 		public String commands_channel_id = "";
+
+		@Setting(comment="Pixelmon announces")
+		public Pixelmon pixelmon = new Pixelmon();
+		@ConfigSerializable
+		public static class Pixelmon{
+
+			@Setting(value="legendary-text", comment="Text to show on Legendary Spawn")
+			public String legendary_text = ":loudspeaker: A Legendary **%s** has spawned on biome **%s** in world **%s**";
+			@Setting(value="legendary-channel-id", comment="Announce to a discord channel when a Legendary Spawns")
+			public String legendary_channel_id = "";
+		}
+
 		@Setting(value="server-commands", comment="Put the id on 'commands-channel-id' option or/and enable server commands on channel configuration to use this.")
 		public ServerCmds server_commands = new ServerCmds();
 		@ConfigSerializable

@@ -30,7 +30,7 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
 	private UChat uchat;
 
     public boolean JDAAvailable(){
-        return this.jda != null;
+        return this.jda != null && this.jda.getStatus().isInit();
     }
 	
 	public UCDiscord(UChat plugin){
@@ -168,6 +168,12 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
 		if (!uchat.getConfig().root().discord.log_channel_id.isEmpty()){
 			sendToChannel(uchat.getConfig().root().discord.log_channel_id, text);
 		}			
+	}
+
+	public void sendPixelmonLegendary(String text){
+		if (!uchat.getConfig().root().discord.pixelmon.legendary_channel_id.isEmpty()){
+			sendToChannel(uchat.getConfig().root().discord.pixelmon.legendary_channel_id, text);
+		}
 	}
 	
 	public void sendToDiscord(CommandSource sender, String text, UCChannel ch){

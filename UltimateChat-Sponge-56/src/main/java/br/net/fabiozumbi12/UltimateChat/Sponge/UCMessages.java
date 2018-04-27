@@ -43,7 +43,7 @@ public class UCMessages {
 	private static HashMap<String, String> registeredReplacers = new HashMap<>();
 	private static String[] defFormat = new String[0];	
 		
-	static MutableMessageChannel sendFancyMessage(String[] format, Text msg, UCChannel channel, CommandSource sender, CommandSource tellReceiver){
+	public static MutableMessageChannel sendFancyMessage(String[] format, Text msg, UCChannel channel, CommandSource sender, CommandSource tellReceiver){
 		//Execute listener:
 		HashMap<String,String> tags = new HashMap<>();
 		for (String str:UChat.get().getConfig().root().general.custom_tags){
@@ -107,7 +107,7 @@ public class UCMessages {
 			
 			if (ch.getDistance() > 0 && sender instanceof Player){
 				for (Player play:Sponge.getServer().getOnlinePlayers().stream().filter(p -> p.getWorld().equals(((Player) sender).getWorld())
-						&& p.getLocation().getPosition().distanceSquared(((Player) sender).getLocation().getPosition()) <= ch.getDistance())
+						&& p.getLocation().getPosition().distance(((Player) sender).getLocation().getPosition()) <= ch.getDistance())
 						.collect(Collectors.toList())){
 					if (UChat.get().getPerms().channelReadPerm(play, ch)){
 						if (sender.equals(play)){
@@ -125,6 +125,8 @@ public class UCMessages {
 						}
 						if (!((Player)sender).canSee(play)){
 							vanish++;
+						} else {
+							noWorldReceived++;
 						}
 						if (!ch.neeFocus() || ch.isMember(play)){
 							msgPlayers.put(play, sendMessage(sender, play, srcText, ch, false));

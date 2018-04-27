@@ -17,5 +17,7 @@ public interface UCDInterface {
 	
 	void sendCommandsToDiscord(String text);
 
+	void sendPixelmonLegendary(String text);
+
 	void shutdown();
 }
