@@ -30,6 +30,7 @@ public class UCPixelmonListener {
 
     @Listener
     public void onPixelmonSpawn(SpawnEntityEvent event){
+        if (event.getCause().root() instanceof Player) return;
         if (event.getEntities().size() > 0 && event.getEntities().get(0) instanceof Living){
             Entity ent = event.getEntities().get(0);
             if (ent.getType().getName().equalsIgnoreCase("pixelmon")){
