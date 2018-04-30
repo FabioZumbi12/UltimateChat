@@ -8,6 +8,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.event.EventHandler;
 
 import java.io.*;
+import java.util.stream.Collectors;
 
 public class UCProxy extends Plugin implements Listener {
 
@@ -49,8 +50,8 @@ public class UCProxy extends Plugin implements Listener {
 	    } catch (IOException e) {
 	        e.printStackTrace();
 	    }
-	    for (ServerInfo si:getProxy().getServers().values()){
-	    	si.sendData("uChat", stream.toByteArray());
+	    for (ServerInfo si:getProxy().getServers().values().stream().filter(si -> !si.getPlayers().isEmpty()).collect(Collectors.toList())){
+			si.sendData("uChat", stream.toByteArray());
 	    }	    
 	}
 }
