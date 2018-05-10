@@ -9,6 +9,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.exceptions.JedisConnectionException;
+import redis.clients.jedis.exceptions.JedisException;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -24,11 +25,12 @@ public class UCJedisLoader {
     private int port;
     private String auth;
     private JedisPoolConfig poolCfg;
-	
+    private PubSubListener psl;
+
 	protected JedisPool getPool(){
-		return this.pool;		
+		return this.pool;
 	}
-	
+
 	public UCJedisLoader(String ip, int port, String auth, List<UCChannel> channels){
 		this.thisId = UChat.get().getUCConfig().getString("jedis.server-id").replace("$", "");
         this.ip = ip;
@@ -38,24 +40,47 @@ public class UCJedisLoader {
 		channels.add(new UCChannel("generic"));
 		channels.add(new UCChannel("tellsend"));
 		channels.add(new UCChannel("tellresponse"));
-		
+
 		String[] newChannels = new String[channels.size()];
 		for (int i = 0; i < channels.size(); i++){
 			newChannels[i] = channels.get(i).getName().toLowerCase();
 		}
-		
+
 		this.channels = newChannels;
 		channel = new ChatChannel(newChannels);
 		poolCfg = new JedisPoolConfig();
-		poolCfg.setTestOnBorrow(true);
 
 		//connect
-        if (!connectPool()){
-            return;
+        if (connectPool()){
+
+            psl = new PubSubListener();
+            new Thread(psl, "UltimateChat PubSub Listener").start();
+
+            UChat.get().getUCLogger().info("REDIS conected.");
+        }
+	}
+
+    private class PubSubListener implements Runnable {
+        private Jedis rsc;
+
+        private PubSubListener() {
         }
 
-	    UChat.get().getUCLogger().info("REDIS conected.");
-	}
+        @Override
+        public void run() {
+            try {
+                rsc = pool.getResource();
+                rsc.subscribe(channel, channels);
+            } catch (JedisException | ClassCastException ignored) {
+            }
+        }
+        private void poison() {
+            try{
+                channel.unsubscribe();
+                pool.returnResource(rsc);
+            } catch (Exception ignored){}
+        }
+    }
 
     private boolean connectPool(){
         if (this.pool == null || this.pool.isClosed()){
@@ -65,21 +90,24 @@ public class UCJedisLoader {
                 this.pool = new JedisPool(poolCfg, ip, port, 0, auth);
             }
 
+            Jedis jedis = null;
             try {
-                Jedis jedis = this.pool.getResource();
-                jedis.configSet("timeout", "0");
-                new Thread(() -> {
-                    try {
-                        jedis.subscribe(channel, channels);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }).start();
+                jedis = this.pool.getResource();
+                jedis.exists(String.valueOf(System.currentTimeMillis()));
+                return true;
             } catch (JedisConnectionException e){
+                UChat.get().getUCLogger().warning("REDIS not conected! Try again with /chat reload, or check the status of your Redis server.");
+                if (jedis != null)
+                    pool.returnBrokenResource(jedis);
+                pool.destroy();
+                pool = null;
                 e.printStackTrace();
-                UChat.get().getLogger().warning("REDIS not conected! Try again with /chat reload, or check the status of your Redis server.");
-                return false;
+            } finally {
+                if (jedis != null && pool != null) {
+                    pool.returnResource(jedis);
+                }
             }
+            return false;
         }
         return true;
     }
@@ -87,78 +115,75 @@ public class UCJedisLoader {
 	public void sendTellMessage(CommandSender sender, String tellReceiver, String msg){
 		UltimateFancy fancy = new UltimateFancy();
 		fancy.textAtStart(ChatColor.translateAlternateColorCodes('&', this.thisId));
-		
+
 		//spy
 		if (!UCPerms.hasPermission(sender, "uchat.chat-spy.bypass")){
-			for (Player receiver:UChat.get().getServer().getOnlinePlayers()){			
-				if (!receiver.getName().equals(tellReceiver) && !receiver.equals(sender) && 
+			for (Player receiver:UChat.get().getServer().getOnlinePlayers()){
+				if (!receiver.getName().equals(tellReceiver) && !receiver.equals(sender) &&
 						UChat.get().isSpy.contains(receiver.getName()) && UCPerms.hasSpyPerm(receiver, "private")){
 					String spyformat = UChat.get().getUCConfig().getString("general.spy-format");
-					
+
 					spyformat = spyformat.replace("{output}", ChatColor.stripColor(UCMessages.sendMessage(sender, tellReceiver, msg, new UCChannel("tell"), true).toOldFormat()));
 					receiver.sendMessage(ChatColor.translateAlternateColorCodes('&', spyformat));
 				}
 			}
 		}
-		
+
 		fancy.appendString(UCMessages.sendMessage(sender, tellReceiver, msg, new UCChannel("tell"), false).toString());
 		tellPlayers.put(tellReceiver, sender.getName());
-		
+
 		if (Arrays.asList(channels).contains("tellsend")){
 			Bukkit.getScheduler().runTaskAsynchronously(UChat.get(), () -> {
+                Jedis jedis = pool.getResource();
                 try {
-                    connectPool();
-                    Jedis jedis = pool.getResource();
                     jedis.publish("tellsend", thisId+"$"+tellReceiver+"$"+fancy.toString());
-                    jedis.quit();
-                } catch (Exception e) {
+                } catch (JedisConnectionException e) {
+                    pool.returnBrokenResource(jedis);
                     e.printStackTrace();
+                } finally {
+                    pool.returnResource(jedis);
                 }
             });
 		}
 	}
-	
-	public void sendRawMessage(UltimateFancy value){		
+
+	public void sendRawMessage(UltimateFancy value){
 		if (Arrays.asList(channels).contains("generic")){
 			Bukkit.getScheduler().runTaskAsynchronously(UChat.get(), () -> {
+                Jedis jedis = pool.getResource();
                 try {
-                    connectPool();
-                    Jedis jedis = pool.getResource();
                     jedis.publish("generic", thisId+"$"+value.toString());
-                    jedis.quit();
-                } catch (Exception e) {
+                } catch (JedisConnectionException e) {
+                    pool.returnBrokenResource(jedis);
                     e.printStackTrace();
+                } finally {
+                    pool.returnResource(jedis);
                 }
             });
-		}		
+		}
 	}
-	
+
 	public void sendMessage(String channel, UltimateFancy value){
-			
+
 		if (Arrays.asList(channels).contains(channel)){
 			Bukkit.getScheduler().runTaskAsynchronously(UChat.get(), () -> {
+                Jedis jedis = pool.getResource();
                 try {
-                    connectPool();
-                    Jedis jedis = pool.getResource();
                     jedis.publish(channel, thisId+"$"+value.toString());
-                    jedis.quit();
-                } catch (Exception e) {
+                } catch (JedisConnectionException e) {
+                    pool.returnBrokenResource(jedis);
                     e.printStackTrace();
+                } finally {
+                    pool.returnResource(jedis);
                 }
             });
-		}		
+		}
 	}
 
 	public void closePool(){
 		UChat.get().getUCLogger().info("Closing REDIS...");
-		if (this.channel.isSubscribed()){
-			this.channel.unsubscribe();
-		}
-		try {
-            this.pool.getResource().close();
-        } catch (Exception ignored){}
-		this.pool.close();
-		this.pool.destroy();
+        if (psl != null) psl.poison();
+        if (pool != null) pool.destroy();
 		UChat.get().getUCLogger().info("REDIS closed.");
 	}
 }

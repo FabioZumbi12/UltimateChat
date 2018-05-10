@@ -15,6 +15,7 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.exceptions.JedisConnectionException;
 import redis.clients.jedis.exceptions.JedisException;
+import sun.reflect.annotation.ExceptionProxy;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -81,8 +82,10 @@ public class UCJedisLoader {
 			}
 		}
 		private void poison() {
-			channel.unsubscribe();
-			pool.returnResource(rsc);
+			try{
+				channel.unsubscribe();
+				pool.returnResource(rsc);
+			} catch (Exception ignored){}
 		}
 	}
 
@@ -138,7 +141,6 @@ public class UCJedisLoader {
 		
 		if (Arrays.asList(channels).contains("tellsend")){
 			Sponge.getScheduler().createAsyncExecutor(UChat.get()).execute(() -> {
-				//connectPool();
 				Jedis jedis = pool.getResource();
                 try {
                     //string 0 1 2
@@ -157,7 +159,6 @@ public class UCJedisLoader {
 		
 		if (Arrays.asList(channels).contains("generic")){
 			Sponge.getScheduler().createAsyncExecutor(UChat.get()).execute(() -> {
-				//connectPool();
 				Jedis jedis = pool.getResource();
                 try {
                     //string 0 1
