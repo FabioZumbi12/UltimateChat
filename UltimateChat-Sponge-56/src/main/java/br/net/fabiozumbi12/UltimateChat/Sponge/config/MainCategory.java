@@ -12,9 +12,7 @@ import java.util.*;
 @ConfigSerializable
 public class MainCategory {
 	
-	public MainCategory(){
-		defaultTags();
-	}
+	public MainCategory(){}
 		
 	@Setting(value="_config-version")
 	public Double config_version = 1.0;	
@@ -185,21 +183,18 @@ public class MainCategory {
 		@ConfigSerializable
 		public static class DefaultChannels{
 
-			public DefaultChannels(){
-				defaultWorldInfo();
-			}
-
 			@Setting(value = "default-channel", comment = "Default channel for new added worlds")
 			public String default_channel = "l";
 
 			@Setting
-			public Map<String, WorldInfo> worlds = new HashMap<>();
-
-			private void defaultWorldInfo(){
+			public Map<String, WorldInfo> worlds = defaultWorldInfo();
+			private Map<String, WorldInfo> defaultWorldInfo(){
+				Map<String, WorldInfo> myMap = new HashMap<>();
 				WorldInfo wi = new WorldInfo("l", false);
 				for (World w:Sponge.getServer().getWorlds()){
-					worlds.put(w.getName(), wi);
+					myMap.put(w.getName(), wi);
 				}
+				return myMap;
 			}
 		}
 
@@ -281,20 +276,21 @@ public class MainCategory {
 					+ "You can use the tag \"custom-tag\" as base to create your own tags.\n"
 					+ "When finish, get the name of your tag and put on \"general.default-tag-build\" \n"
 					+ "or on channel builder on \"channels\" folder.")	
-	public Map<String, TagsCategory> tags = new HashMap<>();
-	
-	private void defaultTags(){		
-		tags.put("prefix", new TagsCategory("{option_prefix}", null, Collections.singletonList("&3Rank: &f{option_display_name}"), null, null, null, null));
-		tags.put("nickname", new TagsCategory("{nick-symbol}{nickname}", null, Arrays.asList("&3Player: &f{playername}","&3Money: &7{balance}"), null, null, null, null));
-		tags.put("playername", new TagsCategory("{playername}", null, Arrays.asList("&3Player: &f{playername}","&3Money: &7{balance}"), null, null, null, null));		
-		tags.put("suffix", new TagsCategory("{option_suffix}", null, null, null, null, null, null));		
-		tags.put("world", new TagsCategory("&7[{world}&7]&r", null, Collections.singletonList("&7Sent from world &8{world}"), null, null, null, null));
-		tags.put("message", new TagsCategory("{message}", null, null, null, null, null, null));		
-		tags.put("ch-tags", new TagsCategory("{ch-color}[{ch-alias}]&r", "ch {ch-alias}", Arrays.asList("&3Channel name: {ch-color}{ch-name}","&bClick to join this channel"), null, null, null, null));		
-		tags.put("admin-chat", new TagsCategory("&b[&r{playername}&b]&r: &b", null, null, null, null, null, null));
-		tags.put("custom-tag", new TagsCategory("&7[&2MyTag&7]", "say I created an awesome tag!", Collections.singletonList("You discovered me :P"), "any-name-perm.custom-tag", Collections.singletonList("world-show"), Collections.singletonList("world-hide"), "www.google.com"));
-		tags.put("vanilla-chat", new TagsCategory("{chat_header}{chat_body}", null, null, null, null, null, null));	
-		tags.put("jedis", new TagsCategory("{server-id}", null, Arrays.asList("&7Server: {jedis-id}","&cChange me on configuration!"), null, null, null, null));
+	public Map<String, TagsCategory> tags = defaultTags();
+	private Map<String, TagsCategory> defaultTags(){
+		Map<String, TagsCategory> myMap = new HashMap<>();
+		myMap.put("prefix", new TagsCategory("{option_prefix}", null, Collections.singletonList("&3Rank: &f{option_display_name}"), null, null, null, null));
+		myMap.put("nickname", new TagsCategory("{nick-symbol}{nickname}", null, Arrays.asList("&3Player: &f{playername}","&3Money: &7{balance}"), null, null, null, null));
+		myMap.put("playername", new TagsCategory("{playername}", null, Arrays.asList("&3Player: &f{playername}","&3Money: &7{balance}"), null, null, null, null));
+		myMap.put("suffix", new TagsCategory("{option_suffix}", null, null, null, null, null, null));
+		myMap.put("world", new TagsCategory("&7[{world}&7]&r", null, Collections.singletonList("&7Sent from world &8{world}"), null, null, null, null));
+		myMap.put("message", new TagsCategory("{message}", null, null, null, null, null, null));
+		myMap.put("ch-tags", new TagsCategory("{ch-color}[{ch-alias}]&r", "ch {ch-alias}", Arrays.asList("&3Channel name: {ch-color}{ch-name}","&bClick to join this channel"), null, null, null, null));
+		myMap.put("admin-chat", new TagsCategory("&b[&r{playername}&b]&r: &b", null, null, null, null, null, null));
+		myMap.put("custom-tag", new TagsCategory("&7[&2MyTag&7]", "say I created an awesome tag!", Collections.singletonList("You discovered me :P"), "any-name-perm.custom-tag", Collections.singletonList("world-show"), Collections.singletonList("world-hide"), "www.google.com"));
+		myMap.put("vanilla-chat", new TagsCategory("{chat_header}{chat_body}", null, null, null, null, null, null));
+		myMap.put("jedis", new TagsCategory("{server-id}", null, Arrays.asList("&7Server: {jedis-id}","&cChange me on configuration!"), null, null, null, null));
+	    return myMap;
 	}
 
 	@ConfigSerializable
