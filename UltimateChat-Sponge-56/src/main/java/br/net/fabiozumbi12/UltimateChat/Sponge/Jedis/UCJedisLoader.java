@@ -111,8 +111,9 @@ public class UCJedisLoader {
 					pool.returnResource(jedis);
 				}
 			}
+			return false;
         }
-        return false;
+        return true;
     }
 
 	public void sendTellMessage(CommandSource sender, String tellReceiver, Text msg){
@@ -137,13 +138,13 @@ public class UCJedisLoader {
 		
 		if (Arrays.asList(channels).contains("tellsend")){
 			Sponge.getScheduler().createAsyncExecutor(UChat.get()).execute(() -> {
-				connectPool();
+				//connectPool();
 				Jedis jedis = pool.getResource();
                 try {
                     //string 0 1 2
                     jedis.publish("tellsend", this.thisId+"$"+tellReceiver+"$"+TextSerializers.JSON.serialize(text.build()));
-                    jedis.quit();
-                } catch (Exception e) {
+                } catch (JedisConnectionException  e) {
+					pool.returnBrokenResource(jedis);
                     e.printStackTrace();
                 } finally {
 					pool.returnResource(jedis);
@@ -156,13 +157,13 @@ public class UCJedisLoader {
 		
 		if (Arrays.asList(channels).contains("generic")){
 			Sponge.getScheduler().createAsyncExecutor(UChat.get()).execute(() -> {
-				connectPool();
+				//connectPool();
 				Jedis jedis = pool.getResource();
                 try {
                     //string 0 1
                     jedis.publish("generic", this.thisId+"$"+TextSerializers.JSON.serialize(value));
-                    jedis.quit();
-                } catch (Exception e) {
+                } catch (JedisConnectionException  e) {
+					pool.returnBrokenResource(jedis);
                     e.printStackTrace();
                 } finally {
 					pool.returnResource(jedis);
@@ -175,13 +176,13 @@ public class UCJedisLoader {
 		
 		if (Arrays.asList(channels).contains(channel)){
 			Sponge.getScheduler().createAsyncExecutor(UChat.get().instance()).execute(() -> {
-				connectPool();
+				//connectPool();
 				Jedis jedis = pool.getResource();
                 try {
                     //string 0 1
                     jedis.publish(channel, this.thisId+"$"+TextSerializers.JSON.serialize(value));
-                    jedis.quit();
-                } catch (Exception e) {
+                } catch (JedisConnectionException  e) {
+					pool.returnBrokenResource(jedis);
                     e.printStackTrace();
                 } finally {
 					pool.returnResource(jedis);
@@ -192,8 +193,8 @@ public class UCJedisLoader {
 
 	public void closePool(){
 		UChat.get().getLogger().info("Closing REDIS...");
-		psl.poison();
-		pool.destroy();
+		if (psl != null) psl.poison();
+		if (pool != null) pool.destroy();
 		UChat.get().getLogger().info("REDIS closed.");
 	}	
 }
