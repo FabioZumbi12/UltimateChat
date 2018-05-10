@@ -55,11 +55,13 @@ public class UCJedisLoader {
 		channel = new ChatChannel(newChannels);
 		poolCfg = new JedisPoolConfig();
 
-		psl = new PubSubListener();
-		new Thread(psl, "UltimateChat PubSub Listener").start();
 
 		//connect
         if (connectPool()){
+
+			psl = new PubSubListener();
+			new Thread(psl, "UltimateChat PubSub Listener").start();
+
 			UChat.get().getLogger().info("REDIS conected.");
         }
 	}
