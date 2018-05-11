@@ -318,11 +318,13 @@ public class UCConfig{
 	
     public void save(){
     	try {
+			configRoot.setValue(TypeToken.of(MainCategory.class), root);
     		cfgLoader.save(configRoot);
+			protsRoot.setValue(TypeToken.of(ProtectionsCategory.class), protections);
     		protLoader.save(protsRoot);
-		} catch (IOException e) {
+		} catch (IOException | ObjectMappingException e) {
 			e.printStackTrace();
 		}
-    }
+	}
 }
    
