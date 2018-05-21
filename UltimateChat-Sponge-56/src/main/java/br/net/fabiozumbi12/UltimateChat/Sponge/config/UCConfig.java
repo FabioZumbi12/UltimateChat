@@ -115,12 +115,17 @@ public class UCConfig{
 			configRoot = cfgLoader.load(ConfigurationOptions.defaults().setObjectMapperFactory(factory).setShouldCopyDefaults(true).setHeader(header));			
 			root = configRoot.getValue(TypeToken.of(MainCategory.class), new MainCategory());
 
+			for (World w:Sponge.getServer().getWorlds()){
+				if (!root.general.default_channels.worlds.containsKey(w.getName())){
+					root.general.default_channels.worlds.put(w.getName(), new MainCategory.WorldInfo(root.general.default_channels.default_channel, false));
+				}
+			}
+
 			//update old configs
 			double update = 0;
 			if (configRoot.getNode("_config-version").getDouble() < 1.2D){
 				configRoot.getNode("_config-version").setValue(1.2D);
 
-				configRoot.getNode("general", "default-channel").setValue(null);
 				configRoot.getNode("debug-messages").setValue(null);
 
 				update = 1.2D;
@@ -221,13 +226,7 @@ public class UCConfig{
 			}
 		}
 	}
-	
-	public List<String> getTagList(){
-		List<String> tags = new ArrayList<>();
-		root.tags.keySet().forEach(tags::add);
-		return tags;
-	}
-	
+
 	public void delChannel(UCChannel ch){
 		UChat.get().getCmds().unregisterCmd(ch.getAlias());
 		UChat.get().getCmds().unregisterCmd(ch.getName());
@@ -316,10 +315,11 @@ public class UCConfig{
 		return Arrays.asList(root.general.umsg_cmd_aliases.replace(" ", "").split(","));
 	}
 	
-    public void save(){
+    private void save(){
     	try {
 			configRoot.setValue(TypeToken.of(MainCategory.class), root);
     		cfgLoader.save(configRoot);
+
 			protsRoot.setValue(TypeToken.of(ProtectionsCategory.class), protections);
     		protLoader.save(protsRoot);
 		} catch (IOException | ObjectMappingException e) {

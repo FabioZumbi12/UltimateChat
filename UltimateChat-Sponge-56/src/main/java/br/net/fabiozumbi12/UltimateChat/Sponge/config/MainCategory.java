@@ -187,15 +187,7 @@ public class MainCategory {
 			public String default_channel = "l";
 
 			@Setting
-			public Map<String, WorldInfo> worlds = defaultWorldInfo();
-			private Map<String, WorldInfo> defaultWorldInfo(){
-				Map<String, WorldInfo> myMap = new HashMap<>();
-				WorldInfo wi = new WorldInfo("l", false);
-				for (World w:Sponge.getServer().getWorlds()){
-					myMap.put(w.getName(), wi);
-				}
-				return myMap;
-			}
+			public Map<String, WorldInfo> worlds = new HashMap<>();
 		}
 
 		@Setting(value="check-channel-change-world", comment = "This will make a check if the player channel is available on destination world and put on the world channel if is not available.")
