@@ -10,7 +10,7 @@ Sponge: [https://ore.spongepowered.org/FabioZumbi12/UltimateChat](https://ore.sp
 The source is available on GitHub: [https://github.com/FabioZumbi12/UltimateChat](https://github.com/FabioZumbi12/UltimateChat)  
 
 ## Dev Builds:
-Dev builds on Jenkins: [![Build Status](http://areaz12server.net.br:8080/buildStatus/icon?job=UltimateChat)](http://areaz12server.net.br:8080/job/UltimateChat/)
+Dev builds on Jenkins: [![Build Status](https://host.areaz12server.net.br:8080/buildStatus/icon?job=UltimateChat)](https://host.areaz12server.net.br:8080/job/UltimateChat/)
 
 ## UltimateChat WIKI:
 Check WIKI for:  
