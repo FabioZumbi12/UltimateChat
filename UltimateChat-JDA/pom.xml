@@ -6,13 +6,13 @@
     <version>1.8.6</version>
   </parent>
   <artifactId>UltimateChat-JDA</artifactId>
-  <version>3.5.1-341</version>
+  <version>3.7.1-385</version>
 
  <dependencies>
     <dependency>
         <groupId>org.spigotmc</groupId>
         <artifactId>spigot-api</artifactId>
-        <version>1.12.2-R0.1-SNAPSHOT</version>
+        <version>1.13-pre7-R0.1-SNAPSHOT</version>
     </dependency>  
     <dependency>
         <groupId>org.spongepowered</groupId>

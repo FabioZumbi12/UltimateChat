@@ -466,14 +466,14 @@ public class UltimateFancy {
 					StringBuilder itemEnch = new StringBuilder();
 					itemEnch.append("ench:[");
 					for (Entry<Enchantment, Integer> ench:((EnchantmentStorageMeta)meta).getStoredEnchants().entrySet()){
-						itemEnch.append("{id:"+ench.getKey().getId()+",lvl:"+ench.getValue()+"},");
+						itemEnch.append("{id:"+ench.getKey().getKey()+",lvl:"+ench.getValue()+"},");
 					}
 					itemTag.append(itemEnch.toString().substring(0, itemEnch.length()-1)+"],");
 				} else if (meta.hasEnchants()){
 					StringBuilder itemEnch = new StringBuilder();
 					itemEnch.append("ench:[");
 					for (Entry<Enchantment, Integer> ench:meta.getEnchants().entrySet()){
-						itemEnch.append("{id:"+ench.getKey().getId()+",lvl:"+ench.getValue()+"},");
+						itemEnch.append("{id:"+ench.getKey().getKey()+",lvl:"+ench.getValue()+"},");
 					}
 					itemTag.append(itemEnch.toString().substring(0, itemEnch.length()-1)+"],");
 				}

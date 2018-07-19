@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: net.md-5:bungeecord-protocol:1.13-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/net/md-5/bungeecord-protocol/1.13-SNAPSHOT/bungeecord-protocol-1.13-20180717.091016-81.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/net/md-5/bungeecord-protocol/1.13-SNAPSHOT/bungeecord-protocol-1.13-20180717.091016-81-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/net/md-5/bungeecord-protocol/1.13-SNAPSHOT/bungeecord-protocol-1.13-20180717.091016-81-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

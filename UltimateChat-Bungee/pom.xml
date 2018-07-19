@@ -31,7 +31,7 @@
          </dependency>
      </dependencies>
      <properties>
-     	<mineVersion>1.12-SNAPSHOT</mineVersion>
+     	<mineVersion>1.13-SNAPSHOT</mineVersion>
      </properties>
      
      <build>
