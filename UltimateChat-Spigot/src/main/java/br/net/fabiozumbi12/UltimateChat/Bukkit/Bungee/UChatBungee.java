@@ -17,7 +17,7 @@ public class UChatBungee implements PluginMessageListener, Listener {
 	
 	@Override
     public void onPluginMessageReceived(String channel, Player player, byte[] message) {
-		if (!channel.equals("bungeecord:uchat")){
+		if (!channel.equals("bungee:uchat")){
 			return;
 		}
 		DataInputStream in = new DataInputStream(new ByteArrayInputStream(message));
@@ -62,7 +62,7 @@ public class UChatBungee implements PluginMessageListener, Listener {
 
         Player p = Iterables.getFirst(Bukkit.getOnlinePlayers(), null);
         try {
-			p.sendPluginMessage(UChat.get(), "bungeecord:uchat", out.toByteArray());
+			p.sendPluginMessage(UChat.get(), "bungee:uchat", out.toByteArray());
 		} catch (Exception ex){
         	ex.printStackTrace();
 		}

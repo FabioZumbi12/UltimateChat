@@ -166,8 +166,8 @@ public class UChat extends JavaPlugin {
             getServer().getPluginManager().registerEvents(listener, this);
             getServer().getPluginManager().registerEvents(new UCChatProtection(), this);
             
-            getServer().getMessenger().registerOutgoingPluginChannel(this, "uChat");
-            getServer().getMessenger().registerIncomingPluginChannel(this, "uChat", new UChatBungee());
+            getServer().getMessenger().registerOutgoingPluginChannel(this, "bungee:uchat");
+            getServer().getMessenger().registerIncomingPluginChannel(this, "bungee:uchat", new UChatBungee());
             
             //register aliases
             registerAliases();

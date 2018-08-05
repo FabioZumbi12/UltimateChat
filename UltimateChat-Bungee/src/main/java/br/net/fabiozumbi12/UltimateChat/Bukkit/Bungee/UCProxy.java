@@ -14,14 +14,14 @@ public class UCProxy extends Plugin implements Listener {
 
 	@Override
     public void onEnable() {
-		getProxy().registerChannel("uChat");
+		getProxy().registerChannel("bungee:uchat");
 		getProxy().getPluginManager().registerListener(this, this);
         getLogger().info("UChat Bungee enabled!");
     }
 	
 	@EventHandler	
 	public void onPluginMessage(PluginMessageEvent e) {
-		if (!e.getTag().equals("uChat")){
+		if (!e.getTag().equals("bungee:uchat")){
 			return;
 		}
 		
@@ -37,10 +37,10 @@ public class UCProxy extends Plugin implements Listener {
 	    } catch (IOException ex){
 	    	ex.printStackTrace();
 	    }
-	    sendMessage(e.getSender(), ch, json, id); 
+	    sendMessage(ch, json, id);
 	}
 	
-	public void sendMessage(Connection server, String ch, String json, String id){	    
+	public void sendMessage(String ch, String json, String id){
 	    ByteArrayOutputStream stream = new ByteArrayOutputStream();
 	    DataOutputStream out = new DataOutputStream(stream);
 	    try {
@@ -51,7 +51,7 @@ public class UCProxy extends Plugin implements Listener {
 	        e.printStackTrace();
 	    }
 	    for (ServerInfo si:getProxy().getServers().values().stream().filter(si -> !si.getPlayers().isEmpty()).collect(Collectors.toList())){
-			si.sendData("uChat", stream.toByteArray());
+			si.sendData("bungee:uchat", stream.toByteArray());
 	    }	    
 	}
 }
