@@ -36,7 +36,7 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.flowpowered:flow-math:1.0.3" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.flowpowered:flow-noise:1.0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.ow2.asm:asm:5.2" level="project" />
-    <orderEntry type="library" name="Maven: net.dv8tion:JDA:3.7.1_385" level="project" />
+    <orderEntry type="library" name="Maven: net.dv8tion:JDA:3.7.1_389" level="project" />
     <orderEntry type="library" name="Maven: club.minnced:opus-java:1.0.2" level="project" />
     <orderEntry type="library" name="Maven: club.minnced:opus-java-api:1.0.2" level="project" />
     <orderEntry type="library" name="Maven: club.minnced:opus-java-natives:1.0.2" level="project" />
