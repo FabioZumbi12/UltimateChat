@@ -8,7 +8,6 @@ import jdalib.jda.core.entities.Role;
 import jdalib.jda.core.entities.TextChannel;
 import jdalib.jda.core.events.message.MessageReceivedEvent;
 import jdalib.jda.core.exceptions.PermissionException;
-import jdalib.jda.core.exceptions.RateLimitedException;
 import jdalib.jda.core.hooks.ListenerAdapter;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
@@ -22,7 +21,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class UCDiscord extends ListenerAdapter implements UCDInterface {	

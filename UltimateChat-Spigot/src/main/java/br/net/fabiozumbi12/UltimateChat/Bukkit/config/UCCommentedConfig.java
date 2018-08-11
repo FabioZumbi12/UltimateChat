@@ -10,7 +10,6 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class UCCommentedConfig {
     private final HashMap<String, String> comments;

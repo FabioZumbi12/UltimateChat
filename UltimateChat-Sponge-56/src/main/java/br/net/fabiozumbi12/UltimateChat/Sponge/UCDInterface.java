@@ -2,8 +2,6 @@ package br.net.fabiozumbi12.UltimateChat.Sponge;
 
 import org.spongepowered.api.command.CommandSource;
 
-import java.util.UUID;
-
 public interface UCDInterface {
 	boolean JDAAvailable();
 

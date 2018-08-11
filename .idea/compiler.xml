@@ -10,7 +10,9 @@
         <module name="UltimateChat-JDA" />
         <module name="UltimateChat-Spigot" />
         <module name="UltimateChat-Sponge-5.0-6.0" />
-        <module name="UltimateChat-Sponge-7.0-8.0" />
+        <module name="UltimateChat-Sponge-56" />
+        <module name="UltimateChat-Sponge-7" />
+        <module name="UltimateChat-Sponge-8" />
         <module name="UltimateChat-Sponge-8.0" />
       </profile>
     </annotationProcessing>
@@ -20,8 +22,11 @@
       <module name="UltimateChat-JDA" target="1.8" />
       <module name="UltimateChat-Spigot" target="1.8" />
       <module name="UltimateChat-Sponge-5.0-6.0" target="1.8" />
+      <module name="UltimateChat-Sponge-56" target="1.8" />
+      <module name="UltimateChat-Sponge-7" target="1.8" />
       <module name="UltimateChat-Sponge-7.0" target="1.8" />
       <module name="UltimateChat-Sponge-7.0-8.0" target="1.8" />
+      <module name="UltimateChat-Sponge-8" target="1.8" />
       <module name="UltimateChat-Sponge-8.0" target="1.8" />
     </bytecodeTargetLevel>
   </component>

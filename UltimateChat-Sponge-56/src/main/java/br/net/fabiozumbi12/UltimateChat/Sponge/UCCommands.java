@@ -1,7 +1,6 @@
 package br.net.fabiozumbi12.UltimateChat.Sponge;
 
 import br.net.fabiozumbi12.UltimateChat.Sponge.API.PlayerChangeChannelEvent;
-import br.net.fabiozumbi12.UltimateChat.Sponge.API.UChatReloadEvent;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.*;
 import org.spongepowered.api.command.args.*;
@@ -15,7 +14,6 @@ import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.Text.Builder;
 import org.spongepowered.api.text.action.TextActions;
-import org.spongepowered.api.text.format.TextColors;
 
 import java.net.MalformedURLException;
 import java.net.URL;

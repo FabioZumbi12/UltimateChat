@@ -1,11 +1,8 @@
 package br.net.fabiozumbi12.UltimateChat.Sponge.config;
 
-import br.net.fabiozumbi12.UltimateChat.Sponge.UChat;
 import com.google.common.collect.Maps;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
-import org.spongepowered.api.Sponge;
-import org.spongepowered.api.world.World;
 
 import java.util.*;
 

@@ -5,7 +5,7 @@
   <artifactId>UltimateChat</artifactId>
   <packaging>pom</packaging>
   <name>UltimateChat</name>
-  <version>1.8.7</version>
+  <version>1.8.8</version>
   <description>Ultimate Chat is an advanced chat hooking into most used plugins to show more info on player chat.</description>
 
   <!-- Jedis -->
@@ -205,6 +205,7 @@
       <module>UltimateChat-Spigot</module>
       <module>UltimateChat-Bungee</module>
       <module>UltimateChat-Sponge-56</module>
-      <module>UltimateChat-Sponge-78</module>
+      <module>UltimateChat-Sponge-7</module>
+      <module>UltimateChat-Sponge-8</module>
   </modules>
 </project>

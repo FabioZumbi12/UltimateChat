@@ -8,7 +8,6 @@ import jdalib.jda.core.entities.Role;
 import jdalib.jda.core.entities.TextChannel;
 import jdalib.jda.core.events.message.MessageReceivedEvent;
 import jdalib.jda.core.exceptions.PermissionException;
-import jdalib.jda.core.exceptions.RateLimitedException;
 import jdalib.jda.core.hooks.ListenerAdapter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

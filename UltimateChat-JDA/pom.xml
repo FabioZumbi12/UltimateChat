@@ -3,7 +3,7 @@
   <parent>
     <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
     <artifactId>UltimateChat</artifactId>
-    <version>1.8.7</version>
+    <version>1.8.8</version>
   </parent>
   <artifactId>UltimateChat-JDA</artifactId>
   <version>3.7.1-385</version>

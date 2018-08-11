@@ -15,7 +15,6 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.exceptions.JedisConnectionException;
 import redis.clients.jedis.exceptions.JedisException;
-import sun.reflect.annotation.ExceptionProxy;
 
 import java.util.Arrays;
 import java.util.HashMap;

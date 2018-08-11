@@ -5,7 +5,6 @@ import br.net.fabiozumbi12.UltimateChat.Sponge.UCUtil;
 import br.net.fabiozumbi12.UltimateChat.Sponge.UChat;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 
 import java.io.*;
