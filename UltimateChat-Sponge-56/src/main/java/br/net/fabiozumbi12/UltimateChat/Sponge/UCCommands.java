@@ -300,12 +300,13 @@ public class UCCommands {
 				    .executor((src, args) -> { {
 				    	Player receiver = args.<Player>getOne("player").get();
 				    	String msg = args.<String>getOne("message").get();
+				    	msg = msg.replace("/n","\n");
 
 						Builder txtBuilder = Text.builder().append(UCUtil.toText(msg));
 						for (String arg:msg.split(" ")){
 							try{
 								txtBuilder.onClick(TextActions.openUrl(new URL(arg)));
-								txtBuilder.onHover(TextActions.showText(UCUtil.toText(UChat.get().getConfig().root().general.URL_template.replace("{url}", arg))));
+								txtBuilder.onHover(TextActions.showText(UCUtil.toText(UChat.get().getConfig().root().general.URL_template.replace("{url}", arg).replace("/n","\n"))));
 							} catch (MalformedURLException ignored) {}
 						}
 				    	receiver.sendMessage(txtBuilder.build());

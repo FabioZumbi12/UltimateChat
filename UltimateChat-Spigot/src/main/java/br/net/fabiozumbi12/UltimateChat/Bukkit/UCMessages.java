@@ -23,6 +23,7 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class UCMessages {
@@ -162,7 +163,7 @@ public class UCMessages {
 				}
 			}
 			
-		} else {						
+		} else {
 			//send tell
 
 			if (UChat.get().msgTogglePlayers.contains(tellReceiver.getName()) && !sender.hasPermission("uchat.msgtoggle.exempt")){
@@ -237,17 +238,32 @@ public class UCMessages {
 	}
 		
 	private static String composeColor(CommandSender sender, String evmsg){
-		evmsg = ChatColor.translateAlternateColorCodes('&', evmsg);	
-		if (sender instanceof Player){			
-			if (!UCPerms.hasPerm(sender, "chat.color")){
-				evmsg = evmsg.replaceAll("(?i)§([a-fA-F0-9Rr])", "&$1");
-			}
-			if (!UCPerms.hasPerm(sender, "chat.color.formats")){
-				evmsg = evmsg.replaceAll("(?i)§([l-oL-O])", "&$1");
-			}
-			if (!UCPerms.hasPerm(sender, "chat.color.magic")){
-				evmsg = evmsg.replaceAll("(?i)§([kK])", "&$1");
-			}
+		if (sender instanceof Player){
+            Pattern mat1 = Pattern.compile("(?i)&([A-Fa-f0-9Rr])");
+            Pattern mat2 = Pattern.compile("(?i)&([L-Ol-o])");
+            Pattern mat3 = Pattern.compile("(?i)&([Kk])");
+
+            if (!UCPerms.hasPerm(sender, "chat.color")){
+                while (mat1.matcher(evmsg).find()){
+                    evmsg = evmsg.replaceAll(mat1.pattern(), "");
+                }
+            }
+            if (!UCPerms.hasPerm(sender, "chat.color.formats")){
+                while (mat2.matcher(evmsg).find()){
+                    evmsg = evmsg.replaceAll(mat2.pattern(), "");
+                }
+            }
+            if (!UCPerms.hasPerm(sender, "chat.color.magic")){
+                while (mat3.matcher(evmsg).find()){
+                    evmsg = evmsg.replaceAll(mat3.pattern(), "");
+                }
+            }
+
+			if (!UCPerms.hasPerm(sender, "chat.newline")){
+				evmsg = evmsg.replace("/n", " ");
+			} else{
+                evmsg = evmsg.replace("/n", "\n");
+            }
 		}	
 		return evmsg;
 	}
@@ -325,7 +341,7 @@ public class UCMessages {
 							
 				StringBuilder tooltip = new StringBuilder();
 				for (String tp:messages){
-					tooltip.append("\n").append(tp);
+					tooltip.append("\n").append(tp.replace("/n","\n"));
 				}
 				if (tooltip.length() > 2){
 					tooltip = new StringBuilder(tooltip.substring(1));
@@ -343,7 +359,6 @@ public class UCMessages {
 					try{
 						fanci.clickOpenURL(new URL(formatTags(tag, url, sender, receiver, msg, ch)));
 					} catch (MalformedURLException ignored){}
-
 				}
 
 				if (!tag.equals("message") || UCPerms.hasPerm(sender, "chat.click-urls")){

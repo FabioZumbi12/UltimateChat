@@ -72,7 +72,7 @@ public class UltimateFancy {
 	 * @param text
 	 * @return instance of same {@link UltimateFancy}.
 	 */
-	public UltimateFancy textAndNext(String text){	
+	public UltimateFancy textAndNext(String text){
 		this.text(text);
 		return next();
 	}
@@ -123,7 +123,7 @@ public class UltimateFancy {
 	 * @param text
 	 * @return instance of same {@link UltimateFancy}.
 	 */
-	public UltimateFancy text(String text){		
+	public UltimateFancy text(String text){
 		workingGroup.addAll(parseColors(text));
 		return this;
 	}

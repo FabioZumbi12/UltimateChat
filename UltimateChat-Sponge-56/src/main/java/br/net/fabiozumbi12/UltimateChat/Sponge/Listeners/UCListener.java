@@ -112,7 +112,7 @@ public class UCListener {
 		} 
 		
 		else {
-			UCChannel ch = UChat.get().getPlayerChannel(p);
+			UCChannel ch = Sponge.getServer().getPlayer(p.getUniqueId()).isPresent() ? UChat.get().getPlayerChannel(p) : UChat.get().getChannel(UChat.get().getConfig().root().general.fakeplayer_channel);
 			if (UChat.get().tempChannels.containsKey(p.getName()) && !UChat.get().tempChannels.get(p.getName()).equals(ch.getAlias())){
 				ch = UChat.get().getChannel(UChat.get().tempChannels.get(p.getName()));
 				UChat.get().tempChannels.remove(p.getName());

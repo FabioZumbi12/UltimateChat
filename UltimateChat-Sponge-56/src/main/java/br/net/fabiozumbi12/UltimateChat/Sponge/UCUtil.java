@@ -36,6 +36,7 @@ public class UCUtil {
 		 boolean isUrl = false;
 		 for (String arg:args){
 			 if (arg.contains(UChat.get().getConfig().root().broadcast.on_hover)){
+                 arg = arg.replace("/n","\n");
 				 hover.append(" ").append(arg.replace(UChat.get().getConfig().root().broadcast.on_hover, ""));
 				 isHover = true;
 				 isCmd = false;
@@ -66,6 +67,7 @@ public class UCUtil {
 			 if (isUrl){
 				 url.append(" ").append(arg);
 			 } else {
+                 arg = arg.replace("/n","\n");
 				 message.append(" ").append(arg);
 			 }
 		 }

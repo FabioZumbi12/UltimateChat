@@ -115,7 +115,7 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface{
 							}
 						} catch (MalformedURLException ignore){}
 					} else {
-						fancy.text(message);	
+						fancy.text(message);
 					}
 					ch.sendMessage(uchat.getServer().getConsoleSender(), fancy, true);	
 					used++;

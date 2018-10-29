@@ -268,8 +268,13 @@ public class UCMessages {
 				while (mat3.matcher(evmsg).find()){
 					evmsg = evmsg.replaceAll(mat3.pattern(), "");
 				}				
-			}					
-		}	
+			}
+            if (!UChat.get().getPerms().hasPerm(sender, "chat.newline")){
+                evmsg = evmsg.replace("/n", " ");
+            } else{
+                evmsg = evmsg.replace("/n", "\n");
+            }
+        }
 		return evmsg;
 	}
 	

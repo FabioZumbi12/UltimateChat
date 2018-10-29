@@ -134,6 +134,8 @@ public class MainCategory {
 	@ConfigSerializable
 	public static class GeneralCat{
 
+		@Setting(value = "fakeplayer-channel", comment = "The default channel for fakeplayers from mods and other plugins.")
+		public String fakeplayer_channel = "l";
 		@Setting(value="URL-template", comment="Template to show when players send links or urls.")
 		public String URL_template = "&3Click to open &n{url}&r";
 		@Setting(value="console-tag", comment="Tag to show when sent messages from console to channels.")

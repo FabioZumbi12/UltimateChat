@@ -83,6 +83,7 @@ public class UCUtil {
 		for (String arg:args){
 		    if (first) {first = false; continue;}
 
+            arg = arg.replace("/n","\n");
 			fancy.coloredText(arg+" ");
 			try{
 				fancy.clickOpenURL(new URL(arg));
@@ -107,6 +108,7 @@ public class UCUtil {
 		 boolean isSug = false;
 		 for (String arg:args){
 			 if (arg.contains(UChat.get().getUCConfig().getString("broadcast.on-hover"))){
+                 arg = arg.replace("/n","\n");
 				 hover.append(" ").append(ChatColor.translateAlternateColorCodes('&', arg.replace(UChat.get().getUCConfig().getString("broadcast.on-hover"), "")));
 				 isHover = true;
 				 isCmd = false;
@@ -151,7 +153,7 @@ public class UCUtil {
 		     if (isSug){
 		    	 suggest.append(" ").append(ChatColor.translateAlternateColorCodes('&', arg));
 			 } else {
-				 message.append(" ").append(ChatColor.translateAlternateColorCodes('&', arg));
+				 message.append(" ").append(ChatColor.translateAlternateColorCodes('&', arg).replace("/n","\n"));
 			 }
 		 }
 		 
