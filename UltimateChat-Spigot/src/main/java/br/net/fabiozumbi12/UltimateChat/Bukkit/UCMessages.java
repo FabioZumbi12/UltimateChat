@@ -565,7 +565,11 @@ public class UCMessages {
 				text = text.replace("{hand-type}", "Air");
 			}
 			
-			if (UChat.get().getVaultChat() != null && (text.contains("-prefix") || text.contains("-suffix"))){			
+			if (UChat.get().getVaultChat() != null && (text.contains("-prefix") || text.contains("-suffix"))){
+
+			    text = text.replace("{group-all-prefixes}", UCVaultCache.getVaultChat(sender).getPlayerPrefixes());
+			    text = text.replace("{group-all-suffixes}", UCVaultCache.getVaultChat(sender).getPlayerSuffix());
+
 				text = text
 						.replace("{group-suffix}", UCVaultCache.getVaultChat(sender).getPlayerSuffix())
 						.replace("{group-prefix}", UCVaultCache.getVaultChat(sender).getPlayerPrefix());

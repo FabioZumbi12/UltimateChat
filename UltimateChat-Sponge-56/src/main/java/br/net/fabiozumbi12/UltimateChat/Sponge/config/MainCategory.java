@@ -142,6 +142,8 @@ public class MainCategory {
 		public String console_tag = "&6 {console}&3";
 		@Setting(value="custom-tags")
 		public List<String> custom_tags = new ArrayList<>();
+        @Setting(value="dont-show-groups", comment = "If using the placeholder \"{option_all_prefixes/suffixes}\", exclude this groups from tags.")
+        public List<String> dont_show_groups = Collections.singletonList("default");
 		@Setting(value="remove-from-chat", comment="Remove this from chat (like empty tags)")
 		public List<String> remove_from_chat = Arrays.asList("[]","&7[]","&7[&7]");
 		@Setting(value="channel-cmd-aliases", comment="Command and aliases for /channel command.")

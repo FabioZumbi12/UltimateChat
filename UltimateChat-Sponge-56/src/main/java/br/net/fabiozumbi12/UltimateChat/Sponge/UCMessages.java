@@ -641,43 +641,64 @@ public class UCMessages {
 			}
 			
 			//parse permissions options
-			try {				
-				//player options
-				Pattern pp = Pattern.compile("\\{player_option_(.+?)\\}");
-				Matcher pm = pp.matcher(text);
-				
-				while (pm.find()){
-					if (sender.getOption(pm.group(1)).isPresent() && !text.contains(sender.getOption(pm.group(1)).get())){
-						text = text.replace("{player_option_"+pm.group(1)+"}", sender.getOption(pm.group(1)).get());
-						pm = pp.matcher(text);
-					}
-				}
-					
-				//group options
-				Subject sub = UChat.get().getPerms().getGroupAndTag(sender);
-				if (sub != null){
-					
-					text = text.replace("{option_group}", UChat.get().getConfig().root().general.group_names.getOrDefault(sub.getIdentifier(), sub.getIdentifier()));
-					
-					if (sub.getOption("display_name").isPresent()){
-						text = text.replace("{option_display_name}", sub.getOption("display_name").get());
-					} else {
-						text = text.replace("{option_display_name}", UChat.get().getConfig().root().general.group_names.getOrDefault(sub.getIdentifier(), sub.getIdentifier()));
-					}
-					
-					Pattern gp = Pattern.compile("\\{option_(.+?)\\}");
-					Matcher gm = gp.matcher(text);
-					
-					while (gm.find()){
-						if (sub.getOption(gm.group(1)).isPresent() && !text.contains(sub.getOption(gm.group(1)).get())){
-							text = text.replace("{option_"+gm.group(1)+"}", sub.getOption(gm.group(1)).get());
-							gm = gp.matcher(text);
-						}
-					}
-				}	
-			} catch (InterruptedException | ExecutionException e) {
-				e.printStackTrace();
-			}		
+            if (text.contains("option_") || text.contains("player_option_")){
+                try {
+                    //all groups
+                    StringBuilder groupPrefs = new StringBuilder();
+                    StringBuilder groupSuffs = new StringBuilder();
+
+                    for (Subject group:UChat.get().getPerms().getPlayerGroups(sender).values()){
+                        if (UChat.get().getConfig().root().general.dont_show_groups.contains(group.getIdentifier())) continue;
+
+                        if (group.getOption("prefix").isPresent()){
+                            groupPrefs.append(group.getOption("prefix").get());
+                        }
+                        if (group.getOption("suffix").isPresent()){
+                            groupSuffs.append(group.getOption("suffix").get());
+                        }
+                    }
+                    text = text.replace("{option_all_prefixes}", groupPrefs.toString());
+                    text = text.replace("{option_all_suffixes}", groupSuffs.toString());
+
+                    //player options
+                    Pattern pp = Pattern.compile("\\{player_option_(.+?)\\}");
+                    Matcher pm = pp.matcher(text);
+
+                    while (pm.find()){
+                        if (sender.getOption(pm.group(1)).isPresent() && !text.contains(sender.getOption(pm.group(1)).get())){
+                            text = text.replace("{player_option_"+pm.group(1)+"}", sender.getOption(pm.group(1)).get());
+                            pm = pp.matcher(text);
+                        }
+                    }
+
+                    //group options
+                    Subject sub = UChat.get().getPerms().getGroupAndTag(sender);
+                    if (sub != null){
+
+                        text = text.replace("{option_group}", UChat.get().getConfig().root().general.group_names.getOrDefault(sub.getIdentifier(), sub.getIdentifier()));
+
+                        if (sub.getOption("display_name").isPresent()){
+                            text = text.replace("{option_display_name}", sub.getOption("display_name").get());
+                        } else {
+                            text = text.replace("{option_display_name}", UChat.get().getConfig().root().general.group_names.getOrDefault(sub.getIdentifier(), sub.getIdentifier()));
+                        }
+
+                        Pattern gp = Pattern.compile("\\{option_(.+?)\\}");
+                        Matcher gm = gp.matcher(text);
+
+                        while (gm.find()){
+                            String gmp = gm.group(1);
+                            if (sub.getOption(gmp).isPresent() && !text.contains(sub.getOption(gmp).get())){
+                                text = text.replace("{option_"+gmp+"}", sub.getOption(gmp).get());
+                                UChat.get().getLogger().severe("group: "+sub.getIdentifier()+" - Opt: "+gmp);
+                                gm = gp.matcher(text);
+                            }
+                        }
+                    }
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+            }
 						
 			if (text.contains("{clan_") && UChat.get().getConfig().root().hooks.MCClans.enable){
 				Optional<ClanService> clanServiceOpt = Sponge.getServiceManager().provide(ClanService.class);

@@ -59,14 +59,19 @@ public class UCPerms56 implements UCPerms{
 	}
 	
 	public Subject getGroupAndTag(User player) {
-		HashMap<Integer, Subject> subs = new HashMap<>();
-		for (Subject sub:player.getParents()){
-			if (sub.getContainingCollection().equals(getGroups()) && (sub.getIdentifier() != null)){
-				subs.put(sub.getParents().size(), sub);				
-			}			
-		}
+        HashMap<Integer, Subject> subs = getPlayerGroups(player);
 		return subs.isEmpty() ? null : subs.get(Collections.max(subs.keySet()));
 	}
+
+    public HashMap<Integer, Subject> getPlayerGroups(User player) {
+        HashMap<Integer, Subject> subs = new HashMap<>();
+        for (Subject sub:player.getParents()){
+            if (sub.getContainingCollection().equals(getGroups()) && (sub.getIdentifier() != null)){
+                subs.put(sub.getParents().size(), sub);
+            }
+        }
+        return subs;
+    }
 	
 	private static boolean isAdmin(CommandSource p){
 		return (p instanceof ConsoleSource) || p.hasPermission("uchat.admin");

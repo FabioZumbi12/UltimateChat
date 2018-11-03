@@ -3,9 +3,13 @@ package br.net.fabiozumbi12.UltimateChat.Bukkit;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class UCVaultCache {
+	static final HashMap<String, String> playerPrefixes = new HashMap<>();
+
 	static final HashMap<String, String[]> playerGroups = new HashMap<>();
 	static final HashMap<String, String> primaryGroups = new HashMap<>();
 	
@@ -100,6 +104,43 @@ class VaultChat{
 		UCVaultCache.playerPrefix.put(sender, pref);
 		Bukkit.getScheduler().runTaskLater(UChat.get(), () -> UCVaultCache.playerPrefix.remove(sender), 40);
 	}
+
+	public String getPlayerPrefixes(){
+	    if (UCVaultCache.playerPrefixes.containsKey(sender.getName())){
+	        return UCVaultCache.playerPrefixes.get(sender.getName());
+        }
+	    StringBuilder gps = new StringBuilder();
+	    String[] groups = UCVaultCache.getVaultPerms(sender).getPlayerGroups();
+	    for (String group:groups){
+	        if (UChat.get().getUCConfig().getStringList("general.dont-show-groups").contains(group)) continue;
+            gps.append(UChat.get().getVaultChat().getGroupPrefix(sender.getWorld(), group));
+        }
+
+        getPlayerPrefixes(sender.getName(), gps.toString());
+        return gps.toString();
+    }
+
+    private void getPlayerPrefixes(String sender, String prefixes){
+        UCVaultCache.playerPrefixes.put(sender, prefixes);
+        Bukkit.getScheduler().runTaskLater(UChat.get(), () -> UCVaultCache.playerPrefixes.remove(sender), 40);
+    }
+
+    public String getPlayerSuffixes(){
+        StringBuilder gps = new StringBuilder();
+        String[] groups = UCVaultCache.getVaultPerms(sender).getPlayerGroups();
+        for (String group:groups){
+            gps.append(UChat.get().getVaultChat().getGroupSuffix(sender.getWorld(), group));
+        }
+
+        getPlayerSuffixes(sender.getName(), gps.toString());
+        return gps.toString();
+    }
+
+    private void getPlayerSuffixes(String sender, String prefixes){
+        UCVaultCache.playerPrefixes.put(sender, prefixes);
+        Bukkit.getScheduler().runTaskLater(UChat.get(), () -> UCVaultCache.playerPrefixes.remove(sender), 40);
+    }
+
 }
 
 class VaultPerms {	

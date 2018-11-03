@@ -61,15 +61,20 @@ public class UCPerms7 implements UCPerms {
 	}
 		
 	public Subject getGroupAndTag(User player) throws InterruptedException, ExecutionException{
-		HashMap<Integer, Subject> subs = new HashMap<>();
-		for (SubjectReference sub:player.getParents()){
-			if (sub.getCollectionIdentifier().equals(getGroups().getIdentifier()) && (sub.getSubjectIdentifier() != null)){
-				Subject subj = sub.resolve().get();
-				subs.put(subj.getParents().size(), subj);				
-			}			
-		}
+        HashMap<Integer, Subject> subs = getPlayerGroups(player);
 		return subs.isEmpty() ? null : subs.get(Collections.max(subs.keySet()));
 	}
+
+    public HashMap<Integer, Subject> getPlayerGroups(User player) throws ExecutionException, InterruptedException {
+        HashMap<Integer, Subject> subs = new HashMap<>();
+        for (SubjectReference sub:player.getParents()){
+            if (sub.getCollectionIdentifier().equals(getGroups().getIdentifier()) && (sub.getSubjectIdentifier() != null)){
+                Subject subj = sub.resolve().get();
+                subs.put(subj.getParents().size(), subj);
+            }
+        }
+        return subs;
+    }
 	
 	private static boolean isAdmin(CommandSource p){
 		return (p instanceof ConsoleSource) || p.hasPermission("uchat.admin");

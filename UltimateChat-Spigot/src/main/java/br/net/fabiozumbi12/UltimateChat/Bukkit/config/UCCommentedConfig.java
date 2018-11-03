@@ -92,6 +92,7 @@ public class UCCommentedConfig {
 
         setDefault("general.spy-format", "&c&o[Spy] {output}", "Chat spy format.");
         setDefault("general.spy-enable-onjoin", true, "Enable Spy on join?");
+        setDefault("general.dont-show-groups", Collections.singletonList("default"), "If using the placeholder \"{group-all-prefixes/suffixes}\", exclude this groups from tags.");
         setDefault("general.use-channel-tag-builder", true, "Use the tag builder from channel configuration and ignore this tag builder.");
         setDefault("general.default-tag-builder", "world,marry-tag,ch-tags,clan-tag,factions,group-prefix,nickname,group-suffix,message", "" +
                 "This is the main tag builder.\n" +
@@ -245,7 +246,9 @@ public class UCCommentedConfig {
                     + "\n"
                     + "# Vault:\n"
                     + "#  - {group-prefix}: Get group prefix;\n"
+                    + "#  - {group-all-prefixes}: Get all player group prefixes and show on chat;\n"
                     + "#  - {group-suffix}: Get group suffix;\n"
+                    + "#  - {group-all-suffixes}: Get all player group suffixes and show on chat;\n"
                     + "#  - {balance}: Get the sender money;\n"
                     + "#  - {prim-group}: Get the primary group tag;\n"
                     + "#  - {player-groups}: Get all groups names the sender has;\n"
