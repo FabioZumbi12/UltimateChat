@@ -238,6 +238,7 @@ public class UCMessages {
 	}
 		
 	private static String composeColor(CommandSender sender, String evmsg){
+		evmsg = ChatColor.translateAlternateColorCodes('&', evmsg);	
 		if (sender instanceof Player){
             Pattern mat1 = Pattern.compile("(?i)&([A-Fa-f0-9Rr])");
             Pattern mat2 = Pattern.compile("(?i)&([L-Ol-o])");
@@ -523,6 +524,7 @@ public class UCMessages {
 			
 			//replace item hand			
 			text = text.replace(UChat.get().getUCConfig().getString("general.item-hand.placeholder"), ChatColor.translateAlternateColorCodes('&', UChat.get().getUCConfig().getString("general.item-hand.format")));
+
 			if (text.contains("{hand-") && !sender.getItemInHand().getType().equals(Material.AIR)){
 				ItemStack item = sender.getItemInHand();
 				
@@ -696,7 +698,7 @@ public class UCMessages {
 		}
 		return text;
 	}
-		
+
 	private static String checkEmpty(String tag){
 		if (tag.length() <= 0){
 			return UChat.get().getLang().get("tag.notset");

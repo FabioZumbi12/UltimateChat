@@ -722,7 +722,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 		
 	private void sendPreTell(CommandSender sender, CommandSender receiver, String msg){
 		Set<Player> pls = new HashSet<>();
-		Player p = null;
+		Player p;
 		if (sender instanceof Player){
 			p = (Player)sender;
 		} else {
@@ -959,12 +959,8 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 		for (String remove:toRemove2){
 			UChat.get().respondTell.remove(remove);
 		}
-		if (UChat.get().tempChannels.containsKey(p.getName())){
-			UChat.get().tempChannels.remove(p.getName());
-		}
-		if (UChat.get().command.contains(p.getName())){
-			UChat.get().command.remove(p.getName());
-		}
+        UChat.get().tempChannels.remove(p.getName());
+        UChat.get().command.remove(p.getName());
 		if (UChat.get().getUCJDA() != null && !p.hasPermission(UChat.get().getUCConfig().getString("discord.vanish-perm"))){
 			UChat.get().getUCJDA().sendRawToDiscord(UChat.get().getLang().get("discord.leave").replace("{player}", p.getName()));
 		}
@@ -1094,7 +1090,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 		StringBuilder channels = new StringBuilder();
 		for (UCChannel ch:UChat.get().getChannels().values()){
 			if (!UCPerms.channelReadPerm(p, ch))continue;
-			channels.append(", "+ch.getName());
+			channels.append(", ").append(ch.getName());
 		}
 		p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7>> -------------- "+UChat.get().getLang().get("_UChat.prefix")+" Help &7-------------- <<"));
 		p.sendMessage(UChat.get().getLang().get("help.channels.available").replace("{channels}", channels.toString().substring(2)));

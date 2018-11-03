@@ -153,7 +153,7 @@ public class UCUtil {
 		     if (isSug){
 		    	 suggest.append(" ").append(ChatColor.translateAlternateColorCodes('&', arg));
 			 } else {
-				 message.append(" ").append(ChatColor.translateAlternateColorCodes('&', arg).replace("/n","\n"));
+				 message.append(" ").append(ChatColor.translateAlternateColorCodes('&', arg));
 			 }
 		 }
 		 

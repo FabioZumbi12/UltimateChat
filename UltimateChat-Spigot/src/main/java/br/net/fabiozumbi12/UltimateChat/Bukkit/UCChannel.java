@@ -363,10 +363,10 @@ public class UCChannel {
 				UCChannel chp = UChat.get().getPlayerChannel(p);
 				if (UCPerms.channelReadPerm(p, this) && !this.isIgnoring(p.getName()) && (!this.neeFocus() || chp.equals(this))){
 					UChat.get().getUCLogger().timings(timingType.START, "UCChannel#sendMessage()|Direct Message");
-					message.send(p);					
+					message.send(p);
 				}
-			}			
-			message.send(sender);	
+			}
+			message.send(sender);
 		} else {
             Set<Player> pls = new HashSet<>(Bukkit.getOnlinePlayers());
 			UChat.get().tempChannels.put(sender.getName(), this.getAlias());
@@ -383,16 +383,16 @@ public class UCChannel {
 	 * @param message {@code FancyMessage} - Message to send.
 	 * @param direct {@code boolean} - Send message direct to players on channel.
 	 */
-	public void sendMessage(ConsoleCommandSender sender, UltimateFancy message, boolean direct){	
+	public void sendMessage(ConsoleCommandSender sender, UltimateFancy message, boolean direct){
 		if (direct){
 			for (Player p:Bukkit.getOnlinePlayers()){
 				UCChannel chp = UChat.get().getPlayerChannel(p);
 				if (UCPerms.channelReadPerm(p, this) && !this.isIgnoring(p.getName()) && (!this.neeFocus() || chp.equals(this))){
 					UChat.get().getUCLogger().timings(timingType.START, "UCChannel#sendMessage()|Direct Message");
-					message.send(p);					
+					message.send(p);
 				}
 			}
-			message.send(sender);	
+			message.send(sender);
 		} else {			
 			UChat.get().getUCLogger().timings(timingType.START, "UCChannel#sendMessage()|Fire MessageChannelEvent");
 			UCMessages.sendFancyMessage(new String[0], message.toOldFormat(), this, sender, null);
@@ -413,7 +413,7 @@ public class UCChannel {
 				UCChannel chp = UChat.get().getPlayerChannel(p);
 				if (UCPerms.channelReadPerm(p, this) && !this.isIgnoring(p.getName()) && (!this.neeFocus() || chp.equals(this))){
 					UChat.get().getUCLogger().timings(timingType.START, "UCChannel#sendMessage()|Fire AsyncPlayerChatEvent");
-					fmsg.send(p);					
+					fmsg.send(p);
 				}
 			}
 			fmsg.send(sender);

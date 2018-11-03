@@ -63,7 +63,7 @@ public class PostFormatChatMessageEvent extends Event implements Cancellable  {
 	 * @param receiver {@code @CommandSender}
 	 * @param message {@code Text}
 	 */
-	public void setReceiverMessage(CommandSender receiver, UltimateFancy message){		
+	public void setReceiverMessage(CommandSender receiver, UltimateFancy message){
 		this.receivers.put(receiver, message);
 	}
 	

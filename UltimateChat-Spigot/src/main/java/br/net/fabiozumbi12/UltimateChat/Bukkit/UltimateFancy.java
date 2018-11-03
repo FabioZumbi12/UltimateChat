@@ -4,23 +4,20 @@ import br.net.fabiozumbi12.UltimateChat.Bukkit.UCLogger.timingType;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.EnchantmentStorageMeta;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.potion.Potion;
-import org.bukkit.potion.PotionData;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -422,74 +419,35 @@ public class UltimateFancy {
 		return obj;
 	}
 	
-	private JSONObject parseHoverItem(ItemStack item){		
-		StringBuilder itemBuild = new StringBuilder();
-		StringBuilder itemTag = new StringBuilder();		
-		//serialize itemstack
-		String itemType = item.getType().toString()
-				.replace("_ITEM", "")
-				.replace("_SPADE", "_SHOVEL")
-				.replace("GOLD_", "GOLDEN_");		
-		itemBuild.append("id:"+itemType+",Count:"+1+",Damage:"+item.getDurability()+",");		
-		if (item.hasItemMeta()){
-			ItemMeta meta = item.getItemMeta();
-			if (meta.hasLore()){
-				StringBuilder lore = new StringBuilder();
-				for (String lorep:meta.getLore()){
-					lore.append(lorep+",");
-				}
-				itemTag.append("display:{Lore:["+lore.toString().substring(0, lore.length()-1)+"]},");
-			} else if (meta.hasDisplayName()){
-				itemTag.append("display:{Name:"+meta.getDisplayName()+"},");
-			} else if (meta.hasLore() && meta.hasDisplayName()){
-				StringBuilder lore = new StringBuilder();
-				for (String lorep:meta.getLore()){
-					lore.append(lorep+",");
-				}
-				itemTag.append("display:{Name:"+meta.getDisplayName()+",Lore:["+lore.toString().substring(0, lore.length()-1)+"]},");
-			}
-			
-			//enchants
-			try{
-				if (meta instanceof PotionMeta){
-					StringBuilder itemEnch = new StringBuilder();
-					itemEnch.append("CustomPotionEffects:[");
-					if (UCUtil.getBukkitVersion() >= 190){
-						PotionData pot = ((PotionMeta)meta).getBasePotionData();
-						itemEnch.append("{Id:"+pot.getType().getEffectType().getId()+",Duration:"+pot.getType().getEffectType().getDurationModifier()+",Ambient:true,},");
-					} else {
-						Potion pot = Potion.fromItemStack(item);
-						itemEnch.append("{Id:"+pot.getType().getEffectType().getId()+",Duration:"+pot.getType().getEffectType().getDurationModifier()+",Ambient:true,},");
-					}
-					itemTag.append(itemEnch.toString().substring(0, itemEnch.length()-1)+"],");
-				} else if (meta instanceof EnchantmentStorageMeta){
-					StringBuilder itemEnch = new StringBuilder();
-					itemEnch.append("ench:[");
-					for (Entry<Enchantment, Integer> ench:((EnchantmentStorageMeta)meta).getStoredEnchants().entrySet()){
-						itemEnch.append("{id:"+ench.getKey().getKey()+",lvl:"+ench.getValue()+"},");
-					}
-					itemTag.append(itemEnch.toString().substring(0, itemEnch.length()-1)+"],");
-				} else if (meta.hasEnchants()){
-					StringBuilder itemEnch = new StringBuilder();
-					itemEnch.append("ench:[");
-					for (Entry<Enchantment, Integer> ench:meta.getEnchants().entrySet()){
-						itemEnch.append("{id:"+ench.getKey().getKey()+",lvl:"+ench.getValue()+"},");
-					}
-					itemTag.append(itemEnch.toString().substring(0, itemEnch.length()-1)+"],");
-				}
-			} catch (Exception ex){
-				ex.printStackTrace();
-				UChat.get().getUCLogger().severe("Error on parse item hand for " + item.toString());
-			}
-		}		
-		if (itemTag.length() > 0){
-			itemBuild.append("tag:{"+itemTag.toString().substring(0, itemTag.length()-1)+"},");
-		}		
+	private JSONObject parseHoverItem(ItemStack item){
 		JSONObject obj = new JSONObject();
-		obj.put("action", "show_item");	
-		obj.put("value", ChatColor.stripColor("{"+itemBuild.toString().substring(0, itemBuild.length()-1).replace(" ", "_")+"}"));
+		obj.put("action", "show_item");
+		obj.put("value",convertItemStackToJson(item));
 		return obj;
 	}
+
+    private String convertItemStackToJson(ItemStack itemStack) {
+        Class<?> craftItemStackClazz = ReflectionUtil.getOBCClass("inventory.CraftItemStack");
+        Method asNMSCopyMethod = ReflectionUtil.getMethod(craftItemStackClazz, "asNMSCopy", ItemStack.class);
+
+        Class<?> nmsItemStackClazz = ReflectionUtil.getNMSClass("ItemStack");
+        Class<?> nbtTagCompoundClazz = ReflectionUtil.getNMSClass("NBTTagCompound");
+        Method saveNmsItemStackMethod = ReflectionUtil.getMethod(nmsItemStackClazz, "save", nbtTagCompoundClazz);
+
+        Object nmsNbtTagCompoundObj;
+        Object nmsItemStackObj;
+        Object itemAsJsonObject;
+
+        try {
+            nmsNbtTagCompoundObj = nbtTagCompoundClazz.newInstance();
+            nmsItemStackObj = asNMSCopyMethod.invoke(null, itemStack);
+            itemAsJsonObject = saveNmsItemStackMethod.invoke(nmsItemStackObj, nmsNbtTagCompoundObj);
+        } catch (Throwable t) {
+            UChat.get().getLogger().log(Level.SEVERE, "failed to serialize itemstack to nms item", t);
+            return null;
+        }
+        return itemAsJsonObject.toString();
+    }
 		
 	private JSONArray addColorToArray(String text){
 		JSONArray extraArr = new JSONArray();
@@ -554,4 +512,83 @@ public class UltimateFancy {
 		return newFanci;
 	}
 
+}
+
+class ReflectionUtil {
+    private static String versionString;
+    private static Map<String, Class<?>> loadedNMSClasses = new HashMap<>();
+    private static Map<String, Class<?>> loadedOBCClasses = new HashMap<>();
+    private static Map<Class<?>, Map<String, Method>> loadedMethods = new HashMap<>();
+
+    public static String getVersion() {
+        if (versionString == null) {
+            String name = Bukkit.getServer().getClass().getPackage().getName();
+            versionString = name.substring(name.lastIndexOf('.') + 1) + ".";
+        }
+
+        return versionString;
+    }
+
+    public static Class<?> getNMSClass(String nmsClassName) {
+        if (loadedNMSClasses.containsKey(nmsClassName)) {
+            return loadedNMSClasses.get(nmsClassName);
+        }
+
+        String clazzName = "net.minecraft.server." + getVersion() + nmsClassName;
+        Class<?> clazz;
+
+        try {
+            clazz = Class.forName(clazzName);
+        } catch (Throwable t) {
+            t.printStackTrace();
+            return loadedNMSClasses.put(nmsClassName, null);
+        }
+
+        loadedNMSClasses.put(nmsClassName, clazz);
+        return clazz;
+    }
+
+    public static Class<?> getOBCClass(String obcClassName) {
+        if (loadedOBCClasses.containsKey(obcClassName)) {
+            return loadedOBCClasses.get(obcClassName);
+        }
+
+        String clazzName = "org.bukkit.craftbukkit." + getVersion() + obcClassName;
+        Class<?> clazz;
+
+        try {
+            clazz = Class.forName(clazzName);
+        } catch (Throwable t) {
+            t.printStackTrace();
+            loadedOBCClasses.put(obcClassName, null);
+            return null;
+        }
+
+        loadedOBCClasses.put(obcClassName, clazz);
+        return clazz;
+    }
+
+    public static Method getMethod(Class<?> clazz, String methodName, Class<?>... params) {
+        if (!loadedMethods.containsKey(clazz)) {
+            loadedMethods.put(clazz, new HashMap<>());
+        }
+
+        Map<String, Method> methods = loadedMethods.get(clazz);
+
+        if (methods.containsKey(methodName)) {
+            return methods.get(methodName);
+        }
+
+        try {
+            Method method = clazz.getMethod(methodName, params);
+            methods.put(methodName, method);
+            loadedMethods.put(clazz, methods);
+            return method;
+        } catch (Exception e) {
+            e.printStackTrace();
+            methods.put(methodName, null);
+            loadedMethods.put(clazz, methods);
+            return null;
+        }
+    }
 }
