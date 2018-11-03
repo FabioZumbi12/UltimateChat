@@ -34,7 +34,7 @@ public class UCChatProtection implements Listener{
 	}
 
 	public static String filterChatMessage(Player p, String msg, UCChannel ch){
-		if (msg.length() <= 1){
+		if (msg.length() <= 0){
 			return null;
 		}
 
@@ -52,9 +52,7 @@ public class UCChatProtection implements Listener{
 			if (!chatSpam.containsKey(p)){
 				chatSpam.put(p, msg);
 				Bukkit.getScheduler().scheduleSyncDelayedTask(UChat.get(), () -> {
-					if (chatSpam.containsKey(p)){
-						chatSpam.remove(p);
-					}
+                    chatSpam.remove(p);
 				},UChat.get().getUCConfig().getProtInt("chat-protection.antispam.time-between-messages")*20);
 			} else if (!chatSpam.get(p).equalsIgnoreCase(msg)){
 				UChat.get().getLang().sendMessage(p, UChat.get().getUCConfig().getProtMsg("chat-protection.antispam.cooldown-msg"));
@@ -66,9 +64,7 @@ public class UCChatProtection implements Listener{
 				msgSpam.put(msg, 1);
 				final String nmsg = msg;
 				Bukkit.getScheduler().scheduleSyncDelayedTask(UChat.get(), () -> {
-					if (msgSpam.containsKey(nmsg)){
-						msgSpam.remove(nmsg);
-					}
+                    msgSpam.remove(nmsg);
 				},UChat.get().getUCConfig().getProtInt("chat-protection.antispam.time-between-same-messages")*20);
 			} else {
 				msgSpam.put(msg, msgSpam.get(msg)+1);

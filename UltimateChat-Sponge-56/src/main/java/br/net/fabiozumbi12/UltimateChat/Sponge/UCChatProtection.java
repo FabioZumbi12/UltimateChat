@@ -24,7 +24,7 @@ public class UCChatProtection {
 		
 		final Player p = (Player) source;
 		
-		if (msg.length() <= 1){
+		if (msg.length() <= 0){
 			return msg;
 		}
 		
@@ -42,9 +42,7 @@ public class UCChatProtection {
 			if (!chatSpam.containsKey(p)){
 				chatSpam.put(p, msg);				
 				Sponge.getScheduler().createSyncExecutor(UChat.get().instance()).schedule(() -> {
-                    if (chatSpam.containsKey(p)){
-                        chatSpam.remove(p);
-                    }
+                    chatSpam.remove(p);
                 },UChat.get().getConfig().protections().antispam.time_between_messages,TimeUnit.SECONDS);
 			} else if (!chatSpam.get(p).equalsIgnoreCase(msg)){				
 				p.sendMessage(UCUtil.toText(UChat.get().getConfig().protections().antispam.cooldown_msg));
@@ -56,9 +54,7 @@ public class UCChatProtection {
 				msgSpam.put(msg, 1);
 				final String nmsg = msg;
 				Sponge.getScheduler().createSyncExecutor(UChat.get().instance()).schedule(() -> {
-                    if (msgSpam.containsKey(nmsg)){
-                        msgSpam.remove(nmsg);
-                    }
+                    msgSpam.remove(nmsg);
                 },UChat.get().getConfig().protections().antispam.time_between_same_messages, TimeUnit.SECONDS);
 			} else {
 				msgSpam.put(msg, msgSpam.get(msg)+1);				
