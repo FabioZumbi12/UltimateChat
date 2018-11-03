@@ -403,7 +403,7 @@ public class UCMessages {
 						
 			StringBuilder tooltip = new StringBuilder();
 			for (String tp:messages){
-				tooltip.append("\n").append(tp);
+				tooltip.append("\n").append(tp.replace("/n","\n"));
 			}
 			if (tooltip.length() > 2){
 				tooltip = new StringBuilder(tooltip.substring(1));

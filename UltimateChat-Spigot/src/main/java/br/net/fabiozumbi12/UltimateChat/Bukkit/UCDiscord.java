@@ -19,6 +19,8 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class UCDiscord extends ListenerAdapter implements UCDInterface{	
 	private JDA jda;
@@ -87,23 +89,23 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface{
 						}
 						if (count > 0) continue;
 					}
-					UCUtil.performCommand(null, Bukkit.getServer().getConsoleSender(), message);					
+					UCUtil.performCommand(null, Bukkit.getServer().getConsoleSender(), message);
 					used++;
 				} else {
 					UltimateFancy fancy = new UltimateFancy();
-					
+
 					//format prefixes tags
 					String formated = formatTags(ch.getDiscordtoMCFormat(), ch, e, "", "");
-					
+
 					//add dd channel name to hover
 					String hovered = formatTags(ch.getDiscordHover(), ch, e, "", "");
 					fancy.text(formated);
 					if (!hovered.isEmpty()){
-						fancy.hoverShowText(hovered);	
-					}				
+						fancy.hoverShowText(hovered);
+					}
 					fancy.next();
-					
-					//format message							
+
+					//format message
 					if (!e.getMessage().getAttachments().isEmpty()){
 						try{
 							fancy.clickOpenURL(new URL(e.getMessage().getAttachments().get(0).getUrl()));
@@ -115,11 +117,37 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface{
 							}
 						} catch (MalformedURLException ignore){}
 					} else {
-						fancy.text(message.replace("/n","\n"));
+					    message = message.replace("/n","\n");
+
+					    //emoji
+                        Pattern pe = Pattern.compile(":(.+?):");
+                        Matcher me = pe.matcher(message);
+                        if (me.find())
+                            message = message.replaceAll("<:(.+?)>",":"+me.group(1)+":");
+                        else
+                            message = message.replaceAll("<:(.+?)>",":?:");
+
+                        //user name
+                        Pattern pp = Pattern.compile("<@(.+?)>");
+                        Matcher mp = pp.matcher(message);
+                        if (mp.find())
+                            message = message.replaceAll("<@(.+?)>", "@"+e.getAuthor().getName());
+                        else
+                            message = message.replaceAll("<@(.+?)>", "@?");
+
+                        //channel
+                        Pattern pc = Pattern.compile("<#(.+?)>");
+                        Matcher mc = pc.matcher(message);
+                        if (mc.find() && e.getMessage().getMentionedChannels().stream().anyMatch(chg->chg.getId().equals(mc.group(1))))
+                            message = message.replaceAll("<#(.+?)>", "#"+e.getMessage().getMentionedChannels().stream().filter(chg->chg.getId().equals(mc.group(1))).findFirst().get().getName());
+                        else
+                            message = message.replaceAll("<#(.+?)>","#?");
+
+                                    fancy.text(message);
 					}
-					ch.sendMessage(uchat.getServer().getConsoleSender(), fancy, true);	
+					ch.sendMessage(uchat.getServer().getConsoleSender(), fancy, true);
 					used++;
-				}										
+				}
 			}
 		}
 		

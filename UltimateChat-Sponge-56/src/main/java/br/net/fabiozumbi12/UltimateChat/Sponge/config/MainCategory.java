@@ -201,7 +201,8 @@ public class MainCategory {
 			public boolean enable = true;
 			@Setting(comment="Text to show on chat on hover the tag.")
 			public String format = "&6[{hand-amount} {hand-type}]{group-suffix}";
-			@Setting(comment="Placeholder to use on chat by players to show your item in hand.")
+			@Setting(comment="Placeholder to use on chat by players to show your item in hand.\n" +
+                    "Placeholders: {hand-amount}, {hand-type}, {hand-name}")
 			public String placeholder = "@hand";
 		}
 		

@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class UCDiscord extends ListenerAdapter implements UCDInterface {	
 	private JDA jda;
@@ -113,7 +115,33 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
 							}
 						} catch (MalformedURLException ignored) {}
 					} else {
-						text.append(Text.of(message));
+                        message = message.replace("/n","\n");
+
+                        //emoji
+                        Pattern pe = Pattern.compile(":(.+?):");
+                        Matcher me = pe.matcher(message);
+                        if (me.find())
+                            message = message.replaceAll("<:(.+?)>",":"+me.group(1)+":");
+                        else
+                            message = message.replaceAll("<:(.+?)>",":?:");
+
+                        //user name
+                        Pattern pp = Pattern.compile("<@(.+?)>");
+                        Matcher mp = pp.matcher(message);
+                        if (mp.find())
+                            message = message.replaceAll("<@(.+?)>", "@"+e.getAuthor().getName());
+                        else
+                            message = message.replaceAll("<@(.+?)>", "@?");
+
+                        //channel
+                        Pattern pc = Pattern.compile("<#(.+?)>");
+                        Matcher mc = pc.matcher(message);
+                        if (mc.find() && e.getMessage().getMentionedChannels().stream().anyMatch(chg->chg.getId().equals(mc.group(1))))
+                            message = message.replaceAll("<#(.+?)>", "#"+e.getMessage().getMentionedChannels().stream().filter(chg->chg.getId().equals(mc.group(1))).findFirst().get().getName());
+                        else
+                            message = message.replaceAll("<#(.+?)>","#?");
+
+                        text.append(Text.of(message));
 					}
 					ch.sendMessage(Sponge.getServer().getConsole(), text.build(), true);	
 					used++;

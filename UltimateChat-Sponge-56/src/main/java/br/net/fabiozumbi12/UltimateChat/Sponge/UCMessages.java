@@ -365,7 +365,7 @@ public class UCMessages {
 				StringBuilder tooltip = new StringBuilder();
 				if (messages != null && !messages.isEmpty()){
 					for (String tp:messages){
-						tooltip.append("\n").append(tp);
+						tooltip.append("\n").append(tp.replace("/n","\n"));
 					}
 					if (tooltip.length() > 2){
 						tooltip = new StringBuilder(tooltip.substring(1));
@@ -449,7 +449,7 @@ public class UCMessages {
 			StringBuilder tooltip = new StringBuilder();
 			if (!messages.isEmpty() && messages.get(0).length() > 1){
 				for (String tp:messages){
-					tooltip.append("\n").append(tp);
+					tooltip.append("\n").append(tp.replace("/n","\n"));
 				}
 				if (tooltip.length() > 2){
 					tooltip = new StringBuilder(tooltip.substring(1));

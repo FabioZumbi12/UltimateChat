@@ -101,7 +101,8 @@ public class UCCommentedConfig {
         setDefault("general.enable-tags-on-messages", false, "Enable to allow parse tags and placeholders on messages.");
         setDefault("general.persist-channels", true, "Remember the channel the player is when logout/login until server restart?");
         setDefault("general.item-hand.enable", true, null);
-        setDefault("general.item-hand.format", "&6[{hand-amount} {hand-type}]{group-suffix}", "Text to show on chat.");
+        setDefault("general.item-hand.format", "&6[{hand-amount} {hand-type}]{group-suffix}", "Text to show on chat when using @hand.\n" +
+                "Placeholders: {hand-amount}, {hand-type}, {hand-name}");
         setDefault("general.item-hand.placeholder", "@hand", "Placeholder to use on chat by players to show your item in hand.");
 
         setDefault("general.world-names", null, "Example alias for rename world name to other name. Support color codes.");
