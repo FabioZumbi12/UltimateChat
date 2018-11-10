@@ -1,42 +1,43 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
-    <artifactId>UltimateChat</artifactId>
-    <version>1.8.8</version>
-  </parent>
-  <artifactId>UltimateChat-Sponge-7</artifactId>
-  
-  <properties>
-    <spongeVersion>7.1.0-SNAPSHOT</spongeVersion>
-  </properties>
-  
-  <dependencies>
-    <dependency>
-        <groupId>org.spongepowered</groupId>
-        <artifactId>spongeapi</artifactId>
-        <version>${spongeVersion}</version>
-        <scope>provided</scope>
-    </dependency> 
-    
-    <dependency>
-        <groupId>org.spongepowered</groupId>
-        <artifactId>spongeapi</artifactId>
-        <version>${spongeVersion}</version>
-        <classifier>javadoc</classifier>
-    </dependency>
-    <dependency>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
         <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
-        <artifactId>UltimateChat-Sponge-56</artifactId>
-        <version>LATEST</version>
-        <scope>compile</scope>
-    </dependency>
+        <artifactId>UltimateChat</artifactId>
+        <version>1.8.8</version>
+    </parent>
+    <artifactId>UltimateChat-Sponge-7</artifactId>
 
-  </dependencies>
-  
-  <build>
-    <finalName>DONT-DOWNLOAD-SpongeAPI7-Reference</finalName>    
-  </build>
-    
-   
+    <properties>
+        <spongeVersion>7.1.0-SNAPSHOT</spongeVersion>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.spongepowered</groupId>
+            <artifactId>spongeapi</artifactId>
+            <version>${spongeVersion}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.spongepowered</groupId>
+            <artifactId>spongeapi</artifactId>
+            <version>${spongeVersion}</version>
+            <classifier>javadoc</classifier>
+        </dependency>
+        <dependency>
+            <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
+            <artifactId>UltimateChat-Sponge-56</artifactId>
+            <version>LATEST</version>
+            <scope>compile</scope>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <finalName>DONT-DOWNLOAD-SpongeAPI7-Reference</finalName>
+    </build>
+
+
 </project>

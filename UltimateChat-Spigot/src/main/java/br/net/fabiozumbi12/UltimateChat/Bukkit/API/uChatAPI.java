@@ -12,92 +12,94 @@ import org.bukkit.entity.Player;
 import java.io.IOException;
 import java.util.*;
 
-public class uChatAPI{
+public class uChatAPI {
 
-	public boolean registerNewTag(String tagName, String format, String clickCmd, List<String> hoverMessages, String clickUrl){
-		if (UChat.get().getUCConfig().getString("tags."+tagName+".format") == null){
-			UChat.get().getUCConfig().setConfig("tags."+tagName+".format", format);
-			UChat.get().getUCConfig().setConfig("tags."+tagName+".click-cmd", clickCmd);
-			UChat.get().getUCConfig().setConfig("tags."+tagName+".click-url", clickUrl);
-			UChat.get().getUCConfig().setConfig("tags."+tagName+".hover-messages", hoverMessages);
-			UChat.get().getUCConfig().save();
-			return true;
-		}
-		return false;
-	}
-	
-	public boolean registerNewChannel(UCChannel channel) throws IOException{	
-		UChat.get().getUCConfig().addChannel(channel);
-		UChat.get().reload();
-		return true;
-	}
-	
-	public boolean registerNewChannel(Map<String, Object> properties) throws IOException{
-		UCChannel ch = new UCChannel(properties);		
-		return registerNewChannel(ch);
-	}
-			
-	@Deprecated
-	public boolean registerNewChannel(String chName, String chAlias, boolean crossWorlds, int distance, String color, String tagBuilder, boolean needFocus, boolean receiverMsg, double cost, String ddmode, String ddmcformat, String mcddformat, String ddhover, boolean ddallowcmds, boolean bungee) throws IOException{
-		if (UChat.get().getChannel(chName) != null){
-			return false;
-		}
-		if (tagBuilder == null || tagBuilder.equals("")){
-			tagBuilder = UChat.get().getUCConfig().getString("general.default-tag-builder");
-		}
-		UCChannel ch = new UCChannel(chName, chAlias, crossWorlds, distance, color, tagBuilder, needFocus, receiverMsg, cost, bungee, false, false, "player", "", new ArrayList<>(), "", ddmode, ddmcformat, mcddformat, ddhover, ddallowcmds, true);
-		UChat.get().getUCConfig().addChannel(ch);
-		UChat.get().reload();
-		return true;
-	}	
-	
-	public UCChannel getChannel(String chName){
-		return UChat.get().getChannel(chName);
-	}
-	
-	public UCChannel getPlayerChannel(Player player){
-		return UChat.get().getPlayerChannel(player);
-	}
-	
-	public Collection<UCChannel> getChannels(){
-		return UChat.get().getChannels().values();
-	}
-	
-	public Chat getVaultChat(){
-		return UChat.get().getVaultChat();
-	}
-	
-	public Economy getVaultEco(){
-		return UChat.get().getVaultEco();
-	}
-	
-	public Permission getVaultPerms(){
-		return UChat.get().getVaultPerms();
-	}
+    public boolean registerNewTag(String tagName, String format, String clickCmd, List<String> hoverMessages, String clickUrl) {
+        if (UChat.get().getUCConfig().getString("tags." + tagName + ".format") == null) {
+            UChat.get().getUCConfig().setConfig("tags." + tagName + ".format", format);
+            UChat.get().getUCConfig().setConfig("tags." + tagName + ".click-cmd", clickCmd);
+            UChat.get().getUCConfig().setConfig("tags." + tagName + ".click-url", clickUrl);
+            UChat.get().getUCConfig().setConfig("tags." + tagName + ".hover-messages", hoverMessages);
+            UChat.get().getUCConfig().save();
+            return true;
+        }
+        return false;
+    }
+
+    public boolean registerNewChannel(UCChannel channel) throws IOException {
+        UChat.get().getUCConfig().addChannel(channel);
+        UChat.get().reload();
+        return true;
+    }
+
+    public boolean registerNewChannel(Map<String, Object> properties) throws IOException {
+        UCChannel ch = new UCChannel(properties);
+        return registerNewChannel(ch);
+    }
+
+    @Deprecated
+    public boolean registerNewChannel(String chName, String chAlias, boolean crossWorlds, int distance, String color, String tagBuilder, boolean needFocus, boolean receiverMsg, double cost, String ddmode, String ddmcformat, String mcddformat, String ddhover, boolean ddallowcmds, boolean bungee) throws IOException {
+        if (UChat.get().getChannel(chName) != null) {
+            return false;
+        }
+        if (tagBuilder == null || tagBuilder.equals("")) {
+            tagBuilder = UChat.get().getUCConfig().getString("general.default-tag-builder");
+        }
+        UCChannel ch = new UCChannel(chName, chAlias, crossWorlds, distance, color, tagBuilder, needFocus, receiverMsg, cost, bungee, false, false, "player", "", new ArrayList<>(), "", ddmode, ddmcformat, mcddformat, ddhover, ddallowcmds, true);
+        UChat.get().getUCConfig().addChannel(ch);
+        UChat.get().reload();
+        return true;
+    }
+
+    public UCChannel getChannel(String chName) {
+        return UChat.get().getChannel(chName);
+    }
+
+    public UCChannel getPlayerChannel(Player player) {
+        return UChat.get().getPlayerChannel(player);
+    }
+
+    public Collection<UCChannel> getChannels() {
+        return UChat.get().getChannels().values();
+    }
+
+    public Chat getVaultChat() {
+        return UChat.get().getVaultChat();
+    }
+
+    public Economy getVaultEco() {
+        return UChat.get().getVaultEco();
+    }
+
+    public Permission getVaultPerms() {
+        return UChat.get().getVaultPerms();
+    }
 
     /**
      * Filter your message strings by using uchat protections with this method.
+     *
      * @param receiver The receiver
-     * @param message String message
-     * @param channel Receiver channel
+     * @param message  String message
+     * @param channel  Receiver channel
      * @return Filtered message as string.
      */
-	public String filterMessage(Player receiver, String message, UCChannel channel){
-		return UCChatProtection.filterChatMessage(receiver, message, channel);
-	}
+    public String filterMessage(Player receiver, String message, UCChannel channel) {
+        return UCChatProtection.filterChatMessage(receiver, message, channel);
+    }
 
     /**
      * Get formated tag format from config with placeholders already parsed.
-     * @param tagname Tag name from {@code tags} config section.
-     * @param sender The player to be the sender/owner of parsed tag.
+     *
+     * @param tagname  Tag name from {@code tags} config section.
+     * @param sender   The player to be the sender/owner of parsed tag.
      * @param receiver The player as receiver of tag. Use {@link Optional}.empty() to do not use a receiver.
      * @return Formatted tag or {@code null} if the tag is not on config.
      */
-	public String getTagFormat(String tagname, Player sender, Optional<Player> receiver){
-        if (UChat.get().getUCConfig().getString("tags."+tagname+".format") != null){
-            String format = UChat.get().getUCConfig().getString("tags."+tagname+".format");
+    public String getTagFormat(String tagname, Player sender, Optional<Player> receiver) {
+        if (UChat.get().getUCConfig().getString("tags." + tagname + ".format") != null) {
+            String format = UChat.get().getUCConfig().getString("tags." + tagname + ".format");
             return UCMessages.formatTags(tagname, format, sender, receiver.isPresent() ? receiver.get() : "", "", UChat.get().getPlayerChannel(sender));
         }
         return null;
-	}
+    }
 }

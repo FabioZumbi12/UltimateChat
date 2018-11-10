@@ -1,67 +1,68 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
-    <artifactId>UltimateChat</artifactId>
-    <version>1.8.8</version>
-  </parent>
-  <artifactId>UltimateChat-Sponge-56</artifactId>
-  
-  <properties>
-    <spongeVersion>6.1.0-SNAPSHOT</spongeVersion>
-  </properties>
-  
-  <dependencies>
-    <dependency>
-        <groupId>org.spongepowered</groupId>
-        <artifactId>spongeapi</artifactId>
-        <version>${spongeVersion}</version>
-        <scope>provided</scope>
-    </dependency>
-    
-    <dependency>
-        <groupId>org.spongepowered</groupId>
-        <artifactId>spongeapi</artifactId>
-        <version>${spongeVersion}</version>
-        <classifier>javadoc</classifier>
-    </dependency> 
-    
-    <dependency>
-		<groupId>MCClans</groupId>
-		<artifactId>MCClans</artifactId>
-		<version>v1</version>
-		<scope>system</scope>
-		<systemPath>${project.basedir}/libs/MCClans-API-1.2.jar</systemPath>
-	</dependency>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
+        <artifactId>UltimateChat</artifactId>
+        <version>1.8.8</version>
+    </parent>
+    <artifactId>UltimateChat-Sponge-56</artifactId>
 
-      <!-- nucleus api -->
-      <dependency>
-          <groupId>io.github.nucleuspowered</groupId>
-          <artifactId>nucleus-api</artifactId>
-          <version>1.1.7-LTS-S5.1</version>
-          <scope>provided</scope>
-      </dependency>
+    <properties>
+        <spongeVersion>6.1.0-SNAPSHOT</spongeVersion>
+    </properties>
 
-      <!-- PlaceholdersAPI -->
-      <dependency>
-          <groupId>com.github.rojo8399</groupId>
-          <artifactId>PlaceholderAPI</artifactId>
-          <version>LATEST</version>
-          <scope>provided</scope>
-      </dependency>
-	
-	<!-- Discord bridge -->
+    <dependencies>
+        <dependency>
+            <groupId>org.spongepowered</groupId>
+            <artifactId>spongeapi</artifactId>
+            <version>${spongeVersion}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.spongepowered</groupId>
+            <artifactId>spongeapi</artifactId>
+            <version>${spongeVersion}</version>
+            <classifier>javadoc</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>MCClans</groupId>
+            <artifactId>MCClans</artifactId>
+            <version>v1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/MCClans-API-1.2.jar</systemPath>
+        </dependency>
+
+        <!-- nucleus api -->
+        <dependency>
+            <groupId>io.github.nucleuspowered</groupId>
+            <artifactId>nucleus-api</artifactId>
+            <version>1.1.7-LTS-S5.1</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- PlaceholdersAPI -->
+        <dependency>
+            <groupId>com.github.rojo8399</groupId>
+            <artifactId>PlaceholderAPI</artifactId>
+            <version>LATEST</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Discord bridge -->
         <dependency>
             <groupId>JDALib</groupId>
             <artifactId>Loader</artifactId>
             <version>1.0.0</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/../UltimateChat-JDA/target/UltimateChat-JDA.jar</systemPath>
-        </dependency>  
-        
-  </dependencies>
-  <build>
-    <finalName>DONT-DOWNLOAD-SpongeAPI56-Reference</finalName>
-  </build>
-  
+            <scope>system</scope>
+            <systemPath>${project.basedir}/../UltimateChat-JDA/target/UltimateChat-JDA.jar</systemPath>
+        </dependency>
+
+    </dependencies>
+    <build>
+        <finalName>DONT-DOWNLOAD-SpongeAPI56-Reference</finalName>
+    </build>
+
 </project>

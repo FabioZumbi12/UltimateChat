@@ -9,14 +9,15 @@ import org.bukkit.event.HandlerList;
 public class UChatReloadEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
 
-    public UChatReloadEvent(){}
-
-    @Override
-    public HandlerList getHandlers() {
-        return handlers;
+    public UChatReloadEvent() {
     }
 
     public static HandlerList getHandlerList() {
+        return handlers;
+    }
+
+    @Override
+    public HandlerList getHandlers() {
         return handlers;
     }
 

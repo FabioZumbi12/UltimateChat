@@ -36,7 +36,7 @@ permissions:
       uchat.channel.admin.read: true
       uchat.channel.admin.write: true
       uchat.cant-ignore.admin: true
-      uchat.broadcast: true      
+      uchat.broadcast: true
       uchat.bypass-protections: true
       uchat.discord.mention: true
   uchat.player:

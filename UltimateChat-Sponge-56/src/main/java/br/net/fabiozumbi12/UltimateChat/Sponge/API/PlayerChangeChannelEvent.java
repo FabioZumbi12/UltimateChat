@@ -18,13 +18,13 @@ public class PlayerChangeChannelEvent extends AbstractEvent implements Event, Ca
     private UCChannel channelFrom;
     private boolean isCancelled;
 
-    public PlayerChangeChannelEvent(Player p, UCChannel from, UCChannel to){
+    public PlayerChangeChannelEvent(Player p, UCChannel from, UCChannel to) {
         this.player = p;
         this.channelFrom = from;
         this.channelTo = to;
     }
 
-    public Player getPlayer(){
+    public Player getPlayer() {
         return this.player;
     }
 

@@ -10,7 +10,8 @@ import org.spongepowered.api.event.impl.AbstractEvent;
  */
 public class UChatReloadEvent extends AbstractEvent implements Event {
 
-    public UChatReloadEvent(){}
+    public UChatReloadEvent() {
+    }
 
     @Override
     public Cause getCause() {

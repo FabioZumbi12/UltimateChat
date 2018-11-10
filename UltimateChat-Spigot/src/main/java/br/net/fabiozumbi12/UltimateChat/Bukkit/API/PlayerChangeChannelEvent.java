@@ -10,20 +10,24 @@ import org.bukkit.event.HandlerList;
  * <p>Event fired when a player change from channel A to channel B.</p>
  * <i>Channel A may be null if the channel is deleted by in-game delete commmand.</i>
  */
-public class PlayerChangeChannelEvent extends Event  implements Cancellable {
+public class PlayerChangeChannelEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private Player player;
     private UCChannel channelTo;
     private UCChannel channelFrom;
     private boolean isCancelled;
 
-    public PlayerChangeChannelEvent(Player p, UCChannel from, UCChannel to){
+    public PlayerChangeChannelEvent(Player p, UCChannel from, UCChannel to) {
         this.player = p;
         this.channelFrom = from;
         this.channelTo = to;
     }
 
-    public Player getPlayer(){
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
+
+    public Player getPlayer() {
         return this.player;
     }
 
@@ -37,10 +41,6 @@ public class PlayerChangeChannelEvent extends Event  implements Cancellable {
 
     @Override
     public HandlerList getHandlers() {
-        return handlers;
-    }
-
-    public static HandlerList getHandlerList() {
         return handlers;
     }
 

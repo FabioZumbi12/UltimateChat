@@ -11,46 +11,46 @@ import java.util.stream.Collectors;
 
 public class UCProxy extends Plugin implements Listener {
 
-	@Override
+    @Override
     public void onEnable() {
-		getProxy().registerChannel("bungee:uchat");
-		getProxy().getPluginManager().registerListener(this, this);
+        getProxy().registerChannel("bungee:uchat");
+        getProxy().getPluginManager().registerListener(this, this);
         getLogger().info("UChat Bungee enabled!");
     }
-	
-	@EventHandler	
-	public void onPluginMessage(PluginMessageEvent e) {
-		if (!e.getTag().equals("bungee:uchat")){
-			return;
-		}
-		
-		ByteArrayInputStream stream = new ByteArrayInputStream(e.getData());
-	    DataInputStream in = new DataInputStream(stream);
-	    String id = "";
-	    String ch = "";
-	    String json = "";
-	    try {
-	    	id = in.readUTF();
-	    	ch = in.readUTF();
-	    	json = in.readUTF();
-	    } catch (IOException ex){
-	    	ex.printStackTrace();
-	    }
-	    sendMessage(ch, json, id);
-	}
-	
-	public void sendMessage(String ch, String json, String id){
-	    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-	    DataOutputStream out = new DataOutputStream(stream);
-	    try {
-	    	out.writeUTF(id);
-	    	out.writeUTF(ch);
-	        out.writeUTF(json);
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	    }
-	    for (ServerInfo si:getProxy().getServers().values().stream().filter(si -> !si.getPlayers().isEmpty()).collect(Collectors.toList())){
-			si.sendData("bungee:uchat", stream.toByteArray());
-	    }	    
-	}
+
+    @EventHandler
+    public void onPluginMessage(PluginMessageEvent e) {
+        if (!e.getTag().equals("bungee:uchat")) {
+            return;
+        }
+
+        ByteArrayInputStream stream = new ByteArrayInputStream(e.getData());
+        DataInputStream in = new DataInputStream(stream);
+        String id = "";
+        String ch = "";
+        String json = "";
+        try {
+            id = in.readUTF();
+            ch = in.readUTF();
+            json = in.readUTF();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        sendMessage(ch, json, id);
+    }
+
+    public void sendMessage(String ch, String json, String id) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        DataOutputStream out = new DataOutputStream(stream);
+        try {
+            out.writeUTF(id);
+            out.writeUTF(ch);
+            out.writeUTF(json);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        for (ServerInfo si : getProxy().getServers().values().stream().filter(si -> !si.getPlayers().isEmpty()).collect(Collectors.toList())) {
+            si.sendData("bungee:uchat", stream.toByteArray());
+        }
+    }
 }

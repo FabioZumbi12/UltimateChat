@@ -7,14 +7,14 @@ chat-protection:
     # All to lower-case and first word to uppercase.
     enabled: true
     # Always end with dots.
-    end-with-dot: true    
+    end-with-dot: true
     # Minimum length of message to apply enhancement
     minimum-length: 3
 
   # Anti-Flood
   anti-flood:
     # Channels where this will be enabled
-    disable-on-channels: 
+    disable-on-channels:
     - Local
     enable: true
     whitelist-flood-characs:
@@ -28,11 +28,11 @@ chat-protection:
     enabled: true
     # Minimum length of upper case letters to apply filter
     minimum-length: 3
-    
+
   # Anti-Spam system.
   antispam:
     # Channels where this will be enabled
-    disable-on-channels: 
+    disable-on-channels:
     - Local
     enabled: false
     # Time in seconds the player can send new messages.
@@ -102,7 +102,7 @@ chat-protection:
     replace-by-word: '-removed-'
 
     # Enable punishments.
-    punish: 
+    punish:
       enable: false
       # Max attempts the player can send url/ip before punished.
       max-attempts: 3

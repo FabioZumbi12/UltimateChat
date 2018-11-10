@@ -14,7 +14,7 @@ import java.util.*;
 public class UCCommentedConfig {
     private final HashMap<String, String> comments;
 
-    UCCommentedConfig(){
+    UCCommentedConfig() {
         this.comments = new HashMap<>();
     }
 
@@ -69,14 +69,14 @@ public class UCCommentedConfig {
 
         setDefault("general.URL-template", "&3Click to open &n{url}&r", "Template to show when players send links or urls.");
         setDefault("general.console-tag", "&6 {console}&3", "Tag to show when sent messages from console to channels.");
-        setDefault("general.remove-from-chat", Arrays.asList("[]","&7[]","&7[&7]"), "Remove this from chat (like empty tags)");
+        setDefault("general.remove-from-chat", Arrays.asList("[]", "&7[]", "&7[&7]"), "Remove this from chat (like empty tags)");
         setDefault("general.remove-unnused-placeholderapi", true, "Remove not converted PlaceholdersAPI from tags.");
         setDefault("general.channel-cmd-aliases", "channel, ch", null);
         setDefault("general.umsg-cmd-aliases", "upv", "Aliases to send commands from system to players (without any format, good to send messages from other plugins direct to players)");
         setDefault("general.json-events", true, "False if your server don't support json or if /tellraw is not available.");
 
         //add def channels to worlds
-        if (UChat.get().getConfig().contains("general.default-channel")){
+        if (UChat.get().getConfig().contains("general.default-channel")) {
             String def = UChat.get().getConfig().getString("general.default-channel");
             setDefault("general.default-channels.default-channel", def, "Default channel for new added worlds");
             UChat.get().getConfig().set("general.default-channel", null);
@@ -84,10 +84,10 @@ public class UCCommentedConfig {
         setDefault("general.default-channels.default-channel", "l", "Default channel for new added worlds");
 
         setDefault("general.default-channels.worlds", null, "Default channel for each world. The channel must exist.");
-        for (World w:Bukkit.getWorlds()){
+        for (World w : Bukkit.getWorlds()) {
             String def = UChat.get().getConfig().getString("general.default-channels.default-channel");
-            setDefault("general.default-channels.worlds."+w.getName()+".channel", def, null);
-            setDefault("general.default-channels.worlds."+w.getName()+".force", false, "Force player to join this channel on change world?");
+            setDefault("general.default-channels.worlds." + w.getName() + ".channel", def, null);
+            setDefault("general.default-channels.worlds." + w.getName() + ".force", false, "Force player to join this channel on change world?");
         }
 
         setDefault("general.spy-format", "&c&o[Spy] {output}", "Chat spy format.");
@@ -106,12 +106,12 @@ public class UCCommentedConfig {
         setDefault("general.item-hand.placeholder", "@hand", "Placeholder to use on chat by players to show your item in hand.");
 
         setDefault("general.world-names", null, "Example alias for rename world name to other name. Support color codes.");
-        if (!UChat.get().getConfig().contains("general.world-names")){
+        if (!UChat.get().getConfig().contains("general.world-names")) {
             setDefault("general.world-names.my-nether", "&4Hell&r", null);
             setDefault("general.world-names.my-end", "&5The-End&r", null);
         }
         setDefault("general.group-names", null, "Example alias for rename Group name to other name. Support color codes.");
-        if (!UChat.get().getConfig().contains("general.group-names")){
+        if (!UChat.get().getConfig().contains("general.group-names")) {
             setDefault("general.group-names.my-admin", "&4Admin&r", null);
             setDefault("general.group-names.my-moderation", "&2Mod&r", null);
         }
@@ -155,7 +155,7 @@ public class UCCommentedConfig {
 
         setDefault("tags.ch-tags.format", "{ch-color}[{ch-alias}]&r", null);
         setDefault("tags.ch-tags.click-cmd", "ch {ch-alias}", null);
-        setDefault("tags.ch-tags.hover-messages", Arrays.asList("&3Channel name: {ch-color}{ch-name}","&bClick to go to this channel!"), null);
+        setDefault("tags.ch-tags.hover-messages", Arrays.asList("&3Channel name: {ch-color}{ch-name}", "&bClick to go to this channel!"), null);
 
         setDefault("tags.clan-tag.format", "{clan-tag}", null);
         setDefault("tags.clan-tag.click-cmd", "clan search {playername}", null);
@@ -177,10 +177,10 @@ public class UCCommentedConfig {
         setDefault("tags.bungee.hover-messages", Collections.singletonList("{ch-color}Sent from server -{bungee-id}-"), null);
 
         setDefault("tags.factions.format", "&7[{fac-relation-color}{fac-relation-name}&7]&r", null);
-        setDefault("tags.factions.hover-messages", Arrays.asList("&7Faction name: {fac-relation-color}{fac-name}","&7Motd: &a{fac-motd}","&7Description: {fac-description}"), null);
+        setDefault("tags.factions.hover-messages", Arrays.asList("&7Faction name: {fac-relation-color}{fac-name}", "&7Motd: &a{fac-motd}", "&7Description: {fac-description}"), null);
 
         setDefault("tags.jedis.format", "{jedis-id}", null);
-        setDefault("tags.jedis.hover-messages", Arrays.asList("&7Server: {jedis-id}","&cChange me on configuration!"), null);
+        setDefault("tags.jedis.hover-messages", Arrays.asList("&7Server: {jedis-id}", "&cChange me on configuration!"), null);
 
         setDefault("tags.custom-tag", null, "Use this tag as reference to create other new tags.");
         setDefault("tags.custom-tag.format", "&7[&2MyTag&7]&r", null);
@@ -193,16 +193,16 @@ public class UCCommentedConfig {
         setDefault("tags.custom-tag.hide-in-worlds", new ArrayList<>(), null);
     }
 
-    private void setDefault(String key, Object def, String comment){
-        if (def != null){
+    private void setDefault(String key, Object def, String comment) {
+        if (def != null) {
             UChat.get().getConfig().set(key, UChat.get().getConfig().get(key, def));
         }
-        if (comment != null){
+        if (comment != null) {
             setComment(key, comment);
         }
     }
 
-    private void setComment(String key, String comment){
+    private void setComment(String key, String comment) {
         comments.put(key, comment);
     }
 
@@ -211,7 +211,7 @@ public class UCCommentedConfig {
         UChat.get().getConfig().options().header(null);
 
         String lang = UChat.get().getConfig().getString("language");
-        if (lang.equalsIgnoreCase("EN-US")){
+        if (lang.equalsIgnoreCase("EN-US")) {
             b.append(""
                     + "# Uchat configuration file\n"
                     + "# Author: FabioZumbi12\n"
@@ -287,7 +287,7 @@ public class UCCommentedConfig {
                     + "# - {fac-relation-color}: Faction color in relation of reader of tag;\n"
                     + "\n");
         }
-        if (lang.equalsIgnoreCase("PT-BR")){
+        if (lang.equalsIgnoreCase("PT-BR")) {
             b.append(""
                     + "# Arquivo de configuração do Uchat\n"
                     + "# Autor: FabioZumbi12\n"
@@ -361,31 +361,31 @@ public class UCCommentedConfig {
                     + "\n");
         }
 
-        for (String line:UChat.get().getConfig().getKeys(true)){
-            String[] key = line.split("\\"+UChat.get().getConfig().options().pathSeparator());
+        for (String line : UChat.get().getConfig().getKeys(true)) {
+            String[] key = line.split("\\" + UChat.get().getConfig().options().pathSeparator());
             StringBuilder spaces = new StringBuilder();
-            for (int i = 0; i < key.length; i++){
+            for (int i = 0; i < key.length; i++) {
                 if (i == 0) continue;
                 spaces.append(" ");
             }
-            if (comments.containsKey(line)){
-                if (spaces.length() == 0){
+            if (comments.containsKey(line)) {
+                if (spaces.length() == 0) {
                     b.append("\n# ").append(comments.get(line).replace("\n", "\n# ")).append('\n');
                 } else {
                     b.append(spaces).append("# ").append(comments.get(line).replace("\n", "\n" + spaces + "# ")).append('\n');
                 }
             }
             Object value = UChat.get().getConfig().get(line);
-            if (!UChat.get().getConfig().isConfigurationSection(line)){
-                if (value instanceof String){
+            if (!UChat.get().getConfig().isConfigurationSection(line)) {
+                if (value instanceof String) {
                     b.append(spaces).append(key[key.length - 1]).append(": '").append(value).append("'\n");
                 } else if (value instanceof List<?>) {
-                    if (((List<?>)value).isEmpty()){
+                    if (((List<?>) value).isEmpty()) {
                         b.append(spaces).append(key[key.length - 1]).append(": []\n");
                     } else {
                         b.append(spaces).append(key[key.length - 1]).append(":\n");
-                        for (Object lineCfg:(List<?>)value){
-                            if (lineCfg instanceof String){
+                        for (Object lineCfg : (List<?>) value) {
+                            if (lineCfg instanceof String) {
                                 b.append(spaces).append("- '").append(lineCfg).append("'\n");
                             } else {
                                 b.append(spaces).append("- ").append(lineCfg).append("\n");

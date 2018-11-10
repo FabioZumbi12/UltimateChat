@@ -1,83 +1,84 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
-    <artifactId>UltimateChat</artifactId>
-    <version>1.8.8</version>
-  </parent>
-  <artifactId>UltimateChat-Spigot</artifactId>
-  
-  <dependencies>
-		<!--Spigot-API-->
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
+        <artifactId>UltimateChat</artifactId>
+        <version>1.8.8</version>
+    </parent>
+    <artifactId>UltimateChat-Spigot</artifactId>
+
+    <dependencies>
+        <!--Spigot-API-->
         <dependency>
-          <groupId>org.spigotmc</groupId>
-          <artifactId>spigot-api</artifactId>
-          <version>${mineVersion}</version>
-        </dependency>
-        
-        <dependency>
-          <groupId>org.spigotmc</groupId>
-          <artifactId>spigot-api</artifactId>
-          <version>${mineVersion}</version>
-          <classifier>javadoc</classifier>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>${mineVersion}</version>
         </dependency>
 
-      <!-- bukkit snapshots
-      <dependency>
-          <groupId>org.bukkit</groupId>
-          <artifactId>bukkit</artifactId>
-          <version>18w03b-R0.1-SNAPSHOT</version>
-      </dependency> -->
-        
         <dependency>
-         <groupId>me.clip</groupId>
-          <artifactId>placeholderapi</artifactId>
-          <version>LATEST</version>
-         <scope>compile</scope>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>${mineVersion}</version>
+            <classifier>javadoc</classifier>
         </dependency>
-		         
-		<!-- start of local repos -->
-		         
-		<dependency>
-			<groupId>SimpleClans</groupId>
-			<artifactId>SimpleClans</artifactId>
-			<version>v1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/../libs/SimpleClans.jar</systemPath>
-		</dependency>
-		
-		<dependency>
-			<groupId>MassiveCore</groupId>
-			<artifactId>MassiveCore</artifactId>
-			<version>v1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/../libs/MassiveCore.jar</systemPath>
-		</dependency>		
-		<dependency>
-			<groupId>Factions</groupId>
-			<artifactId>Factions</artifactId>
-			<version>v1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/../libs/Factions.jar</systemPath>
-		</dependency>	
-		<dependency>
-			<groupId>MarriageMaster</groupId>
-			<artifactId>MarriageMaster</artifactId>
-			<version>v1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/../libs/MarriageMaster.jar</systemPath>
-		</dependency>				
-		<dependency>
-			<groupId>com.lenis0012.bukkit</groupId>
-			<artifactId>marriage2</artifactId>
-			<version>2.0.15</version>
-		</dependency>	
-		<dependency>
-           <groupId>org.natrolite</groupId>
-           <artifactId>vault-api</artifactId>
-           <version>LATEST</version>
+
+        <!-- bukkit snapshots
+        <dependency>
+            <groupId>org.bukkit</groupId>
+            <artifactId>bukkit</artifactId>
+            <version>18w03b-R0.1-SNAPSHOT</version>
+        </dependency> -->
+
+        <dependency>
+            <groupId>me.clip</groupId>
+            <artifactId>placeholderapi</artifactId>
+            <version>LATEST</version>
+            <scope>compile</scope>
         </dependency>
-		<dependency>
+
+        <!-- start of local repos -->
+
+        <dependency>
+            <groupId>SimpleClans</groupId>
+            <artifactId>SimpleClans</artifactId>
+            <version>v1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/../libs/SimpleClans.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>MassiveCore</groupId>
+            <artifactId>MassiveCore</artifactId>
+            <version>v1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/../libs/MassiveCore.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>Factions</groupId>
+            <artifactId>Factions</artifactId>
+            <version>v1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/../libs/Factions.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>MarriageMaster</groupId>
+            <artifactId>MarriageMaster</artifactId>
+            <version>v1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/../libs/MarriageMaster.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.lenis0012.bukkit</groupId>
+            <artifactId>marriage2</artifactId>
+            <version>2.0.15</version>
+        </dependency>
+        <dependency>
+            <groupId>org.natrolite</groupId>
+            <artifactId>vault-api</artifactId>
+            <version>LATEST</version>
+        </dependency>
+        <dependency>
             <groupId>net.ess3</groupId>
             <artifactId>Essentials</artifactId>
             <version>2.14-SNAPSHOT</version>
@@ -86,32 +87,32 @@
             <groupId>com.comphenix.protocol</groupId>
             <artifactId>ProtocolLib-API</artifactId>
             <version>LATEST</version>
-        </dependency>        
-        
+        </dependency>
+
         <!-- Discord bridge -->
         <dependency>
             <groupId>JDALib</groupId>
             <artifactId>Loader</artifactId>
             <version>1.0.0</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/../UltimateChat-JDA/target/UltimateChat-JDA.jar</systemPath>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/../UltimateChat-JDA/target/UltimateChat-JDA.jar</systemPath>
         </dependency>
 
-  </dependencies>
+    </dependencies>
 
-  <repositories>
-     <repository>
-	        <id>maven-restlet</id>
-	        <name>Public online Restlet repository</name>
-	        <url>http://maven.restlet.com</url>
-	</repository>
-  </repositories>
+    <repositories>
+        <repository>
+            <id>maven-restlet</id>
+            <name>Public online Restlet repository</name>
+            <url>http://maven.restlet.com</url>
+        </repository>
+    </repositories>
 
-  <build>
-    <finalName>DONT-DOWNLOAD-Spigot-Reference</finalName>    
-  </build>
-  
-  <properties>
-  	<mineVersion>1.13.2-R0.1-SNAPSHOT</mineVersion>
-  </properties>
+    <build>
+        <finalName>DONT-DOWNLOAD-Spigot-Reference</finalName>
+    </build>
+
+    <properties>
+        <mineVersion>1.13.2-R0.1-SNAPSHOT</mineVersion>
+    </properties>
 </project>

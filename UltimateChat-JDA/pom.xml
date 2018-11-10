@@ -1,105 +1,106 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
-    <artifactId>UltimateChat</artifactId>
-    <version>1.8.8</version>
-  </parent>
-  <artifactId>UltimateChat-JDA</artifactId>
-  <version>3.7.1-385</version>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
+        <artifactId>UltimateChat</artifactId>
+        <version>1.8.8</version>
+    </parent>
+    <artifactId>UltimateChat-JDA</artifactId>
+    <version>3.7.1-385</version>
 
- <dependencies>
-    <dependency>
-        <groupId>org.spigotmc</groupId>
-        <artifactId>spigot-api</artifactId>
-        <version>1.13-pre7-R0.1-SNAPSHOT</version>
-    </dependency>  
-    <dependency>
-        <groupId>org.spongepowered</groupId>
-        <artifactId>spongeapi</artifactId>
-        <version>${spongeVersion}</version>
-        <scope>provided</scope>
-    </dependency> 
-        
-    <dependency>
-      <groupId>net.dv8tion</groupId>
-      <artifactId>JDA</artifactId>
-      <version>LATEST</version>
-    </dependency>        
-    <dependency>
-      <groupId>com.google.code.findbugs</groupId>
-      <artifactId>jsr305</artifactId>
-      <version>3.0.2</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-collections4</artifactId>
-      <version>4.1</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.json</groupId>
-      <artifactId>json</artifactId>
-      <version>20180130</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>net.sf.trove4j</groupId>
-      <artifactId>trove4j</artifactId>
-      <version>3.0.3</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>net.java.dev.jna</groupId>
-      <artifactId>jna</artifactId>
-      <version>4.4.0</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.neovisionaries</groupId>
-      <artifactId>nv-websocket-client</artifactId>
-      <version>2.2</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.squareup.okhttp3</groupId>
-      <artifactId>okhttp</artifactId>
-      <version>3.8.1</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>1.7.25</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-nop</artifactId>
-      <version>1.7.25</version>
-      <scope>compile</scope>
-    </dependency>
-        
-  </dependencies>
-  
-  <build>
-    <finalName>DONT-DOWNLOAD-UltimateChat-JDA-reference</finalName>    
-    <plugins>    
-      
-      <!-- Ignore deploy to github -->
-      <plugin>
-        <groupId>com.github.github</groupId>
-        <artifactId>site-maven-plugin</artifactId>
-        <version>0.11</version>
-        <executions>
-          <execution>
-            <id>deploying</id>
-          </execution>
-        </executions>
-       </plugin>
-       
-             <plugin>
+    <dependencies>
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>1.13-pre7-R0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.spongepowered</groupId>
+            <artifactId>spongeapi</artifactId>
+            <version>${spongeVersion}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.dv8tion</groupId>
+            <artifactId>JDA</artifactId>
+            <version>LATEST</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <version>3.0.2</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+            <version>4.1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20180130</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.trove4j</groupId>
+            <artifactId>trove4j</artifactId>
+            <version>3.0.3</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna</artifactId>
+            <version>4.4.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.neovisionaries</groupId>
+            <artifactId>nv-websocket-client</artifactId>
+            <version>2.2</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>3.8.1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.25</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-nop</artifactId>
+            <version>1.7.25</version>
+            <scope>compile</scope>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <finalName>DONT-DOWNLOAD-UltimateChat-JDA-reference</finalName>
+        <plugins>
+
+            <!-- Ignore deploy to github -->
+            <plugin>
+                <groupId>com.github.github</groupId>
+                <artifactId>site-maven-plugin</artifactId>
+                <version>0.11</version>
+                <executions>
+                    <execution>
+                        <id>deploying</id>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>2.4.3</version>
@@ -110,28 +111,28 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                        <artifactSet>
-                          
-                          <includes>
-                            <include>commons-lang:commons-lang</include>
-                            <include>com.googlecode.json-simple:json-simple</include>
-                            <include>org.hamcrest:hamcrest-core</include>
-                            <include>com.google.guava:guava</include>
-                            <include>com.google.code.gson</include>
-                            <include>net.dv8tion:JDA</include>
-                            <include>com.google.code.findbugs:jsr305</include>
-                            <include>org.apache.commons:commons-collections4</include>
-                            <include>org.json:json</include>
-                            <include>net.sf.trove4j:trove4j</include>
-                            <include>net.java.dev.jna:jna</include>
-                            <include>com.neovisionaries:nv-websocket-client</include>
-                            <include>com.squareup.okhttp3:okhttp</include>
-                            <include>com.squareup.okio:okio</include>
-                            <include>org.slf4j:slf4j-api</include>
-                            <include>org.slf4j:slf4j-nop</include>
-                          </includes> 
-                                                 
-                        </artifactSet>
+                            <artifactSet>
+
+                                <includes>
+                                    <include>commons-lang:commons-lang</include>
+                                    <include>com.googlecode.json-simple:json-simple</include>
+                                    <include>org.hamcrest:hamcrest-core</include>
+                                    <include>com.google.guava:guava</include>
+                                    <include>com.google.code.gson</include>
+                                    <include>net.dv8tion:JDA</include>
+                                    <include>com.google.code.findbugs:jsr305</include>
+                                    <include>org.apache.commons:commons-collections4</include>
+                                    <include>org.json:json</include>
+                                    <include>net.sf.trove4j:trove4j</include>
+                                    <include>net.java.dev.jna:jna</include>
+                                    <include>com.neovisionaries:nv-websocket-client</include>
+                                    <include>com.squareup.okhttp3:okhttp</include>
+                                    <include>com.squareup.okio:okio</include>
+                                    <include>org.slf4j:slf4j-api</include>
+                                    <include>org.slf4j:slf4j-nop</include>
+                                </includes>
+
+                            </artifactSet>
                             <relocations>
                                 <relocation>
                                     <pattern>com.google</pattern>
@@ -178,15 +179,15 @@
                             </relocations>
 
                             <minimizeJar>true</minimizeJar>
-                            <outputFile>${project.basedir}/target/UltimateChat-JDA.jar</outputFile> 
-                            <filters> 
-                              <filter>
-                                 <artifact>*:*</artifact>
-                                 <includes>
-                                 <include>**</include>
-                                 </includes>
-                              </filter>                                           
-                           </filters>
+                            <outputFile>${project.basedir}/target/UltimateChat-JDA.jar</outputFile>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <includes>
+                                        <include>**</include>
+                                    </includes>
+                                </filter>
+                            </filters>
                         </configuration>
                     </execution>
                 </executions>
@@ -194,9 +195,9 @@
                     <createDependencyReducedPom>false</createDependencyReducedPom>
                 </configuration>
             </plugin>
-    </plugins>
-  </build>
-  <properties>
-  	<spongeVersion>7.0.0-SNAPSHOT</spongeVersion>
-  </properties>
+        </plugins>
+    </build>
+    <properties>
+        <spongeVersion>7.0.0-SNAPSHOT</spongeVersion>
+    </properties>
 </project>

@@ -8,13 +8,13 @@ import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.plugin.PluginContainer;
 
 public interface UCVHelper {
-	Cause getCause(CommandSource src);
+    Cause getCause(CommandSource src);
 
     Cause getCause(PluginContainer instance);
-	
-	StringBuilder getEnchantments(StringBuilder sb, ItemStack item);
 
-	ItemStack getItemInHand(Player sender);
+    StringBuilder getEnchantments(StringBuilder sb, ItemStack item);
 
-	ItemType getItemName(ItemStack itemStack);
+    ItemStack getItemInHand(Player sender);
+
+    ItemType getItemName(ItemStack itemStack);
 }

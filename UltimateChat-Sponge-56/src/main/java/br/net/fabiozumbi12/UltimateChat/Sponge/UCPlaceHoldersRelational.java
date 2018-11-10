@@ -11,16 +11,16 @@ import java.util.Arrays;
 
 public class UCPlaceHoldersRelational {
 
-    public UCPlaceHoldersRelational(UChat plugin){
+    public UCPlaceHoldersRelational(UChat plugin) {
         PlaceholderService service = Sponge.getServiceManager().provideUnchecked(PlaceholderService.class);
 
         service.loadAll(this, plugin).forEach(builder -> {
-            if (builder.getId().startsWith("uchat-")){
+            if (builder.getId().startsWith("uchat-")) {
                 builder.author("FabioZumbi12");
                 builder.version(plugin.instance().getVersion().get());
-                try{
+                try {
                     builder.buildAndRegister();
-                } catch (Exception ex){
+                } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }
@@ -28,38 +28,38 @@ public class UCPlaceHoldersRelational {
     }
 
     @Placeholder(id = "uchat-channelname")
-    public String channelName(@Source CommandSource p){
+    public String channelName(@Source CommandSource p) {
         return UChat.get().getPlayerChannel(p).getName();
     }
 
     @Placeholder(id = "uchat-channelalias")
-    public String channelAlias(@Source CommandSource p){
+    public String channelAlias(@Source CommandSource p) {
         return UChat.get().getPlayerChannel(p).getAlias();
     }
 
     @Placeholder(id = "uchat-channelcolor")
-    public String channelColor(@Source CommandSource p){
+    public String channelColor(@Source CommandSource p) {
         return UChat.get().getPlayerChannel(p).getColor();
     }
 
     @Placeholder(id = "uchat-tellwith")
-    public String tellWith(@Source CommandSource p){
-        if (UChat.get().tellPlayers.containsKey(p.getName())){
+    public String tellWith(@Source CommandSource p) {
+        if (UChat.get().tellPlayers.containsKey(p.getName())) {
             return UChat.get().tellPlayers.get(p.getName());
         }
         return "--";
     }
 
     @Placeholder(id = "uchat-ignoring")
-    public String ignoringPlayer(@Source CommandSource p){
-        if (UChat.get().ignoringPlayer.containsKey(p.getName())){
+    public String ignoringPlayer(@Source CommandSource p) {
+        if (UChat.get().ignoringPlayer.containsKey(p.getName())) {
             return Arrays.toString(UChat.get().ignoringPlayer.get(p.getName()).toArray());
         }
         return "--";
     }
 
     @Placeholder(id = "uchat-defaultchannel")
-    public String defaultChannel(@Source CommandSource p){
-        return UChat.get().getDefChannel(p instanceof  Player ? ((Player)p).getWorld().getName() : null).getName();
+    public String defaultChannel(@Source CommandSource p) {
+        return UChat.get().getDefChannel(p instanceof Player ? ((Player) p).getWorld().getName() : null).getName();
     }
 }
