@@ -300,6 +300,7 @@ public class UCMessages {
                 evmsg = evmsg.replace("/n", "\n");
             }
         }
+        evmsg = evmsg.replace("§", "&");
         return evmsg;
     }
 

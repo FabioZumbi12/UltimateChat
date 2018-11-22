@@ -263,7 +263,6 @@ public class UCMessages {
     }
 
     private static String composeColor(CommandSender sender, String evmsg) {
-        evmsg = ChatColor.translateAlternateColorCodes('&', evmsg);
         if (sender instanceof Player) {
             Pattern mat1 = Pattern.compile("(?i)&([A-Fa-f0-9Rr])");
             Pattern mat2 = Pattern.compile("(?i)&([L-Ol-o])");
@@ -291,6 +290,7 @@ public class UCMessages {
                 evmsg = evmsg.replace("/n", "\n");
             }
         }
+        evmsg = ChatColor.translateAlternateColorCodes('&', evmsg);
         return evmsg;
     }
 
