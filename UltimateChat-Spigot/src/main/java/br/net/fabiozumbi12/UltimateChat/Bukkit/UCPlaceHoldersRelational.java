@@ -51,6 +51,9 @@ public class UCPlaceHoldersRelational extends PlaceholderExpansion implements Re
         if (arg.equals("player_channel_color")) {
             text = UChat.get().getPlayerChannel(p).getColor();
         }
+        if (arg.equals("player_channel_nickname")) {
+            text = UChat.get().getPlayerChannel(p).getNickName();
+        }
         if (arg.equals("player_tell_with") && UChat.get().tellPlayers.containsKey(p.getName())) {
             text = UChat.get().tellPlayers.get(p.getName());
         }

@@ -101,6 +101,7 @@ public class UCChannel {
     private void addDefaults() {
         properties.put("name", "");
         properties.put("alias", "");
+        properties.put("nickname", "");
         properties.put("char-alias", "");
         properties.put("color", "&b");
         properties.put("across-worlds", true);
@@ -151,6 +152,10 @@ public class UCChannel {
 
     public String getCharAlias() {
         return this.properties.get("char-alias").toString();
+    }
+
+    public String getNickName() {
+        return this.properties.get("nickname").toString();
     }
 
     public boolean AllowBot() {

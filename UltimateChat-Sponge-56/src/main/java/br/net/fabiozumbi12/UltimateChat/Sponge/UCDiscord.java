@@ -290,7 +290,8 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
     private String formatTags(String format, UCChannel ch, MessageReceivedEvent e, String sender, String message) {
         format = format.replace("{ch-color}", ch.getColor())
                 .replace("{ch-alias}", ch.getAlias())
-                .replace("{ch-name}", ch.getName());
+                .replace("{ch-name}", ch.getName())
+                .replace("{ch-nickname}", ch.getNickName());
         if (e != null) {
             format = format.replace("{sender}", e.getMember().getEffectiveName())
                     .replace("{dd-channel}", e.getChannel().getName())

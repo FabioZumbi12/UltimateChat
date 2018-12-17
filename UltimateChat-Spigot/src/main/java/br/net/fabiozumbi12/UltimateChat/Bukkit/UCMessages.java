@@ -497,7 +497,8 @@ public class UCMessages {
         }
         text = text.replace("{ch-color}", ch.getColor())
                 .replace("{ch-name}", ch.getName())
-                .replace("{ch-alias}", ch.getAlias());
+                .replace("{ch-alias}", ch.getAlias())
+                .replace("{ch-nickname}", ch.getNickName());
 
         if (UChat.get().getUCConfig().getBoolean("jedis.enable") && ch.useJedis()) {
             text = text.replace("{jedis-id}", UChat.get().getUCConfig().getString("jedis.server-id"));
