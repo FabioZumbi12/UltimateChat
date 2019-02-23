@@ -99,9 +99,10 @@
             <version>2.0.15</version>
         </dependency>
         <dependency>
-            <groupId>org.natrolite</groupId>
-            <artifactId>vault-api</artifactId>
-            <version>LATEST</version>
+            <groupId>net.milkbowl.vault</groupId>
+            <artifactId>VaultAPI</artifactId>
+            <version>1.7</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>net.ess3</groupId>

@@ -81,8 +81,8 @@
             <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
         </repository>
         <repository>
-            <id>vault-repo</id>
-            <url>https://nexus.keyle.de/content/groups/public/</url>
+            <id>essx-repo</id>
+            <url>https://ci.ender.zone/plugin/repository/everything/</url>
         </repository>
         <repository>
             <id>placeholderapi</id>

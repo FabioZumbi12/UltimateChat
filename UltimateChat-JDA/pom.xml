@@ -32,7 +32,7 @@
         <version>1.8.8</version>
     </parent>
     <artifactId>UltimateChat-JDA</artifactId>
-    <version>3.7.1-385</version>
+    <version>3.8.3_460</version>
 
     <dependencies>
         <dependency>
@@ -50,7 +50,7 @@
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>LATEST</version>
+            <version>3.8.3_460</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.findbugs</groupId>

@@ -59,7 +59,6 @@ fabric.properties
 
 # Editor-based Rest Client
 .idea/httpRequests
-
 ### Maven template
 target/
 pom.xml.tag
@@ -73,3 +72,5 @@ buildNumber.properties
 .mvn/wrapper/maven-wrapper.jar
 
 # CUSTOM
+
+/buildNumber.properties
