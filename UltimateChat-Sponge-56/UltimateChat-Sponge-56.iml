@@ -20,8 +20,8 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.spongepowered:spongeapi:6.1.0-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.22" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.spongepowered:spongeapi:5.2.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.21" level="project" />
     <orderEntry type="library" name="Maven: com.google.guava:guava:17.0" level="project" />
     <orderEntry type="library" name="Maven: com.google.code.gson:gson:2.2.4" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.3.2" level="project" />
@@ -29,9 +29,9 @@
     <orderEntry type="library" name="Maven: com.google.inject:guice:4.0" level="project" />
     <orderEntry type="library" name="Maven: javax.inject:javax.inject:1" level="project" />
     <orderEntry type="library" name="Maven: aopalliance:aopalliance:1.0" level="project" />
-    <orderEntry type="library" name="Maven: com.github.ben-manes.caffeine:caffeine:2.3.5" level="project" />
-    <orderEntry type="library" name="Maven: com.github.ben-manes.caffeine:guava:2.3.5" level="project" />
-    <orderEntry type="library" name="Maven: org.spongepowered:plugin-meta:0.4.1" level="project" />
+    <orderEntry type="library" name="Maven: com.github.ben-manes.caffeine:caffeine:2.3.2" level="project" />
+    <orderEntry type="library" name="Maven: com.github.ben-manes.caffeine:guava:2.3.2" level="project" />
+    <orderEntry type="library" name="Maven: org.spongepowered:plugin-meta:0.2.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: ninja.leaping.configurate:configurate-hocon:3.2" level="project" />
     <orderEntry type="library" name="Maven: com.typesafe:config:1.3.0" level="project" />
     <orderEntry type="library" name="Maven: ninja.leaping.configurate:configurate-core:3.2" level="project" />
@@ -41,11 +41,11 @@
     <orderEntry type="library" name="Maven: com.flowpowered:flow-math:1.0.3" level="project" />
     <orderEntry type="library" name="Maven: com.flowpowered:flow-noise:1.0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.ow2.asm:asm:5.0.3" level="project" />
-    <orderEntry type="library" name="Maven: org.spongepowered:spongeapi:javadoc:6.1.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.spongepowered:spongeapi:javadoc:5.2.0-SNAPSHOT" level="project" />
     <orderEntry type="module-library">
       <library name="Maven: MCClans:MCClans:v1">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/libs/MCClans-API-1.2.jar!/" />
+          <root url="jar://$MODULE_DIR$/libs/MCClans-1.6.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

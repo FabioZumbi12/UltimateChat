@@ -69,6 +69,7 @@ import java.util.List;
         description = "Complete and advanced chat plugin",
         dependencies = {
                 @Dependency(id = "jdalibraryloader", optional = true),
+                @Dependency(id = "mcclans", optional = true),
                 @Dependency(id = "placeholderapi", optional = true),
                 @Dependency(id = "pixelmon", optional = true),
                 @Dependency(id = "nucleus", optional = true)})

@@ -19,7 +19,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.spongepowered:spongeapi:7.1.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.spongepowered:spongeapi:7.2.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.25" level="project" />
     <orderEntry type="library" name="Maven: com.google.guava:guava:21.0" level="project" />
     <orderEntry type="library" name="Maven: com.google.errorprone:error_prone_annotations:2.0.15" level="project" />
@@ -42,8 +42,26 @@
     <orderEntry type="library" name="Maven: com.flowpowered:flow-math:1.0.3" level="project" />
     <orderEntry type="library" name="Maven: com.flowpowered:flow-noise:1.0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.ow2.asm:asm:5.2" level="project" />
-    <orderEntry type="library" name="Maven: org.spongepowered:spongeapi:javadoc:7.1.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.spongepowered:spongeapi:javadoc:7.2.0-SNAPSHOT" level="project" />
     <orderEntry type="module" module-name="UltimateChat-Sponge-56" />
+    <orderEntry type="module-library">
+      <library name="Maven: MCClans:MCClans:v1">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../UltimateChat-Sponge-56/libs/MCClans-1.6.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="Maven: JDALib:Loader:1.0.0">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../UltimateChat-JDA/target/UltimateChat-JDA.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
     <orderEntry type="library" name="Maven: redis.clients:jedis:2.9.0" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-pool2:2.4.2" level="project" />
   </component>

@@ -69,7 +69,7 @@
             <artifactId>SimpleClans</artifactId>
             <version>v1</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/../libs/SimpleClans.jar</systemPath>
+            <systemPath>${project.basedir}/libs/SimpleClans.jar</systemPath>
         </dependency>
 
         <dependency>
@@ -77,21 +77,21 @@
             <artifactId>MassiveCore</artifactId>
             <version>v1</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/../libs/MassiveCore.jar</systemPath>
+            <systemPath>${project.basedir}/libs/MassiveCore.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>Factions</groupId>
             <artifactId>Factions</artifactId>
             <version>v1</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/../libs/Factions.jar</systemPath>
+            <systemPath>${project.basedir}/libs/Factions.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>MarriageMaster</groupId>
             <artifactId>MarriageMaster</artifactId>
             <version>v1</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/../libs/MarriageMaster.jar</systemPath>
+            <systemPath>${project.basedir}/libs/MarriageMaster.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.lenis0012.bukkit</groupId>

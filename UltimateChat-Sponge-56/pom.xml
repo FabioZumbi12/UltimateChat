@@ -34,7 +34,7 @@
     <artifactId>UltimateChat-Sponge-56</artifactId>
 
     <properties>
-        <spongeVersion>6.1.0-SNAPSHOT</spongeVersion>
+        <spongeVersion>5.2.0-SNAPSHOT</spongeVersion>
     </properties>
 
     <dependencies>
@@ -57,7 +57,7 @@
             <artifactId>MCClans</artifactId>
             <version>v1</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/libs/MCClans-API-1.2.jar</systemPath>
+            <systemPath>${project.basedir}/libs/MCClans-1.6.jar</systemPath>
         </dependency>
 
         <!-- nucleus api -->

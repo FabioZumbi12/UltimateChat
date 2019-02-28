@@ -15,11 +15,11 @@ chat-protection:
   anti-flood:
     # Channels where this will be enabled
     disable-on-channels:
-    - Local
+      - Local
     enable: true
     whitelist-flood-characs:
-    - k
-    - w
+      - k
+      - w
 
   # Caps Lock filter
   caps-filter:
@@ -33,7 +33,7 @@ chat-protection:
   antispam:
     # Channels where this will be enabled
     disable-on-channels:
-    - Local
+      - Local
     enabled: false
     # Time in seconds the player can send new messages.
     time-between-messages: 1
@@ -74,7 +74,7 @@ chat-protection:
       on-partial-words: false
       # Action only on this channels or [] to action on all channels.
       only-on-channels:
-      - global
+        - global
 
   # Anti-IP and websites
   anti-ip:
@@ -87,12 +87,12 @@ chat-protection:
     custom-url-regex: ((http:\/\/|https:\/\/)?(www.)?(([a-zA-Z0-9-]){2,}\.){1,4}([a-zA-Z]){2,6}(\/([a-zA-Z-_\/\.0-9#:?=&;,]*)?)?)
     # Check for additional words or entire websites/ips on player message. If unique word add a dot stating the word. This will check for '.net', '. net' or '.     net' using 'net' as example.
     check-for-words:
-    - www.google.com
+      - www.google.com
     # Whitelist words to ignore. Partial or complete URLs/IPs.
     whitelist-words:
-    - www.myserver.com
-    - prntscr.com
-    - gyazo.com
+      - www.myserver.com
+      - prntscr.com
+      - gyazo.com
 
     # Cancel the chat message and show an alert or only replace the link by a word. Use 'replace' or 'cancel'.
     cancel-or-replace: cancel

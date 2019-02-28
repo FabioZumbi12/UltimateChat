@@ -58,6 +58,7 @@ public class UCConfig {
     private CommentedConfigurationNode protsRoot;
     private ConfigurationLoader<CommentedConfigurationNode> protLoader;
     private ProtectionsCategory protections;
+
     public UCConfig(GuiceObjectMapperFactory factory) throws IOException {
         UChat.get().getLogger().info("-> Config module");
         try {

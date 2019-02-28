@@ -31,6 +31,7 @@ public class UCLogger {
 
     private final UChat uchat;
     private long start = 0;
+
     public UCLogger(UChat uChat) {
         this.uchat = uChat;
     }

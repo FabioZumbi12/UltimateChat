@@ -170,21 +170,21 @@ public class SendChannelMessageEvent extends AbstractEvent implements Cancellabl
     }
 
     /**
-     * Change the message to send to chat.
-     *
-     * @param newMsg - Text with new message.
-     */
-    public void setMessage(Text newMsg) {
-        this.msg = newMsg;
-    }
-
-    /**
      * Get the message that will be send to chat.
      *
      * @return Text with the message.
      */
     public Text getMessage() {
         return this.msg;
+    }
+
+    /**
+     * Change the message to send to chat.
+     *
+     * @param newMsg - Text with new message.
+     */
+    public void setMessage(Text newMsg) {
+        this.msg = newMsg;
     }
 
     /**

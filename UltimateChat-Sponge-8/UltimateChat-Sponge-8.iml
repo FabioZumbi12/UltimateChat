@@ -2,12 +2,7 @@
 <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" version="4">
   <component name="FacetManager">
     <facet type="minecraft" name="Minecraft">
-      <configuration>
-        <autoDetectTypes>
-          <platformType>SPIGOT</platformType>
-          <platformType>SPONGE</platformType>
-        </autoDetectTypes>
-      </configuration>
+      <configuration />
     </facet>
   </component>
   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_8">
@@ -56,7 +51,7 @@
     <orderEntry type="module-library">
       <library name="Maven: SimpleClans:SimpleClans:v1">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../libs/SimpleClans.jar!/" />
+          <root url="jar://$MODULE_DIR$/../UltimateChat-Spigot/libs/SimpleClans.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -65,7 +60,7 @@
     <orderEntry type="module-library">
       <library name="Maven: MassiveCore:MassiveCore:v1">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../libs/MassiveCore.jar!/" />
+          <root url="jar://$MODULE_DIR$/../UltimateChat-Spigot/libs/MassiveCore.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -74,7 +69,7 @@
     <orderEntry type="module-library">
       <library name="Maven: Factions:Factions:v1">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../libs/Factions.jar!/" />
+          <root url="jar://$MODULE_DIR$/../UltimateChat-Spigot/libs/Factions.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -83,7 +78,7 @@
     <orderEntry type="module-library">
       <library name="Maven: MarriageMaster:MarriageMaster:v1">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../libs/MarriageMaster.jar!/" />
+          <root url="jar://$MODULE_DIR$/../UltimateChat-Spigot/libs/MarriageMaster.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -107,7 +102,7 @@
     <orderEntry type="module-library">
       <library name="Maven: MCClans:MCClans:v1">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../UltimateChat-Sponge-56/libs/MCClans-API-1.2.jar!/" />
+          <root url="jar://$MODULE_DIR$/../UltimateChat-Sponge-56/libs/MCClans-1.6.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

@@ -38,6 +38,7 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.effect.sound.SoundType;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.service.economy.account.UniqueAccount;
 import org.spongepowered.api.service.permission.Subject;
@@ -626,7 +627,7 @@ public class UCMessages {
 
             item = UChat.get().getVHelper().getItemInHand(sender);
 
-            if (text.contains("{hand-") && !item.isEmpty()) {
+            if (text.contains("{hand-") && !item.getItem().getType().equals(ItemTypes.NONE)) {
                 text = text
                         .replace("{hand-durability}", item.get(Keys.ITEM_DURABILITY).isPresent() ? String.valueOf(item.get(Keys.ITEM_DURABILITY).get()) : "")
                         .replace("{hand-name}", UChat.get().getVHelper().getItemName(item).getTranslation().get());

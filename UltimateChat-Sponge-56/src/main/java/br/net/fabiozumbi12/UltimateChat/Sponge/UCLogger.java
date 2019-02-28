@@ -32,6 +32,7 @@ public class UCLogger {
 
     private final ConsoleSource console;
     private long start = 0;
+
     UCLogger(Server serv) {
         this.console = serv.getConsole();
     }

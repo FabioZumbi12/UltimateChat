@@ -33,6 +33,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.item.ItemType;
+import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.plugin.PluginContainer;
 
@@ -63,7 +64,7 @@ public class UCVHelper56 implements UCVHelper {
         } else if (sender.getItemInHand(HandTypes.OFF_HAND).isPresent()) {
             return sender.getItemInHand(HandTypes.OFF_HAND).get();
         }
-        return ItemStack.empty();
+        return ItemStack.of(ItemTypes.NONE, 0);
     }
 
     @Override
