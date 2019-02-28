@@ -64,7 +64,7 @@ public class UCVHelper56 implements UCVHelper {
         } else if (sender.getItemInHand(HandTypes.OFF_HAND).isPresent()) {
             return sender.getItemInHand(HandTypes.OFF_HAND).get();
         }
-        return ItemStack.of(ItemTypes.NONE, 0);
+        return ItemStack.of(ItemTypes.NONE, 1);
     }
 
     @Override
