@@ -187,8 +187,8 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
                         //user name
                         Pattern pp = Pattern.compile("<@(.+?)>");
                         Matcher mp = pp.matcher(message);
-                        if (mp.find())
-                            message = message.replaceAll("<@(.+?)>", "@" + e.getAuthor().getName());
+                        if (mp.find() && e.getMessage().getMentionedMembers().stream().findFirst().isPresent())
+                            message = message.replaceAll("<@(.+?)>", "@" + e.getMessage().getMentionedMembers().stream().findFirst().get().getNickname());
                         else
                             message = message.replaceAll("<@(.+?)>", "@?");
 
@@ -336,15 +336,15 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
             this.blue = blue;
         }
 
-        public R getRed() {
+        private R getRed() {
             return red;
         }
 
-        public G getGreen() {
+        private G getGreen() {
             return green;
         }
 
-        public B getBlue() {
+        private B getBlue() {
             return blue;
         }
     }
