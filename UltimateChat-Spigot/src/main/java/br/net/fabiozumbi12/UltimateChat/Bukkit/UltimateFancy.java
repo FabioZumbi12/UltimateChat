@@ -405,7 +405,11 @@ public class UltimateFancy {
      * @return instance of same {@link UltimateFancy}.
      */
     public UltimateFancy hoverShowItem(ItemStack item) {
-        pendentElements.add(new ExtraElement("hoverEvent", parseHoverItem(item)));
+        JSONObject jItem = parseHoverItem(item);
+        if (jItem.toJSONString().getBytes().length > 32000)
+            pendentElements.add(new ExtraElement("hoverEvent", parseHoverItem(new ItemStack(item.getType()))));
+
+        pendentElements.add(new ExtraElement("hoverEvent", jItem));
         return this;
     }
 
@@ -475,6 +479,10 @@ public class UltimateFancy {
     private JSONObject parseHoverItem(ItemStack item) {
         JSONObject obj = new JSONObject();
         obj.put("action", "show_item");
+        String jItem = convertItemStackToJson(item);
+        if (jItem.getBytes().length > 32000)
+            obj.put("value", convertItemStackToJson(new ItemStack(item.getType())));
+
         obj.put("value", convertItemStackToJson(item));
         return obj;
     }
