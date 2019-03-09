@@ -216,23 +216,33 @@ public class UCListener {
 
         List<String> toRemove = new ArrayList<>();
         for (String play : UChat.get().tellPlayers.keySet()) {
-            if (play.equals(p.getName()) || UChat.get().tellPlayers.get(play).equals(p.getName())) {
+            if (play.equalsIgnoreCase(p.getName())) {
                 toRemove.add(play);
             }
         }
         for (String remove : toRemove) {
             UChat.get().tellPlayers.remove(remove);
         }
+
         List<String> toRemove2 = new ArrayList<>();
         for (String play : UChat.get().respondTell.keySet()) {
-            if (play.equals(p.getName()) || UChat.get().respondTell.get(play).equals(p.getName())) {
+            if (play.equals(p.getName())) {
                 toRemove2.add(play);
             }
         }
         for (String remove : toRemove2) {
             UChat.get().respondTell.remove(remove);
         }
-        UChat.get().tempChannels.remove(p.getName());
+
+        List<String> toRemove3 = new ArrayList<>();
+        for (String play : UChat.get().tempChannels.keySet()) {
+            if (play.equals(p.getName())) {
+                toRemove3.add(play);
+            }
+        }
+        for (String remove : toRemove3) {
+            UChat.get().tempChannels.remove(remove);
+        }
 
         if (UChat.get().getUCJDA() != null && UChat.get().getUCJDA().JDAAvailable() && !p.hasPermission(UChat.get().getConfig().root().discord.vanish_perm)) {
             UChat.get().getUCJDA().sendRawToDiscord(UChat.get().getLang().get("discord.leave").replace("{player}", p.getName()));
