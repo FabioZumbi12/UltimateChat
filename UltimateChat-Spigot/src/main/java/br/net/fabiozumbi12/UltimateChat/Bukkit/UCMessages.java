@@ -243,19 +243,12 @@ public class UCMessages {
             });
         }
 
-        if (channel != null) {
-            //send to jedis
-            if (!channel.isTell() && UChat.get().getJedis() != null) {
-                UChat.get().getJedis().sendMessage(channel.getName().toLowerCase(), msgPlayers.get(sender));
-            }
-
-            //send to jda
-            if (UChat.get().getUCJDA() != null) {
-                if (channel.isTell()) {
-                    UChat.get().getUCJDA().sendTellToDiscord(msgPlayers.get(sender).toOldFormat());
-                } else {
-                    UChat.get().getUCJDA().sendToDiscord(sender, evmsg, channel);
-                }
+        //send to jda
+        if (channel != null && UChat.get().getUCJDA() != null) {
+            if (channel.isTell()) {
+                UChat.get().getUCJDA().sendTellToDiscord(msgPlayers.get(sender).toOldFormat());
+            } else {
+                UChat.get().getUCJDA().sendToDiscord(sender, evmsg, channel);
             }
         }
 

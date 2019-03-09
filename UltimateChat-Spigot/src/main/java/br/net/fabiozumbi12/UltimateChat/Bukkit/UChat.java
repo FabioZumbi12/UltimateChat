@@ -29,7 +29,6 @@ import at.pcgamingfreaks.MarriageMaster.Bukkit.MarriageMaster;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.API.UChatReloadEvent;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.API.uChatAPI;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.Bungee.UChatBungee;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.Jedis.UCJedisLoader;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.config.UCConfig;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.config.UCLang;
 import com.lenis0012.bukkit.marriage2.Marriage;
@@ -96,7 +95,6 @@ public class UChat extends JavaPlugin {
     private Chat chat;
     private boolean isRelation;
     private uChatAPI ucapi;
-    private UCJedisLoader jedis;
 
     public static UChat get() {
         return uchat;
@@ -157,10 +155,6 @@ public class UChat extends JavaPlugin {
 
     public uChatAPI getAPI() {
         return this.ucapi;
-    }
-
-    public UCJedisLoader getJedis() {
-        return this.jedis;
     }
 
     public PluginDescriptionFile getPDF() {
@@ -259,9 +253,6 @@ public class UChat extends JavaPlugin {
             this.ucapi = new uChatAPI();
 
             //init other features
-
-            //Jedis
-            registerJedis();
             //JDA
             registerJDA();
 
@@ -298,30 +289,11 @@ public class UChat extends JavaPlugin {
         this.registerAliases();
 
         this.registerJDA();
-        this.registerJedis();
         this.initAutomessage();
 
         //ping other plugins when uchat reload
         UChatReloadEvent reloadEvent = new UChatReloadEvent();
         Bukkit.getPluginManager().callEvent(reloadEvent);
-    }
-
-    private void registerJedis() {
-        if (this.jedis != null) {
-            this.jedis.closePool();
-            this.jedis = null;
-        }
-        if (getUCConfig().getBoolean("jedis.enable")) {
-            this.logger.info("Init REDIS...");
-            try {
-                this.jedis = new UCJedisLoader(getUCConfig().getString("jedis.ip"),
-                        getUCConfig().getInt("jedis.port"),
-                        getUCConfig().getString("jedis.pass"), new ArrayList<>(getChannels().values()));
-            } catch (Exception e) {
-                e.printStackTrace();
-                this.logger.warning("Could not connect to REDIS server! Check ip, password and port, and if the REDIS server is running.");
-            }
-        }
     }
 
     private void registerJDA() {
@@ -432,14 +404,11 @@ public class UChat extends JavaPlugin {
     }
 
     public void onDisable() {
-        if (this.jedis != null) {
-            this.jedis.closePool();
-        }
         if (this.UCJDA != null) {
             this.UCJDA.sendRawToDiscord(lang.get("discord.stop"));
             this.UCJDA.shutdown();
         }
-        getUCLogger().severe(getDescription().getFullName() + " disabled!");
+        getUCLogger().info(getDescription().getFullName() + " disabled!");
     }
 
     /**

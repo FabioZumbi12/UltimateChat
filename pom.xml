@@ -35,22 +35,6 @@
     <description>Ultimate Chat is an advanced chat hooking into most used plugins to show more info on player chat.
     </description>
 
-    <!-- Jedis -->
-    <dependencies>
-        <dependency>
-            <groupId>redis.clients</groupId>
-            <artifactId>jedis</artifactId>
-            <version>2.9.0</version>
-            <type>jar</type>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-pool2</artifactId>
-            <version>2.4.2</version>
-        </dependency>
-    </dependencies>
-
     <repositories>
         <!-- Sponge repos -->
         <repository>

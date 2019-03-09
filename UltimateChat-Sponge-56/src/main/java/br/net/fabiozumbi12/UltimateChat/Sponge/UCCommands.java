@@ -278,16 +278,8 @@ public class UCCommands {
                                                 sendPreTell(p, Sponge.getServer().getConsole(), msg);
                                             }
 
-                                            //send to jedis
-                                            else if (UChat.get().getJedis() != null) {
-                                                UChat.get().getJedis().sendTellMessage(p, recObj.toString(), msg);
-                                                return CommandResult.success();
-                                            }
-
                                             //not found
-                                            else {
-                                                UChat.get().getLang().sendMessage(p, "listener.invalidplayer");
-                                            }
+                                            UChat.get().getLang().sendMessage(p, "listener.invalidplayer");
                                             return CommandResult.success();
                                         }
                                         //lock tell

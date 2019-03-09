@@ -40,9 +40,6 @@ public class MainCategory {
     public DebugCat debug = new DebugCat();
     @Setting(comment = "Available languages: EN-US, PT-BR, FR-FR, FR-ES, HU-HU, RU, SP-ES, ZH-CN and KO-KR")
     public String language = "EN-US";
-    // jedis
-    @Setting(comment = "Jedis configuration.\nUse Jedis to send messages between other servers running Jedis.\nConsider a replecement as Bungeecoord.")
-    public JedisCat jedis = new JedisCat();
     //discord
     @Setting(comment = "Enable the two way chat into discord and minecraft.\nGenerate your bot token following this instructions: https://goo.gl/utfRRv")
     public DiscordCat discord = new DiscordCat();
@@ -85,6 +82,19 @@ public class MainCategory {
         myMap.put("vanilla-chat", new TagsCategory("{chat_header}{chat_body}", null, null, null, null, null, null));
         myMap.put("jedis", new TagsCategory("{server-id}", null, Arrays.asList("&7Server: {jedis-id}", "&cChange me on configuration!"), null, null, null, null));
         return myMap;
+    }
+
+    //BungeeCoord
+    @Setting()
+    public BungeeCat bungee = new BungeeCat();
+
+    @ConfigSerializable
+    public static class BungeeCat {
+
+        @Setting()
+        public String server_id = "Sponge";
+        @Setting()
+        public boolean enable = false;
     }
 
     //debug

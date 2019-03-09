@@ -27,7 +27,7 @@ package br.net.fabiozumbi12.UltimateChat.Sponge;
 
 import br.net.fabiozumbi12.UltimateChat.Sponge.API.UChatReloadEvent;
 import br.net.fabiozumbi12.UltimateChat.Sponge.API.uChatAPI;
-import br.net.fabiozumbi12.UltimateChat.Sponge.Jedis.UCJedisLoader;
+import br.net.fabiozumbi12.UltimateChat.Sponge.Bungee.UChatBungee;
 import br.net.fabiozumbi12.UltimateChat.Sponge.Listeners.UCListener;
 import br.net.fabiozumbi12.UltimateChat.Sponge.Listeners.UCPixelmonListener;
 import br.net.fabiozumbi12.UltimateChat.Sponge.config.UCConfig;
@@ -105,9 +105,12 @@ public class UChat {
     private UCDInterface UCJDA;
     private UCLang lang;
     private UCVHelper helper;
-    private UCJedisLoader jedis;
     private HashMap<List<String>, UCChannel> channels;
     private UCPixelmonListener pixelListener;
+    private UChatBungee bungee;
+    public UChatBungee getBungee(){
+        return this.bungee;
+    }
 
     public static UChat get() {
         return uchat;
@@ -137,7 +140,7 @@ public class UChat {
         return this.perms;
     }
 
-    protected EconomyService getEco() {
+    EconomyService getEco() {
         return this.econ;
     }
 
@@ -161,10 +164,6 @@ public class UChat {
         return this.helper;
     }
 
-    public UCJedisLoader getJedis() {
-        return this.jedis;
-    }
-
     public HashMap<List<String>, UCChannel> getChannels() {
         return this.channels;
     }
@@ -179,11 +178,8 @@ public class UChat {
             uchat = this;
             this.serv = Sponge.getServer();
 
-            //init logger
             this.logger = new UCLogger(this.serv);
-            //init config
             this.config = new UCConfig(this.factory);
-            //init lang
             this.lang = new UCLang();
 
             //set compat perms
@@ -195,8 +191,6 @@ public class UChat {
             game.getEventManager().registerListeners(plugin, new UCListener());
 
             //init other features
-            //Jedis
-            registerJedis();
             //JDA
             registerJDA();
 
@@ -228,6 +222,8 @@ public class UChat {
 
     @Listener
     public void onServerStart(GameStartedServerEvent event) {
+        this.bungee = new UChatBungee(get());
+
         if (this.UCJDA != null) {
             this.UCJDA.sendRawToDiscord(lang.get("discord.online"));
         }
@@ -293,29 +289,11 @@ public class UChat {
         }
         this.cmds = new UCCommands(this);
 
-        registerJedis();
         registerJDA();
 
         //fire event
         UChatReloadEvent event = new UChatReloadEvent();
         Sponge.getEventManager().post(event);
-    }
-
-    protected void registerJedis() {
-        if (this.jedis != null) {
-            this.jedis.closePool();
-            this.jedis = null;
-        }
-        if (this.config.root().jedis.enable) {
-            this.logger.info("Init JEDIS...");
-            try {
-                this.jedis = new UCJedisLoader(this.config.root().jedis.ip,
-                        this.config.root().jedis.port,
-                        this.config.root().jedis.pass, new ArrayList<>(getChannels().values()));
-            } catch (Exception e) {
-                this.logger.warning("Could not connect to REDIS server! Check ip, password and port, and if the REDIS server is running.");
-            }
-        }
     }
 
     protected void registerJDA() {
@@ -369,9 +347,6 @@ public class UChat {
 
     @Listener
     public void onStopServer(GameStoppingServerEvent e) {
-        if (this.jedis != null) {
-            this.jedis.closePool();
-        }
         if (this.UCJDA != null) {
             this.UCJDA.sendRawToDiscord(lang.get("discord.stop"));
         }
@@ -382,7 +357,7 @@ public class UChat {
         if (this.UCJDA != null) {
             this.UCJDA.shutdown();
         }
-        get().getLogger().severe(plugin.getName() + " disabled!");
+        get().getLogger().info(plugin.getName() + " disabled!");
     }
 
     //----------- channels

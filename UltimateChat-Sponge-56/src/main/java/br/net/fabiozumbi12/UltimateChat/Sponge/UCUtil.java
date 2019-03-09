@@ -134,9 +134,6 @@ public class UCUtil {
                 fanci.onClick(TextActions.runCommand("/" + cmdline.toString().substring(1).replace("{clicked}", p.getName())));
             }
             p.sendMessage(fanci.build());
-            if (UChat.get().getJedis() != null) {
-                UChat.get().getJedis().sendRawMessage(fanci.build());
-            }
         }
         return true;
     }
