@@ -6,6 +6,10 @@ description: ${project.description}
 softdepend: [mcMMO, SkillAPI, Essentials, SimpleClans, Vault, MarriageMaster, Marriage, PlaceholderAPI, Factions, JDALibLoaderBukkit]
 api-version: 1.13
 commands:
+  discord-sync:
+    description: "Command to enable sync in-game groups with discord roles."
+    permission: "uchat.discord-sync.cmd.base"
+    aliases: [dd-sync]
   uchat:
     description: "Main command for ${project.name}."
     aliases: [uchat, chat]

@@ -23,17 +23,18 @@
  3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
  */
 
-package br.net.fabiozumbi12.UltimateChat.Bukkit;
+package br.net.fabiozumbi12.UltimateChat.Bukkit.discord;
 
+import br.net.fabiozumbi12.UltimateChat.Bukkit.*;
 import jdalib.jda.core.AccountType;
 import jdalib.jda.core.JDA;
 import jdalib.jda.core.JDABuilder;
-import jdalib.jda.core.entities.Game;
-import jdalib.jda.core.entities.Role;
-import jdalib.jda.core.entities.TextChannel;
+import jdalib.jda.core.entities.*;
 import jdalib.jda.core.events.message.MessageReceivedEvent;
 import jdalib.jda.core.exceptions.PermissionException;
+import jdalib.jda.core.exceptions.RateLimitedException;
 import jdalib.jda.core.hooks.ListenerAdapter;
+import jdalib.jda.core.managers.GuildController;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -41,11 +42,10 @@ import org.bukkit.command.CommandSender;
 import javax.security.auth.login.LoginException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class UCDiscord extends ListenerAdapter implements UCDInterface {
     private static final Map<ChatColor, ColorSet<Integer, Integer, Integer>> colorMap = new HashMap<>();
@@ -72,6 +72,9 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
     private JDA jda;
     private UChat uchat;
     private int taskId;
+    public JDA getJDA(){
+        return this.jda;
+    }
 
     public UCDiscord(UChat plugin) {
         this.uchat = plugin;
@@ -92,9 +95,9 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
             e.printStackTrace();
         }
 
-        if (UChat.get().getUCConfig().getBoolean("discord.update-status")) {
+        if (this.uchat.getUCConfig().getBoolean("discord.update-status")) {
             taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () ->
-                    updateGame(UChat.get().getLang().get("discord.game").replace("{online}", String.valueOf(UChat.get().getServer().getOnlinePlayers().size()))), 40, 40);
+                    updateGame(this.uchat.getLang().get("discord.game").replace("{online}", String.valueOf(this.uchat.getServer().getOnlinePlayers().size()))), 40, 40);
         }
     }
 
@@ -120,9 +123,32 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
 
     @Override
     public void onMessageReceived(MessageReceivedEvent e) {
-        if (e.getAuthor().getId().equals(e.getJDA().getSelfUser().getId()) || e.getMember().getUser().isFake()) return;
+        if (e.getAuthor().getId().equals(e.getJDA().getSelfUser().getId())) return;
 
         String message = e.getMessage().getContentRaw();
+        if (e.getMessage().isFromType(ChannelType.PRIVATE) && message.startsWith(this.uchat.getDDSync().getDDCommand())){
+            String code = message.substring(this.uchat.getDDSync().getDDCommand().length()+1);
+            try {
+                if (this.uchat.getDDSync().getPendentCode(code) == null){
+                    e.getChannel().sendMessage(this.uchat.getLang().get("discord.sync-nopendent").replace("{code}",code)).complete(true);
+                    return;
+                }
+
+                if (this.uchat.getDDSync().getSyncNickName(e.getAuthor().getId()) != null){
+                    e.getChannel().sendMessage(this.uchat.getLang().get("discord.sync-already")).complete(true);
+                    return;
+                }
+
+                String player = this.uchat.getDDSync().getPendentCode(code);
+                this.uchat.getDDSync().setPlayerDDId(e.getAuthor().getId(), player, code);
+                e.getChannel().sendMessage(this.uchat.getLang().get("discord.sync-connectok")).complete(true);
+            } catch (RateLimitedException e1) {
+                e1.printStackTrace();
+            }
+            return;
+        }
+
+        if (e.getMember().getUser().isFake()) return;
         int used = 0;
 
         for (UCChannel ch : this.uchat.getChannels().values()) {
@@ -269,7 +295,8 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
         }
     }
 
-    public void sendToChannel(String id, String text) {
+    private void sendToChannel(String id, String text) {
+        if (id.isEmpty()) return;
         text = text.replaceAll("([&" + ChatColor.COLOR_CHAR + "]([a-fA-Fk-oK-ORr0-9]))", "");
         TextChannel ch = jda.getTextChannelById(id);
         try {
@@ -277,8 +304,24 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
         } catch (PermissionException e) {
             uchat.getUCLogger().severe("JDA: No permission to send messages to channel " + ch.getName() + ".");
         } catch (Exception e) {
-            uchat.getUCLogger().warning("JDA: The channel ID is incorrect, not available or Discord is offline, in maintance or some other connection problem.");
+            uchat.getUCLogger().warning("JDA: The channel ID [" + id + "] is incorrect, not available or Discord is offline, in maintance or some other connection problem.");
             e.printStackTrace();
+        }
+    }
+
+    public void setPlayerRole(String ddUser, String ddRoleId, String ddGuild, String nick, List<String> configRoles){
+        try{
+            GuildController gc = this.jda.getGuildById(ddGuild).getController();
+            Member member = gc.getGuild().getMemberById(ddUser);
+            Role newRole = gc.getGuild().getRoleById(ddRoleId);
+            if (!nick.isEmpty() && !member.getNickname().equals(nick)){
+                gc.setNickname(member, nick).complete(true);
+            }
+            if (member.getRoles().contains(newRole)) return;
+
+            gc.modifyMemberRoles(member, new ArrayList<Role>(){{add(newRole);}}, member.getRoles().stream().filter(r -> configRoles.contains(r.getId())).collect(Collectors.toList())).complete(true);
+        } catch (Exception ex){
+            ex.printStackTrace();
         }
     }
 

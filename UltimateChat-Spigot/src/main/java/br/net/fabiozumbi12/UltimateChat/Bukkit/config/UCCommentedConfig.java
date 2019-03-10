@@ -60,13 +60,6 @@ public class UCCommentedConfig {
 
         setDefault("language", "EN-US", "Available languages: EN-US, PT-BR, FR-FR, FR-ES, HU-HU, RU, SP-ES and ZH-CN");
 
-        setDefault("jedis", null, "Jedis configuration.\nUse Jedis to send messages between other servers running Jedis.\nConsider a replecement as Bungeecoord.");
-        setDefault("jedis.enable", false, null);
-        setDefault("jedis.server-id", "&e[ChangeThis]&r ", "Change to a unique identification and use on tags with {jedis-id}.");
-        setDefault("jedis.ip", "localhost", null);
-        setDefault("jedis.port", 6379, null);
-        setDefault("jedis.pass", "", null);
-
         setDefault("discord", null, "Enable the two way chat into discord and minecraft.\nGenerate your bot token following this instructions: https://goo.gl/utfRRv");
         setDefault("discord.use", false, null);
         setDefault("discord.update-status", true, null);
@@ -198,7 +191,7 @@ public class UCCommentedConfig {
 
         setDefault("tags.admin-chat.format", "&b[&r{playername}&b] ", null);
 
-        setDefault("tags.bungee.format", "&7[{world}]{ch-color}[Bungee-{bungee-id}] {playername}: &7", null);
+        setDefault("tags.bungee.format", "&7[{world}]{ch-color}[bungee-{bungee-id}] {playername}: &7", null);
         setDefault("tags.bungee.hover-messages", Collections.singletonList("{ch-color}Sent from server -{bungee-id}-"), null);
 
         setDefault("tags.factions.format", "&7[{fac-relation-color}{fac-relation-name}&7]&r", null);

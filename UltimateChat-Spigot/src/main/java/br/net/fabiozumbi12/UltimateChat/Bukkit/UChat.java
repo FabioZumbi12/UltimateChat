@@ -28,9 +28,12 @@ package br.net.fabiozumbi12.UltimateChat.Bukkit;
 import at.pcgamingfreaks.MarriageMaster.Bukkit.MarriageMaster;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.API.UChatReloadEvent;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.API.uChatAPI;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.Bungee.UChatBungee;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.bungee.UChatBungee;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.config.UCConfig;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.config.UCLang;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.discord.UCDInterface;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.discord.UCDiscord;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.discord.UCDiscordSync;
 import com.lenis0012.bukkit.marriage2.Marriage;
 import com.lenis0012.bukkit.marriage2.MarriageAPI;
 import net.milkbowl.vault.chat.Chat;
@@ -95,6 +98,10 @@ public class UChat extends JavaPlugin {
     private Chat chat;
     private boolean isRelation;
     private uChatAPI ucapi;
+    private UCDiscordSync sync;
+    public UCDiscordSync getDDSync(){
+        return this.sync;
+    }
 
     public static UChat get() {
         return uchat;
@@ -120,7 +127,7 @@ public class UChat extends JavaPlugin {
         return this.config;
     }
 
-    UCDInterface getUCJDA() {
+    public UCDInterface getUCJDA() {
         return this.UCJDA;
     }
 
@@ -310,6 +317,7 @@ public class UChat extends JavaPlugin {
                     this.UCJDA = null;
                     this.logger.info("JDA is not available due errors before...");
                 } else {
+                    this.sync = new UCDiscordSync();
                     this.logger.info("JDA connected and ready to use!");
                 }
             }
@@ -406,6 +414,7 @@ public class UChat extends JavaPlugin {
     public void onDisable() {
         if (this.UCJDA != null) {
             this.UCJDA.sendRawToDiscord(lang.get("discord.stop"));
+            this.sync.unload();
             this.UCJDA.shutdown();
         }
         getUCLogger().info(getDescription().getFullName() + " disabled!");

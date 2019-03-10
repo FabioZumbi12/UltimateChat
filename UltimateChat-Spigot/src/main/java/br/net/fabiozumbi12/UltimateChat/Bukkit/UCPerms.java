@@ -36,7 +36,7 @@ public class UCPerms {
 
     private static final HashMap<String, Map<String, Boolean>> cachedPerm = new HashMap<>();
 
-    public static boolean hasPermission(CommandSender sender, String perm) {
+    static boolean hasPermission(CommandSender sender, String perm) {
         if (cachedPerm.containsKey(sender.getName())) {
             Map<String, Boolean> perms = cachedPerm.get(sender.getName());
             if (perms.containsKey(perm)) {
@@ -56,7 +56,7 @@ public class UCPerms {
         return sender.hasPermission(perm);
     }
 
-    public static boolean hasSpyPerm(CommandSender receiver, String ch) {
+    static boolean hasSpyPerm(CommandSender receiver, String ch) {
         return hasPerm(receiver, "chat-spy." + ch) || hasPerm(receiver, "chat-spy.all");
     }
 
@@ -78,7 +78,7 @@ public class UCPerms {
         return (!(toignore instanceof CommandSender) || !isAdmin((CommandSender) toignore)) && !hasPermission(sender, "uchat.cant-ignore." + (toignore instanceof Player ? ((Player) toignore).getName() : ((UCChannel) toignore).getName()));
     }
 
-    static boolean hasPerm(CommandSender p, String perm) {
+    public static boolean hasPerm(CommandSender p, String perm) {
         return isAdmin(p) || hasPermission(p, "uchat." + perm);
     }
 

@@ -34,6 +34,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -127,7 +128,7 @@ public class UCLang {
             Lang.put("_lang.version", UChat.get().getPDF().getVersion());
         }
         try {
-            Lang.store(new OutputStreamWriter(new FileOutputStream(pathLang), "UTF-8"), null);
+            Lang.store(new OutputStreamWriter(new FileOutputStream(pathLang), StandardCharsets.UTF_8), null);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -148,7 +149,7 @@ public class UCLang {
 
         FMsg = ChatColor.translateAlternateColorCodes('&', FMsg);
 
-        return FMsg;
+        return FMsg.replace("/n", "\n");
     }
 
     public void sendMessage(final Player p, String key) {

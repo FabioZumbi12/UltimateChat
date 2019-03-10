@@ -41,28 +41,28 @@ public class UCLogger {
     }
 
     public void sucess(String s) {
-        uchat.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "UltimateChat: [&a&l" + s + "&r]"));
+        uchat.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "[UltimateChat] &a&l" + s + "&r"));
     }
 
     public void info(String s) {
-        uchat.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "UltimateChat: [" + s + "&r]"));
+        uchat.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "[UltimateChat] " + s ));
     }
 
     public void warning(String s) {
-        uchat.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "UltimateChat: [&6" + s + "&r]"));
+        uchat.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "[UltimateChat] &6" + s + "&r"));
     }
 
     public void severe(String s) {
-        uchat.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "UltimateChat: [&c&l" + s + "&r]"));
+        uchat.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "[UltimateChat] &c&l" + s + "&r"));
     }
 
     public void log(String s) {
-        uchat.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "UltimateChat: [" + s + "&r]"));
+        uchat.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "[UltimateChat] " + s));
     }
 
     public void debug(String s) {
         if (UChat.get().getUCConfig() != null && UChat.get().getUCConfig().getBoolean("debug.messages")) {
-            uchat.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "UltimateChat: [&b" + s + "&r]"));
+            uchat.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "[UltimateChat] &b" + s + "&r"));
         }
     }
 

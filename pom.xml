@@ -77,7 +77,7 @@
             <url>http://repo.dmulloy2.net/content/groups/public/</url>
         </repository>
 
-        <!-- Bungee repo -->
+        <!-- bungee repo -->
         <repository>
             <id>bungeecord-repo</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>

@@ -27,7 +27,7 @@ package br.net.fabiozumbi12.UltimateChat.Bukkit;
 
 import br.net.fabiozumbi12.UltimateChat.Bukkit.API.PostFormatChatMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.API.SendChannelMessageEvent;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.Bungee.UChatBungee;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.bungee.UChatBungee;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UCLogger.timingType;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
