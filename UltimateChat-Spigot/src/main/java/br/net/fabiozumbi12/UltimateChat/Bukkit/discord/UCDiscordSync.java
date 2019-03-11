@@ -60,7 +60,7 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
         setDefault("group-ids", null,
                 "To get a role ID, mention the role with a \\ before it in a Discord channel (e.g. \\@rolename)\n" +
                         "The role need to be MENTIONABLE to allow you to get the id");
-        setDefault("group-ids.group-example", "1234567890123", null);
+        setDefault("group-ids.group-example", Collections.singletonList("1234567890123"), null);
 
 
         if (this.sync.getBoolean("enable-sync")) {
@@ -95,8 +95,13 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
                                     nick = p.getName();
                             }
                             String group = UChat.get().getVaultPerms().getPrimaryGroup(p);
-                            if (getDDRoleByInGameGroup(group) != null && (!this.sync.getBoolean("require-perms") || p.hasPermission("uchat.discord-sync.role." + getDDRoleByInGameGroup(group)))) {
-                                UChat.get().getUCJDA().setPlayerRole(pId, getDDRoleByInGameGroup(group), nick, getConfigRoles());
+                            List<String> roles = getDDRoleByInGameGroup(group);
+
+                            if (this.sync.getBoolean("require-perms"))
+                                roles.removeIf(r -> !p.hasPermission("uchat.discord-sync.role." + r));
+
+                            if (!roles.isEmpty()) {
+                                UChat.get().getUCJDA().setPlayerRole(pId, roles, nick, getConfigRoles());
                             }
 
                             delay[0] += 10;
@@ -190,9 +195,8 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
         return this.sync.getString("sync-database.sync-players." + player);
     }
 
-    private @Nullable
-    String getDDRoleByInGameGroup(String group) {
-        return this.sync.getString("group-ids." + group, null);
+    private List<String> getDDRoleByInGameGroup(String group) {
+        return this.sync.getStringList("group-ids." + group);
     }
 
     private List<String> getConfigRoles() {
@@ -240,7 +244,9 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
 
         //d-sync addgroup group id
         if (args.length == 3 && args[0].equalsIgnoreCase("addgroup") && commandSender.hasPermission("uchat.discord-sync.cmd.addgroup")) {
-            this.sync.set("group-ids." + args[1], args[2]);
+            List<String> groups = this.sync.getStringList("group-ids." + args[1]);
+            if (!groups.contains(args[2])) groups.add(args[2]);
+            this.sync.set("group-ids." + args[1], groups);
             saveConfig();
             UChat.get().getLang().sendMessage(commandSender,  UChat.get().getLang().get("discord.sync-groupadded")
                     .replace("{group}", args[1])
