@@ -67,6 +67,7 @@ public class UCLang {
         loadLang();
         loadBaseLang();
         UChat.get().getUCLogger().info("Language file loaded - Using: " + UChat.get().getUCConfig().getString("language"));
+        if (!UChat.get().getUCConfig().getString("language").equalsIgnoreCase("EN-US")) UChat.get().getUCLogger().info("Translation by " + get("_tranlationBy"));
     }
 
     public SortedSet<String> helpStrings() {
@@ -89,7 +90,7 @@ public class UCLang {
         BaseLang.clear();
         try {
             InputStream fileInput = UChat.get().getResource("assets/ultimatechat/langEN-US.properties");
-            Reader reader = new InputStreamReader(fileInput, "UTF-8");
+            Reader reader = new InputStreamReader(fileInput, StandardCharsets.UTF_8);
             BaseLang.load(reader);
         } catch (Exception e) {
             e.printStackTrace();
@@ -101,7 +102,7 @@ public class UCLang {
         Lang.clear();
         try {
             FileInputStream fileInput = new FileInputStream(pathLang);
-            Reader reader = new InputStreamReader(fileInput, "UTF-8");
+            Reader reader = new InputStreamReader(fileInput, StandardCharsets.UTF_8);
             Lang.load(reader);
         } catch (Exception e) {
             e.printStackTrace();
@@ -167,9 +168,7 @@ public class UCLang {
 
         DelayedMessage.put(p, key);
         Bukkit.getScheduler().scheduleSyncDelayedTask(UChat.get(), () -> {
-            if (DelayedMessage.containsKey(p)) {
-                DelayedMessage.remove(p);
-            }
+            DelayedMessage.remove(p);
         }, 20);
     }
 
@@ -190,14 +189,8 @@ public class UCLang {
             final Player p = (Player) sender;
             DelayedMessage.put(p, key);
             Bukkit.getScheduler().scheduleSyncDelayedTask(UChat.get(), () -> {
-                if (DelayedMessage.containsKey(p)) {
-                    DelayedMessage.remove(p);
-                }
+                DelayedMessage.remove(p);
             }, 20);
         }
-    }
-
-    public boolean containsValue(String value) {
-        return Lang.containsValue(value);
     }
 }

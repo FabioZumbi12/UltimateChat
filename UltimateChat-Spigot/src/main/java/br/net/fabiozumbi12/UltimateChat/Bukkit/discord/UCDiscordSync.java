@@ -48,6 +48,7 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
         setDefault("discord-cmds.connect", ";;connect", "Private BOT command to allow users to use the code for Discord in-game connection");
 
         setDefault("guild-id", "", "The guild ID");
+        setDefault("require-perms", false, "Use permissions or just set the rank if the player is on group set on config?");
 
         setDefault("sync-database.pending-codes", null, "Pending connection codes will be here!");
         setDefault("sync-database.sync-players", null, "Connected players will be here!");
@@ -94,7 +95,7 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
                                     nick = p.getName();
                             }
                             String group = UChat.get().getVaultPerms().getPrimaryGroup(p);
-                            if (getDDRoleByInGameGroup(group) != null && p.hasPermission("uchat.discord-sync.role." + getDDRoleByInGameGroup(group))) {
+                            if (getDDRoleByInGameGroup(group) != null && (!this.sync.getBoolean("require-perms") || p.hasPermission("uchat.discord-sync.role." + getDDRoleByInGameGroup(group)))) {
                                 UChat.get().getUCJDA().setPlayerRole(pId, getDDRoleByInGameGroup(group), nick, getConfigRoles());
                             }
 
@@ -200,7 +201,7 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
         return roles;
     }
 
-    public void unlink(String player){
+    void unlink(String player){
         this.sync.set("sync-database.sync-players." + player, null);
         saveConfig();
     }
@@ -223,7 +224,17 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
             commandSender.sendMessage(ChatColor.AQUA + "---------------- " + UChat.get().getPDF().getFullName() + " ----------------");
             commandSender.sendMessage(ChatColor.AQUA + "Developed by " + ChatColor.GOLD + UChat.get().getPDF().getAuthors() + ".");
             commandSender.sendMessage(ChatColor.AQUA + "Discord Sync Commands [" + ChatColor.GOLD + "/" + s + " gen|unlink" + ChatColor.AQUA + "].");
-            commandSender.sendMessage(ChatColor.AQUA + "---------------------------------------------------");
+            commandSender.sendMessage(ChatColor.AQUA + "-----------------------------------------------------");
+            return true;
+        }
+
+        //d-sync list
+        if (args.length == 1 && args[0].equalsIgnoreCase("list") && commandSender.hasPermission("uchat.discord-sync.cmd.addgroup")) {
+            StringBuilder list = new StringBuilder();
+            for (String key : this.sync.getConfigurationSection("group-ids").getKeys(false)) {
+                list.append("&3- ").append(key).append(": &b").append(this.sync.getString("group-ids." + key)).append("\n");
+            }
+            UChat.get().getLang().sendMessage(commandSender,  UChat.get().getLang().get("discord.sync-group-list") + "\n" + list.toString());
             return true;
         }
 
@@ -234,6 +245,15 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
             UChat.get().getLang().sendMessage(commandSender,  UChat.get().getLang().get("discord.sync-groupadded")
                     .replace("{group}", args[1])
                     .replace("{id}", args[2]));
+            return true;
+        }
+
+        //d-sync removegroup group id
+        if (args.length == 2 && args[0].equalsIgnoreCase("removegroup") && commandSender.hasPermission("uchat.discord-sync.cmd.addgroup")) {
+            this.sync.set("group-ids." + args[1], null);
+            saveConfig();
+            UChat.get().getLang().sendMessage(commandSender,  UChat.get().getLang().get("discord.sync-groupremoved")
+                    .replace("{group}", args[1]));
             return true;
         }
 
@@ -307,8 +327,12 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
                 tab.add("gen");
             if (commandSender.hasPermission("uchat.discord-sync.cmd.unlink"))
                 tab.add("unlink");
-            if (commandSender.hasPermission("uchat.discord-sync.cmd.addgroup"))
+            if (commandSender.hasPermission("uchat.discord-sync.cmd.addgroup")){
                 tab.add("addgroup");
+                tab.add("removegroup");
+                tab.add("list");
+            }
+
         }
         return tab;
     }
@@ -328,7 +352,7 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
         comments.put(key, comment);
     }
 
-    public void saveConfig() {
+    private void saveConfig() {
         StringBuilder b = new StringBuilder();
         this.sync.options().header(null);
 
