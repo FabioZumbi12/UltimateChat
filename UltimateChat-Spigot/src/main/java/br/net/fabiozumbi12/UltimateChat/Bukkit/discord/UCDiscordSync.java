@@ -226,6 +226,17 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
             commandSender.sendMessage(ChatColor.AQUA + "---------------------------------------------------");
             return true;
         }
+
+        //d-sync addgroup group id
+        if (args.length == 3 && args[0].equalsIgnoreCase("addgroup") && commandSender.hasPermission("uchat.discord-sync.cmd.addgroup")) {
+            this.sync.set("group-ids." + args[1], args[2]);
+            saveConfig();
+            UChat.get().getLang().sendMessage(commandSender,  UChat.get().getLang().get("discord.sync-groupadded")
+                    .replace("{group}", args[1])
+                    .replace("{id}", args[2]));
+            return true;
+        }
+
         //d-sync generate
         if (args[0].equalsIgnoreCase("gen") && commandSender.hasPermission("uchat.discord-sync.cmd.generate")) {
             if (args.length == 1 && commandSender instanceof Player) {
@@ -296,6 +307,8 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
                 tab.add("gen");
             if (commandSender.hasPermission("uchat.discord-sync.cmd.unlink"))
                 tab.add("unlink");
+            if (commandSender.hasPermission("uchat.discord-sync.cmd.addgroup"))
+                tab.add("addgroup");
         }
         return tab;
     }
