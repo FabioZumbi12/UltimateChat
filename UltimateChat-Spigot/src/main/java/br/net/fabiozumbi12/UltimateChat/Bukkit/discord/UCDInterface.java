@@ -45,7 +45,7 @@ public interface UCDInterface {
 
     int getTaskId();
 
-    void setPlayerRole(String ddUser, String ddRoleName, String ddGuild, String nick, List<String> configRoles);
+    void setPlayerRole(String ddUser, String ddRoleName, String nick, List<String> configRoles);
 
     void shutdown();
 }

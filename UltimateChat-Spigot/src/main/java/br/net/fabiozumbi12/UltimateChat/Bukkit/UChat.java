@@ -99,12 +99,13 @@ public class UChat extends JavaPlugin {
     private boolean isRelation;
     private uChatAPI ucapi;
     private UCDiscordSync sync;
-    public UCDiscordSync getDDSync(){
-        return this.sync;
-    }
 
     public static UChat get() {
         return uchat;
+    }
+
+    public UCDiscordSync getDDSync() {
+        return this.sync;
     }
 
     public HashMap<List<String>, UCChannel> getChannels() {
@@ -424,21 +425,23 @@ public class UChat extends JavaPlugin {
      * Needed to be called after register or unregister channels.
      */
     void registerAliases() {
-        registerAliases("channel", getChAliases(), true);
-        registerAliases("tell", config.getTellAliases(), true);
-        registerAliases("umsg", config.getMsgAliases(), true);
-        registerAliases("ubroadcast", config.getBroadcastAliases(), config.getBoolean("broadcast.enable"));
+        registerAliases("channel", getChAliases(), true, null, listener);
+        registerAliases("tell", config.getTellAliases(), true, null, listener);
+        registerAliases("umsg", config.getMsgAliases(), true, null, listener);
+        registerAliases("ubroadcast", config.getBroadcastAliases(), config.getBoolean("broadcast.enable"), null, listener);
     }
 
-    private void registerAliases(String name, List<String> aliases, boolean shouldReg) {
+    public void registerAliases(String name, List<String> aliases, boolean shouldReg, String perm, Object cmdListener) {
         List<String> aliases1 = new ArrayList<>(aliases);
 
         for (Command cmd : PluginCommandYamlParser.parse(uchat)) {
             if (cmd.getName().equals(name)) {
                 if (shouldReg) {
-                    getServer().getPluginCommand(name).setExecutor(listener);
+                    getServer().getPluginCommand(name).setExecutor((CommandExecutor) cmdListener);
+                    getServer().getPluginCommand(name).setTabCompleter((TabCompleter) cmdListener);
                     cmd.setAliases(aliases1);
                     cmd.setLabel(name);
+                    if (perm != null) cmd.setPermission(perm);
                 }
                 try {
                     Field field = SimplePluginManager.class.getDeclaredField("commandMap");
@@ -447,7 +450,8 @@ public class UChat extends JavaPlugin {
                     if (shouldReg) {
                         Method register = commandMap.getClass().getMethod("register", String.class, Command.class);
                         register.invoke(commandMap, cmd.getName(), cmd);
-                        ((PluginCommand) cmd).setExecutor(listener);
+                        ((PluginCommand) cmd).setExecutor((CommandExecutor) cmdListener);
+                        ((PluginCommand) cmd).setTabCompleter((TabCompleter) cmdListener);
                     } else if (getServer().getPluginCommand(name).isRegistered()) {
                         getServer().getPluginCommand(name).unregister(commandMap);
                     }

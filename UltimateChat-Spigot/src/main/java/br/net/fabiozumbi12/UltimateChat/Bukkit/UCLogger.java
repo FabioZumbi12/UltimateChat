@@ -45,7 +45,7 @@ public class UCLogger {
     }
 
     public void info(String s) {
-        uchat.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "[UltimateChat] " + s ));
+        uchat.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "[UltimateChat] " + s));
     }
 
     public void warning(String s) {

@@ -108,12 +108,13 @@ public class UChat {
     private HashMap<List<String>, UCChannel> channels;
     private UCPixelmonListener pixelListener;
     private UChatBungee bungee;
-    public UChatBungee getBungee(){
-        return this.bungee;
-    }
 
     public static UChat get() {
         return uchat;
+    }
+
+    public UChatBungee getBungee() {
+        return this.bungee;
     }
 
     public UCLogger getLogger() {

@@ -17,10 +17,7 @@ import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import static org.bukkit.Bukkit.getServer;
 
@@ -29,7 +26,7 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
     private YamlConfiguration sync;
     private int taskId = 0;
 
-    public UCDiscordSync(){
+    public UCDiscordSync() {
         this.comments = new HashMap<>();
         this.sync = new YamlConfiguration();
 
@@ -45,10 +42,15 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
         setDefault("enable-sync", false, "Enable Discord Sync?\n" +
                 "You need to setup the BOT TOKEN on config.yml and enable Discord first");
 
+        setDefault("discord-cmds.admin-roles", new ArrayList<>(), "Roles allowed to use the admin commands");
+        setDefault("discord-cmds.admin", ";;admin", "Private BOT command to manage user connections");
+        setDefault("discord-cmds.help", ";;help", "Private BOT command to admin commands");
+        setDefault("discord-cmds.connect", ";;connect", "Private BOT command to allow users to use the code for Discord in-game connection");
+
         setDefault("guild-id", "", "The guild ID");
+
         setDefault("sync-database.pending-codes", null, "Pending connection codes will be here!");
         setDefault("sync-database.sync-players", null, "Connected players will be here!");
-        setDefault("discord-cmd-connect", ";;connect", "This is the command the player need to use on BOT Private message with code");
         setDefault("sync-database", null, "All stored players and pendent codes! Try to do not edit this manually!");
         setDefault("update-interval", 5, "Interval in minutes to send role updates to Discord");
         setDefault("name.to-discord", false, "Change the discord nickname to IN-GAME name?");
@@ -57,11 +59,11 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
         setDefault("group-ids", null,
                 "To get a role ID, mention the role with a \\ before it in a Discord channel (e.g. \\@rolename)\n" +
                         "The role need to be MENTIONABLE to allow you to get the id");
-        setDefault("group-ids.group-example", "1234567890123",null);
+        setDefault("group-ids.group-example", "1234567890123", null);
 
 
-        if (this.sync.getBoolean("enable-sync")){
-            if (getServer().getPluginCommand("discord-sync").isRegistered()){
+        if (this.sync.getBoolean("enable-sync")) {
+            if (getServer().getPluginCommand("discord-sync").isRegistered()) {
                 try {
                     Field field = SimplePluginManager.class.getDeclaredField("commandMap");
                     field.setAccessible(true);
@@ -71,29 +73,29 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
                 }
             }
 
-            getServer().getPluginCommand("discord-sync").setExecutor(this);
+            UChat.get().registerAliases("discord-sync", Arrays.asList("discord-sync","dd-sync"), true, "uchat.discord-sync.cmd.base", this);
 
             final int interval = this.sync.getInt("update-interval");
-            taskId = Bukkit.getScheduler().runTaskTimerAsynchronously(UChat.get(), ()->{
+            taskId = Bukkit.getScheduler().runTaskTimerAsynchronously(UChat.get(), () -> {
                 if (this.sync.getConfigurationSection("group-ids").getValues(false).isEmpty())
                     return;
 
                 final int[] delay = {0};
                 Bukkit.getOnlinePlayers().forEach(p -> {
-                    if (getPlayerDDId(p.getName()) != null){
+                    if (getPlayerDDId(p.getName()) != null) {
                         String pId = getPlayerDDId(p.getName());
-                        Bukkit.getScheduler().runTaskLaterAsynchronously(UChat.get(), ()->{
+                        Bukkit.getScheduler().runTaskLaterAsynchronously(UChat.get(), () -> {
 
                             String nick = "";
-                            if (this.sync.getBoolean("name.to-discord")){
+                            if (this.sync.getBoolean("name.to-discord")) {
                                 if (this.sync.getBoolean("name.display-name"))
                                     nick = p.getDisplayName();
                                 else
                                     nick = p.getName();
                             }
                             String group = UChat.get().getVaultPerms().getPrimaryGroup(p);
-                            if (getDDRoleByInGameGroup(group) != null && p.hasPermission("uchat.discord-sync.role."+getDDRoleByInGameGroup(group))){
-                                UChat.get().getUCJDA().setPlayerRole(pId, getDDRoleByInGameGroup(group), this.sync.getString("guild-id"), nick, getConfigRoles());
+                            if (getDDRoleByInGameGroup(group) != null && p.hasPermission("uchat.discord-sync.role." + getDDRoleByInGameGroup(group))) {
+                                UChat.get().getUCJDA().setPlayerRole(pId, getDDRoleByInGameGroup(group), nick, getConfigRoles());
                             }
 
                             delay[0] += 10;
@@ -108,16 +110,42 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
         saveConfig();
     }
 
-    public void unload(){
+    public void unload() {
         Bukkit.getScheduler().cancelTask(this.taskId);
     }
 
-    String getDDCommand(){
-        return this.sync.getString("discord-cmd-connect");
+    String getConnectedPlayers(){
+        StringBuilder list = new StringBuilder();
+        try {
+            for (String key : this.sync.getConfigurationSection("sync-database.sync-players").getKeys(false)) {
+                list.append(key).append(": `").append(this.sync.getString("sync-database.sync-players." + key)).append("`\n");
+            }
+        } catch (Exception ignored){}
+        return list.toString();
     }
 
-    private boolean addPendingCode(String player, String code){
-        if (getPlayerDDId(player) != null){
+    @Nullable String getGuidId(){
+        return this.sync.getString("guild-id");
+    }
+
+    boolean isDDAdminRole(String role) {
+        return this.sync.getStringList("discord-cmds.admin-roles").contains(role);
+    }
+
+    String getDDAdminCommand() {
+        return this.sync.getString("discord-cmds.admin");
+    }
+
+    String getDDCommand() {
+        return this.sync.getString("discord-cmds.connect");
+    }
+
+    String getDDHelpCommand() {
+        return this.sync.getString("discord-cmds.help");
+    }
+
+    private boolean addPendingCode(String player, String code) {
+        if (getPlayerDDId(player) != null) {
             return false;
         }
         this.sync.set("sync-database.pending-codes." + code, player);
@@ -125,46 +153,56 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
         return true;
     }
 
-    @Nullable String getPlayerPending(String player){
-        try{
-            for (String key:this.sync.getConfigurationSection("sync-database.pending-codes").getKeys(false)){
+    @Nullable
+    private String getPlayerPending(String player) {
+        try {
+            for (String key : this.sync.getConfigurationSection("sync-database.pending-codes").getKeys(false)) {
                 if (this.sync.getString("sync-database.pending-codes." + key).equals(player)) return key;
             }
-        } catch (Exception ignored){}
+        } catch (Exception ignored) {
+        }
         return null;
     }
 
-    String getPendentCode(String code){
+    String getPendentCode(String code) {
         return this.sync.getString("sync-database.pending-codes." + code);
     }
 
-    void setPlayerDDId(String ddId, String nickName, String code){
-        this.sync.set("sync-database.pending-codes." + code, null);
+    void setPlayerDDId(String ddId, String nickName,@Nullable String code) {
+        if (code != null) this.sync.set("sync-database.pending-codes." + code, null);
         this.sync.set("sync-database.sync-players." + nickName, ddId);
         saveConfig();
     }
 
-    String getSyncNickName(String ddId){
+    @Nullable String getSyncNickName(String ddId) {
         try {
-            for (String key:this.sync.getConfigurationSection("sync-database.sync-players").getKeys(false)){
+            for (String key : this.sync.getConfigurationSection("sync-database.sync-players").getKeys(false)) {
                 if (this.sync.getString("sync-database.sync-players." + key).equals(ddId)) return key;
             }
-        } catch (Exception ignored){}
+        } catch (Exception ignored) {
+        }
         return null;
     }
 
-    private @Nullable String getDDRoleByInGameGroup(String group){
+    @Nullable
+    String getPlayerDDId(String player) {
+        return this.sync.getString("sync-database.sync-players." + player);
+    }
+
+    private @Nullable
+    String getDDRoleByInGameGroup(String group) {
         return this.sync.getString("group-ids." + group, null);
     }
 
-    private List<String> getConfigRoles(){
+    private List<String> getConfigRoles() {
         List<String> roles = new ArrayList<>();
         this.sync.getConfigurationSection("group-ids").getKeys(false).forEach(k -> roles.add(this.sync.getString("group-ids." + k)));
         return roles;
     }
 
-    private @Nullable String getPlayerDDId(String player){
-        return this.sync.getString("sync-database.sync-players." + player, null);
+    public void unlink(String player){
+        this.sync.set("sync-database.sync-players." + player, null);
+        saveConfig();
     }
 
     private String getSaltString() {
@@ -176,13 +214,12 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
             salt.append(SALTCHARS.charAt(index));
         }
         return salt.toString();
-
     }
 
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
-        if (args.length == 0){
+        if (args.length == 0) {
             commandSender.sendMessage(ChatColor.AQUA + "---------------- " + UChat.get().getPDF().getFullName() + " ----------------");
             commandSender.sendMessage(ChatColor.AQUA + "Developed by " + ChatColor.GOLD + UChat.get().getPDF().getAuthors() + ".");
             commandSender.sendMessage(ChatColor.AQUA + "Discord Sync Commands [" + ChatColor.GOLD + "/" + s + " gen|unlink" + ChatColor.AQUA + "].");
@@ -190,36 +227,36 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
             return true;
         }
         //d-sync generate
-        if (args[0].equalsIgnoreCase("gen") && commandSender.hasPermission("uchat.discord-sync.cmd.generate")){
-            if (args.length == 1 && commandSender instanceof Player){
-                Player p = (Player)commandSender;
+        if (args[0].equalsIgnoreCase("gen") && commandSender.hasPermission("uchat.discord-sync.cmd.generate")) {
+            if (args.length == 1 && commandSender instanceof Player) {
+                Player p = (Player) commandSender;
                 String code = getSaltString();
-                if (getPlayerPending(p.getName()) != null){
+                if (getPlayerPending(p.getName()) != null) {
                     code = getPlayerPending(p.getName());
                 }
-                if (addPendingCode(p.getName(), code)){
-                    UltimateFancy fancy = new UltimateFancy(UChat.get().getLang().get("_UChat.prefix")+" "+UChat.get().getLang().get("discord.sync-done").replace("{code}", code));
+                if (addPendingCode(p.getName(), code)) {
+                    UltimateFancy fancy = new UltimateFancy(UChat.get().getLang().get("_UChat.prefix") + " " + UChat.get().getLang().get("discord.sync-done").replace("{code}", code));
                     fancy.hoverShowText(UChat.get().getLang().get("discord.sync-click"));
                     fancy.clickSuggestCmd(code);
                     fancy.send(p);
                 } else {
-                    UltimateFancy fancy = new UltimateFancy(UChat.get().getLang().get("_UChat.prefix")+" "+UChat.get().getLang().get("discord.sync-fail"));
+                    UltimateFancy fancy = new UltimateFancy(UChat.get().getLang().get("_UChat.prefix") + " " + UChat.get().getLang().get("discord.sync-fail"));
                     fancy.send(p);
                 }
             }
-            if (args.length == 2 && commandSender.hasPermission("uchat.discord-sync.cmd.generate.others")){
+            if (args.length == 2 && commandSender.hasPermission("uchat.discord-sync.cmd.generate.others")) {
                 String p = args[1];
                 String code = getSaltString();
-                if (getPlayerPending(p) != null){
+                if (getPlayerPending(p) != null) {
                     code = getPlayerPending(p);
                 }
-                if (addPendingCode(p, code)){
-                    UltimateFancy fancy = new UltimateFancy(UChat.get().getLang().get("_UChat.prefix")+" "+UChat.get().getLang().get("discord.sync-done").replace("{code}", code));
+                if (addPendingCode(p, code)) {
+                    UltimateFancy fancy = new UltimateFancy(UChat.get().getLang().get("_UChat.prefix") + " " + UChat.get().getLang().get("discord.sync-done").replace("{code}", code));
                     fancy.hoverShowText(UChat.get().getLang().get("discord.sync-click"));
                     fancy.clickSuggestCmd(code);
                     fancy.send(commandSender);
                 } else {
-                    UltimateFancy fancy = new UltimateFancy(UChat.get().getLang().get("_UChat.prefix")+" "+UChat.get().getLang().get("discord.sync-fail"));
+                    UltimateFancy fancy = new UltimateFancy(UChat.get().getLang().get("_UChat.prefix") + " " + UChat.get().getLang().get("discord.sync-fail"));
                     fancy.send(commandSender);
                 }
             }
@@ -227,22 +264,20 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
         }
 
         //d-sync unlink
-        if (args[0].equalsIgnoreCase("unlink") && commandSender.hasPermission("uchat.discord-sync.cmd.unlink")){
-            if (args.length == 1 && commandSender instanceof Player){
-                Player p = (Player)commandSender;
-                if (getPlayerDDId(p.getName()) != null){
-                    this.sync.set("sync-database.sync-players." + p.getName(), null);
-                    saveConfig();
+        if (args[0].equalsIgnoreCase("unlink") && commandSender.hasPermission("uchat.discord-sync.cmd.unlink")) {
+            if (args.length == 1 && commandSender instanceof Player) {
+                Player p = (Player) commandSender;
+                if (getPlayerDDId(p.getName()) != null) {
+                    unlink(p.getName());
                     UChat.get().getLang().sendMessage(p, "discord.sync-unlink");
                 } else {
                     UChat.get().getLang().sendMessage(p, "discord.sync-notlink");
                 }
             }
-            if (args.length == 2 && commandSender.hasPermission("uchat.discord-sync.cmd.unlink.others")){
+            if (args.length == 2 && commandSender.hasPermission("uchat.discord-sync.cmd.unlink.others")) {
                 String p = args[1];
-                if (getPlayerDDId(p) != null){
-                    this.sync.set("sync-database.sync-players." + p, null);
-                    saveConfig();
+                if (getPlayerDDId(p) != null) {
+                    unlink(p);
                     UChat.get().getLang().sendMessage(commandSender, "discord.sync-unlink");
                 } else {
                     UChat.get().getLang().sendMessage(commandSender, "discord.sync-notlink");
@@ -256,7 +291,7 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] args) {
         List<String> tab = new ArrayList<>();
-        if (args.length == 1){
+        if (args.length == 1) {
             if (commandSender.hasPermission("uchat.discord-sync.cmd.generate"))
                 tab.add("gen");
             if (commandSender.hasPermission("uchat.discord-sync.cmd.unlink"))
@@ -295,6 +330,7 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
                 + "\n"
                 + "# IMPORTANT NOTE: The BOT need to have a role assigned with MANAGE ROLES and MANAGE NICKNAMES\n"
                 + "# granted, and this role need to be UNDER other roles you want to give to your Discord members!\n"
+                + "# Check our WIKI to see how to setup Synchronization: https://bit.ly/2F3UoRf"
                 + "\n");
 
         for (String line : this.sync.getKeys(true)) {
@@ -302,7 +338,7 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
             StringBuilder spaces = new StringBuilder();
             for (int i = 0; i < key.length; i++) {
                 if (i == 0) continue;
-                spaces.append(" ");
+                spaces.append("  ");
             }
             if (comments.containsKey(line)) {
                 if (spaces.length() == 0) {

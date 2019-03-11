@@ -27,7 +27,6 @@ package br.net.fabiozumbi12.UltimateChat.Sponge;
 
 import br.net.fabiozumbi12.UltimateChat.Sponge.API.PostFormatChatMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.Sponge.API.SendChannelMessageEvent;
-import br.net.fabiozumbi12.UltimateChat.Sponge.Bungee.UChatBungee;
 import br.net.fabiozumbi12.UltimateChat.Sponge.UCLogger.timingType;
 import io.github.nucleuspowered.nucleus.api.NucleusAPI;
 import me.rojo8399.placeholderapi.PlaceholderService;
@@ -254,7 +253,8 @@ public class UCMessages {
 
         if (channel != null && !channel.isTell() && channel.isBungee()) {
             UChat.get().getBungee().sendBungee(channel, msgPlayers.get(sender));
-        } msgPlayers.forEach((send, text) -> {
+        }
+        msgPlayers.forEach((send, text) -> {
             UChat.get().getLogger().timings(timingType.END, "UCMessages#send()|before send");
             send.sendMessage(text);
             UChat.get().getLogger().timings(timingType.END, "UCMessages#send()|after send");

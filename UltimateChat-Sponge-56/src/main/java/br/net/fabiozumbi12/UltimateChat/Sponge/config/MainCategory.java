@@ -64,6 +64,9 @@ public class MainCategory {
             + "When finish, get the name of your tag and put on \"general.default-tag-build\" \n"
             + "or on channel builder on \"channels\" folder.")
     public Map<String, TagsCategory> tags = defaultTags();
+    //BungeeCoord
+    @Setting()
+    public BungeeCat bungee = new BungeeCat();
 
     public MainCategory() {
     }
@@ -83,10 +86,6 @@ public class MainCategory {
         myMap.put("jedis", new TagsCategory("{server-id}", null, Arrays.asList("&7Server: {jedis-id}", "&cChange me on configuration!"), null, null, null, null));
         return myMap;
     }
-
-    //BungeeCoord
-    @Setting()
-    public BungeeCat bungee = new BungeeCat();
 
     @ConfigSerializable
     public static class BungeeCat {
