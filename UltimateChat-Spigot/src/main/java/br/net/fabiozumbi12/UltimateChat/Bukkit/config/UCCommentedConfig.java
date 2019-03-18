@@ -65,9 +65,10 @@ public class UCCommentedConfig {
         setDefault("discord.update-status", true, null);
         setDefault("discord.game-type", "DEFAULT", "The default status of bot. Available status: DEFAULT, LISTENING, WATCHING and STREAMING\"");
         setDefault("discord.twitch", "", "If game-type = STREAMING, set the twitch url.");
-        setDefault("discord.token", "", null);
+        setDefault("discord.token", "", "Follow this instructions to generate your token: https://goo.gl/5Do8LJ");
         setDefault("discord.log-channel-id", "", null);
         setDefault("discord.tell-channel-id", "", "Channel id to spy private messages");
+        setDefault("discord.log-ignored-commands", new ArrayList<>(), "In-Game commands to do not send to discord\nThis is the commands names, not aliases without arguments and without \\");
         setDefault("discord.commands-channel-id", "", "Channel id to send commands issued by players.");
         setDefault("discord.vanish-perm", "essentials.vanish", "Set your vanish plugin pemrissions here to do not announce player join/leave players with this permission.");
         setDefault("discord.server-commands", null, "Put the id on 'commands-channel-id' option or/and enable server commands on channel configuration to use this.");

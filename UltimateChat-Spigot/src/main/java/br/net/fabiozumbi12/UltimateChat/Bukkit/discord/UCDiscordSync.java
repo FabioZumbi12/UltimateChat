@@ -62,18 +62,17 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
                         "The role need to be MENTIONABLE to allow you to get the id");
         setDefault("group-ids.group-example", Collections.singletonList("1234567890123"), null);
 
+        if (getServer().getPluginCommand("discord-sync").isRegistered()) {
+            try {
+                Field field = SimplePluginManager.class.getDeclaredField("commandMap");
+                field.setAccessible(true);
+                getServer().getPluginCommand("discord-sync").unregister((CommandMap) (field.get(getServer().getPluginManager())));
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
 
         if (this.sync.getBoolean("enable-sync")) {
-            if (getServer().getPluginCommand("discord-sync").isRegistered()) {
-                try {
-                    Field field = SimplePluginManager.class.getDeclaredField("commandMap");
-                    field.setAccessible(true);
-                    getServer().getPluginCommand("discord-sync").unregister((CommandMap) (field.get(getServer().getPluginManager())));
-                } catch (NoSuchFieldException | IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-            }
-
             UChat.get().registerAliases("discord-sync", Arrays.asList("discord-sync","dd-sync"), true, "uchat.discord-sync.cmd.base", this);
 
             final int interval = this.sync.getInt("update-interval");
@@ -201,7 +200,7 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
 
     private List<String> getConfigRoles() {
         List<String> roles = new ArrayList<>();
-        this.sync.getConfigurationSection("group-ids").getKeys(false).forEach(k -> roles.add(this.sync.getString("group-ids." + k)));
+        this.sync.getConfigurationSection("group-ids").getKeys(false).forEach(k -> roles.addAll(this.sync.getStringList("group-ids." + k)));
         return roles;
     }
 
@@ -254,7 +253,7 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
             return true;
         }
 
-        //d-sync removegroup group id
+        //d-sync removegroup group
         if (args.length == 2 && args[0].equalsIgnoreCase("removegroup") && commandSender.hasPermission("uchat.discord-sync.cmd.addgroup")) {
             this.sync.set("group-ids." + args[1], null);
             saveConfig();

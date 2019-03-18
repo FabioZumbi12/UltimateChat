@@ -33,6 +33,9 @@ import br.net.fabiozumbi12.UltimateChat.Sponge.Listeners.UCPixelmonListener;
 import br.net.fabiozumbi12.UltimateChat.Sponge.config.UCConfig;
 import br.net.fabiozumbi12.UltimateChat.Sponge.config.UCLang;
 import br.net.fabiozumbi12.UltimateChat.Sponge.config.VersionData;
+import br.net.fabiozumbi12.UltimateChat.Sponge.discord.UCDInterface;
+import br.net.fabiozumbi12.UltimateChat.Sponge.discord.UCDiscord;
+import br.net.fabiozumbi12.UltimateChat.Sponge.discord.UCDiscordSync;
 import com.google.inject.Inject;
 import ninja.leaping.configurate.objectmapping.GuiceObjectMapperFactory;
 import org.spongepowered.api.Game;
@@ -108,9 +111,14 @@ public class UChat {
     private HashMap<List<String>, UCChannel> channels;
     private UCPixelmonListener pixelListener;
     private UChatBungee bungee;
+    private UCDiscordSync sync;
 
     public static UChat get() {
         return uchat;
+    }
+
+    public UCDiscordSync getDDSync() {
+        return this.sync;
     }
 
     public UChatBungee getBungee() {
@@ -297,7 +305,7 @@ public class UChat {
         Sponge.getEventManager().post(event);
     }
 
-    protected void registerJDA() {
+    private void registerJDA() {
         if (checkJDA()) {
             this.logger.info("JDA LibLoader is present...");
             if (this.UCJDA != null) {
@@ -320,6 +328,7 @@ public class UChat {
                     this.logger.info("JDA is not available due errors before.\n" +
                             "Hint: If you updated UChat, check if you need to update JDALibLoader too!");
                 } else {
+                    this.sync = new UCDiscordSync(this.factory);
                     this.logger.info("JDA connected and ready to use!");
                 }
             }
@@ -356,6 +365,7 @@ public class UChat {
     @Listener
     public void onStopServer(GameStoppedServerEvent e) {
         if (this.UCJDA != null) {
+            this.sync.unload();
             this.UCJDA.shutdown();
         }
         get().getLogger().info(plugin.getName() + " disabled!");

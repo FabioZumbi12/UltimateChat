@@ -909,7 +909,8 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onCommand(PlayerCommandPreprocessEvent e) {
         Player p = e.getPlayer();
-        if (UChat.get().getUCJDA() != null) {
+        Command cmd = Bukkit.getPluginCommand(e.getMessage().split(" ")[0].substring(1));
+        if (UChat.get().getUCJDA() != null && cmd != null && !UChat.get().getUCConfig().getString("discord.log-ignored-commands").contains(cmd.getName())) {
             Calendar cal = Calendar.getInstance();
             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
             UChat.get().getUCJDA().sendCommandsToDiscord(UChat.get().getLang().get("discord.command")
