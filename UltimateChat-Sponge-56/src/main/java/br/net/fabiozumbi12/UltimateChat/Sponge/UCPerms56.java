@@ -55,6 +55,8 @@ public class UCPerms56 implements UCPerms {
         this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "uchat.cmd.clear", Tristate.TRUE);
         this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "uchat.cmd.msgtoggle", Tristate.TRUE);
         this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "uchat.password", Tristate.TRUE);
+        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "uchat.discord-sync.cmd.base", Tristate.TRUE);
+        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "uchat.discord-sync.cmd.generate", Tristate.TRUE);
     }
 
     private static boolean isAdmin(CommandSource p) {

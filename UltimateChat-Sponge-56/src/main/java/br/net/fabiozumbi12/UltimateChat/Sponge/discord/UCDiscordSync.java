@@ -122,11 +122,11 @@ public class UCDiscordSync {
                     .build();
 
             CommandSpec generateCmd = CommandSpec.builder()
-                    .arguments(GenericArguments.string(Text.of("player")))
+                    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("player"))))
                     .description(Text.of("Command to generate a new key to sync an in-game nick to discord id"))
                     .permission("uchat.discord-sync.cmd.generate")
                     .executor((src, args) -> {
-                        if (!args.hasAny("group") && src instanceof Player){
+                        if (!args.hasAny("player") && src instanceof Player){
                             Player p = (Player) src;
                             String code = getSaltString();
                             if (getPlayerPending(p.getName()) != null) {
@@ -144,8 +144,8 @@ public class UCDiscordSync {
                             }
                             return CommandResult.success();
                         }
-                        if (args.hasAny("group") && src.hasPermission("uchat.discord-sync.cmd.generate.others")){
-                            String p = args.<String>getOne("group").get();
+                        if (args.hasAny("player") && src.hasPermission("uchat.discord-sync.cmd.generate.others")){
+                            String p = args.<String>getOne("player").get();
                             String code = getSaltString();
                             if (getPlayerPending(p) != null) {
                                 code = getPlayerPending(p);
@@ -167,7 +167,7 @@ public class UCDiscordSync {
                     .build();
 
             CommandSpec unlinkCmd = CommandSpec.builder()
-                    .arguments(GenericArguments.string(Text.of("player")))
+                    .arguments(GenericArguments.optional(GenericArguments.string(Text.of("player"))))
                     .description(Text.of("Command to disconnect form discord"))
                     .permission("uchat.discord-sync.cmd.unlink")
                     .executor((src, args) -> {
@@ -376,7 +376,7 @@ public class UCDiscordSync {
 @ConfigSerializable
 class DiscordSync {
 
-    @Setting(value = "enable_sync", comment = "Enable Discord Sync?\n" +
+    @Setting(value = "enable-sync", comment = "Enable Discord Sync?\n" +
             "You need to setup the BOT TOKEN on config.yml and enable Discord first")
     public boolean enable_sync = false;
 
@@ -394,7 +394,7 @@ class DiscordSync {
         public String connect = ";;connect";
     }
 
-    @Setting(comment = "The discord guild/channel ID")
+    @Setting(value = "guild-id", comment = "The discord guild/channel ID")
     public String guild_id = "";
     @Setting(value = "require-perms", comment = "Use permissions or just set the rank if the player is on group set on config?")
     public boolean require_perms = false;
@@ -408,9 +408,9 @@ class DiscordSync {
     @ConfigSerializable
     public static class syncDBCat {
 
-        @Setting(comment = "Pending connection codes will be here!")
+        @Setting(value = "pending-codes", comment = "Pending connection codes will be here!")
         public Map<String, String> pending_codes = new HashMap<>();
-        @Setting(comment = "Connected players will be here!")
+        @Setting(value = "sync-players", comment = "Connected players will be here!")
         public Map<String, String> sync_players = new HashMap<>();
     }
 

@@ -33,6 +33,7 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.text.Text;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -83,7 +84,7 @@ public class UCLang {
         Lang.clear();
         try {
             FileInputStream fileInput = new FileInputStream(pathLang);
-            Reader reader = new InputStreamReader(fileInput, "UTF-8");
+            Reader reader = new InputStreamReader(fileInput, StandardCharsets.UTF_8);
             Lang.load(reader);
         } catch (Exception e) {
             e.printStackTrace();
@@ -110,7 +111,7 @@ public class UCLang {
             Lang.put("_lang.version", UChat.get().instance().getVersion().get());
         }
         try {
-            Lang.store(new OutputStreamWriter(new FileOutputStream(pathLang), "UTF-8"), null);
+            Lang.store(new OutputStreamWriter(new FileOutputStream(pathLang), StandardCharsets.UTF_8), null);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -128,7 +129,7 @@ public class UCLang {
         } else {
             FMsg = Lang.get(key).toString();
         }
-        return FMsg;
+        return FMsg.replace("/n", "\n");
     }
 
     public Text getText(String key, String additional) {
@@ -154,9 +155,7 @@ public class UCLang {
 
         DelayedMessage.put(p, key);
         Sponge.getScheduler().createSyncExecutor(UChat.get().instance()).schedule(() -> {
-            if (DelayedMessage.containsKey(p)) {
-                DelayedMessage.remove(p);
-            }
+            DelayedMessage.remove(p);
         }, 1, TimeUnit.SECONDS);
     }
 
