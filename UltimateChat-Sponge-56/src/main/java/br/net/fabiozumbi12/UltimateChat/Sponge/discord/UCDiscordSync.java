@@ -259,7 +259,8 @@ public class UCDiscordSync {
     }
 
     public void unload() {
-        Sponge.getScheduler().getTaskById(this.taskId).get().cancel();
+        if (Sponge.getScheduler().getTaskById(this.taskId).isPresent())
+            Sponge.getScheduler().getTaskById(this.taskId).get().cancel();
     }
 
     String getConnectedPlayers(){
