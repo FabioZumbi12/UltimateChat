@@ -764,7 +764,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
             msg = e.getCommand().substring(args[0].length() + 1);
         }
 
-        if (UChat.get().getUCConfig().getTellAliases().contains(args[0])) {
+        if (msg != null && UChat.get().getUCConfig().getTellAliases().contains(args[0])) {
             if (args.length >= 3) {
                 Player p = UChat.get().getServer().getPlayer(args[1]);
 
@@ -795,15 +795,10 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
         UCMessages.sendFancyMessage(new String[0], msg, null, sender, receiver);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onChat(AsyncPlayerChatEvent e) {
 
         UChat.get().getUCLogger().debug("AsyncPlayerChatEvent: " + e.getMessage());
-
-        if (e.isCancelled()) {
-            return;
-        }
-
         UChat.get().getUCLogger().timings(timingType.START, "UCListener#onChat()|Listening AsyncPlayerChatEvent");
 
         //e.setCancelled(true);

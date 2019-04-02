@@ -56,7 +56,7 @@ public class UCMessages {
     private static HashMap<String, String> registeredReplacers = new HashMap<>();
     private static String[] defFormat = new String[0];
 
-    protected static boolean sendFancyMessage(String[] format, String msg, UCChannel channel, CommandSender sender, CommandSender tellReceiver) {
+    static boolean sendFancyMessage(String[] format, String msg, UCChannel channel, CommandSender sender, CommandSender tellReceiver) {
         //Execute listener:
         HashMap<String, String> tags = new HashMap<>();
         for (String str : UChat.get().getUCConfig().getStringList("api.legendchat-tags")) {
@@ -73,6 +73,8 @@ public class UCMessages {
         registeredReplacers = event.getResgisteredTags();
         defFormat = event.getDefFormat();
         String evmsg = event.getMessage();
+
+        if (evmsg == null || evmsg.isEmpty()) return cancel;
 
         HashMap<CommandSender, UltimateFancy> msgPlayers = new HashMap<>();
         evmsg = composeColor(sender, evmsg);
