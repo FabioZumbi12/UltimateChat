@@ -746,7 +746,7 @@ public class UCMessages {
                     PlaceholderService phapi = phapiOpt.get();
 
                     //fix last color from string
-                    String lastcolor = text.length() > 1 ? text.substring(text.length() - 2, text.length()) : "";
+                    String lastcolor = text.length() > 1 ? text.substring(text.length() - 2) : "";
                     if (!Pattern.compile("(&([A-Fa-fK-Ok-oRr0-9]))").matcher(lastcolor).find()) lastcolor = "";
 
                     text = TextSerializers.FORMATTING_CODE.serialize(phapi.replacePlaceholders(text, sender, receiver, p)) + lastcolor;

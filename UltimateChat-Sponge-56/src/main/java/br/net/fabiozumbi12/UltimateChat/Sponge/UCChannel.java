@@ -302,9 +302,7 @@ public class UCChannel {
     }
 
     public void unMuteThis(String player) {
-        if (this.mutes.contains(player)) {
-            this.mutes.remove(player);
-        }
+        this.mutes.remove(player);
     }
 
     public boolean isMuted(String player) {
@@ -318,9 +316,7 @@ public class UCChannel {
     }
 
     public void unIgnoreThis(String player) {
-        if (this.ignoring.contains(player)) {
-            this.ignoring.remove(player);
-        }
+        this.ignoring.remove(player);
     }
 
     public boolean isIgnoring(String player) {

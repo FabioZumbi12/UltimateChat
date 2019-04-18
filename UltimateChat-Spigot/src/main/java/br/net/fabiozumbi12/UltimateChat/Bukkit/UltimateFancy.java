@@ -430,9 +430,9 @@ public class UltimateFancy {
                 if (ChatColor.valueOf(colorStr.toUpperCase()) != null) {
                     ChatColor color = ChatColor.valueOf(colorStr.toUpperCase());
                     if (color.equals(ChatColor.WHITE)) {
-                        result.append(String.valueOf(ChatColor.RESET));
+                        result.append(ChatColor.RESET);
                     } else {
-                        result.append(String.valueOf(color));
+                        result.append(color);
                     }
                 }
 
@@ -447,7 +447,7 @@ public class UltimateFancy {
                         frmtStr = "underlined";
                     }
                     if (json.containsKey(frmtStr)) {
-                        result.append(String.valueOf(frmt));
+                        result.append(frmt);
                     }
                 }
             } catch (Exception ignored) {

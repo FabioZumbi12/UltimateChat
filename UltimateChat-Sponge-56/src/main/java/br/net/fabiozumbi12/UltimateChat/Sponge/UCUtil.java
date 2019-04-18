@@ -60,8 +60,8 @@ public class UCUtil {
         boolean isCmd = false;
         boolean isUrl = false;
         for (String arg : args) {
+            arg = arg.replace("/n", "\n");
             if (arg.contains(UChat.get().getConfig().root().broadcast.on_hover)) {
-                arg = arg.replace("/n", "\n");
                 hover.append(" ").append(arg.replace(UChat.get().getConfig().root().broadcast.on_hover, ""));
                 isHover = true;
                 isCmd = false;

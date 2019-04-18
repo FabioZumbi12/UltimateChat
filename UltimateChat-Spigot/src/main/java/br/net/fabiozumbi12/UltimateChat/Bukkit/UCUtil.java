@@ -125,7 +125,7 @@ public class UCUtil {
         return true;
     }
 
-    public static boolean sendBroadcast(CommandSender src, String[] args, boolean silent) {
+    static boolean sendBroadcast(CommandSender src, String[] args, boolean silent) {
         StringBuilder message = new StringBuilder();
         StringBuilder hover = new StringBuilder();
         StringBuilder cmdline = new StringBuilder();
@@ -136,8 +136,8 @@ public class UCUtil {
         boolean isUrl = false;
         boolean isSug = false;
         for (String arg : args) {
+            arg = arg.replace("/n", "\n");
             if (arg.contains(UChat.get().getUCConfig().getString("broadcast.on-hover"))) {
-                arg = arg.replace("/n", "\n");
                 hover.append(" ").append(ChatColor.translateAlternateColorCodes('&', arg.replace(UChat.get().getUCConfig().getString("broadcast.on-hover"), "")));
                 isHover = true;
                 isCmd = false;
