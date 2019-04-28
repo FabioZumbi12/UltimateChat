@@ -422,7 +422,7 @@ public class UCChannel {
             message.send(sender);
         } else {
             UChat.get().getUCLogger().timings(timingType.START, "UCChannel#sendMessage()|Fire MessageChannelEvent");
-            UCMessages.sendFancyMessage(new String[0], message.toOldFormat(), this, sender, null);
+            Bukkit.getScheduler().runTask(UChat.get(), () -> UCMessages.sendFancyMessage(new String[0], message.toOldFormat(), this, sender, null));
         }
     }
 
@@ -435,7 +435,7 @@ public class UCChannel {
     @Deprecated
     public void sendMessage(ConsoleCommandSender sender, String message) {
         if (UChat.get().getUCConfig().getBoolean("api.format-console-messages")) {
-            UCMessages.sendFancyMessage(new String[0], message, this, sender, null);
+            Bukkit.getScheduler().runTask(UChat.get(), () -> UCMessages.sendFancyMessage(new String[0], message, this, sender, null));
         } else {
             UltimateFancy fmsg = new UltimateFancy(message);
             for (Player p : Bukkit.getOnlinePlayers()) {

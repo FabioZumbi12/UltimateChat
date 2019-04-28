@@ -44,6 +44,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.event.world.WorldLoadEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -589,7 +590,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
                     }
                     String msg = msgb.toString().substring(1);
 
-                    UCMessages.sendFancyMessage(new String[0], msg, ch, sender, null);
+                    Bukkit.getScheduler().runTask(UChat.get(), () -> UCMessages.sendFancyMessage(new String[0], msg, ch, sender, null));
                     return true;
                 }
             }
@@ -792,7 +793,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
             return;
         }
         UChat.get().respondTell.put(receiver.getName(), sender.getName());
-        UCMessages.sendFancyMessage(new String[0], msg, null, sender, receiver);
+        Bukkit.getScheduler().runTask(UChat.get(), () -> UCMessages.sendFancyMessage(new String[0], msg, null, sender, receiver));
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -851,7 +852,6 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
                 } else {
                     sendTell(p, UChat.get().getServer().getPlayer(recStr), e.getMessage());
                 }
-                //UChat.get().respondTell.remove(p.getName());
                 UChat.get().command.remove(p.getName());
             }
             e.setCancelled(true);
@@ -885,10 +885,9 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
                 }
                 e.setCancelled(true);
             } else {
-                boolean cancel = UCMessages.sendFancyMessage(e.getFormat().split(","), e.getMessage(), ch, p, null);
-                if (cancel) {
-                    e.setCancelled(true);
-                }
+                final UCChannel fch = ch;
+                Bukkit.getScheduler().runTask(UChat.get(), () -> UCMessages.sendFancyMessage(e.getFormat().split(","), e.getMessage(), fch, p, null));
+                e.setCancelled(true);
             }
         }
     }
