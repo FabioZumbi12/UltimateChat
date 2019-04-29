@@ -674,15 +674,6 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
                 }
 
                 if (args.length == 2) {
-                    if (args[1].equalsIgnoreCase("unlock")){
-                        if (UChat.get().tellPlayers.containsKey(p.getName())) {
-                            String tp = UChat.get().tellPlayers.get(p.getName());
-                            UChat.get().tellPlayers.remove(p.getName());
-                            UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("cmd.tell.unlocked").replace("{player}", tp));
-                        }
-                        return;
-                    }
-
                     Player receiver = UChat.get().getServer().getPlayer(args[1]);
                     if (receiver == null || !receiver.isOnline() || !p.canSee(receiver)) {
                         UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("listener.invalidplayer"));

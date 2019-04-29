@@ -280,16 +280,10 @@ public class UCCommands {
                                                 UChat.get().tempTellPlayers.put(p.getName(), "CONSOLE");
                                                 UChat.get().command.add(p.getName());
                                                 sendPreTell(p, Sponge.getServer().getConsole(), msg);
-                                            } else if (recObj.toString().equalsIgnoreCase("unlock")) {
-                                                if (UChat.get().tellPlayers.containsKey(p.getName())) {
-                                                    String tp = UChat.get().tellPlayers.get(p.getName());
-                                                    UChat.get().tellPlayers.remove(p.getName());
-                                                    UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("cmd.tell.unlocked").replace("{player}", tp));
-                                                }
-                                            } else {
-                                                //not found
-                                                UChat.get().getLang().sendMessage(p, "listener.invalidplayer");
                                             }
+
+                                            //not found
+                                            UChat.get().getLang().sendMessage(p, "listener.invalidplayer");
                                             return CommandResult.success();
                                         }
                                         //lock tell
