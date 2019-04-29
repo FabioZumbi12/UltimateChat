@@ -132,6 +132,6 @@
     </build>
 
     <properties>
-        <mineVersion>1.14-Pre5-SNAPSHOT</mineVersion>
+        <mineVersion>1.14-pre5-SNAPSHOT</mineVersion>
     </properties>
 </project>
