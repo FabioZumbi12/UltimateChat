@@ -190,7 +190,7 @@ public class UCMessages {
                     if (!receiver.equals(sender) && !receivers.contains(receiver) && !receivers.contains(sender) &&
                             UChat.get().isSpy.contains(receiver.getName()) && UChat.get().getPerms().hasSpyPerm(receiver, ch.getName())) {
                         String spyformat = UChat.get().getConfig().root().general.spy_format;
-                        spyformat = spyformat.replace("{output}", UCUtil.stripColor(sendMessage(sender, receiver, srcText, ch, true).toPlain()));
+                        spyformat = spyformat.replace("{output}", UCUtil.stripColor('&', sendMessage(sender, receiver, srcText, ch, true).toPlain()));
                         receiver.sendMessage(UCUtil.toText(spyformat));
                     }
                 }
@@ -226,7 +226,7 @@ public class UCMessages {
                         if (isIgnoringPlayers(tellReceiver.getName(), sender.getName())) {
                             spyformat = UChat.get().getLang().get("chat.ignored") + spyformat;
                         }
-                        spyformat = spyformat.replace("{output}", UCUtil.stripColor(sendMessage(sender, tellReceiver, srcText, channel, true).toPlain()));
+                        spyformat = spyformat.replace("{output}", UCUtil.stripColor('&', sendMessage(sender, tellReceiver, srcText, channel, true).toPlain()));
                         receiver.sendMessage(UCUtil.toText(spyformat));
                     }
                 }

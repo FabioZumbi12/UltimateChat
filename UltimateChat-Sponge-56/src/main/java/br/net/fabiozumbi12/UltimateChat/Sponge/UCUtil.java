@@ -47,8 +47,8 @@ public class UCUtil {
         return str.replaceAll("(&([A-Fa-fK-Ok-oRr0-9]))", "§$2");
     }
 
-    public static String stripColor(String str) {
-        return str.replaceAll("(&([A-Fa-fK-Ok-oRr0-9]))", "");
+    public static String stripColor(char symbol, String str) {
+        return str.replaceAll("("+symbol+"([A-Fa-fK-Ok-oRr0-9]))", "");
     }
 
     static boolean sendBroadcast(CommandSource src, String[] args, boolean silent) {

@@ -421,7 +421,8 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
                 .replace("{ch-alias}", ch.getAlias())
                 .replace("{ch-name}", ch.getName());
         if (e != null) {
-            format = format.replace("{sender}", e.getMember().getEffectiveName())
+            sender = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', e.getMember().getEffectiveName()));
+            format = format.replace("{sender}", sender)
                     .replace("{dd-channel}", e.getChannel().getName())
                     .replace("{message}", e.getMessage().getContentRaw());
             if (!e.getMember().getRoles().isEmpty()) {
@@ -435,9 +436,9 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
                 format = format.replace("{dd-rolename}", role.getName());
             }
             if (e.getMember().getNickname() != null) {
-                format = format.replace("{nickname}", e.getMember().getNickname());
+                format = format.replace("{nickname}", ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', e.getMember().getNickname())));
             } else {
-                format = format.replace("{nickname}", e.getMember().getEffectiveName());
+                format = format.replace("{nickname}", sender);
             }
         }
         //if not filtered

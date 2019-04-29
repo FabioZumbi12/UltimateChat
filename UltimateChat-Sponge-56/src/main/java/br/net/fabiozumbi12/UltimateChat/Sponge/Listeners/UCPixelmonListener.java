@@ -66,7 +66,7 @@ public class UCPixelmonListener {
                         plugin.getUCJDA().sendPixelmonLegendary(String.format(plugin.getConfig().root().discord.pixelmon.legendary_text,
                                 name,
                                 ent.getTransform().getLocation().getBiome().getName(),
-                                plugin.getConfig().root().general.world_names.getOrDefault(ent.getWorld().getName(), UCUtil.stripColor(ent.getWorld().getName()))));
+                                plugin.getConfig().root().general.world_names.getOrDefault(ent.getWorld().getName(), UCUtil.stripColor('&', ent.getWorld().getName()))));
                     }
                 }
 
