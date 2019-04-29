@@ -214,35 +214,15 @@ public class UCListener {
             UChat.get().getPlayerChannel(p).removeMember(p);
         }
 
-        List<String> toRemove = new ArrayList<>();
-        for (String play : UChat.get().tellPlayers.keySet()) {
-            if (play.equalsIgnoreCase(p.getName())) {
-                toRemove.add(play);
-            }
-        }
-        for (String remove : toRemove) {
-            UChat.get().tellPlayers.remove(remove);
-        }
-
-        List<String> toRemove2 = new ArrayList<>();
-        for (String play : UChat.get().respondTell.keySet()) {
-            if (play.equals(p.getName())) {
-                toRemove2.add(play);
-            }
-        }
-        for (String remove : toRemove2) {
-            UChat.get().respondTell.remove(remove);
-        }
-
-        List<String> toRemove3 = new ArrayList<>();
-        for (String play : UChat.get().tempChannels.keySet()) {
-            if (play.equals(p.getName())) {
-                toRemove3.add(play);
-            }
-        }
-        for (String remove : toRemove3) {
-            UChat.get().tempChannels.remove(remove);
-        }
+        UChat.get().tellPlayers.remove(p.getName());
+        UChat.get().tellPlayers.entrySet().removeIf(k -> k.getValue().equals(p.getName()));
+        UChat.get().tempTellPlayers.remove(p.getName());
+        UChat.get().tempTellPlayers.entrySet().removeIf(k -> k.getValue().equals(p.getName()));
+        UChat.get().respondTell.remove(p.getName());
+        UChat.get().respondTell.entrySet().removeIf(k -> k.getValue().equals(p.getName()));
+        UChat.get().tempChannels.remove(p.getName());
+        UChat.get().tempChannels.entrySet().removeIf(k -> k.getValue().equals(p.getName()));
+        UChat.get().command.remove(p.getName());
 
         if (UChat.get().getUCJDA() != null && UChat.get().getUCJDA().JDAAvailable() && !p.hasPermission(UChat.get().getConfig().root().discord.vanish_perm)) {
             UChat.get().getUCJDA().sendRawToDiscord(UChat.get().getLang().get("discord.leave").replace("{player}", p.getName()));

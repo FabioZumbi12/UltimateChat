@@ -35,44 +35,50 @@ import org.bukkit.entity.Player;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Properties;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 public class UCLang {
 
-    private static final HashMap<Player, String> DelayedMessage = new HashMap<>();
-    private static final Properties BaseLang = new Properties();
-    private static final Properties Lang = new Properties();
+    private static final HashMap<Player, String> delayedMessage = new HashMap<>();
+    private final Properties loadedlang = new Properties() {
+        @Override
+        public synchronized Enumeration<Object> keys() {
+            return Collections.enumeration(new TreeSet<>(super.keySet()));
+        }
+    };
+    private final Properties baseLang = new Properties() {
+        @Override
+        public synchronized Enumeration<Object> keys() {
+            return Collections.enumeration(new TreeSet<>(super.keySet()));
+        }
+    };    
     private String pathLang;
-    private String resLang;
 
     public UCLang() {
         pathLang = UChat.get().getDataFolder() + File.separator + "lang" + UChat.get().getUCConfig().getString("language") + ".properties";
-        resLang = "lang" + UChat.get().getUCConfig().getString("language") + ".properties";
+        String resLang = "lang" + UChat.get().getUCConfig().getString("language") + ".properties";
 
         File lang = new File(pathLang);
         if (!lang.exists()) {
-            if (UChat.get().getResource("assets/ultimatechat/" + resLang) == null) {
-                resLang = "langEN-US.properties";
-                pathLang = UChat.get().getDataFolder() + File.separator + "langEN-US.properties";
+            if (UChat.get().getResource("assets/ultimatechat/" + resLang) != null) {
+                UCUtil.saveResource("/assets/ultimatechat/" + resLang, lang);
+            } else {
+                UCUtil.saveResource("/assets/ultimatechat/langEN-US.properties", lang);
             }
-            //UChat.get().saveResource(resLang, false);//create lang file
-            UCUtil.saveResource("/assets/ultimatechat/" + resLang, new File(UChat.get().getDataFolder(), resLang));
             UChat.get().getUCLogger().info("Created lang file: " + pathLang);
         }
 
         loadLang();
         loadBaseLang();
+        updateLang();
+
         UChat.get().getUCLogger().info("Language file loaded - Using: " + UChat.get().getUCConfig().getString("language"));
-        if (!UChat.get().getUCConfig().getString("language").equalsIgnoreCase("EN-US")) UChat.get().getUCLogger().info("Translation by " + get("_tranlationBy"));
     }
 
     public SortedSet<String> helpStrings() {
         SortedSet<String> values = new TreeSet<>();
-        for (Object help : Lang.keySet()) {
+        for (Object help : loadedlang.keySet()) {
             if (help.toString().startsWith("help.cmd.")) {
                 String helpStr = help.toString().replace("help.cmd.", "");
                 if (helpStr.equals("broadcast") || helpStr.equals("umsg")) continue;
@@ -87,49 +93,48 @@ public class UCLang {
     }
 
     private void loadBaseLang() {
-        BaseLang.clear();
+        baseLang.clear();
         try {
             InputStream fileInput = UChat.get().getResource("assets/ultimatechat/langEN-US.properties");
             Reader reader = new InputStreamReader(fileInput, StandardCharsets.UTF_8);
-            BaseLang.load(reader);
+            baseLang.load(reader);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        updateLang();
     }
 
     private void loadLang() {
-        Lang.clear();
+        loadedlang.clear();
         try {
             FileInputStream fileInput = new FileInputStream(pathLang);
             Reader reader = new InputStreamReader(fileInput, StandardCharsets.UTF_8);
-            Lang.load(reader);
+            loadedlang.load(reader);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        if (Lang.get("_lang.version") != null) {
-            int langv = Integer.parseInt(Lang.get("_lang.version").toString().replace(".", ""));
+        if (loadedlang.get("_lang.version") != null) {
+            int langv = Integer.parseInt(loadedlang.get("_lang.version").toString().replace(".", ""));
             int rpv = Integer.parseInt(UChat.get().getPDF().getVersion().replace(".", ""));
             if (langv < rpv || langv == 0) {
                 UChat.get().getUCLogger().warning("Your lang file is outdated. Probally need strings updates!");
-                UChat.get().getUCLogger().warning("Lang file version: " + Lang.get("_lang.version"));
-                Lang.put("_lang.version", UChat.get().getPDF().getVersion());
+                UChat.get().getUCLogger().warning("Lang file version: " + loadedlang.get("_lang.version"));
+                loadedlang.put("_lang.version", UChat.get().getPDF().getVersion());
             }
         }
     }
 
     private void updateLang() {
-        for (Entry<Object, Object> linha : BaseLang.entrySet()) {
-            if (!Lang.containsKey(linha.getKey())) {
-                Lang.put(linha.getKey(), linha.getValue());
+        for (Entry<Object, Object> linha : baseLang.entrySet()) {
+            if (!loadedlang.containsKey(linha.getKey())) {
+                loadedlang.put(linha.getKey(), linha.getValue());
             }
         }
-        if (!Lang.containsKey("_lang.version")) {
-            Lang.put("_lang.version", UChat.get().getPDF().getVersion());
+        if (!loadedlang.containsKey("_lang.version")) {
+            loadedlang.put("_lang.version", UChat.get().getPDF().getVersion());
         }
         try {
-            Lang.store(new OutputStreamWriter(new FileOutputStream(pathLang), StandardCharsets.UTF_8), null);
+            loadedlang.store(new OutputStreamWriter(new FileOutputStream(pathLang), StandardCharsets.UTF_8), null);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -142,10 +147,10 @@ public class UCLang {
     public String get(String key) {
         String FMsg;
 
-        if (!Lang.containsKey(key)) {
+        if (!loadedlang.containsKey(key)) {
             FMsg = "&c&oMissing language string for " + ChatColor.GOLD + key;
         } else {
-            FMsg = Lang.get(key).toString();
+            FMsg = loadedlang.get(key).toString();
         }
 
         FMsg = ChatColor.translateAlternateColorCodes('&', FMsg);
@@ -154,11 +159,11 @@ public class UCLang {
     }
 
     public void sendMessage(final Player p, String key) {
-        if (DelayedMessage.containsKey(p) && DelayedMessage.get(p).equals(key)) {
+        if (delayedMessage.containsKey(p) && delayedMessage.get(p).equals(key)) {
             return;
         }
 
-        if (!Lang.containsKey(key)) {
+        if (!loadedlang.containsKey(key)) {
             p.sendMessage(get(p, "_UChat.prefix") + " " + UCMessages.formatTags("", ChatColor.translateAlternateColorCodes('&', key), p, "", "", UChat.get().getPlayerChannel(p)));
         } else if (get(key).isEmpty()) {
             return;
@@ -166,18 +171,18 @@ public class UCLang {
             p.sendMessage(get(p, "_UChat.prefix") + " " + get(p, key));
         }
 
-        DelayedMessage.put(p, key);
+        delayedMessage.put(p, key);
         Bukkit.getScheduler().scheduleSyncDelayedTask(UChat.get(), () -> {
-            DelayedMessage.remove(p);
+            delayedMessage.remove(p);
         }, 20);
     }
 
     public void sendMessage(CommandSender sender, String key) {
-        if (sender instanceof Player && DelayedMessage.containsKey(sender) && DelayedMessage.get(sender).equals(key)) {
+        if (sender instanceof Player && delayedMessage.containsKey(sender) && delayedMessage.get(sender).equals(key)) {
             return;
         }
 
-        if (Lang.get(key) == null) {
+        if (loadedlang.get(key) == null) {
             sender.sendMessage(get(sender, "_UChat.prefix") + " " + UCMessages.formatTags("", ChatColor.translateAlternateColorCodes('&', key), sender, "", "", UChat.get().getPlayerChannel(sender)));
         } else if (get(key).equalsIgnoreCase("")) {
             return;
@@ -187,9 +192,9 @@ public class UCLang {
 
         if (sender instanceof Player) {
             final Player p = (Player) sender;
-            DelayedMessage.put(p, key);
+            delayedMessage.put(p, key);
             Bukkit.getScheduler().scheduleSyncDelayedTask(UChat.get(), () -> {
-                DelayedMessage.remove(p);
+                delayedMessage.remove(p);
             }, 20);
         }
     }

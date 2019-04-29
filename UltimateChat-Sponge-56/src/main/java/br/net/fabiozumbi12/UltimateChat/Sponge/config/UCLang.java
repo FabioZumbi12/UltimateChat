@@ -34,31 +34,40 @@ import org.spongepowered.api.text.Text;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 public class UCLang {
 
     private static final HashMap<CommandSource, String> DelayedMessage = new HashMap<>();
-    private static final Properties BaseLang = new Properties();
-    private static final Properties Lang = new Properties();
+    private final Properties loadedLang = new Properties() {
+        @Override
+        public synchronized Enumeration<Object> keys() {
+            return Collections.enumeration(new TreeSet<>(super.keySet()));
+        }
+    };
+    private final Properties baseLang = new Properties() {
+        @Override
+        public synchronized Enumeration<Object> keys() {
+            return Collections.enumeration(new TreeSet<>(super.keySet()));
+        }
+    };
     private static String pathLang;
-    private static String resLang;
 
     public UCLang() {
-        resLang = "lang" + UChat.get().getConfig().root().language + ".properties";
+        String resLang = "lang" + UChat.get().getConfig().root().language + ".properties";
         pathLang = UChat.get().configDir() + File.separator + resLang;
 
         File lang = new File(pathLang);
         if (!lang.exists()) {
-            if (!UChat.get().instance().getAsset(resLang).isPresent()) {
-                resLang = "langEN-US.properties";
-                pathLang = UChat.get().configDir() + File.separator + resLang;
-            }
             try {
-                UChat.get().instance().getAsset(resLang).get().copyToDirectory(UChat.get().configDir().toPath());
+                if (UChat.get().instance().getAsset(resLang).isPresent()) {
+                    UChat.get().instance().getAsset(resLang).get().copyToDirectory(UChat.get().configDir().toPath());
+                } else {
+                    UChat.get().instance().getAsset("langEN-US.properties").get().copyToDirectory(UChat.get().configDir().toPath());
+                    new File(UChat.get().configDir(),"langEN-US.properties" ).renameTo(lang);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -66,52 +75,53 @@ public class UCLang {
         }
 
         loadLang();
-        loadBaseLang();
+        loadbaseLang();
+        updateLang();
+
         UChat.get().getLogger().info("Language file loaded - Using: " + UChat.get().getConfig().root().language);
     }
 
-    private void loadBaseLang() {
-        BaseLang.clear();
+    private void loadbaseLang() {
+        baseLang.clear();
         try {
-            BaseLang.load(UChat.get().instance().getAsset("langEN-US.properties").get().getUrl().openStream());
+            baseLang.load(UChat.get().instance().getAsset("langEN-US.properties").get().getUrl().openStream());
         } catch (Exception e) {
             e.printStackTrace();
         }
-        updateLang();
     }
 
     private void loadLang() {
-        Lang.clear();
+        loadedLang.clear();
         try {
             FileInputStream fileInput = new FileInputStream(pathLang);
             Reader reader = new InputStreamReader(fileInput, StandardCharsets.UTF_8);
-            Lang.load(reader);
+            loadedLang.load(reader);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        if (Lang.get("_lang.version") != null) {
-            int langv = Integer.parseInt(((String) Lang.get("_lang.version")).replace(".", ""));
+        if (loadedLang.get("_lang.version") != null) {
+            int langv = Integer.parseInt(((String) loadedLang.get("_lang.version")).replace(".", ""));
             int rpv = Integer.parseInt(UChat.get().instance().getVersion().get().replace(".", ""));
             if (langv < rpv || langv == 0) {
                 UChat.get().instance().getLogger().info("Your lang file is outdated. Probably need strings updates!");
-                UChat.get().instance().getLogger().info("Lang file version: " + Lang.get("_lang.version"));
-                Lang.put("_lang.version", UChat.get().instance().getVersion().get());
+                UChat.get().instance().getLogger().info("Lang file version: " + loadedLang.get("_lang.version"));
+                loadedLang.put("_lang.version", UChat.get().instance().getVersion().get());
             }
         }
     }
 
     private void updateLang() {
-        for (Entry<Object, Object> linha : BaseLang.entrySet()) {
-            if (!Lang.containsKey(linha.getKey())) {
-                Lang.put(linha.getKey(), linha.getValue());
+        for (Entry<Object, Object> linha : baseLang.entrySet()) {
+            if (!loadedLang.containsKey(linha.getKey())) {
+                loadedLang.put(linha.getKey(), linha.getValue());
             }
         }
-        if (!Lang.containsKey("_lang.version")) {
-            Lang.put("_lang.version", UChat.get().instance().getVersion().get());
+        if (!loadedLang.containsKey("_lang.version")) {
+            loadedLang.put("_lang.version", UChat.get().instance().getVersion().get());
         }
         try {
-            Lang.store(new OutputStreamWriter(new FileOutputStream(pathLang), StandardCharsets.UTF_8), null);
+            loadedLang.store(new OutputStreamWriter(new FileOutputStream(pathLang), StandardCharsets.UTF_8), null);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -124,10 +134,10 @@ public class UCLang {
     public String get(String key) {
         String FMsg;
 
-        if (Lang.get(key) == null) {
+        if (loadedLang.get(key) == null) {
             FMsg = "&c&oMissing language string for &4" + key;
         } else {
-            FMsg = Lang.get(key).toString();
+            FMsg = loadedLang.get(key).toString();
         }
         return FMsg.replace("/n", "\n");
     }
@@ -145,7 +155,7 @@ public class UCLang {
             return;
         }
 
-        if (Lang.get(key) == null) {
+        if (loadedLang.get(key) == null) {
             p.sendMessage(UCUtil.toText(get(p, "_UChat.prefix") + " " + UCMessages.formatTags("", key, p, "", "", UChat.get().getPlayerChannel(p))));
         } else if (get(key).equalsIgnoreCase("")) {
             return;

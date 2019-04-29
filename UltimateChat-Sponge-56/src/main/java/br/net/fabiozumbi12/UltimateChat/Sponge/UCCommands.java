@@ -228,7 +228,11 @@ public class UCCommands {
                         .build(), tell);
             } else {
                 manager.register(UChat.get().instance(), CommandSpec.builder()
-                        .arguments(GenericArguments.optional(GenericArguments.firstParsing(GenericArguments.player(Text.of("receiver")), GenericArguments.string(Text.of("receiver")))), GenericArguments.optional(new remainJoinedStringsWithTab(Text.of("message"))))
+                        .arguments(GenericArguments.optional(
+                                GenericArguments.firstParsing(
+                                        GenericArguments.player(Text.of("receiver")),
+                                        GenericArguments.string(Text.of("receiver")))),
+                                GenericArguments.optional(new remainJoinedStringsWithTab(Text.of("message"))))
                         .description(Text.of("Lock your chat with a player or send private messages."))
                         .permission("uchat.cmd.tell")
                         .executor((src, args) -> {
@@ -276,10 +280,16 @@ public class UCCommands {
                                                 UChat.get().tempTellPlayers.put(p.getName(), "CONSOLE");
                                                 UChat.get().command.add(p.getName());
                                                 sendPreTell(p, Sponge.getServer().getConsole(), msg);
+                                            } else if (recObj.toString().equalsIgnoreCase("unlock")) {
+                                                if (UChat.get().tellPlayers.containsKey(p.getName())) {
+                                                    String tp = UChat.get().tellPlayers.get(p.getName());
+                                                    UChat.get().tellPlayers.remove(p.getName());
+                                                    UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("cmd.tell.unlocked").replace("{player}", tp));
+                                                }
+                                            } else {
+                                                //not found
+                                                UChat.get().getLang().sendMessage(p, "listener.invalidplayer");
                                             }
-
-                                            //not found
-                                            UChat.get().getLang().sendMessage(p, "listener.invalidplayer");
                                             return CommandResult.success();
                                         }
                                         //lock tell

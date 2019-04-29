@@ -172,7 +172,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
                     return true;
                 }
 
-                if (args.length >= 1) {
+                if (args.length >= 2) {
                     UCChannel ch = UChat.get().getChannel(label);
                     StringBuilder msgBuild = new StringBuilder();
                     for (String arg : args) {
@@ -244,7 +244,6 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
                             return true;
                         }
                         ch.addMember(p);
-                        UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.entered").replace("{channel}", ch.getName()));
                         UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.entered").replace("{channel}", ch.getName()));
                         return true;
                     }
@@ -675,6 +674,15 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
                 }
 
                 if (args.length == 2) {
+                    if (args[1].equalsIgnoreCase("unlock")){
+                        if (UChat.get().tellPlayers.containsKey(p.getName())) {
+                            String tp = UChat.get().tellPlayers.get(p.getName());
+                            UChat.get().tellPlayers.remove(p.getName());
+                            UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("cmd.tell.unlocked").replace("{player}", tp));
+                        }
+                        return;
+                    }
+
                     Player receiver = UChat.get().getServer().getPlayer(args[1]);
                     if (receiver == null || !receiver.isOnline() || !p.canSee(receiver)) {
                         UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("listener.invalidplayer"));
@@ -711,12 +719,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
                     //send to player
                     Player receiver = UChat.get().getServer().getPlayer(args[1]);
 
-                    if (receiver == null || !receiver.isOnline()) {
-                        UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("listener.invalidplayer"));
-                        return;
-                    }
-
-                    if (!p.canSee(receiver)) {
+                    if (receiver == null || !receiver.isOnline() || !p.canSee(receiver)) {
                         UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("listener.invalidplayer"));
                         return;
                     }
@@ -852,6 +855,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
                 } else {
                     sendTell(p, UChat.get().getServer().getPlayer(recStr), e.getMessage());
                 }
+                //UChat.get().respondTell.remove(p.getName());
                 UChat.get().command.remove(p.getName());
             }
             e.setCancelled(true);
@@ -953,37 +957,16 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
             UChat.get().getPlayerChannel(p).removeMember(p);
         }
 
-        List<String> toRemove = new ArrayList<>();
-        for (String play : UChat.get().tellPlayers.keySet()) {
-            if (play.equals(p.getName())) {
-                toRemove.add(play);
-            }
-        }
-        for (String remove : toRemove) {
-            UChat.get().tellPlayers.remove(remove);
-        }
-
-        List<String> toRemove2 = new ArrayList<>();
-        for (String play : UChat.get().respondTell.keySet()) {
-            if (play.equals(p.getName())) {
-                toRemove2.add(play);
-            }
-        }
-        for (String remove : toRemove2) {
-            UChat.get().respondTell.remove(remove);
-        }
-
-        List<String> toRemove3 = new ArrayList<>();
-        for (String play : UChat.get().tempChannels.keySet()) {
-            if (play.equals(p.getName())) {
-                toRemove3.add(play);
-            }
-        }
-        for (String remove : toRemove3) {
-            UChat.get().tempChannels.remove(remove);
-        }
-
+        UChat.get().tellPlayers.remove(p.getName());
+        UChat.get().tellPlayers.entrySet().removeIf(k -> k.getValue().equals(p.getName()));
+        UChat.get().tempTellPlayers.remove(p.getName());
+        UChat.get().tempTellPlayers.entrySet().removeIf(k -> k.getValue().equals(p.getName()));
+        UChat.get().respondTell.remove(p.getName());
+        UChat.get().respondTell.entrySet().removeIf(k -> k.getValue().equals(p.getName()));
+        UChat.get().tempChannels.remove(p.getName());
+        UChat.get().tempChannels.entrySet().removeIf(k -> k.getValue().equals(p.getName()));
         UChat.get().command.remove(p.getName());
+
         if (UChat.get().getUCJDA() != null && !p.hasPermission(UChat.get().getUCConfig().getString("discord.vanish-perm"))) {
             UChat.get().getUCJDA().sendRawToDiscord(UChat.get().getLang().get("discord.leave").replace("{player}", p.getName()));
         }
