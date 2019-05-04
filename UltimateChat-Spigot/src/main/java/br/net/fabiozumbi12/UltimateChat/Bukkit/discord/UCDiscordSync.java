@@ -94,12 +94,12 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
                                     nick = p.getName();
                             }
                             String group = UChat.get().getVaultPerms().getPrimaryGroup(p);
+
                             List<String> roles = getDDRoleByInGameGroup(group);
-
-                            if (this.sync.getBoolean("require-perms"))
-                                roles.removeIf(r -> !p.hasPermission("uchat.discord-sync.role." + r));
-
                             if (!roles.isEmpty()) {
+                                if (this.sync.getBoolean("require-perms"))
+                                    roles.removeIf(r -> !p.hasPermission("uchat.discord-sync.role." + r));
+
                                 UChat.get().getUCJDA().setPlayerRole(pId, roles, nick, getConfigRoles());
                             }
 

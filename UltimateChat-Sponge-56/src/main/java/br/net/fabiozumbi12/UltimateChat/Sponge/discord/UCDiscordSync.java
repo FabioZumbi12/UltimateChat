@@ -234,12 +234,12 @@ public class UCDiscordSync {
                             } catch (InterruptedException | ExecutionException e) {
                                 e.printStackTrace();
                             }
+
                             List<String> roles = getDDRoleByInGameGroup(group);
+                            if (roles != null && !roles.isEmpty()) {
+                                if (this.sync.require_perms)
+                                    roles.removeIf(r -> !p.hasPermission("uchat.discord-sync.role." + r));
 
-                            if (this.sync.require_perms)
-                                roles.removeIf(r -> !p.hasPermission("uchat.discord-sync.role." + r));
-
-                            if (!roles.isEmpty()) {
                                 UChat.get().getUCJDA().setPlayerRole(pId, roles, nick, getConfigRoles());
                             }
 
