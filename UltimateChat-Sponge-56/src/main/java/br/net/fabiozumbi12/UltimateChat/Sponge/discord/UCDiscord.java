@@ -304,13 +304,24 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
                         else
                             message = message.replaceAll("<:(.+?)>", ":?:");
 
-                        //user name
+                        //user and role name
                         Pattern pp = Pattern.compile("<@(.+?)>");
                         Matcher mp = pp.matcher(message);
-                        if (mp.find() && e.getMessage().getMentionedMembers().stream().findFirst().isPresent())
-                            message = message.replaceAll("<@(.+?)>", "@" + e.getMessage().getMentionedMembers().stream().findFirst().get().getNickname());
-                        else
-                            message = message.replaceAll("<@(.+?)>", "@?");
+                        if (mp.find()){
+                            if (e.getMessage().getMentionedRoles().stream().findFirst().isPresent()){
+                                String role = e.getMessage().getMentionedRoles().stream().findFirst().get().getName();
+                                message = message.replaceAll("<@(.+?)>", "@" + role);
+                            } else
+                            if (e.getMessage().getMentionedMembers().stream().findFirst().isPresent()){
+                                String nick = e.getMessage().getMentionedMembers().stream().findFirst().get().getNickname();
+                                if (nick == null || nick.isEmpty())
+                                    nick = e.getMessage().getMentionedMembers().stream().findFirst().get().getEffectiveName();
+
+                                message = message.replaceAll("<@(.+?)>", "@" + nick);
+                            }
+                            else
+                                message = message.replaceAll("<@(.+?)>", "@?");
+                        }
 
                         //channel
                         Pattern pc = Pattern.compile("<#(.+?)>");
