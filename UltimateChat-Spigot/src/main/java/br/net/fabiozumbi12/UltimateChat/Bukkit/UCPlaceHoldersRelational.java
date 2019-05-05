@@ -102,11 +102,6 @@ public class UCPlaceHoldersRelational extends PlaceholderExpansion implements Re
     }
 
     @Override
-    public String getPlugin() {
-        return null;
-    }
-
-    @Override
     public String getAuthor() {
         return "FabioZumbi12";
     }
