@@ -172,7 +172,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
                     return true;
                 }
 
-                if (args.length >= 2) {
+                if (args.length >= 1) {
                     UCChannel ch = UChat.get().getChannel(label);
                     StringBuilder msgBuild = new StringBuilder();
                     for (String arg : args) {

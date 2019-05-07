@@ -35,7 +35,7 @@ public class UCPlaceHoldersRelational extends PlaceholderExpansion implements Re
 
     private UChat plugin;
 
-    public UCPlaceHoldersRelational(UChat plugin) {
+    UCPlaceHoldersRelational(UChat plugin) {
         this.plugin = plugin;
     }
 
