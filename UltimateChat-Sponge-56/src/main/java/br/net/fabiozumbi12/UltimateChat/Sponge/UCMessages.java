@@ -273,6 +273,8 @@ public class UCMessages {
     }
 
     private static String composeColor(CommandSource sender, String evmsg) {
+        if (evmsg == null || evmsg.isEmpty()) return "";
+
         if (sender instanceof Player) {
             Pattern mat1 = Pattern.compile("(?i)&([A-Fa-f0-9Rr])");
             Pattern mat2 = Pattern.compile("(?i)&([L-Ol-o])");
