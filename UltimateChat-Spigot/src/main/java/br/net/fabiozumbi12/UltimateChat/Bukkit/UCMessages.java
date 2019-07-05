@@ -112,7 +112,7 @@ public class UCMessages {
             int vanish = 0;
 
             //put sender
-            msgPlayers.put(sender, sendMessage(sender, sender, evmsg, ch, false));
+            msgPlayers.put(sender, sendMessage(sender, sender, evmsg, ch));
             if (ch.getDistance() > 0 && sender instanceof Player) {
                 for (Player play : ((Player) sender).getNearbyEntities(ch.getDistance(), ch.getDistance(), ch.getDistance()).stream()
                         .filter(ent -> ent instanceof Player)
@@ -135,7 +135,7 @@ public class UCMessages {
                             noWorldReceived++;
                         }
                         if (!ch.neeFocus() || ch.isMember(play)) {
-                            msgPlayers.put(play, sendMessage(sender, play, evmsg, ch, false));
+                            msgPlayers.put(play, sendMessage(sender, play, evmsg, ch));
                             receivers.add(play);
                         }
                     }
@@ -161,7 +161,7 @@ public class UCMessages {
                         noWorldReceived++;
                     }
                     if (!ch.neeFocus() || ch.isMember(receiver)) {
-                        msgPlayers.put(receiver, sendMessage(sender, receiver, evmsg, ch, false));
+                        msgPlayers.put(receiver, sendMessage(sender, receiver, evmsg, ch));
                         receivers.add(receiver);
                     }
                 }
@@ -173,7 +173,7 @@ public class UCMessages {
                     if (!receiver.equals(sender) && !receivers.contains(receiver) && !receivers.contains(sender) &&
                             UChat.get().isSpy.contains(receiver.getName()) && UCPerms.hasSpyPerm(receiver, ch.getName())) {
                         String spyformat = UChat.get().getUCConfig().getString("general.spy-format");
-                        spyformat = spyformat.replace("{output}", ChatColor.stripColor(sendMessage(sender, receiver, evmsg, ch, true).toOldFormat()));
+                        spyformat = spyformat.replace("{output}", ChatColor.stripColor(sendMessage(sender, receiver, evmsg, ch).toOldFormat()));
                         receiver.sendMessage(ChatColor.translateAlternateColorCodes('&', spyformat));
                     }
                 }
@@ -209,15 +209,15 @@ public class UCMessages {
                         if (isIgnoringPlayers(tellReceiver.getName(), sender.getName())) {
                             spyformat = UChat.get().getLang().get("chat.ignored") + spyformat;
                         }
-                        spyformat = spyformat.replace("{output}", ChatColor.stripColor(sendMessage(sender, tellReceiver, evmsg, channel, true).toOldFormat()));
+                        spyformat = spyformat.replace("{output}", ChatColor.stripColor(sendMessage(sender, tellReceiver, evmsg, channel).toOldFormat()));
                         receiver.sendMessage(ChatColor.translateAlternateColorCodes('&', spyformat));
                     }
                 }
             }
 
-            msgPlayers.put(sender, sendMessage(sender, tellReceiver, evmsg, channel, false));
+            msgPlayers.put(sender, sendMessage(sender, tellReceiver, evmsg, channel));
             if (!isIgnoringPlayers(tellReceiver.getName(), sender.getName())) {
-                msgPlayers.put(tellReceiver, sendMessage(sender, tellReceiver, evmsg, channel, false));
+                msgPlayers.put(tellReceiver, sendMessage(sender, tellReceiver, evmsg, channel));
             }
             if (isIgnoringPlayers(tellReceiver.getName(), sender.getName())) {
                 msgPlayers.put(UChat.get().getServer().getConsoleSender(), new UltimateFancy(UChat.get().getLang().get("chat.ignored") + msgPlayers.get(sender).toOldFormat()));
@@ -323,7 +323,7 @@ public class UCMessages {
     }
 
     @SuppressWarnings("deprecation")
-    public static UltimateFancy sendMessage(CommandSender sender, Object receiver, String msg, UCChannel ch, boolean isSpy) {
+    public static UltimateFancy sendMessage(CommandSender sender, Object receiver, String msg, UCChannel ch) {
         UltimateFancy fanci = new UltimateFancy();
 
         if (!ch.getName().equals("tell")) {

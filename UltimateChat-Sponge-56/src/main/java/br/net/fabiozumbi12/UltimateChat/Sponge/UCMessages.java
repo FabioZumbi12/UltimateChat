@@ -123,7 +123,7 @@ public class UCMessages {
             List<Player> receivers = new ArrayList<>();
 
             //put sender
-            msgPlayers.put(sender, sendMessage(sender, sender, srcText, ch, false));
+            msgPlayers.put(sender, sendMessage(sender, sender, srcText, ch));
             msgCh.addMember(sender);
 
             if (ch.getDistance() > 0 && sender instanceof Player) {
@@ -150,7 +150,7 @@ public class UCMessages {
                             noWorldReceived++;
                         }
                         if (!ch.neeFocus() || ch.isMember(play)) {
-                            msgPlayers.put(play, sendMessage(sender, play, srcText, ch, false));
+                            msgPlayers.put(play, sendMessage(sender, play, srcText, ch));
                             receivers.add(play);
                             msgCh.addMember(play);
                         }
@@ -177,7 +177,7 @@ public class UCMessages {
                         noWorldReceived++;
                     }
                     if (!ch.neeFocus() || ch.isMember(receiver)) {
-                        msgPlayers.put(receiver, sendMessage(sender, receiver, srcText, ch, false));
+                        msgPlayers.put(receiver, sendMessage(sender, receiver, srcText, ch));
                         receivers.add(receiver);
                         msgCh.addMember(receiver);
                     }
@@ -190,7 +190,7 @@ public class UCMessages {
                     if (!receiver.equals(sender) && !receivers.contains(receiver) && !receivers.contains(sender) &&
                             UChat.get().isSpy.contains(receiver.getName()) && UChat.get().getPerms().hasSpyPerm(receiver, ch.getName())) {
                         String spyformat = UChat.get().getConfig().root().general.spy_format;
-                        spyformat = spyformat.replace("{output}", UCUtil.stripColor('&', sendMessage(sender, receiver, srcText, ch, true).toPlain()));
+                        spyformat = spyformat.replace("{output}", UCUtil.stripColor('&', sendMessage(sender, receiver, srcText, ch).toPlain()));
                         receiver.sendMessage(UCUtil.toText(spyformat));
                     }
                 }
@@ -226,15 +226,17 @@ public class UCMessages {
                         if (isIgnoringPlayers(tellReceiver.getName(), sender.getName())) {
                             spyformat = UChat.get().getLang().get("chat.ignored") + spyformat;
                         }
-                        spyformat = spyformat.replace("{output}", UCUtil.stripColor('&', sendMessage(sender, tellReceiver, srcText, channel, true).toPlain()));
+                        spyformat = spyformat.replace("{output}", UCUtil.stripColor('&', sendMessage(sender, tellReceiver, srcText, channel).toPlain()));
                         receiver.sendMessage(UCUtil.toText(spyformat));
                     }
                 }
             }
 
-            Text to = sendMessage(sender, tellReceiver, srcText, channel, false);
-            msgPlayers.put(tellReceiver, to);
+            Text to = sendMessage(sender, tellReceiver, srcText, channel);
             msgPlayers.put(sender, to);
+            if (!isIgnoringPlayers(tellReceiver.getName(), sender.getName())) {
+                msgPlayers.put(tellReceiver, to);
+            }
             if (isIgnoringPlayers(tellReceiver.getName(), sender.getName())) {
                 to = Text.of(UCUtil.toText(UChat.get().getLang().get("chat.ignored")), to);
             }
@@ -245,6 +247,8 @@ public class UCMessages {
         if (!msgPlayers.keySet().contains(Sponge.getServer().getConsole())) {
             msgPlayers.put(Sponge.getServer().getConsole(), msgPlayers.values().stream().findAny().get());
         }
+
+        //fire post event
         PostFormatChatMessageEvent postEvent = new PostFormatChatMessageEvent(sender, msgPlayers, channel);
         Sponge.getEventManager().post(postEvent);
         if (postEvent.isCancelled()) {
@@ -331,7 +335,7 @@ public class UCMessages {
         UChat.get().ignoringPlayer.put(p, list);
     }
 
-    public static Text sendMessage(CommandSource sender, Object receiver, Text srcTxt, UCChannel ch, boolean isSpy) {
+    public static Text sendMessage(CommandSource sender, Object receiver, Text srcTxt, UCChannel ch) {
         Builder formatter = Text.builder();
         Builder playername = Text.builder();
         Builder message = Text.builder();
