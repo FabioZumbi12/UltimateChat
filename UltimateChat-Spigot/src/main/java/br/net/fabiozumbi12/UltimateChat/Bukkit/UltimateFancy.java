@@ -26,6 +26,7 @@
 package br.net.fabiozumbi12.UltimateChat.Bukkit;
 
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UCLogger.timingType;
+import com.google.common.base.Utf8;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -406,7 +407,7 @@ public class UltimateFancy {
      */
     public UltimateFancy hoverShowItem(ItemStack item) {
         JSONObject jItem = parseHoverItem(item);
-        if (jItem.toJSONString().getBytes().length > 32000)
+        if (Utf8.encodedLength(jItem.toJSONString()) > 32767)
             pendentElements.add(new ExtraElement("hoverEvent", parseHoverItem(new ItemStack(item.getType()))));
 
         pendentElements.add(new ExtraElement("hoverEvent", jItem));
@@ -480,10 +481,10 @@ public class UltimateFancy {
         JSONObject obj = new JSONObject();
         obj.put("action", "show_item");
         String jItem = convertItemStackToJson(item);
-        if (jItem.getBytes().length > 32000)
+        if (Utf8.encodedLength(jItem) > 32767)
             obj.put("value", convertItemStackToJson(new ItemStack(item.getType())));
 
-        obj.put("value", convertItemStackToJson(item));
+        obj.put("value", jItem);
         return obj;
     }
 
