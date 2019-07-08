@@ -558,6 +558,11 @@ public class UChat extends JavaPlugin {
 
     private boolean checkFac() {
         Plugin p = Bukkit.getPluginManager().getPlugin("Factions");
+        try {
+            Class.forName("com.massivecraft.factions.RelationParticipator");
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
         return p != null && p.isEnabled();
     }
 }
