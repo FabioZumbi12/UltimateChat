@@ -50,7 +50,7 @@ public class UCChannel {
     private List<String> members = new ArrayList<>();
 
     @Deprecated()
-    public UCChannel(String name, String alias, boolean worlds, int dist, String color, String builder, boolean focus, boolean receiversMsg, double cost, boolean isbungee, boolean ownBuilder, boolean isAlias, String aliasSender, String aliasCmd, List<String> availableWorlds, String ddchannel, String ddmode, String ddmcformat, String mcddformat, String ddhover, boolean ddallowcmds, boolean lock) {
+    public UCChannel(String name, String alias, boolean worlds, int dist, String color, String builder, boolean focus, boolean receiversMsg, double cost, boolean isbungee, boolean hand, boolean ownBuilder, boolean isAlias, String aliasSender, String aliasCmd, List<String> availableWorlds, String ddchannel, String ddmode, String ddmcformat, String mcddformat, String ddhover, boolean ddallowcmds, boolean lock) {
         addDefaults();
         properties.put("name", name);
         properties.put("alias", alias);
@@ -64,6 +64,7 @@ public class UCChannel {
         properties.put("receivers-message", receiversMsg);
         properties.put("cost", cost);
         properties.put("bungee", isbungee);
+        properties.put("allow-hand", hand);
         properties.put("channelAlias.enable", isAlias);
         properties.put("channelAlias.sendAs", aliasSender);
         properties.put("channelAlias.cmd", aliasCmd);
@@ -108,6 +109,7 @@ public class UCChannel {
         properties.put("receivers-message", true);
         properties.put("cost", 0.0);
         properties.put("bungee", false);
+        properties.put("allow-hand", true);
         properties.put("jedis", false);
         properties.put("password", "");
         properties.put("channelAlias.enable", false);
@@ -143,6 +145,10 @@ public class UCChannel {
         } else {
             properties.put(key, value);
         }
+    }
+
+    public boolean allowHand(){
+        return (boolean) properties.get("allow-hand");
     }
 
     public String getCharAlias() {

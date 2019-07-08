@@ -52,7 +52,7 @@
             <groupId>me.clip</groupId>
             <artifactId>placeholderapi</artifactId>
             <version>LATEST</version>
-            <scope>compile</scope>
+            <scope>provided</scope>
         </dependency>
 
         <!-- start of local repos -->

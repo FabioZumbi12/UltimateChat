@@ -441,7 +441,7 @@ public class UCMessages {
                     //append text
                     msgBuilder.append(UCUtil.toText(format));
 
-                    if (UChat.get().getConfig().root().general.item_hand.enable && msg.contains(UChat.get().getConfig().root().general.item_hand.placeholder) && sender instanceof Player) {
+                    if (ch.allowHand() && UChat.get().getConfig().root().general.item_hand.enable && msg.contains(UChat.get().getConfig().root().general.item_hand.placeholder) && sender instanceof Player) {
                         ItemStack hand = UChat.get().getVHelper().getItemInHand(((Player) sender));
                         msgBuilder.onHover(TextActions.showItem(hand.createSnapshot()));
                     } else if (UChat.get().getConfig().root().mention.hover_message.length() > 0 && StringUtils.containsIgnoreCase(msg, ((CommandSource) receiver).getName())) {
