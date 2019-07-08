@@ -400,7 +400,7 @@ public class UCMessages {
                     format = formatTags(tag, format, sender, receiver, msg, ch);
 
                     if (ch.allowHand() && UChat.get().getUCConfig().getBoolean("general.item-hand.enable") && msg.contains(UChat.get().getUCConfig().getString("general.item-hand.placeholder")) && sender instanceof Player) {
-                        fanci.text(format).hoverShowItem(((Player) sender).getItemInHand()).next();
+                        if (!((Player) sender).getItemInHand().getType().equals(Material.AIR)) fanci.text(format).hoverShowItem(((Player) sender).getItemInHand()).next();
                     } else if (!msg.equals(mention(sender, (CommandSender) receiver, msg)) && UChat.get().getUCConfig().getString("mention.hover-message").length() > 0 && StringUtils.containsIgnoreCase(msg, ((CommandSender) receiver).getName())) {
                         tooltip = new StringBuilder(formatTags("", UChat.get().getUCConfig().getString("mention.hover-message"), sender, receiver, msg, ch));
                         fanci.text(format).hoverShowText(tooltip.toString()).next();

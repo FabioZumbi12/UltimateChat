@@ -443,7 +443,7 @@ public class UCMessages {
 
                     if (ch.allowHand() && UChat.get().getConfig().root().general.item_hand.enable && msg.contains(UChat.get().getConfig().root().general.item_hand.placeholder) && sender instanceof Player) {
                         ItemStack hand = UChat.get().getVHelper().getItemInHand(((Player) sender));
-                        msgBuilder.onHover(TextActions.showItem(hand.createSnapshot()));
+                        if (!hand.getItem().equals(ItemTypes.NONE)) msgBuilder.onHover(TextActions.showItem(hand.createSnapshot()));
                     } else if (UChat.get().getConfig().root().mention.hover_message.length() > 0 && StringUtils.containsIgnoreCase(msg, ((CommandSource) receiver).getName())) {
                         tooltip = new StringBuilder(formatTags("", UChat.get().getConfig().root().mention.hover_message, sender, receiver, msg, ch));
                         msgBuilder.onHover(TextActions.showText(UCUtil.toText(tooltip.toString())));
