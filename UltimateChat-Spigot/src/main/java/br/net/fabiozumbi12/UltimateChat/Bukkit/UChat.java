@@ -25,6 +25,7 @@
 
 package br.net.fabiozumbi12.UltimateChat.Bukkit;
 
+import at.pcgamingfreaks.MarriageMaster.Bukkit.API.MarriageMasterPlugin;
 import at.pcgamingfreaks.MarriageMaster.Bukkit.MarriageMaster;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.API.UChatReloadEvent;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.API.uChatAPI;
@@ -67,8 +68,10 @@ public class UChat extends JavaPlugin {
     static boolean SClans;
     static SimpleClans sc;
     static boolean MarryReloded;
-    static boolean MarryMaster;
+    static boolean MarryMasterV1;
+	static boolean MarryMasterV2;
     static MarriageMaster mm;
+    static MarriageMasterPlugin mm2;
     static Marriage mapi;
     static boolean PlaceHolderAPI;
     static boolean Factions;
@@ -180,7 +183,8 @@ public class UChat extends JavaPlugin {
             Vault = checkVault();
             SClans = checkSC();
             MarryReloded = checkMR();
-            MarryMaster = checkMM();
+            MarryMasterV1 = checkMM();
+            MarryMasterV2 = checkMM2();
             ProtocolLib = checkPL();
             PlaceHolderAPI = checkPHAPI();
             Factions = checkFac();
@@ -220,10 +224,14 @@ public class UChat extends JavaPlugin {
                 logger.info("Marriage Reloaded found. Hooked.");
             }
 
-            if (MarryMaster) {
-                mm = (MarriageMaster) Bukkit.getPluginManager().getPlugin("MarriageMaster");
-                logger.info("MarryMaster found. Hooked.");
+            if (MarryMasterV1) {
+	            mm = (MarriageMaster) Bukkit.getPluginManager().getPlugin("MarriageMaster");
+	            logger.info("MarryMaster v1.x found. Hooked.");
             }
+	        if (MarryMasterV2) {
+		        mm2 = (MarriageMasterPlugin) Bukkit.getPluginManager().getPlugin("MarriageMaster");
+		        logger.info("MarryMaster found. Hooked.");
+	        }
 
             if (SClans) {
                 sc = SimpleClans.getInstance();
@@ -543,8 +551,13 @@ public class UChat extends JavaPlugin {
 
     private boolean checkMM() {
         Plugin p = Bukkit.getPluginManager().getPlugin("MarriageMaster");
-        return p != null && p.isEnabled();
+        return p != null && p.isEnabled() && p.getDescription().getVersion().startsWith("1.");
     }
+
+	private boolean checkMM2() {
+		Plugin p = Bukkit.getPluginManager().getPlugin("MarriageMaster");
+		return p != null && p.isEnabled() && !p.getDescription().getVersion().startsWith("1.");
+	}
 
     private boolean checkPL() {
         Plugin p = Bukkit.getPluginManager().getPlugin("ProtocolLib");
