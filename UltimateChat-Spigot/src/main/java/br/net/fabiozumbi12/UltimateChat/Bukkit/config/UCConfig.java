@@ -238,15 +238,15 @@ public class UCConfig {
     }
 
     public List<String> getBroadcastAliases() {
-        return Arrays.asList(plugin.getConfig().getString("broadcast.aliases").replace(" ", "").split(","));
+        return Arrays.asList(plugin.getConfig().getString("broadcast.aliases", "").replace(" ", "").split(","));
     }
 
     public List<String> getTellAliases() {
-        return Arrays.asList(plugin.getConfig().getString("tell.cmd-aliases").replace(" ", "").split(","));
+        return Arrays.asList(plugin.getConfig().getString("tell.cmd-aliases", "").replace(" ", "").split(","));
     }
 
     public List<String> getMsgAliases() {
-        return Arrays.asList(plugin.getConfig().getString("general.umsg-cmd-aliases").replace(" ", "").split(","));
+        return Arrays.asList(plugin.getConfig().getString("general.umsg-cmd-aliases", "").replace(" ", "").split(","));
     }
 
     public boolean getBoolean(String key) {
@@ -258,11 +258,7 @@ public class UCConfig {
     }
 
     public String getString(String key) {
-        return plugin.getConfig().getString(key);
-    }
-
-    public int getInt(String key) {
-        return plugin.getConfig().getInt(key);
+        return plugin.getConfig().getString(key, "");
     }
 
     public List<String> getStringList(String key) {

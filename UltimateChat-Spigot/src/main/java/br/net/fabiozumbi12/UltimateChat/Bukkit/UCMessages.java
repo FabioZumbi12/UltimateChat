@@ -683,16 +683,16 @@ public class UCMessages {
                                 .replace("{marry-prefix}", UChat.mm.config.GetPrefix().replace("<heart>", ChatColor.RED + "❤" + ChatColor.WHITE))
                                 .replace("{marry-suffix}", UChat.mm.config.GetSuffix().replace("<heart>", ChatColor.RED + "❤" + ChatColor.WHITE));
                     }
-                }
+                }/*
 	            if (UChat.MarryMasterV2) {
 		            MarriagePlayer marriagePlayer = UChat.mm2.getPlayerData(sender), partner;
-		            if(marriagePlayer.isMarried() && (partner = marriagePlayer.getPartner()) != null) {
+		            if (marriagePlayer.isMarried() && (partner = marriagePlayer.getPartner()) != null) {
 			            Marriage marriage = marriagePlayer.getMarriageData(partner);
 			            text = text.replace("{marry-partner}", partner.getName())
 					            .replace("{marry-prefix}", UChat.mm2.getPrefixSuffixFormatter().formatPrefix(marriage, partner))
 					            .replace("{marry-suffix}", UChat.mm2.getPrefixSuffixFormatter().formatSuffix(marriage, partner));
 		            }
-	            }
+	            }*/
             }
 
             if (UChat.PlaceHolderAPI) {
