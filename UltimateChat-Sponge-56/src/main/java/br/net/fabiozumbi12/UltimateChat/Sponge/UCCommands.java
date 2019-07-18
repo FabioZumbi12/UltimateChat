@@ -280,7 +280,7 @@ public class UCCommands {
                                                 UChat.get().tempTellPlayers.put(p.getName(), "CONSOLE");
                                                 UChat.get().command.add(p.getName());
                                                 sendPreTell(p, Sponge.getServer().getConsole(), msg);
-                                            }
+                                            } else
 
                                             //not found
                                             UChat.get().getLang().sendMessage(p, "listener.invalidplayer");

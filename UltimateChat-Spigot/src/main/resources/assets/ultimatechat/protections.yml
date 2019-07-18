@@ -13,7 +13,7 @@ chat-protection:
 
   # Anti-Flood
   anti-flood:
-    # Channels where this will be enabled
+    # Channels where this will be disabled
     disable-on-channels:
       - Local
     enable: true
@@ -23,7 +23,7 @@ chat-protection:
 
   # Caps Lock filter
   caps-filter:
-    # Channels where this will be enabled
+    # Channels where this will be disabled
     disable-on-channels: []
     enabled: true
     # Minimum length of upper case letters to apply filter
@@ -31,7 +31,7 @@ chat-protection:
 
   # Anti-Spam system.
   antispam:
-    # Channels where this will be enabled
+    # Channels where this will be disabled
     disable-on-channels:
       - Local
     enabled: false

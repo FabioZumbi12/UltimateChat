@@ -25,8 +25,8 @@
 
 package br.net.fabiozumbi12.UltimateChat.Bukkit;
 
-import at.pcgamingfreaks.MarriageMaster.Bukkit.API.Marriage;
-import at.pcgamingfreaks.MarriageMaster.Bukkit.API.MarriagePlayer;
+//import at.pcgamingfreaks.MarriageMaster.Bukkit.API.Marriage;
+//import at.pcgamingfreaks.MarriageMaster.Bukkit.API.MarriagePlayer;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.API.PostFormatChatMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.API.SendChannelMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UCLogger.timingType;

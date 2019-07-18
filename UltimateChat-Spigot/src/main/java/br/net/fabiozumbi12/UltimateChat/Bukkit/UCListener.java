@@ -721,7 +721,9 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
                     }
 
                     //remove receiver name
-                    msg = msg.substring(args[1].length() + 1);
+                    try {
+                        msg = msg.substring(args[1].length() + 1);
+                    } catch (Exception ignored) {}
 
                     UChat.get().tempTellPlayers.put(p.getName(), receiver.getName());
                     UChat.get().command.add(p.getName());
