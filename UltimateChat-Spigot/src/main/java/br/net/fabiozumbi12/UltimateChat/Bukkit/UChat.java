@@ -25,7 +25,7 @@
 
 package br.net.fabiozumbi12.UltimateChat.Bukkit;
 
-//import at.pcgamingfreaks.MarriageMaster.Bukkit.API.MarriageMasterPlugin;
+import at.pcgamingfreaks.MarriageMaster.Bukkit.API.MarriageMasterPlugin;
 import at.pcgamingfreaks.MarriageMaster.Bukkit.MarriageMaster;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.API.UChatReloadEvent;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.API.uChatAPI;
@@ -71,7 +71,7 @@ public class UChat extends JavaPlugin {
     static boolean MarryMasterV1;
 	static boolean MarryMasterV2;
     static MarriageMaster mm;
-    //static MarriageMasterPlugin mm2;
+    static MarriageMasterPlugin mm2;
     static Marriage mapi;
     static boolean PlaceHolderAPI;
     static boolean Factions;
@@ -227,10 +227,10 @@ public class UChat extends JavaPlugin {
 	            mm = (MarriageMaster) Bukkit.getPluginManager().getPlugin("MarriageMaster");
 	            logger.info("MarryMaster v1.x found. Hooked.");
             }
-	        /*if (MarryMasterV2) {
+	        if (MarryMasterV2) {
 		        mm2 = (MarriageMasterPlugin) Bukkit.getPluginManager().getPlugin("MarriageMaster");
 		        logger.info("MarryMaster found. Hooked.");
-	        }*/
+	        }
 
             if (SClans) {
                 sc = SimpleClans.getInstance();

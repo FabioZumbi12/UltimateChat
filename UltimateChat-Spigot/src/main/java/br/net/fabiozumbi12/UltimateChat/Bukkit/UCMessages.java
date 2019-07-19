@@ -25,8 +25,8 @@
 
 package br.net.fabiozumbi12.UltimateChat.Bukkit;
 
-//import at.pcgamingfreaks.MarriageMaster.Bukkit.API.Marriage;
-//import at.pcgamingfreaks.MarriageMaster.Bukkit.API.MarriagePlayer;
+import at.pcgamingfreaks.MarriageMaster.Bukkit.API.Marriage;
+import at.pcgamingfreaks.MarriageMaster.Bukkit.API.MarriagePlayer;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.API.PostFormatChatMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.API.SendChannelMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UCLogger.timingType;
@@ -683,7 +683,7 @@ public class UCMessages {
                                 .replace("{marry-prefix}", UChat.mm.config.GetPrefix().replace("<heart>", ChatColor.RED + "❤" + ChatColor.WHITE))
                                 .replace("{marry-suffix}", UChat.mm.config.GetSuffix().replace("<heart>", ChatColor.RED + "❤" + ChatColor.WHITE));
                     }
-                }/*
+                }
 	            if (UChat.MarryMasterV2) {
 		            MarriagePlayer marriagePlayer = UChat.mm2.getPlayerData(sender), partner;
 		            if (marriagePlayer.isMarried() && (partner = marriagePlayer.getPartner()) != null) {
@@ -692,7 +692,7 @@ public class UCMessages {
 					            .replace("{marry-prefix}", UChat.mm2.getPrefixSuffixFormatter().formatPrefix(marriage, partner))
 					            .replace("{marry-suffix}", UChat.mm2.getPrefixSuffixFormatter().formatSuffix(marriage, partner));
 		            }
-	            }*/
+	            }
             }
 
             if (UChat.PlaceHolderAPI) {
