@@ -142,6 +142,6 @@
     </build>
 
     <properties>
-        <mineVersion>1.14.3-SNAPSHOT</mineVersion>
+        <mineVersion>1.14.4-R0.1-SNAPSHOT</mineVersion>
     </properties>
 </project>
