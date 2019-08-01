@@ -25,8 +25,6 @@
 
 package br.net.fabiozumbi12.UltimateChat.Bukkit;
 
-import at.pcgamingfreaks.MarriageMaster.Bukkit.API.Marriage;
-import at.pcgamingfreaks.MarriageMaster.Bukkit.API.MarriagePlayer;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.API.PostFormatChatMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.API.SendChannelMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UCLogger.timingType;
@@ -562,7 +560,7 @@ public class UCMessages {
                     } else if (meta.hasDisplayName()) {
                         text = text.replace("{hand-name}", item.getItemMeta().getDisplayName());
                     } else {
-                        text = text.replace("{hand-name}", UCUtil.capitalize(item.getType().toString()));
+                        text = text.replace("{hand-name}", translateItem(item));
                     }
                     if (meta.hasLore()) {
                         StringBuilder lorestr = new StringBuilder();
@@ -584,8 +582,8 @@ public class UCMessages {
                     }
                 }
                 text = text.replace("{hand-amount}", String.valueOf(item.getAmount()));
-                text = text.replace("{hand-name}", UCUtil.capitalize(item.getType().toString()));
-                text = text.replace("{hand-type}", UCUtil.capitalize(item.getType().toString()));
+                text = text.replace("{hand-name}", translateItem(item));
+                text = text.replace("{hand-type}", translateItem(item));
             } else {
                 text = text.replace("{hand-name}", UChat.get().getLang().get("chat.emptyslot"));
                 text = text.replace("{hand-type}", "Air");
@@ -685,12 +683,10 @@ public class UCMessages {
                     }
                 }
 	            if (UChat.MarryMasterV2) {
-		            MarriagePlayer marriagePlayer = UChat.mm2.getPlayerData(sender), partner;
-		            if (marriagePlayer.isMarried() && (partner = marriagePlayer.getPartner()) != null) {
-			            Marriage marriage = marriagePlayer.getMarriageData(partner);
-			            text = text.replace("{marry-partner}", partner.getName())
-					            .replace("{marry-prefix}", UChat.mm2.getPrefixSuffixFormatter().formatPrefix(marriage, partner))
-					            .replace("{marry-suffix}", UChat.mm2.getPrefixSuffixFormatter().formatSuffix(marriage, partner));
+		            if (UChat.mm2.getPlayerData(sender).isMarried() && UChat.mm2.getPlayerData(sender).getPartner() != null) {
+			            text = text.replace("{marry-partner}", UChat.mm2.getPlayerData(sender).getPartner().getName())
+					            .replace("{marry-prefix}", UChat.mm2.getPrefixSuffixFormatter().formatPrefix(UChat.mm2.getPlayerData(sender).getMarriageData(UChat.mm2.getPlayerData(sender).getPartner()), UChat.mm2.getPlayerData(sender).getPartner()))
+					            .replace("{marry-suffix}", UChat.mm2.getPrefixSuffixFormatter().formatSuffix(UChat.mm2.getPlayerData(sender).getMarriageData(UChat.mm2.getPlayerData(sender).getPartner()), UChat.mm2.getPlayerData(sender).getPartner()));
 		            }
 	            }
             }
@@ -743,5 +739,9 @@ public class UCMessages {
             return UChat.get().getLang().get("tag.notset");
         }
         return tag;
+    }
+
+    private static String translateItem(ItemStack itemStack) {
+        return UChat.tapi == null ? UCUtil.capitalize(itemStack.getType().toString()) : UChat.tapi.translateItem(itemStack.getType(), "en-us", true);
     }
 }

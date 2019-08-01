@@ -112,6 +112,12 @@
             <artifactId>ProtocolLib-API</artifactId>
             <version>LATEST</version>
         </dependency>
+        <dependency>
+            <groupId>br.net.fabiozumbi12</groupId>
+            <artifactId>TranslationAPI</artifactId>
+            <version>LATEST</version>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- Discord bridge -->
         <dependency>
@@ -135,6 +141,10 @@
 			<id>pcgf-repo</id>
 			<url>https://repo.pcgamingfreaks.at/repository/maven-everything</url>
 		</repository>
+        <repository>
+            <id>Translation-API</id>
+            <url>https://raw.githubusercontent.com/FabioZumbi12/TranslationAPI/mvn-repo/</url>
+        </repository>
     </repositories>
 
     <build>
