@@ -35,6 +35,7 @@ import br.net.fabiozumbi12.UltimateChat.Bukkit.config.UCLang;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.discord.UCDInterface;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.discord.UCDiscord;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.discord.UCDiscordSync;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.metrics.Metrics;
 import br.net.fabiozumbi12.translationapi.TranslationAPI;
 import br.net.fabiozumbi12.translationapi.TranslationCore;
 import com.lenis0012.bukkit.marriage2.Marriage;
@@ -294,6 +295,16 @@ public class UChat extends JavaPlugin {
 
             if (this.UCJDA != null) {
                 this.UCJDA.sendRawToDiscord(lang.get("discord.start"));
+            }
+
+            //Metrics
+            try {
+                Metrics metrics = new Metrics(this);
+                metrics.addCustomChart(new Metrics.SingleLineChart("chat_channels", () -> this.channels.size()));
+                if (metrics.isEnabled())
+                    logger.info("Metrics enabled! See our stats here: https://bstats.org/plugin/bukkit/UChat");
+            } catch (Exception ex) {
+                logger.info("Metrics not enabled due errors: " + ex.getLocalizedMessage());
             }
         } catch (Exception e) {
             e.printStackTrace();
