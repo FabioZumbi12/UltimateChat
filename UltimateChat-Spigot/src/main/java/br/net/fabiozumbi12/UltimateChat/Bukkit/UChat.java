@@ -36,6 +36,7 @@ import br.net.fabiozumbi12.UltimateChat.Bukkit.discord.UCDInterface;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.discord.UCDiscord;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.discord.UCDiscordSync;
 import br.net.fabiozumbi12.translationapi.TranslationAPI;
+import br.net.fabiozumbi12.translationapi.TranslationCore;
 import com.lenis0012.bukkit.marriage2.Marriage;
 import com.lenis0012.bukkit.marriage2.MarriageAPI;
 import net.milkbowl.vault.chat.Chat;
@@ -74,7 +75,7 @@ public class UChat extends JavaPlugin {
     static MarriageMaster mm;
     static MarriageMasterPlugin mm2;
     static Marriage mapi;
-    static TranslationAPI tapi;
+    static TranslationCore tapi;
     static boolean PlaceHolderAPI;
     static boolean Factions;
     private static boolean Vault = false;
