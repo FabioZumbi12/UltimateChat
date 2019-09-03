@@ -247,7 +247,7 @@ public class UCDiscordSync {
                         }, delay[0], TimeUnit.MILLISECONDS);
                     }
                 });
-            }, 1, interval < 1 ? 1 : interval, TimeUnit.SECONDS).getTask().getUniqueId();
+            }, 1, Math.max(interval, 1), TimeUnit.SECONDS).getTask().getUniqueId();
 
             UChat.get().getLogger().info("- Discord Sync in use!");
         }
@@ -255,8 +255,10 @@ public class UCDiscordSync {
     }
 
     public void unload() {
-        if (Sponge.getScheduler().getTaskById(this.taskId).isPresent())
-            Sponge.getScheduler().getTaskById(this.taskId).get().cancel();
+        try {
+            if (Sponge.getScheduler().getTaskById(this.taskId).isPresent())
+                Sponge.getScheduler().getTaskById(this.taskId).get().cancel();
+        } catch (Exception ignored) {}
     }
 
     String getConnectedPlayers(){
