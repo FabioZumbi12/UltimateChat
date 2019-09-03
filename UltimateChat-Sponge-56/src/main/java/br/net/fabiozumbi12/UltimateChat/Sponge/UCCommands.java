@@ -259,12 +259,7 @@ public class UCCommands {
                                                 }
                                                 //sendTell(p, args.<Player>getOne("player"), args.<String>getOne("message").get());
 
-                                                if (!receiver.isOnline() || !p.canSee(receiver)) {
-                                                    UChat.get().getLang().sendMessage(p, "listener.invalidplayer");
-                                                    return CommandResult.success();
-                                                }
-
-                                                if (!p.canSee(receiver)) {
+                                                if (!receiver.isOnline() || (!p.canSee(receiver) && !src.hasPermission("uchat.see-vanish"))) {
                                                     UChat.get().getLang().sendMessage(p, "listener.invalidplayer");
                                                     return CommandResult.success();
                                                 }
@@ -290,7 +285,7 @@ public class UCCommands {
                                         else if (recObj instanceof Player) {
                                             Player receiver = (Player) recObj;
 
-                                            if (!receiver.isOnline() || !p.canSee(receiver)) {
+                                            if (!receiver.isOnline() || (!p.canSee(receiver) && !src.hasPermission("uchat.see-vanish"))) {
                                                 throw new CommandException(UChat.get().getLang().getText("listener.invalidplayer"), true);
                                             }
 

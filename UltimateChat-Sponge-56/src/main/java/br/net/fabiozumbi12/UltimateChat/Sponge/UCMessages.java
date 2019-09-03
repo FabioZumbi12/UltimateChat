@@ -144,7 +144,7 @@ public class UCMessages {
                             noWorldReceived++;
                             continue;
                         }
-                        if (!((Player) sender).canSee(play)) {
+                        if (!((Player) sender).canSee(play) && !sender.hasPermission("uchat.see-vanish")) {
                             vanish++;
                         } else {
                             noWorldReceived++;
@@ -171,7 +171,7 @@ public class UCMessages {
                         noWorldReceived++;
                         continue;
                     }
-                    if (sender instanceof Player && !((Player) sender).canSee(receiver)) {
+                    if (sender instanceof Player && !((Player) sender).canSee(receiver) && !sender.hasPermission("uchat.see-vanish")) {
                         vanish++;
                     } else {
                         noWorldReceived++;
