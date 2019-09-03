@@ -49,6 +49,7 @@ public class ChatMessageEvent extends Event implements Cancellable {
     private String message;
 
     public ChatMessageEvent(CommandSender sender, HashMap<String, String> tags, String message) {
+        super(true);
         this.sender = sender;
         this.tags = tags;
         this.message = message;

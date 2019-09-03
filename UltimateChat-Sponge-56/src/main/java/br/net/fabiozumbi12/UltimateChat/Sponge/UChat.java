@@ -29,7 +29,6 @@ import br.net.fabiozumbi12.UltimateChat.Sponge.API.UChatReloadEvent;
 import br.net.fabiozumbi12.UltimateChat.Sponge.API.uChatAPI;
 import br.net.fabiozumbi12.UltimateChat.Sponge.Bungee.UChatBungee;
 import br.net.fabiozumbi12.UltimateChat.Sponge.Listeners.UCListener;
-import br.net.fabiozumbi12.UltimateChat.Sponge.Listeners.UCPixelmonListener;
 import br.net.fabiozumbi12.UltimateChat.Sponge.config.UCConfig;
 import br.net.fabiozumbi12.UltimateChat.Sponge.config.UCLang;
 import br.net.fabiozumbi12.UltimateChat.Sponge.config.VersionData;
@@ -61,9 +60,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @Plugin(id = "ultimatechat",
         name = "UltimateChat",
@@ -81,15 +78,15 @@ public class UChat {
     private static UChat uchat;
     @Inject
     public GuiceObjectMapperFactory factory;
-    public HashMap<String, String> tempChannels = new HashMap<>();
-    public HashMap<String, String> tellPlayers = new HashMap<>();
-    public HashMap<String, String> tempTellPlayers = new HashMap<>();
-    public HashMap<String, String> respondTell = new HashMap<>();
-    public List<String> mutes = new ArrayList<>();
-    public List<String> isSpy = new ArrayList<>();
-    public List<String> command = new ArrayList<>();
+    public Map<String, String> tempChannels = Collections.synchronizedMap(new HashMap<>());
+    public Map<String, String> tellPlayers = Collections.synchronizedMap(new HashMap<>());
+    public Map<String, String> tempTellPlayers = Collections.synchronizedMap(new HashMap<>());
+    public Map<String, String> respondTell = Collections.synchronizedMap(new HashMap<>());
+    public List<String> mutes = Collections.synchronizedList(new ArrayList<>());
+    public List<String> isSpy = Collections.synchronizedList(new ArrayList<>());
+    public List<String> command = Collections.synchronizedList(new ArrayList<>());
     public HashMap<String, Integer> timeMute = new HashMap<>();
-    public List<String> msgTogglePlayers = new ArrayList<>();
+    public List<String> msgTogglePlayers = Collections.synchronizedList(new ArrayList<>());
     protected HashMap<String, List<String>> ignoringPlayer = new HashMap<>();
     private UCLogger logger;
     @Inject
@@ -109,7 +106,6 @@ public class UChat {
     private UCLang lang;
     private UCVHelper helper;
     private HashMap<List<String>, UCChannel> channels;
-    private UCPixelmonListener pixelListener;
     private UChatBungee bungee;
     private UCDiscordSync sync;
 
@@ -311,17 +307,8 @@ public class UChat {
             if (this.UCJDA != null) {
                 this.UCJDA.shutdown();
                 this.UCJDA = null;
-                if (Sponge.getPluginManager().getPlugin("pixelmon").isPresent()) {
-                    game.getEventManager().unregisterListeners(pixelListener);
-                }
             }
             if (config.root().discord.use) {
-                if (Sponge.getPluginManager().getPlugin("pixelmon").isPresent()) {
-                    pixelListener = new UCPixelmonListener(this);
-                    game.getEventManager().registerListeners(plugin, pixelListener);
-                    logger.info("Pixelmon Legendary announces enabled!");
-                }
-
                 this.UCJDA = new UCDiscord(this);
                 if (!this.UCJDA.JDAAvailable()) {
                     this.UCJDA = null;

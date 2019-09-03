@@ -43,6 +43,7 @@ public class PlayerChangeChannelEvent extends Event implements Cancellable {
     private boolean isCancelled;
 
     public PlayerChangeChannelEvent(Player p, UCChannel from, UCChannel to) {
+        super(true);
         this.player = p;
         this.channelFrom = from;
         this.channelTo = to;

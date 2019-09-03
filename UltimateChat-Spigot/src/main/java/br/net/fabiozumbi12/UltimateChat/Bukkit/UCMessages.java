@@ -107,7 +107,7 @@ public class UCMessages {
                 }
             }
 
-            List<Player> receivers = new ArrayList<>();
+            List<CommandSender> receivers = new ArrayList<>();
             int noWorldReceived = 0;
             int vanish = 0;
 
@@ -168,14 +168,12 @@ public class UCMessages {
             }
 
             //chat spy
-            if (!UCPerms.hasPermission(sender, "uchat.chat-spy.bypass")) {
-                for (Player receiver : UChat.get().getServer().getOnlinePlayers()) {
-                    if (!receiver.equals(sender) && !receivers.contains(receiver) && !receivers.contains(sender) &&
-                            UChat.get().isSpy.contains(receiver.getName()) && UCPerms.hasSpyPerm(receiver, ch.getName())) {
-                        String spyformat = UChat.get().getUCConfig().getString("general.spy-format");
-                        spyformat = spyformat.replace("{output}", ChatColor.stripColor(sendMessage(sender, receiver, evmsg, ch).toOldFormat()));
-                        receiver.sendMessage(ChatColor.translateAlternateColorCodes('&', spyformat));
-                    }
+            for (Player receiver : UChat.get().getServer().getOnlinePlayers()) {
+                if ((!receiver.equals(sender) && !receivers.contains(receiver) && !receivers.contains(sender) &&
+                        UChat.get().isSpy.contains(receiver.getName()) && UCPerms.hasSpyPerm(receiver, ch.getName())) || !UCPerms.hasPermission(sender, "uchat.chat-spy.bypass")) {
+                    String spyformat = UChat.get().getUCConfig().getString("general.spy-format");
+                    spyformat = spyformat.replace("{output}", ChatColor.stripColor(sendMessage(sender, receiver, evmsg, ch).toOldFormat()));
+                    receiver.sendMessage(ChatColor.translateAlternateColorCodes('&', spyformat));
                 }
             }
 
@@ -201,17 +199,15 @@ public class UCMessages {
             channel = new UCChannel("tell");
 
             //send spy
-            if (!UCPerms.hasPermission(sender, "uchat.chat-spy.bypass")) {
-                for (Player receiver : UChat.get().getServer().getOnlinePlayers()) {
-                    if (!receiver.equals(tellReceiver) && !receiver.equals(sender) &&
-                            UChat.get().isSpy.contains(receiver.getName()) && UCPerms.hasSpyPerm(receiver, "private")) {
-                        String spyformat = UChat.get().getUCConfig().getString("general.spy-format");
-                        if (isIgnoringPlayers(tellReceiver.getName(), sender.getName())) {
-                            spyformat = UChat.get().getLang().get("chat.ignored") + spyformat;
-                        }
-                        spyformat = spyformat.replace("{output}", ChatColor.stripColor(sendMessage(sender, tellReceiver, evmsg, channel).toOldFormat()));
-                        receiver.sendMessage(ChatColor.translateAlternateColorCodes('&', spyformat));
+            for (Player receiver : UChat.get().getServer().getOnlinePlayers()) {
+                if ((!receiver.equals(tellReceiver) && !receiver.equals(sender) &&
+                        UChat.get().isSpy.contains(receiver.getName()) && UCPerms.hasSpyPerm(receiver, "private")) || !UCPerms.hasPermission(sender, "uchat.chat-spy.bypass")) {
+                    String spyformat = UChat.get().getUCConfig().getString("general.spy-format");
+                    if (isIgnoringPlayers(tellReceiver.getName(), sender.getName())) {
+                        spyformat = UChat.get().getLang().get("chat.ignored") + spyformat;
                     }
+                    spyformat = spyformat.replace("{output}", ChatColor.stripColor(sendMessage(sender, tellReceiver, evmsg, channel).toOldFormat()));
+                    receiver.sendMessage(ChatColor.translateAlternateColorCodes('&', spyformat));
                 }
             }
 
@@ -620,7 +616,7 @@ public class UCMessages {
                 }
                 String primGroup = UCVaultCache.getVaultPerms(sender).getPrimaryGroup();
                 String group = UChat.get().getUCConfig().getString("general.group-names." + primGroup);
-                text = text.replace("{prim-group}", group == null ? primGroup : group);
+                text = text.replace("{prim-group}", group.isEmpty() ? primGroup : group);
 
             }
             if (text.contains("{clan-") && UChat.SClans) {

@@ -502,6 +502,28 @@ public class UCCommands {
     }
 
     private CommandCallable uchat() {
+        CommandSpec addfilter = CommandSpec.builder()
+                .arguments(GenericArguments.string(Text.of("filter")))
+                .description(Text.of("Add filters to censor."))
+                .permission("uchat.cmd.addfilter")
+                .executor((src, args) -> {
+                    {
+                        //uchat addfilter word:replace
+                        String arg = args.<String>getOne("filter").get();
+                        if (!arg.contains(":")) {
+                            UChat.get().getLang().get("cmd.addfilter.invalid");
+                            throw new CommandException(UCUtil.toText(UChat.get().getLang().get("cmd.addfilter.invalid")), true);
+                        }
+
+                        String[] pair = arg.split(":");
+                        UChat.get().getConfig().protections().censor.replace_words.put(pair[0], pair[1]);
+                        UChat.get().getConfig().save();
+
+                        UChat.get().getLang().sendMessage(src, "cmd.addfilter.added");
+                        return CommandResult.success();
+                    }
+                }).build();
+
         CommandSpec msgtoggle = CommandSpec.builder()
                 .arguments(GenericArguments.optional(
                         GenericArguments.requiringPermission(
@@ -868,6 +890,7 @@ public class UCCommands {
                 .child(mute, "mute")
                 .child(tempmute, "tempmute")
                 .child(msgtoggle, "msgtoggle")
+                .child(addfilter, "addfilter")
                 .build();
     }
 

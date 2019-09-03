@@ -120,7 +120,7 @@ public class UCMessages {
 
             int noWorldReceived = 0;
             int vanish = 0;
-            List<Player> receivers = new ArrayList<>();
+            List<CommandSource> receivers = new ArrayList<>();
 
             //put sender
             msgPlayers.put(sender, sendMessage(sender, sender, srcText, ch));
@@ -185,14 +185,12 @@ public class UCMessages {
             }
 
             //chat spy
-            if (!sender.hasPermission("uchat.chat-spy.bypass")) {
-                for (Player receiver : Sponge.getServer().getOnlinePlayers()) {
-                    if (!receiver.equals(sender) && !receivers.contains(receiver) && !receivers.contains(sender) &&
-                            UChat.get().isSpy.contains(receiver.getName()) && UChat.get().getPerms().hasSpyPerm(receiver, ch.getName())) {
-                        String spyformat = UChat.get().getConfig().root().general.spy_format;
-                        spyformat = spyformat.replace("{output}", UCUtil.stripColor('&', sendMessage(sender, receiver, srcText, ch).toPlain()));
-                        receiver.sendMessage(UCUtil.toText(spyformat));
-                    }
+            for (Player receiver : Sponge.getServer().getOnlinePlayers()) {
+                if ((!receiver.equals(sender) && !receivers.contains(receiver) && !receivers.contains(sender) &&
+                        UChat.get().isSpy.contains(receiver.getName()) && UChat.get().getPerms().hasSpyPerm(receiver, ch.getName())) || !sender.hasPermission("uchat.chat-spy.bypass")) {
+                    String spyformat = UChat.get().getConfig().root().general.spy_format;
+                    spyformat = spyformat.replace("{output}", UCUtil.stripColor('&', sendMessage(sender, receiver, srcText, ch).toPlain()));
+                    receiver.sendMessage(UCUtil.toText(spyformat));
                 }
             }
 
@@ -218,17 +216,15 @@ public class UCMessages {
             channel = new UCChannel("tell");
 
             //send spy
-            if (!sender.hasPermission("uchat.chat-spy.bypass")) {
-                for (Player receiver : Sponge.getServer().getOnlinePlayers()) {
-                    if (!receiver.equals(tellReceiver) && !receiver.equals(sender) &&
-                            UChat.get().isSpy.contains(receiver.getName()) && UChat.get().getPerms().hasSpyPerm(receiver, "private")) {
-                        String spyformat = UChat.get().getConfig().root().general.spy_format;
-                        if (isIgnoringPlayers(tellReceiver.getName(), sender.getName())) {
-                            spyformat = UChat.get().getLang().get("chat.ignored") + spyformat;
-                        }
-                        spyformat = spyformat.replace("{output}", UCUtil.stripColor('&', sendMessage(sender, tellReceiver, srcText, channel).toPlain()));
-                        receiver.sendMessage(UCUtil.toText(spyformat));
+            for (Player receiver : Sponge.getServer().getOnlinePlayers()) {
+                if ((!receiver.equals(tellReceiver) && !receiver.equals(sender) &&
+                        UChat.get().isSpy.contains(receiver.getName()) && UChat.get().getPerms().hasSpyPerm(receiver, "private")) || !sender.hasPermission("uchat.chat-spy.bypass")) {
+                    String spyformat = UChat.get().getConfig().root().general.spy_format;
+                    if (isIgnoringPlayers(tellReceiver.getName(), sender.getName())) {
+                        spyformat = UChat.get().getLang().get("chat.ignored") + spyformat;
                     }
+                    spyformat = spyformat.replace("{output}", UCUtil.stripColor('&', sendMessage(sender, tellReceiver, srcText, channel).toPlain()));
+                    receiver.sendMessage(UCUtil.toText(spyformat));
                 }
             }
 

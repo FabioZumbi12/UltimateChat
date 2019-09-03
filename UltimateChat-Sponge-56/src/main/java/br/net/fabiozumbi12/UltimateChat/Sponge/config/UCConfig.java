@@ -346,7 +346,7 @@ public class UCConfig {
         return Arrays.asList(root.general.umsg_cmd_aliases.replace(" ", "").split(","));
     }
 
-    private void save() {
+    public void save() {
         try {
             configRoot.setValue(TypeToken.of(MainCategory.class), root);
             cfgLoader.save(configRoot);

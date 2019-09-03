@@ -61,10 +61,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class UChat extends JavaPlugin {
 
@@ -82,13 +79,13 @@ public class UChat extends JavaPlugin {
     private static boolean Vault = false;
     private static UChat uchat;
     List<String> isSpy = new ArrayList<>();
-    List<String> msgTogglePlayers = new ArrayList<>();
-    protected List<String> command = new ArrayList<>();
-    HashMap<String, String> tempChannels = new HashMap<>();
-    HashMap<String, String> tellPlayers = new HashMap<>();
-    HashMap<String, String> tempTellPlayers = new HashMap<>();
-    HashMap<String, String> respondTell = new HashMap<>();
-    HashMap<String, List<String>> ignoringPlayer = new HashMap<>();
+    List<String> msgTogglePlayers = Collections.synchronizedList(new ArrayList<>());
+    protected List<String> command = Collections.synchronizedList(new ArrayList<>());
+    Map<String, String> tempChannels = Collections.synchronizedMap(new HashMap<>());
+    Map<String, String> tellPlayers = Collections.synchronizedMap(new HashMap<>());
+    Map<String, String> tempTellPlayers = Collections.synchronizedMap(new HashMap<>());
+    Map<String, String> respondTell = Collections.synchronizedMap(new HashMap<>());
+    Map<String, List<String>> ignoringPlayer = Collections.synchronizedMap(new HashMap<>());
     List<String> mutes = new ArrayList<>();
     HashMap<String, Integer> timeMute = new HashMap<>();
     private FileConfiguration amConfig;

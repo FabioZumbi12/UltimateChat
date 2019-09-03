@@ -39,6 +39,7 @@ import java.util.HashMap;
  *
  * @author FabioZumbi12
  */
+
 public class SendChannelMessageEvent extends Event implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
@@ -52,6 +53,7 @@ public class SendChannelMessageEvent extends Event implements Cancellable {
     private boolean cancelChat = true;
 
     public SendChannelMessageEvent(HashMap<String, String> registeredReplacers, String[] defFormat, CommandSender sender, UCChannel channel, String msg) {
+        super(true);
         this.sender = sender;
         this.msg = msg;
         this.channel = channel;

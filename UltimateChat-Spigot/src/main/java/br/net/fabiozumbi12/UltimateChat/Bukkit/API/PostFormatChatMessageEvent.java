@@ -49,6 +49,7 @@ public class PostFormatChatMessageEvent extends Event implements Cancellable {
     private String raw;
 
     public PostFormatChatMessageEvent(CommandSender sender, HashMap<CommandSender, UltimateFancy> receivers, UCChannel channel, String raw) {
+        super(true);
         this.sender = sender;
         this.channel = channel;
         this.receivers = receivers;
@@ -57,6 +58,7 @@ public class PostFormatChatMessageEvent extends Event implements Cancellable {
 
     @Deprecated
     public PostFormatChatMessageEvent(CommandSender sender, HashMap<CommandSender, UltimateFancy> receivers, UCChannel channel) {
+        super(true);
         this.sender = sender;
         this.channel = channel;
         this.receivers = receivers;
