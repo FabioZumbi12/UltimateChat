@@ -299,7 +299,7 @@ public class UChat extends JavaPlugin {
                 Metrics metrics = new Metrics(this);
                 metrics.addCustomChart(new Metrics.SingleLineChart("chat_channels", () -> this.channels.size()));
                 if (metrics.isEnabled())
-                    logger.info("Metrics enabled! See our stats here: https://bstats.org/plugin/bukkit/UChat");
+                    logger.info("Metrics enabled! See our stats here: https://bstats.org/plugin/bukkit/UltimateChat");
             } catch (Exception ex) {
                 logger.info("Metrics not enabled due errors: " + ex.getLocalizedMessage());
             }
