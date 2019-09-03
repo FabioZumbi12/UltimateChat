@@ -106,9 +106,8 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
                             delay[0] += 10;
                         }, delay[0]);
                     }
-
                 });
-            }, 20, 20 * (60 * (interval < 1 ? 1 : interval))/*secs*/).getTaskId();
+            }, 20, 20 * (60 * (Math.max(interval, 1)))/*secs*/).getTaskId();
 
             UChat.get().getUCLogger().info("- Discord Sync in use!");
         }
