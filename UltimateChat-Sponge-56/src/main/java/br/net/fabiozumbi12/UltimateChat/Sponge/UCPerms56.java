@@ -82,7 +82,7 @@ public class UCPerms56 implements UCPerms {
     }
 
     public boolean canIgnore(CommandSource sender, Object toignore) {
-        return (!(toignore instanceof CommandSource) || !isAdmin((CommandSource) toignore)) && !sender.hasPermission("uchat.cant-ignore." + (toignore instanceof Player ? ((Player) toignore).getName() : ((UCChannel) toignore).getName()));
+        return !(toignore instanceof CommandSource) || !sender.hasPermission("uchat.cant-ignore." + (toignore instanceof Player ? ((Player) toignore).getName() : ((UCChannel) toignore).getName()));
     }
 
     public boolean hasPerm(CommandSource p, String perm) {

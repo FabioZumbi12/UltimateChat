@@ -29,8 +29,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class MuteCountDown extends BukkitRunnable {
-    final String p;
-    int time;
+    private final String p;
+    private int time;
 
     MuteCountDown(String p, int t) {
         this.p = p;

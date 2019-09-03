@@ -75,7 +75,7 @@ public class UCPerms {
     }
 
     static boolean canIgnore(CommandSender sender, Object toignore) {
-        return (!(toignore instanceof CommandSender) || !isAdmin((CommandSender) toignore)) && !hasPermission(sender, "uchat.cant-ignore." + (toignore instanceof Player ? ((Player) toignore).getName() : ((UCChannel) toignore).getName()));
+        return !(toignore instanceof CommandSender) || !hasPermission(sender, "uchat.cant-ignore." + (toignore instanceof Player ? ((Player) toignore).getName() : ((UCChannel) toignore).getName()));
     }
 
     public static boolean hasPerm(CommandSender p, String perm) {
