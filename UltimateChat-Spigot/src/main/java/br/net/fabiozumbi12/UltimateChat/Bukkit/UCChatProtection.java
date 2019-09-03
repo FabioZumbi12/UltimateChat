@@ -253,8 +253,9 @@ public class UCChatProtection implements Listener {
         String msg = e.getMessage();
         UCChannel ch = e.getChannel();
 
-        if (filterChatMessage(p, msg, ch) != null) {
-            e.setMessage(filterChatMessage(p, msg, ch));
+        String message = filterChatMessage(p, msg, ch);
+        if (message != null) {
+            e.setMessage(message);
         } else {
             e.setCancelled(true);
         }
