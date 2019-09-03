@@ -703,7 +703,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 
                 if (args.length == 2) {
                     Player receiver = UChat.get().getServer().getPlayer(args[1]);
-                    if (receiver == null || !receiver.isOnline() || !p.canSee(receiver)) {
+                    if (receiver == null || !receiver.isOnline() || (!p.canSee(receiver) && !UCPerms.hasPermission(p, "uchat.see-vanish"))) {
                         UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("listener.invalidplayer"));
                         return;
                     }
@@ -738,7 +738,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
                     //send to player
                     Player receiver = UChat.get().getServer().getPlayer(args[1]);
 
-                    if (receiver == null || !receiver.isOnline() || !p.canSee(receiver)) {
+                    if (receiver == null || !receiver.isOnline() || (!p.canSee(receiver) && !UCPerms.hasPermission(p, "uchat.see-vanish"))) {
                         UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("listener.invalidplayer"));
                         return;
                     }
@@ -755,7 +755,6 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 
                     UChat.get().tempTellPlayers.put(p.getName(), receiver.getName());
                     UChat.get().command.add(p.getName());
-                    //sendTell(p, receiver, msg);
 
                     sendPreTell(p, receiver, msg);
                     return;
@@ -809,7 +808,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
     private void sendTell(CommandSender sender, CommandSender receiver, String msg) {
         if (receiver == null
                 || (receiver instanceof Player && (!((Player) receiver).isOnline()
-                || (sender instanceof Player && !((Player) sender).canSee((Player) receiver))))
+                || (sender instanceof Player && (!((Player) sender).canSee((Player) receiver) && !UCPerms.hasPermission(sender, "uchat.see-vanish")))))
         ) {
             UChat.get().getLang().sendMessage(sender, UChat.get().getLang().get("listener.invalidplayer"));
             return;
