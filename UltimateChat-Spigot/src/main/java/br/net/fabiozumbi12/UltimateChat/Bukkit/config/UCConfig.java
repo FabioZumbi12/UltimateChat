@@ -279,6 +279,11 @@ public class UCConfig {
         return Prots.getConfigurationSection("chat-protection.censor.replace-words");
     }
 
+    public void delFilter(String word) {
+        Prots.set("chat-protection.censor.replace-words." + word, null);
+        save();
+    }
+
     public void addFilter(String word) {
         String[] pair = word.split(":");
         Prots.set("chat-protection.censor.replace-words." + pair[0], pair[1]);

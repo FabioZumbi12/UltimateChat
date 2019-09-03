@@ -519,7 +519,24 @@ public class UCCommands {
                         UChat.get().getConfig().protections().censor.replace_words.put(pair[0], pair[1]);
                         UChat.get().getConfig().save();
 
-                        UChat.get().getLang().sendMessage(src, "cmd.addfilter.added");
+                        UChat.get().getLang().sendMessage(src, UChat.get().getLang().get("cmd.addfilter.added").replace("{filter}",arg));
+                        return CommandResult.success();
+                    }
+                }).build();
+
+        CommandSpec delfilter = CommandSpec.builder()
+                .arguments(GenericArguments.string(Text.of("filter")))
+                .description(Text.of("Removes a filter from censor."))
+                .permission("uchat.cmd.addfilter")
+                .executor((src, args) -> {
+                    {
+                        //uchat addfilter word:replace
+                        String arg = args.<String>getOne("filter").get();
+
+                        UChat.get().getConfig().protections().censor.replace_words.remove(arg);
+                        UChat.get().getConfig().save();
+
+                        UChat.get().getLang().sendMessage(src, UChat.get().getLang().get("cmd.addfilter.removed").replace("{filter}",arg));
                         return CommandResult.success();
                     }
                 }).build();
@@ -891,6 +908,7 @@ public class UCCommands {
                 .child(tempmute, "tempmute")
                 .child(msgtoggle, "msgtoggle")
                 .child(addfilter, "addfilter")
+                .child(delfilter, "dellfilter")
                 .build();
     }
 
@@ -905,6 +923,10 @@ public class UCCommands {
             fancy.append(UChat.get().getLang().getText("help.tell.lock", "\n"));
             fancy.append(UChat.get().getLang().getText("help.tell.send", "\n"));
             fancy.append(UChat.get().getLang().getText("help.tell.respond", "\n"));
+        }
+        if (UChat.get().getPerms().cmdPerm(p, "uchat.cmd.addfilter")) {
+            fancy.append(UChat.get().getLang().getText("help.cmd.addfilter", "\n"));
+            fancy.append(UChat.get().getLang().getText("help.cmd.delfilter", "\n"));
         }
         if (UChat.get().getPerms().cmdPerm(p, "uchat.cmd.broadcast")) {
             fancy.append(UChat.get().getLang().getText("help.cmd.broadcast", "\n"));

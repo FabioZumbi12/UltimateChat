@@ -326,7 +326,19 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 
                 if (args.length == 2) {
 
-                    //chat msgtoggle <player>
+                    //chat delfilter word
+                    if (args[0].equalsIgnoreCase("delfilter")) {
+                        if (!UCPerms.hasPerm(p, "addfilter")) {
+                            UChat.get().getLang().sendMessage(p, "cmd.nopermission");
+                            return true;
+                        }
+
+                        UChat.get().getUCConfig().delFilter(args[1]);
+                        UChat.get().getLang().sendMessage(p, "cmd.addfilter.removed");
+                        return true;
+                    }
+
+                    //chat addfilter word:replace
                     if (args[0].equalsIgnoreCase("addfilter")) {
                         if (!UCPerms.hasPerm(p, "addfilter")) {
                             UChat.get().getLang().sendMessage(p, "cmd.nopermission");
@@ -339,7 +351,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
                         }
 
                         UChat.get().getUCConfig().addFilter(args[1]);
-                        UChat.get().getLang().sendMessage(p, "cmd.addfilter.added");
+                        UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("cmd.addfilter.added").replace("{filter}",args[1]));
                         return true;
                     }
 
@@ -1028,6 +1040,10 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
             fancy.coloredText(UChat.get().getLang().get("help.tell.lock") + "\n");
             fancy.coloredText(UChat.get().getLang().get("help.tell.send") + "\n");
             fancy.coloredText(UChat.get().getLang().get("help.tell.respond") + "\n");
+        }
+        if (UCPerms.cmdPerm(p, "addfilter")) {
+            fancy.coloredText(UChat.get().getLang().get("help.cmd.addfilter") + "\n");
+            fancy.coloredText(UChat.get().getLang().get("help.cmd.dellfilter") + "\n");
         }
         if (UCPerms.cmdPerm(p, "broadcast")) {
             fancy.coloredText(UChat.get().getLang().get("help.cmd.broadcast") + "\n");
