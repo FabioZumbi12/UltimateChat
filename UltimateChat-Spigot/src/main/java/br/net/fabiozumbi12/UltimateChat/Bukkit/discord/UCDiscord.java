@@ -38,6 +38,7 @@ import jdalib.jda.core.managers.GuildController;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import javax.security.auth.login.LoginException;
 import java.net.MalformedURLException;
@@ -94,7 +95,8 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
 
         if (this.uchat.getUCConfig().getBoolean("discord.update-status")) {
             taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () ->
-                    updateGame(this.uchat.getLang().get("discord.game").replace("{online}", String.valueOf(this.uchat.getServer().getOnlinePlayers().size()))), 40, 40);
+                    updateGame(this.uchat.getLang().get("discord.game").replace("{online}",
+                            String.valueOf(this.uchat.getServer().getOnlinePlayers().stream().filter(p->!p.hasPermission("uchat.discord.hide")).count()))), 40, 40);
         }
     }
 
@@ -407,7 +409,7 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
         } catch (PermissionException e) {
             uchat.getUCLogger().severe("JDA: No permission to send messages to channel " + ch.getName() + ".");
         } catch (Exception e) {
-            uchat.getUCLogger().warning("JDA: The channel ID [" + id + "] is incorrect, not available or Discord is offline, in maintance or some other connection problem.");
+            uchat.getUCLogger().warning("JDA: The channel ID [" + id + "] is incorrect, not available or Discord is offline, in maintenance or some other connection problem.");
             e.printStackTrace();
         }
     }
