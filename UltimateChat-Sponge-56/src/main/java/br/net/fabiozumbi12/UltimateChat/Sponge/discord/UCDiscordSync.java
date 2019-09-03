@@ -256,7 +256,7 @@ public class UCDiscordSync {
 
     public void unload() {
         try {
-            if (Sponge.getScheduler().getTaskById(this.taskId).isPresent())
+            if (this.taskId != null && Sponge.getScheduler().getTaskById(this.taskId).isPresent())
                 Sponge.getScheduler().getTaskById(this.taskId).get().cancel();
         } catch (Exception ignored) {}
     }
