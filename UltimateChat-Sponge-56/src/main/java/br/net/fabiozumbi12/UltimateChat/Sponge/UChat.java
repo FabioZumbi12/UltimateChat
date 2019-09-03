@@ -28,7 +28,6 @@ package br.net.fabiozumbi12.UltimateChat.Sponge;
 import br.net.fabiozumbi12.UltimateChat.Sponge.API.UChatReloadEvent;
 import br.net.fabiozumbi12.UltimateChat.Sponge.API.uChatAPI;
 import br.net.fabiozumbi12.UltimateChat.Sponge.Bungee.UChatBungee;
-import br.net.fabiozumbi12.UltimateChat.Sponge.Listeners.UCListener;
 import br.net.fabiozumbi12.UltimateChat.Sponge.config.UCConfig;
 import br.net.fabiozumbi12.UltimateChat.Sponge.config.UCLang;
 import br.net.fabiozumbi12.UltimateChat.Sponge.config.VersionData;

@@ -23,7 +23,7 @@
  3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
  */
 
-package br.net.fabiozumbi12.UltimateChat.Sponge.Listeners;
+package br.net.fabiozumbi12.UltimateChat.Sponge;
 
 import br.net.fabiozumbi12.UltimateChat.Sponge.*;
 import br.net.fabiozumbi12.UltimateChat.Sponge.config.MainCategory;

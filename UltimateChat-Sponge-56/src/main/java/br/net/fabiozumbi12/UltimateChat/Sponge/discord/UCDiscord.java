@@ -422,12 +422,14 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
         try {
             GuildController gc = this.jda.getGuildById(this.uchat.getDDSync().getGuidId()).getController();
             Member member = gc.getGuild().getMemberById(ddUser);
-            List<Role> roles = new ArrayList<>();
-            ddRoleIds.forEach(r -> roles.add(gc.getGuild().getRoleById(r)));
             if (!nick.isEmpty() && (member.getNickname() == null || !member.getNickname().equals(nick))) {
                 gc.setNickname(member, nick).complete(true);
             }
-            gc.modifyMemberRoles(member, roles, member.getRoles().stream().filter(r -> configRoles.contains(r.getId()) && !roles.contains(r)).collect(Collectors.toList())).complete(true);
+
+            List<Role> roles = new ArrayList<>();
+            ddRoleIds.forEach(r -> roles.add(gc.getGuild().getRoleById(r)));
+            gc.removeRolesFromMember(member, configRoles.stream().map(r->gc.getGuild().getRoleById(r)).collect(Collectors.toList())).complete(true);
+            gc.addRolesToMember(member, roles).complete(true);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
