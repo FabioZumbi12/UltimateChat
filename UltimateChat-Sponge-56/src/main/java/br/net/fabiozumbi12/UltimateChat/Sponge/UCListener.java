@@ -198,6 +198,9 @@ public class UCListener {
         if (!UChat.get().getConfig().root().general.persist_channels) {
             UChat.get().getDefChannel(p.getWorld().getName()).addMember(p);
         }
+        if (p.hasPermission("uchat.auto-msgtoggle")) {
+            UChat.get().msgTogglePlayers.remove(p.getName());
+        }
 
         if (UChat.get().getUCJDA() != null && !p.hasPermission(UChat.get().getConfig().root().discord.vanish_perm)) {
             UChat.get().getUCJDA().sendRawToDiscord(UChat.get().getLang().get("discord.join").replace("{player}", p.getName()));

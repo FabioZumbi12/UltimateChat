@@ -943,6 +943,9 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
         if (!UChat.get().getUCConfig().getBoolean("general.persist-channels")) {
             UChat.get().getDefChannel(p.getWorld().getName()).addMember(p);
         }
+        if (p.hasPermission("uchat.auto-msgtoggle")) {
+            UChat.get().msgTogglePlayers.remove(p.getName());
+        }
 
         if (UChat.get().getUCJDA() != null && !p.hasPermission(UChat.get().getUCConfig().getString("discord.vanish-perm"))) {
             UChat.get().getUCJDA().sendRawToDiscord(UChat.get().getLang().get("discord.join").replace("{player}", p.getName()));
