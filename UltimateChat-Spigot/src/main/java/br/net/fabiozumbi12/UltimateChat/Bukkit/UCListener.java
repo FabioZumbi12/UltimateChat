@@ -814,7 +814,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
             return;
         }
         UChat.get().respondTell.put(receiver.getName(), sender.getName());
-        Bukkit.getScheduler().runTask(UChat.get(), () -> UCMessages.sendFancyMessage(new String[0], msg, null, sender, receiver));
+        UCMessages.sendFancyMessage(new String[0], msg, null, sender, receiver);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

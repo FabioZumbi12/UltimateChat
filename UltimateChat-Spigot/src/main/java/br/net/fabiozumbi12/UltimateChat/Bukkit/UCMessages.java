@@ -170,7 +170,7 @@ public class UCMessages {
             //chat spy
             for (Player receiver : UChat.get().getServer().getOnlinePlayers()) {
                 if (!receiver.equals(sender) && !receivers.contains(receiver) && !receivers.contains(sender) &&
-                        (UChat.get().isSpy.contains(receiver.getName()) && UCPerms.hasSpyPerm(receiver, ch.getName())) || UCPerms.hasPermission(receiver, "uchat.chat-spy.bypass")) {
+                        (UChat.get().isSpy.contains(receiver.getName()) && UCPerms.hasSpyPerm(receiver, ch.getName()) || UCPerms.hasPermission(receiver, "uchat.chat-spy.bypass"))) {
                     String spyformat = UChat.get().getUCConfig().getString("general.spy-format");
                     spyformat = spyformat.replace("{output}", ChatColor.stripColor(sendMessage(sender, receiver, evmsg, ch).toOldFormat()));
                     receiver.sendMessage(ChatColor.translateAlternateColorCodes('&', spyformat));
@@ -201,7 +201,7 @@ public class UCMessages {
             //send spy
             for (Player receiver : UChat.get().getServer().getOnlinePlayers()) {
                 if (!receiver.equals(tellReceiver) && !receiver.equals(sender) &&
-                        (UChat.get().isSpy.contains(receiver.getName()) && UCPerms.hasSpyPerm(receiver, "private")) || !UCPerms.hasPermission(sender, "uchat.chat-spy.bypass")) {
+                        (UChat.get().isSpy.contains(receiver.getName()) && UCPerms.hasSpyPerm(receiver, "private") || UCPerms.hasPermission(receiver, "uchat.chat-spy.bypass"))) {
                     String spyformat = UChat.get().getUCConfig().getString("general.spy-format");
                     if (isIgnoringPlayers(tellReceiver.getName(), sender.getName())) {
                         spyformat = UChat.get().getLang().get("chat.ignored") + spyformat;
