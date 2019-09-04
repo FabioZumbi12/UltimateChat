@@ -1144,11 +1144,12 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
             if (args.length > 0) {
                 for (String arg : args) {
                     if (Bukkit.getPlayer(arg) != null) {
-                        if (!(sender instanceof Player) || Bukkit.getPlayer(arg).canSee((Player)sender))
+                        if (!(sender instanceof Player) || ((Player)sender).canSee(Bukkit.getPlayer(arg)))
                             tab.add(Bukkit.getPlayer(arg).getName());
                     }
                 }
             }
+            return tab;
         }
         if (command.getName().equals("uchat")) {
             if (args.length == 1) {

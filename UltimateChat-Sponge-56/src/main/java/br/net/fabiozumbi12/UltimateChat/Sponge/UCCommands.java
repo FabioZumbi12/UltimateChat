@@ -1044,7 +1044,7 @@ public class UCCommands {
         @Override
         public List<String> complete(CommandSource src, CommandArgs args, CommandContext context) {
             return Sponge.getServer().getOnlinePlayers().stream().filter(
-                    play -> args.hasNext() && (src instanceof ConsoleSource || (src instanceof Player && play.canSee((Player) src))) && play.getName().toUpperCase().startsWith(args.getAll().get(args.getAll().size() - 1).toUpperCase()))
+                    play -> args.hasNext() && (src instanceof ConsoleSource || (src instanceof Player && ((Player) src).canSee(play))) && play.getName().toUpperCase().startsWith(args.getAll().get(args.getAll().size() - 1).toUpperCase()))
                     .map(Player::getName).collect(Collectors.toList());
         }
     }
