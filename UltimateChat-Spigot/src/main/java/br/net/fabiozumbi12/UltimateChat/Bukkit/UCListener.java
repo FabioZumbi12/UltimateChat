@@ -781,25 +781,29 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
     @EventHandler
     public void onServerCmd(ServerCommandEvent e) {
         String[] args = e.getCommand().replace("/", "").split(" ");
-        String msg = null;
+        final String[] msg = {null};
         if (e.getCommand().length() > args[0].length() + 1) {
-            msg = e.getCommand().substring(args[0].length() + 1);
+            msg[0] = e.getCommand().substring(args[0].length() + 1);
         }
 
-        if (msg != null && UChat.get().getUCConfig().getTellAliases().contains(args[0])) {
+        if (msg[0] != null && UChat.get().getUCConfig().getTellAliases().contains(args[0])) {
             if (args.length >= 3) {
-                Player p = UChat.get().getServer().getPlayer(args[1]);
 
-                if (p == null || !p.isOnline()) {
-                    UChat.get().getLang().sendMessage(e.getSender(), "listener.invalidplayer");
-                    return;
-                }
+                Bukkit.getScheduler().runTaskAsynchronously(UChat.get(), () -> {
+                    Player p = UChat.get().getServer().getPlayer(args[1]);
 
-                msg = msg.substring(args[1].length() + 1);
+                    if (p == null || !p.isOnline()) {
+                        UChat.get().getLang().sendMessage(e.getSender(), "listener.invalidplayer");
+                        return;
+                    }
 
-                UChat.get().tempTellPlayers.put("CONSOLE", p.getName());
-                UChat.get().command.add("CONSOLE");
-                sendPreTell(UChat.get().getServer().getConsoleSender(), p, msg);
+                    msg[0] = msg[0].substring(args[1].length() + 1);
+
+                    UChat.get().tempTellPlayers.put("CONSOLE", p.getName());
+                    UChat.get().command.add("CONSOLE");
+                    sendPreTell(UChat.get().getServer().getConsoleSender(), p, msg[0]);
+                });
+
                 e.setCancelled(true);
             }
         }
