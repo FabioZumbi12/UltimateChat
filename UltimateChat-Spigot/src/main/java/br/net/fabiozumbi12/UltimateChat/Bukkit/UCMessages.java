@@ -79,177 +79,180 @@ public class UCMessages {
         HashMap<CommandSender, UltimateFancy> msgPlayers = new HashMap<>();
         evmsg = composeColor(sender, evmsg);
 
-        if (event.getChannel() != null) {
+        String finalEvmsg = evmsg;
+        Bukkit.getScheduler().runTask(UChat.get(), () -> {
+            UCChannel ch;
+            if (event.getChannel() != null) {
 
-            UCChannel ch = event.getChannel();
+                ch = event.getChannel();
 
-            if (sender instanceof Player && !ch.availableWorlds().isEmpty() && !ch.availableInWorld(((Player) sender).getWorld())) {
-                UChat.get().getLang().sendMessage(sender, UChat.get().getLang().get("channel.notavailable").replace("{channel}", ch.getName()));
-                return cancel;
-            }
-
-            if (!UCPerms.channelWritePerm(sender, ch)) {
-                UChat.get().getLang().sendMessage(sender, UChat.get().getLang().get("channel.nopermission").replace("{channel}", ch.getName()));
-                return cancel;
-            }
-
-            if (ch.isMuted(sender.getName())) {
-                UChat.get().getLang().sendMessage(sender, "channel.muted");
-                return cancel;
-            }
-
-            if (!UCPerms.hasPerm(sender, "bypass.cost") && UChat.get().getVaultEco() != null && sender instanceof Player && ch.getCost() > 0) {
-                if (UChat.get().getVaultEco().getBalance((Player) sender, ((Player) sender).getWorld().getName()) < ch.getCost()) {
-                    UChat.get().getLang().sendMessage(sender, UChat.get().getLang().get("channel.cost").replace("{value}", "" + ch.getCost()));
-                    return cancel;
-                } else {
-                    UChat.get().getVaultEco().withdrawPlayer((Player) sender, ((Player) sender).getWorld().getName(), ch.getCost());
+                if (sender instanceof Player && !ch.availableWorlds().isEmpty() && !ch.availableInWorld(((Player) sender).getWorld())) {
+                    UChat.get().getLang().sendMessage(sender, UChat.get().getLang().get("channel.notavailable").replace("{channel}", ch.getName()));
+                    return;
                 }
-            }
 
-            List<CommandSender> receivers = new ArrayList<>();
-            int noWorldReceived = 0;
-            int vanish = 0;
+                if (!UCPerms.channelWritePerm(sender, ch)) {
+                    UChat.get().getLang().sendMessage(sender, UChat.get().getLang().get("channel.nopermission").replace("{channel}", ch.getName()));
+                    return;
+                }
 
-            //put sender
-            msgPlayers.put(sender, sendMessage(sender, sender, evmsg, ch));
-            if (ch.getDistance() > 0 && sender instanceof Player) {
-                for (Player play : ((Player) sender).getNearbyEntities(ch.getDistance(), ch.getDistance(), ch.getDistance()).stream()
-                        .filter(ent -> ent instanceof Player)
-                        .map(ent -> (Player) ent)
-                        .collect(Collectors.toList())) {
-                    if (UCPerms.channelReadPerm(play, ch)) {
-                        if (!ch.availableWorlds().isEmpty() && !ch.availableInWorld(play.getWorld())) {
+                if (ch.isMuted(sender.getName())) {
+                    UChat.get().getLang().sendMessage(sender, "channel.muted");
+                    return;
+                }
+
+                if (!UCPerms.hasPerm(sender, "bypass.cost") && UChat.get().getVaultEco() != null && sender instanceof Player && ch.getCost() > 0) {
+                    if (UChat.get().getVaultEco().getBalance((Player) sender, ((Player) sender).getWorld().getName()) < ch.getCost()) {
+                        UChat.get().getLang().sendMessage(sender, UChat.get().getLang().get("channel.cost").replace("{value}", "" + ch.getCost()));
+                        return;
+                    } else {
+                        UChat.get().getVaultEco().withdrawPlayer((Player) sender, ((Player) sender).getWorld().getName(), ch.getCost());
+                    }
+                }
+
+                List<CommandSender> receivers = new ArrayList<>();
+                int noWorldReceived = 0;
+                int vanish = 0;
+
+                //put sender
+                msgPlayers.put(sender, sendMessage(sender, sender, finalEvmsg, ch));
+                if (ch.getDistance() > 0 && sender instanceof Player) {
+                    for (Player play : ((Player) sender).getNearbyEntities(ch.getDistance(), ch.getDistance(), ch.getDistance()).stream()
+                            .filter(ent -> ent instanceof Player)
+                            .map(ent -> (Player) ent)
+                            .collect(Collectors.toList())) {
+                        if (UCPerms.channelReadPerm(play, ch)) {
+                            if (!ch.availableWorlds().isEmpty() && !ch.availableInWorld(play.getWorld())) {
+                                continue;
+                            }
+                            if (ch.isIgnoring(play.getName())) {
+                                continue;
+                            }
+                            if (isIgnoringPlayers(play.getName(), sender.getName())) {
+                                noWorldReceived++;
+                                continue;
+                            }
+                            if (!((Player) sender).canSee(play) && !UCPerms.hasPermission(sender, "uchat.see-vanish")) {
+                                vanish++;
+                            } else {
+                                noWorldReceived++;
+                            }
+                            if (!ch.neeFocus() || ch.isMember(play)) {
+                                msgPlayers.put(play, sendMessage(sender, play, finalEvmsg, ch));
+                                receivers.add(play);
+                            }
+                        }
+                    }
+                } else {
+                    for (Player receiver : UChat.get().getServer().getOnlinePlayers()) {
+                        if (receiver.equals(sender) || !UCPerms.channelReadPerm(receiver, ch) || (!ch.crossWorlds() && (sender instanceof Player && !receiver.getWorld().equals(((Player) sender).getWorld())))) {
                             continue;
                         }
-                        if (ch.isIgnoring(play.getName())) {
+                        if (!ch.availableWorlds().isEmpty() && !ch.availableInWorld(receiver.getWorld())) {
                             continue;
                         }
-                        if (isIgnoringPlayers(play.getName(), sender.getName())) {
+                        if (ch.isIgnoring(receiver.getName())) {
+                            continue;
+                        }
+                        if (isIgnoringPlayers(receiver.getName(), sender.getName())) {
                             noWorldReceived++;
                             continue;
                         }
-                        if (!((Player) sender).canSee(play) && !UCPerms.hasPermission(sender, "uchat.see-vanish")) {
+                        if (sender instanceof Player && (!((Player) sender).canSee(receiver) && !UCPerms.hasPermission(sender, "uchat.see-vanish"))) {
                             vanish++;
                         } else {
                             noWorldReceived++;
                         }
-                        if (!ch.neeFocus() || ch.isMember(play)) {
-                            msgPlayers.put(play, sendMessage(sender, play, evmsg, ch));
-                            receivers.add(play);
+                        if (!ch.neeFocus() || ch.isMember(receiver)) {
+                            msgPlayers.put(receiver, sendMessage(sender, receiver, finalEvmsg, ch));
+                            receivers.add(receiver);
                         }
                     }
                 }
-            } else {
+
+                //chat spy
                 for (Player receiver : UChat.get().getServer().getOnlinePlayers()) {
-                    if (receiver.equals(sender) || !UCPerms.channelReadPerm(receiver, ch) || (!ch.crossWorlds() && (sender instanceof Player && !receiver.getWorld().equals(((Player) sender).getWorld())))) {
-                        continue;
-                    }
-                    if (!ch.availableWorlds().isEmpty() && !ch.availableInWorld(receiver.getWorld())) {
-                        continue;
-                    }
-                    if (ch.isIgnoring(receiver.getName())) {
-                        continue;
-                    }
-                    if (isIgnoringPlayers(receiver.getName(), sender.getName())) {
-                        noWorldReceived++;
-                        continue;
-                    }
-                    if (sender instanceof Player && (!((Player) sender).canSee(receiver) && !UCPerms.hasPermission(sender, "uchat.see-vanish"))) {
-                        vanish++;
-                    } else {
-                        noWorldReceived++;
-                    }
-                    if (!ch.neeFocus() || ch.isMember(receiver)) {
-                        msgPlayers.put(receiver, sendMessage(sender, receiver, evmsg, ch));
-                        receivers.add(receiver);
+                    if (!receiver.equals(sender) && !receivers.contains(receiver) && !receivers.contains(sender) &&
+                            (UChat.get().isSpy.contains(receiver.getName()) && UCPerms.hasSpyPerm(receiver, ch.getName()) || UCPerms.hasPermission(receiver, "uchat.chat-spy.bypass"))) {
+                        String spyformat = UChat.get().getUCConfig().getString("general.spy-format");
+                        spyformat = spyformat.replace("{output}", ChatColor.stripColor(sendMessage(sender, receiver, finalEvmsg, ch).toOldFormat()));
+                        receiver.sendMessage(ChatColor.translateAlternateColorCodes('&', spyformat));
                     }
                 }
-            }
 
-            //chat spy
-            for (Player receiver : UChat.get().getServer().getOnlinePlayers()) {
-                if (!receiver.equals(sender) && !receivers.contains(receiver) && !receivers.contains(sender) &&
-                        (UChat.get().isSpy.contains(receiver.getName()) && UCPerms.hasSpyPerm(receiver, ch.getName()) || UCPerms.hasPermission(receiver, "uchat.chat-spy.bypass"))) {
-                    String spyformat = UChat.get().getUCConfig().getString("general.spy-format");
-                    spyformat = spyformat.replace("{output}", ChatColor.stripColor(sendMessage(sender, receiver, evmsg, ch).toOldFormat()));
-                    receiver.sendMessage(ChatColor.translateAlternateColorCodes('&', spyformat));
-                }
-            }
-
-            if (ch.getDistance() == 0 && noWorldReceived <= 0) {
-                if (ch.getReceiversMsg()) {
-                    UChat.get().getLang().sendMessage(sender, "channel.noplayer.world");
-                }
-            }
-            if ((receivers.size() - vanish) <= 0) {
-                if (ch.getReceiversMsg()) {
-                    UChat.get().getLang().sendMessage(sender, "channel.noplayer.near");
-                }
-            }
-
-        } else {
-            //send tell
-
-            if (UChat.get().msgTogglePlayers.contains(tellReceiver.getName()) && !sender.hasPermission("uchat.msgtoggle.exempt")) {
-                UChat.get().getLang().sendMessage(sender, "cmd.msgtoggle.msgdisabled");
-                return cancel;
-            }
-
-            channel = new UCChannel("tell");
-
-            //send spy
-            for (Player receiver : UChat.get().getServer().getOnlinePlayers()) {
-                if (!receiver.equals(tellReceiver) && !receiver.equals(sender) &&
-                        (UChat.get().isSpy.contains(receiver.getName()) && UCPerms.hasSpyPerm(receiver, "private") || UCPerms.hasPermission(receiver, "uchat.chat-spy.bypass"))) {
-                    String spyformat = UChat.get().getUCConfig().getString("general.spy-format");
-                    if (isIgnoringPlayers(tellReceiver.getName(), sender.getName())) {
-                        spyformat = UChat.get().getLang().get("chat.ignored") + spyformat;
+                if (ch.getDistance() == 0 && noWorldReceived <= 0) {
+                    if (ch.getReceiversMsg()) {
+                        UChat.get().getLang().sendMessage(sender, "channel.noplayer.world");
                     }
-                    spyformat = spyformat.replace("{output}", ChatColor.stripColor(sendMessage(sender, tellReceiver, evmsg, channel).toOldFormat()));
-                    receiver.sendMessage(ChatColor.translateAlternateColorCodes('&', spyformat));
                 }
-            }
+                if ((receivers.size() - vanish) <= 0) {
+                    if (ch.getReceiversMsg()) {
+                        UChat.get().getLang().sendMessage(sender, "channel.noplayer.near");
+                    }
+                }
 
-            msgPlayers.put(sender, sendMessage(sender, tellReceiver, evmsg, channel));
-            if (!isIgnoringPlayers(tellReceiver.getName(), sender.getName())) {
-                msgPlayers.put(tellReceiver, sendMessage(sender, tellReceiver, evmsg, channel));
-            }
-            if (isIgnoringPlayers(tellReceiver.getName(), sender.getName())) {
-                msgPlayers.put(UChat.get().getServer().getConsoleSender(), new UltimateFancy(UChat.get().getLang().get("chat.ignored") + msgPlayers.get(sender).toOldFormat()));
-            }
-        }
-
-        if (!msgPlayers.keySet().contains(UChat.get().getServer().getConsoleSender())) {
-            msgPlayers.put(UChat.get().getServer().getConsoleSender(), msgPlayers.get(sender));
-        }
-
-        //fire post event
-        PostFormatChatMessageEvent postEvent = new PostFormatChatMessageEvent(sender, msgPlayers, channel, msg);
-        Bukkit.getPluginManager().callEvent(postEvent);
-        if (postEvent.isCancelled()) {
-            return cancel;
-        }
-
-        if (channel != null && !channel.isTell() && channel.isBungee()) {
-            UChatBungee.sendBungee(channel, msgPlayers.get(sender));
-        } else {
-            msgPlayers.forEach((send, text) -> {
-                UChat.get().getUCLogger().timings(timingType.END, "UCMessages#send()|before send");
-                text.send(send);
-                UChat.get().getUCLogger().timings(timingType.END, "UCMessages#send()|after send");
-            });
-        }
-
-        //send to jda
-        if (channel != null && UChat.get().getUCJDA() != null) {
-            if (channel.isTell()) {
-                UChat.get().getUCJDA().sendTellToDiscord(msgPlayers.get(sender).toOldFormat());
             } else {
-                UChat.get().getUCJDA().sendToDiscord(sender, evmsg, channel);
-            }
-        }
+                //send tell
 
+                if (UChat.get().msgTogglePlayers.contains(tellReceiver.getName()) && !sender.hasPermission("uchat.msgtoggle.exempt")) {
+                    UChat.get().getLang().sendMessage(sender, "cmd.msgtoggle.msgdisabled");
+                    return;
+                }
+
+                ch = new UCChannel("tell");
+
+                //send spy
+                for (Player receiver : UChat.get().getServer().getOnlinePlayers()) {
+                    if (!receiver.equals(tellReceiver) && !receiver.equals(sender) &&
+                            (UChat.get().isSpy.contains(receiver.getName()) && UCPerms.hasSpyPerm(receiver, "private") || UCPerms.hasPermission(receiver, "uchat.chat-spy.bypass"))) {
+                        String spyformat = UChat.get().getUCConfig().getString("general.spy-format");
+                        if (isIgnoringPlayers(tellReceiver.getName(), sender.getName())) {
+                            spyformat = UChat.get().getLang().get("chat.ignored") + spyformat;
+                        }
+                        spyformat = spyformat.replace("{output}", ChatColor.stripColor(sendMessage(sender, tellReceiver, finalEvmsg, ch).toOldFormat()));
+                        receiver.sendMessage(ChatColor.translateAlternateColorCodes('&', spyformat));
+                    }
+                }
+
+                msgPlayers.put(sender, sendMessage(sender, tellReceiver, finalEvmsg, ch));
+                if (!isIgnoringPlayers(tellReceiver.getName(), sender.getName())) {
+                    msgPlayers.put(tellReceiver, sendMessage(sender, tellReceiver, finalEvmsg, ch));
+                }
+                if (isIgnoringPlayers(tellReceiver.getName(), sender.getName())) {
+                    msgPlayers.put(UChat.get().getServer().getConsoleSender(), new UltimateFancy(UChat.get().getLang().get("chat.ignored") + msgPlayers.get(sender).toOldFormat()));
+                }
+            }
+
+            if (!msgPlayers.containsKey(UChat.get().getServer().getConsoleSender())) {
+                msgPlayers.put(UChat.get().getServer().getConsoleSender(), msgPlayers.get(sender));
+            }
+
+            //fire post event
+            PostFormatChatMessageEvent postEvent = new PostFormatChatMessageEvent(sender, msgPlayers, ch, msg);
+            Bukkit.getPluginManager().callEvent(postEvent);
+
+            if (!postEvent.isCancelled()) {
+
+                if (!ch.isTell() && ch.isBungee()) {
+                    UChatBungee.sendBungee(ch, msgPlayers.get(sender));
+                } else {
+                    msgPlayers.forEach((send, text) -> {
+                        UChat.get().getUCLogger().timings(timingType.END, "UCMessages#send()|before send");
+                        text.send(send);
+                        UChat.get().getUCLogger().timings(timingType.END, "UCMessages#send()|after send");
+                    });
+                }
+
+                //send to jda
+                if (UChat.get().getUCJDA() != null) {
+                    if (ch.isTell()) {
+                        UChat.get().getUCJDA().sendTellToDiscord(msgPlayers.get(sender).toOldFormat());
+                    } else {
+                        UChat.get().getUCJDA().sendToDiscord(sender, finalEvmsg, ch);
+                    }
+                }
+            }
+        });
         return cancel;
     }
 
