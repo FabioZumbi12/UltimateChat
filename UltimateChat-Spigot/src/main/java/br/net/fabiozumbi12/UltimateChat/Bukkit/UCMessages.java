@@ -193,7 +193,6 @@ public class UCMessages {
 
             } else {
                 //send tell
-
                 if (UChat.get().msgTogglePlayers.contains(tellReceiver.getName()) && !sender.hasPermission("uchat.msgtoggle.exempt")) {
                     UChat.get().getLang().sendMessage(sender, "cmd.msgtoggle.msgdisabled");
                     return;
@@ -228,7 +227,7 @@ public class UCMessages {
             }
 
             //fire post event
-            PostFormatChatMessageEvent postEvent = new PostFormatChatMessageEvent(sender, msgPlayers, ch, msg);
+            PostFormatChatMessageEvent postEvent = new PostFormatChatMessageEvent(sender, msgPlayers, ch, msg, false);
             Bukkit.getPluginManager().callEvent(postEvent);
 
             if (!postEvent.isCancelled()) {

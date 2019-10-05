@@ -48,6 +48,14 @@ public class PostFormatChatMessageEvent extends Event implements Cancellable {
     private boolean cancelled;
     private String raw;
 
+    public PostFormatChatMessageEvent(CommandSender sender, HashMap<CommandSender, UltimateFancy> receivers, UCChannel channel, String raw, boolean isAsync) {
+        super(isAsync);
+        this.sender = sender;
+        this.channel = channel;
+        this.receivers = receivers;
+        this.raw = raw;
+    }
+
     public PostFormatChatMessageEvent(CommandSender sender, HashMap<CommandSender, UltimateFancy> receivers, UCChannel channel, String raw) {
         super(true);
         this.sender = sender;
