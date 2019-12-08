@@ -626,8 +626,7 @@ public class UCMessages {
 
             if (text.contains("{hand-") && !item.getItem().getType().equals(ItemTypes.NONE)) {
                 text = text
-                        .replace("{hand-durability}", item.get(Keys.ITEM_DURABILITY).isPresent() ? String.valueOf(item.get(Keys.ITEM_DURABILITY).get()) : "")
-                        .replace("{hand-name}", UChat.get().getVHelper().getItemName(item).getTranslation().get());
+                        .replace("{hand-durability}", item.get(Keys.ITEM_DURABILITY).isPresent() ? String.valueOf(item.get(Keys.ITEM_DURABILITY).get()) : "");
                 if (item.get(Keys.ITEM_LORE).isPresent()) {
                     StringBuilder lorestr = new StringBuilder();
                     for (Text line : item.get(Keys.ITEM_LORE).get()) {
@@ -645,8 +644,14 @@ public class UCMessages {
                     }
                 }
                 text = text.replace("{hand-amount}", String.valueOf(item.getQuantity()));
-                text = text.replace("{hand-name}", UChat.get().getVHelper().getItemName(item).getName());
-                text = text.replace("{hand-type}", UChat.get().getVHelper().getItemName(item).getTranslation().get());
+                String itemType = UChat.get().getVHelper().getItemName(item).getTranslation().get();
+                Optional<Text> displayName = item.get(Keys.DISPLAY_NAME);
+                if (displayName.isPresent()) {
+                    text = text.replace("{hand-name}", displayName.get().toPlain());
+                } else {
+                    text = text.replace("{hand-name}", itemType);
+                }
+                text = text.replace("{hand-type}", itemType);
             } else {
                 text = text.replace("{hand-name}", UChat.get().getLang().get("chat.emptyslot"));
                 text = text.replace("{hand-type}", "Air");
