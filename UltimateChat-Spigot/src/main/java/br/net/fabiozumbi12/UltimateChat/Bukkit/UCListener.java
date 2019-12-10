@@ -998,6 +998,11 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
     }
 
     @EventHandler
+    public void onCreateWorld(WorldLoadEvent e) {
+        UChat.get().reload();
+    }
+
+    @EventHandler
     public void onChangeWorld(PlayerChangedWorldEvent e) {
 
         Player p = e.getPlayer();
