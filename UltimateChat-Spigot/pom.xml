@@ -127,7 +127,6 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/../UltimateChat-JDA/target/UltimateChat-JDA.jar</systemPath>
         </dependency>
-
     </dependencies>
 
     <repositories>
@@ -152,6 +151,6 @@
     </build>
 
     <properties>
-        <mineVersion>1.14.4-R0.1-SNAPSHOT</mineVersion>
+        <mineVersion>1.15-R0.1-SNAPSHOT</mineVersion>
     </properties>
 </project>
