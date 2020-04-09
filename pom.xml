@@ -31,7 +31,7 @@
     <artifactId>UltimateChat</artifactId>
     <packaging>pom</packaging>
     <name>UltimateChat</name>
-    <version>1.8.9</version>
+    <version>1.9.0</version>
     <description>Ultimate Chat is an advanced chat hooking into most used plugins to show more info on player chat.
     </description>
 
@@ -83,7 +83,7 @@
         <repository>
             <id>jcenter</id>
             <name>jcenter-bintray</name>
-            <url>http://jcenter.bintray.com</url>
+            <url>https://jcenter.bintray.com</url>
         </repository>
 
         <!-- EssentialsX repo -->

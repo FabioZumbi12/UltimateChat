@@ -328,24 +328,27 @@ public class UChat extends JavaPlugin {
     }
 
     private void registerJDA() {
-        if (checkJDA()) {
-            this.logger.info("JDA LibLoader is present...");
-            if (this.UCJDA != null) {
-                Bukkit.getScheduler().cancelTask(this.UCJDA.getTaskId());
-                this.UCJDA.shutdown();
-                this.UCJDA = null;
-            }
-            if (getUCConfig().getBoolean("discord.use")) {
-                this.UCJDA = new UCDiscord(this);
-                if (!this.UCJDA.JDAAvailable()) {
+        Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
+            if (checkJDA()) {
+                this.logger.info("JDA LibLoader is present...");
+                if (this.UCJDA != null) {
+                    Bukkit.getScheduler().cancelTask(this.UCJDA.getTaskId());
+                    this.UCJDA.shutdown();
                     this.UCJDA = null;
-                    this.logger.info("JDA is not available due errors before...");
-                } else {
-                    this.sync = new UCDiscordSync();
-                    this.logger.info("JDA connected and ready to use!");
+                }
+                if (getUCConfig().getBoolean("discord.use")) {
+                    this.UCJDA = new UCDiscord(this);
+                    if (!this.UCJDA.JDAAvailable()) {
+                        this.UCJDA = null;
+                        this.logger.info("JDA is not available due errors before...");
+                    } else {
+                        this.sync = new UCDiscordSync();
+                        this.logger.info("JDA connected and ready to use!");
+                    }
                 }
             }
-        }
+        });
+
     }
 
     private void initAutomessage() {

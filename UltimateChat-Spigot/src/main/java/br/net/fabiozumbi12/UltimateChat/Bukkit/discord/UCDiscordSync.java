@@ -13,7 +13,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.SimplePluginManager;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -128,7 +127,7 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
         return list.toString();
     }
 
-    @Nullable String getGuidId(){
+    String getGuidId(){
         return this.sync.getString("guild-id");
     }
 
@@ -157,7 +156,6 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
         return true;
     }
 
-    @Nullable
     private String getPlayerPending(String player) {
         try {
             for (String key : this.sync.getConfigurationSection("sync-database.pending-codes").getKeys(false)) {
@@ -172,13 +170,13 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
         return this.sync.getString("sync-database.pending-codes." + code);
     }
 
-    void setPlayerDDId(String ddId, String nickName,@Nullable String code) {
+    void setPlayerDDId(String ddId, String nickName,String code) {
         if (code != null) this.sync.set("sync-database.pending-codes." + code, null);
         this.sync.set("sync-database.sync-players." + nickName, ddId);
         saveConfig();
     }
 
-    @Nullable String getSyncNickName(String ddId) {
+    String getSyncNickName(String ddId) {
         try {
             for (String key : this.sync.getConfigurationSection("sync-database.sync-players").getKeys(false)) {
                 if (this.sync.getString("sync-database.sync-players." + key).equals(ddId)) return key;
@@ -188,7 +186,6 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
         return null;
     }
 
-    @Nullable
     String getPlayerDDId(String player) {
         return this.sync.getString("sync-database.sync-players." + player);
     }

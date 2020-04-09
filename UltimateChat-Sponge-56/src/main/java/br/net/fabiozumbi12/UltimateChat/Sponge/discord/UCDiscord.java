@@ -28,15 +28,13 @@ package br.net.fabiozumbi12.UltimateChat.Sponge.discord;
 import br.net.fabiozumbi12.UltimateChat.Sponge.UCChannel;
 import br.net.fabiozumbi12.UltimateChat.Sponge.UCUtil;
 import br.net.fabiozumbi12.UltimateChat.Sponge.UChat;
-import jdalib.jda.core.AccountType;
-import jdalib.jda.core.JDA;
-import jdalib.jda.core.JDABuilder;
-import jdalib.jda.core.entities.*;
-import jdalib.jda.core.events.message.MessageReceivedEvent;
-import jdalib.jda.core.exceptions.PermissionException;
-import jdalib.jda.core.exceptions.RateLimitedException;
-import jdalib.jda.core.hooks.ListenerAdapter;
-import jdalib.jda.core.managers.GuildController;
+import jdalib.jda.api.JDA;
+import jdalib.jda.api.JDABuilder;
+import jdalib.jda.api.entities.*;
+import jdalib.jda.api.events.message.MessageReceivedEvent;
+import jdalib.jda.api.exceptions.PermissionException;
+import jdalib.jda.api.exceptions.RateLimitedException;
+import jdalib.jda.api.hooks.ListenerAdapter;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.text.Text;
@@ -80,27 +78,36 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
     public UCDiscord(UChat plugin) {
         this.uchat = plugin;
         try {
-            jda = new JDABuilder(AccountType.BOT).setToken(this.uchat.getConfig().root().discord.token).buildBlocking();
-            jda.addEventListener(this);
-            if (plugin.getConfig().root().discord.update_status) {
-                Game.GameType type = Game.GameType.valueOf(plugin.getConfig().root().discord.game_type.toUpperCase());
-                if (type.equals(Game.GameType.STREAMING) && Game.isValidStreamingUrl(plugin.getConfig().root().discord.twitch)) {
-                    jda.getPresence().setGame(Game.of(type, plugin.getLang().get("discord.game").replace("{online}", String.valueOf(Sponge.getServer().getOnlinePlayers().size())), plugin.getConfig().root().discord.twitch));
-                } else {
-                    jda.getPresence().setGame(Game.of(type, plugin.getLang().get("discord.game").replace("{online}", String.valueOf(Sponge.getServer().getOnlinePlayers().size()))));
-                }
+            jda = JDABuilder.createDefault(this.uchat.getConfig().root().discord.token)
+                    .addEventListeners(this)
+                    .build().awaitReady();
 
+            if (plugin.getConfig().root().discord.update_status) {
+                String game = plugin.getLang().get("discord.game").replace("{online}", String.valueOf(Sponge.getServer().getOnlinePlayers().size()));
+                Activity activity = Activity.playing(game);
+                jda.getPresence().setActivity(activity);
             }
-        } catch (LoginException e) {
-            uchat.getLogger().severe("The TOKEN is wrong or empty! Check you config and your token.");
         } catch (IllegalArgumentException | InterruptedException e) {
             e.printStackTrace();
+            return;
+        } catch (LoginException e) {
+            e.printStackTrace();
+            uchat.getLogger().warning(e.getLocalizedMessage());
+            uchat.getLogger().severe("The TOKEN is wrong or empty! Check you config and your token.");
+            return;
         }
 
         if (UChat.get().getConfig().root().discord.update_status) {
             Sponge.getScheduler().createSyncExecutor(plugin).scheduleAtFixedRate(() ->
                     updateGame(UChat.get().getLang().get("discord.game").replace("{online}", String.valueOf(Sponge.getServer().getOnlinePlayers().stream().filter(p->!p.hasPermission("uchat.discord.hide")).count()))), 2, 2, TimeUnit.SECONDS);
         }
+    }
+
+    public void shutdown() {
+        this.uchat.getLogger().info("Shutdown JDA...");
+        this.jda.getRegisteredListeners().forEach(l -> this.jda.removeEventListener(l));
+        this.jda.shutdown();
+        this.uchat.getLogger().info("JDA disabled!");
     }
 
     /*   ------ color util --------   */
@@ -129,8 +136,8 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
         //listen bot privates for dd sync
         if (e.getMessage().isFromType(ChannelType.PRIVATE)) {
 
-            GuildController gc = this.jda.getGuildById(this.uchat.getDDSync().getGuidId()).getController();
-            if (gc.getGuild().getMemberById(e.getAuthor().getId()).getRoles().stream().anyMatch(r -> this.uchat.getDDSync().isDDAdminRole(r.getId()))){
+            Guild gc = e.getJDA().getGuildById(this.uchat.getDDSync().getGuidId());
+            if (gc.getMemberById(e.getAuthor().getId()).getRoles().stream().anyMatch(r -> this.uchat.getDDSync().isDDAdminRole(r.getId()))){
                 //listen for ;;help
                 if (args.length == 1 && args[0].equalsIgnoreCase(this.uchat.getDDSync().getDDHelpCommand())){
                     try {
@@ -360,12 +367,9 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
     }
 
     public void updateGame(String text) {
-        Game.GameType type = Game.GameType.valueOf(uchat.getConfig().root().discord.game_type.toUpperCase());
-        if (type.equals(Game.GameType.STREAMING) && Game.isValidStreamingUrl(uchat.getConfig().root().discord.twitch)) {
-            jda.getPresence().setGame(Game.of(type, uchat.getLang().get("discord.game").replace("{online}", String.valueOf(Sponge.getServer().getOnlinePlayers().size())), uchat.getConfig().root().discord.twitch));
-        } else {
-            jda.getPresence().setGame(Game.of(type, uchat.getLang().get("discord.game").replace("{online}", String.valueOf(Sponge.getServer().getOnlinePlayers().size()))));
-        }
+        String game = uchat.getLang().get("discord.game").replace("{online}", String.valueOf(Sponge.getServer().getOnlinePlayers().size()));
+        Activity activity = Activity.playing(game);
+        jda.getPresence().setActivity(activity);
     }
 
     public void sendTellToDiscord(String text) {
@@ -420,15 +424,15 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
 
     public void setPlayerRole(String ddUser, List<String> ddRoleIds, String nick, List<String> configRoles) {
         try {
-            GuildController gc = this.jda.getGuildById(this.uchat.getDDSync().getGuidId()).getController();
-            Member member = gc.getGuild().getMemberById(ddUser);
+            Guild gc = this.jda.getGuildById(this.uchat.getDDSync().getGuidId());
+            Member member = gc.getMemberById(ddUser);
             if (!nick.isEmpty() && (member.getNickname() == null || !member.getNickname().equals(nick))) {
-                gc.setNickname(member, nick).complete(true);
+                gc.getMember(member.getUser()).modifyNickname(nick).complete(true);
             }
 
             List<Role> roles = new ArrayList<>();
-            ddRoleIds.forEach(r -> roles.add(gc.getGuild().getRoleById(r)));
-            gc.modifyMemberRoles(member, roles, configRoles.stream().map(r->gc.getGuild().getRoleById(r)).filter(r-> r != null && !roles.contains(r)).collect(Collectors.toList())).complete(true);
+            ddRoleIds.forEach(r -> roles.add(gc.getRoleById(r)));
+            gc.modifyMemberRoles(member, roles, configRoles.stream().map(r->gc.getRoleById(r)).filter(r-> r != null && !roles.contains(r)).collect(Collectors.toList())).complete(true);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -465,12 +469,6 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
                 .replace("{message}", message);
         format = format.replaceAll("\\{.*\\}", "");
         return UCUtil.toColor(format);
-    }
-
-    public void shutdown() {
-        this.uchat.getLogger().info("Shutdown JDA...");
-        this.jda.shutdown();
-        this.uchat.getLogger().info("JDA disabled!");
     }
 
     private static class ColorSet<R, G, B> {

@@ -29,7 +29,7 @@
     <parent>
         <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
         <artifactId>UltimateChat</artifactId>
-        <version>1.8.9</version>
+        <version>1.9.0</version>
     </parent>
     <artifactId>UltimateChat-Spigot</artifactId>
 
@@ -123,7 +123,7 @@
         <dependency>
             <groupId>JDALib</groupId>
             <artifactId>Loader</artifactId>
-            <version>1.0.0</version>
+            <version>v4.0</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/../UltimateChat-JDA/target/UltimateChat-JDA.jar</systemPath>
         </dependency>
@@ -151,6 +151,6 @@
     </build>
 
     <properties>
-        <mineVersion>1.15-R0.1-SNAPSHOT</mineVersion>
+        <mineVersion>1.15.2-R0.1-SNAPSHOT</mineVersion>
     </properties>
 </project>

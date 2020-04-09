@@ -41,6 +41,7 @@ import org.spongepowered.api.event.filter.cause.Root;
 import org.spongepowered.api.event.message.MessageChannelEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.event.world.LoadWorldEvent;
+import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.channel.MutableMessageChannel;
 import org.spongepowered.api.text.serializer.TextSerializers;
@@ -179,17 +180,18 @@ public class UCListener {
         if (UChat.get().getUCJDA() != null) {
             Calendar cal = Calendar.getInstance();
             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-            UChat.get().getUCJDA().sendCommandsToDiscord(UChat.get().getLang().get("discord.command")
+            Task.builder().async().execute(() -> UChat.get().getUCJDA().sendCommandsToDiscord(UChat.get().getLang().get("discord.command")
                     .replace("{player}", p.getName())
                     .replace("{cmd}", "/" + e.getCommand() + " " + e.getArguments())
-                    .replace("{time-now}", sdf.format(cal.getTime())));
+                    .replace("{time-now}", sdf.format(cal.getTime()))));
         }
     }
 
     @Listener
     public void onDeath(DestructEntityEvent.Death e, @Getter("getTargetEntity") Player p) {
         if (UChat.get().getUCJDA() != null && !p.hasPermission(UChat.get().getConfig().root().discord.vanish_perm)) {
-            UChat.get().getUCJDA().sendRawToDiscord(UChat.get().getLang().get("discord.death").replace("{player}", p.getName()));
+            Task.builder().async().execute(() ->
+                    UChat.get().getUCJDA().sendRawToDiscord(UChat.get().getLang().get("discord.death").replace("{player}", p.getName())));
         }
     }
 
@@ -203,7 +205,8 @@ public class UCListener {
         }
 
         if (UChat.get().getUCJDA() != null && !p.hasPermission(UChat.get().getConfig().root().discord.vanish_perm)) {
-            UChat.get().getUCJDA().sendRawToDiscord(UChat.get().getLang().get("discord.join").replace("{player}", p.getName()));
+            Task.builder().async().execute(() ->
+                    UChat.get().getUCJDA().sendRawToDiscord(UChat.get().getLang().get("discord.join").replace("{player}", p.getName())));
         }
         if (UChat.get().getConfig().root().general.spy_enabled_onjoin && p.hasPermission("uchat.cmd.spy") && !UChat.get().isSpy.contains(p.getName())) {
             UChat.get().isSpy.add(p.getName());
@@ -228,7 +231,8 @@ public class UCListener {
         UChat.get().command.remove(p.getName());
 
         if (UChat.get().getUCJDA() != null && UChat.get().getUCJDA().JDAAvailable() && !p.hasPermission(UChat.get().getConfig().root().discord.vanish_perm)) {
-            UChat.get().getUCJDA().sendRawToDiscord(UChat.get().getLang().get("discord.leave").replace("{player}", p.getName()));
+            Task.builder().async().execute(() ->
+                    UChat.get().getUCJDA().sendRawToDiscord(UChat.get().getLang().get("discord.leave").replace("{player}", p.getName())));
         }
     }
 

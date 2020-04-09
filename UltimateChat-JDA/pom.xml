@@ -29,16 +29,16 @@
     <parent>
         <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
         <artifactId>UltimateChat</artifactId>
-        <version>1.8.9</version>
+        <version>1.9.0</version>
     </parent>
     <artifactId>UltimateChat-JDA</artifactId>
-    <version>3.8.3_460</version>
+    <version>4.0</version>
 
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.13-pre7-R0.1-SNAPSHOT</version>
+            <version>1.15.2-R0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.spongepowered</groupId>
@@ -50,61 +50,7 @@
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>3.8.3_460</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.code.findbugs</groupId>
-            <artifactId>jsr305</artifactId>
-            <version>3.0.2</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-collections4</artifactId>
-            <version>4.1</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>20180130</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.sf.trove4j</groupId>
-            <artifactId>trove4j</artifactId>
-            <version>3.0.3</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.java.dev.jna</groupId>
-            <artifactId>jna</artifactId>
-            <version>4.4.0</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.neovisionaries</groupId>
-            <artifactId>nv-websocket-client</artifactId>
-            <version>2.2</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.squareup.okhttp3</groupId>
-            <artifactId>okhttp</artifactId>
-            <version>3.8.1</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.25</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-nop</artifactId>
-            <version>1.7.25</version>
-            <scope>compile</scope>
+            <version>4.1.1_129</version>
         </dependency>
 
     </dependencies>
@@ -128,7 +74,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>2.4.3</version>
+                <version>3.2.1</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -137,72 +83,18 @@
                         </goals>
                         <configuration>
                             <artifactSet>
-
                                 <includes>
-                                    <include>commons-lang:commons-lang</include>
-                                    <include>com.googlecode.json-simple:json-simple</include>
-                                    <include>org.hamcrest:hamcrest-core</include>
-                                    <include>com.google.guava:guava</include>
-                                    <include>com.google.code.gson</include>
                                     <include>net.dv8tion:JDA</include>
                                     <include>com.google.code.findbugs:jsr305</include>
-                                    <include>org.apache.commons:commons-collections4</include>
-                                    <include>org.json:json</include>
-                                    <include>net.sf.trove4j:trove4j</include>
-                                    <include>net.java.dev.jna:jna</include>
                                     <include>com.neovisionaries:nv-websocket-client</include>
                                     <include>com.squareup.okhttp3:okhttp</include>
+                                    <include>org.apache.commons:commons-collections4</include>
+                                    <include>net.sf.trove4j:trove4j</include>
+                                    <include>com.fasterxml.jackson.core:jackson-core</include>
+                                    <include>com.fasterxml.jackson.core:jackson-databind</include>
                                     <include>com.squareup.okio:okio</include>
-                                    <include>org.slf4j:slf4j-api</include>
-                                    <include>org.slf4j:slf4j-nop</include>
                                 </includes>
-
                             </artifactSet>
-                            <relocations>
-                                <relocation>
-                                    <pattern>com.google</pattern>
-                                    <shadedPattern>jdalib.com.google</shadedPattern>
-                                </relocation>
-
-                                <relocation>
-                                    <pattern>net.dv8tion.jda</pattern>
-                                    <shadedPattern>jdalib.jda</shadedPattern>
-                                </relocation>
-
-                                <relocation>
-                                    <pattern>org.apache.http</pattern>
-                                    <shadedPattern>jdalib.apache.http</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>org.apache.commons.io</pattern>
-                                    <shadedPattern>jdalib.commons.io</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>org.apache.commons.lang</pattern>
-                                    <shadedPattern>jdalib.commons.lang</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>org.apache.commons.collections</pattern>
-                                    <shadedPattern>jdalib.commons.collections</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>org.reflections</pattern>
-                                    <shadedPattern>jdalib.reflections</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>org.json</pattern>
-                                    <shadedPattern>jdalib.json</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>org.json.simple</pattern>
-                                    <shadedPattern>jdalib.json.simple</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>org.slf4j</pattern>
-                                    <shadedPattern>jdalib.slf4j</shadedPattern>
-                                </relocation>
-                            </relocations>
-
                             <minimizeJar>true</minimizeJar>
                             <outputFile>${project.basedir}/target/UltimateChat-JDA.jar</outputFile>
                             <filters>
@@ -213,6 +105,28 @@
                                     </includes>
                                 </filter>
                             </filters>
+                            <relocations>
+                                <relocation>
+                                    <pattern>com.google</pattern>
+                                    <shadedPattern>jdalib.com.google</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>net.dv8tion.jda</pattern>
+                                    <shadedPattern>jdalib.jda</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.apache</pattern>
+                                    <shadedPattern>jdalib.org.apache</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.reflections</pattern>
+                                    <shadedPattern>jdalib.org.reflections</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.json</pattern>
+                                    <shadedPattern>jdalib.org.json</shadedPattern>
+                                </relocation>
+                            </relocations>
                         </configuration>
                     </execution>
                 </executions>
@@ -223,6 +137,6 @@
         </plugins>
     </build>
     <properties>
-        <spongeVersion>7.0.0-SNAPSHOT</spongeVersion>
+        <spongeVersion>7.1.0-SNAPSHOT</spongeVersion>
     </properties>
 </project>

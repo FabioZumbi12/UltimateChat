@@ -53,6 +53,7 @@ import org.spongepowered.api.event.service.ChangeServiceProviderEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
+import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.service.economy.EconomyService;
 
 import java.io.File;
@@ -301,24 +302,26 @@ public class UChat {
     }
 
     private void registerJDA() {
-        if (checkJDA()) {
-            this.logger.info("JDA LibLoader is present...");
-            if (this.UCJDA != null) {
-                this.UCJDA.shutdown();
-                this.UCJDA = null;
-            }
-            if (config.root().discord.use) {
-                this.UCJDA = new UCDiscord(this);
-                if (!this.UCJDA.JDAAvailable()) {
+        Task.builder().async().execute(() -> {
+            if (checkJDA()) {
+                this.logger.info("JDA LibLoader is present...");
+                if (this.UCJDA != null) {
+                    this.UCJDA.shutdown();
                     this.UCJDA = null;
-                    this.logger.info("JDA is not available due errors before.\n" +
-                            "Hint: If you updated UChat, check if you need to update JDALibLoader too!");
-                } else {
-                    this.sync = new UCDiscordSync(this.factory);
-                    this.logger.info("JDA connected and ready to use!");
+                }
+                if (config.root().discord.use) {
+                    this.UCJDA = new UCDiscord(this);
+                    if (!this.UCJDA.JDAAvailable()) {
+                        this.UCJDA = null;
+                        this.logger.info("JDA is not available due errors before.\n" +
+                                "Hint: If you updated UChat, check if you need to update JDALibLoader too!");
+                    } else {
+                        this.sync = new UCDiscordSync(this.factory);
+                        this.logger.info("JDA connected and ready to use!");
+                    }
                 }
             }
-        }
+        });
     }
 
     private boolean checkJDA() {
