@@ -416,6 +416,7 @@ public class UChat extends JavaPlugin {
                 getAMConfig().set("messages.0.onclick", "Command on click here!");
                 getAMConfig().set("messages.0.suggest", "Text to suggest on click");
                 getAMConfig().set("messages.0.url", "http://google.com");
+                getAMConfig().set("messages.0.permission", "");
             }
 
             getAMConfig().save(am);
@@ -439,19 +440,23 @@ public class UChat extends JavaPlugin {
                 String onclick = getAMConfig().getString("messages." + index + ".onclick", "");
                 String suggest = getAMConfig().getString("messages." + index + ".suggest", "");
                 String url = getAMConfig().getString("messages." + index + ".url", "");
+                String perm = getAMConfig().getString("messages." + index + ".permission", "");
 
                 String cmd = text;
-                if (hover.length() > 1) {
+                if (hover.isEmpty()) {
                     cmd = cmd + " " + getUCConfig().getString("broadcast.on-hover") + hover;
                 }
-                if (onclick.length() > 1) {
+                if (onclick.isEmpty()) {
                     cmd = cmd + " " + getUCConfig().getString("broadcast.on-click") + onclick;
                 }
-                if (suggest.length() > 1) {
+                if (suggest.isEmpty()) {
                     cmd = cmd + " " + getUCConfig().getString("broadcast.suggest") + suggest;
                 }
-                if (url.length() > 1) {
+                if (url.isEmpty()) {
                     cmd = cmd + " " + getUCConfig().getString("broadcast.url") + url;
+                }
+                if (perm.isEmpty()) {
+                    cmd = cmd + " " + getUCConfig().getString("broadcast.permission") + perm;
                 }
                 if (plays == 0 || getServer().getOnlinePlayers().size() >= plays) {
                     UCUtil.sendBroadcast(Bukkit.getConsoleSender(), cmd.split(" "), silent);

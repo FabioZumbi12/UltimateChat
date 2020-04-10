@@ -301,9 +301,7 @@ public class UCMessages {
                     evmsg = evmsg.replaceAll(mat3.pattern(), "");
                 }
             }
-            if (!UChat.get().getPerms().hasPerm(sender, "chat.newline")) {
-                evmsg = evmsg.replace("/n", " ");
-            } else {
+            if (UChat.get().getPerms().hasPerm(sender, "chat.newline")) {
                 evmsg = evmsg.replace("/n", "\n");
             }
         }

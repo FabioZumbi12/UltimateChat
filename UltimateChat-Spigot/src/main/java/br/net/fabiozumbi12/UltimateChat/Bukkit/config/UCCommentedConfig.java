@@ -155,6 +155,7 @@ public class UCCommentedConfig {
         setDefault("broadcast.on-click", "click:", "Tag to use on broadcast message to set a click event.");
         setDefault("broadcast.suggest", "suggest:", "Tag to use on broadcast message to suggest a command.");
         setDefault("broadcast.url", "url:", "Tag to use on broadcast message to set a website url on click (with www).");
+        setDefault("broadcast.permission", "perm:", "Permission check for receivers.");
         setDefault("broadcast.aliases", "ubroad,uannounce,usay,uaction,all,anunciar,todos", "Aliases to use for broadcast.");
 
         setDefault("tags", null, "" +

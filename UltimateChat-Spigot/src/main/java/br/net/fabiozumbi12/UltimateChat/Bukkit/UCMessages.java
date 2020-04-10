@@ -284,9 +284,7 @@ public class UCMessages {
                 }
             }
 
-            if (!UCPerms.hasPerm(sender, "chat.newline")) {
-                evmsg = evmsg.replace("/n", " ");
-            } else {
+            if (UCPerms.hasPerm(sender, "chat.newline")) {
                 evmsg = evmsg.replace("/n", "\n");
             }
         }

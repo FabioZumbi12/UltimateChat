@@ -131,10 +131,12 @@ public class UCUtil {
         StringBuilder cmdline = new StringBuilder();
         StringBuilder url = new StringBuilder();
         StringBuilder suggest = new StringBuilder();
+        String perm = "";
         boolean isHover = false;
         boolean isCmd = false;
         boolean isUrl = false;
         boolean isSug = false;
+        boolean isPerm = false;
         for (String arg : args) {
             arg = arg.replace("/n", "\n");
             if (arg.contains(UChat.get().getUCConfig().getString("broadcast.on-hover"))) {
@@ -143,6 +145,7 @@ public class UCUtil {
                 isCmd = false;
                 isUrl = false;
                 isSug = false;
+                isPerm = false;
                 continue;
             }
             if (arg.contains(UChat.get().getUCConfig().getString("broadcast.on-click"))) {
@@ -151,6 +154,7 @@ public class UCUtil {
                 isHover = false;
                 isUrl = false;
                 isSug = false;
+                isPerm = false;
                 continue;
             }
             if (arg.contains(UChat.get().getUCConfig().getString("broadcast.url"))) {
@@ -159,6 +163,7 @@ public class UCUtil {
                 isHover = false;
                 isUrl = true;
                 isSug = false;
+                isPerm = false;
                 continue;
             }
             if (arg.contains(UChat.get().getUCConfig().getString("broadcast.suggest"))) {
@@ -167,6 +172,16 @@ public class UCUtil {
                 isHover = false;
                 isUrl = false;
                 isSug = true;
+                isPerm = false;
+                continue;
+            }
+            if (arg.contains(UChat.get().getUCConfig().getString("broadcast.permission"))) {
+                perm = arg.replace(UChat.get().getUCConfig().getString("broadcast.permission"), "");
+                isCmd = false;
+                isHover = false;
+                isUrl = false;
+                isSug = false;
+                isPerm = true;
                 continue;
             }
 
@@ -178,6 +193,8 @@ public class UCUtil {
                 url.append(" ").append(ChatColor.translateAlternateColorCodes('&', arg));
             } else if (isSug) {
                 suggest.append(" ").append(ChatColor.translateAlternateColorCodes('&', arg));
+            } else if (isPerm) {
+                continue;
             } else {
                 message.append(" ").append(ChatColor.translateAlternateColorCodes('&', arg));
             }
@@ -219,6 +236,8 @@ public class UCUtil {
             }
 
             for (Player p : Bukkit.getOnlinePlayers()) {
+                if (!perm.isEmpty() && !UCPerms.hasPerm(p, perm)) continue;
+
                 if (cmdline.toString().length() > 1) {
                     fanci.clickRunCmd("/" + cmdline.toString().substring(1).replace("{clicked}", p.getName()));
                 }
@@ -233,6 +252,7 @@ public class UCUtil {
             }
         } else {
             for (Player p : Bukkit.getOnlinePlayers()) {
+                if (!perm.isEmpty() && !UCPerms.hasPerm(p, perm)) continue;
                 p.sendMessage(finalMsg);
             }
         }

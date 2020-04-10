@@ -53,7 +53,7 @@ import java.util.regex.Pattern;
  * @author FabioZumbi12
  */
 
-@SuppressWarnings({"deprecation", "unchecked"})
+@SuppressWarnings({"unchecked"})
 public class UltimateFancy {
 
     private ChatColor lastColor = ChatColor.WHITE;
