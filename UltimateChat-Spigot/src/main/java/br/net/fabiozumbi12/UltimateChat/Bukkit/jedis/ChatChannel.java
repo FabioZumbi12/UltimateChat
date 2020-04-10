@@ -26,8 +26,8 @@
 package br.net.fabiozumbi12.UltimateChat.Bukkit.jedis;
 
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UCChannel;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.UCPerms;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.UCUtil;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCPerms;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCUtil;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UChat;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

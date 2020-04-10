@@ -1,7 +1,7 @@
 package br.net.fabiozumbi12.UltimateChat.Sponge.Bungee;
 
 import br.net.fabiozumbi12.UltimateChat.Sponge.UCChannel;
-import br.net.fabiozumbi12.UltimateChat.Sponge.UCUtil;
+import br.net.fabiozumbi12.UltimateChat.Sponge.util.UCUtil;
 import br.net.fabiozumbi12.UltimateChat.Sponge.UChat;
 import org.spongepowered.api.Platform;
 import org.spongepowered.api.Sponge;

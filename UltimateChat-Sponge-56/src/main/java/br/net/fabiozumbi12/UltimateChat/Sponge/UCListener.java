@@ -25,8 +25,8 @@
 
 package br.net.fabiozumbi12.UltimateChat.Sponge;
 
-import br.net.fabiozumbi12.UltimateChat.Sponge.*;
 import br.net.fabiozumbi12.UltimateChat.Sponge.config.MainCategory;
+import br.net.fabiozumbi12.UltimateChat.Sponge.util.UCLogger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
@@ -48,9 +48,7 @@ import org.spongepowered.api.text.serializer.TextSerializers;
 import org.spongepowered.api.world.World;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Optional;
 
 public class UCListener {

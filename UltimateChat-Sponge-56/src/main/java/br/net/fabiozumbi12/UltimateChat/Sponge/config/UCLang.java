@@ -26,7 +26,7 @@
 package br.net.fabiozumbi12.UltimateChat.Sponge.config;
 
 import br.net.fabiozumbi12.UltimateChat.Sponge.UCMessages;
-import br.net.fabiozumbi12.UltimateChat.Sponge.UCUtil;
+import br.net.fabiozumbi12.UltimateChat.Sponge.util.UCUtil;
 import br.net.fabiozumbi12.UltimateChat.Sponge.UChat;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;

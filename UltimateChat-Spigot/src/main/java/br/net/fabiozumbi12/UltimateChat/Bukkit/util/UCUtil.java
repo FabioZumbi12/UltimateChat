@@ -23,8 +23,11 @@
  3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
  */
 
-package br.net.fabiozumbi12.UltimateChat.Bukkit;
+package br.net.fabiozumbi12.UltimateChat.Bukkit.util;
 
+import br.net.fabiozumbi12.UltimateChat.Bukkit.UCChannel;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.UCMessages;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.UChat;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -125,7 +128,7 @@ public class UCUtil {
         return true;
     }
 
-    static boolean sendBroadcast(CommandSender src, String[] args, boolean silent) {
+    public static boolean sendBroadcast(CommandSender src, String[] args, boolean silent) {
         StringBuilder message = new StringBuilder();
         StringBuilder hover = new StringBuilder();
         StringBuilder cmdline = new StringBuilder();

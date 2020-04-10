@@ -26,6 +26,9 @@
 package br.net.fabiozumbi12.UltimateChat.Bukkit.bungee;
 
 import br.net.fabiozumbi12.UltimateChat.Bukkit.*;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCPerms;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCUtil;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UltimateFancy;
 import com.google.common.collect.Iterables;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;

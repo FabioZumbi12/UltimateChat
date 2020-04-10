@@ -1,10 +1,7 @@
 package br.net.fabiozumbi12.UltimateChat.Sponge.discord;
 
-import br.net.fabiozumbi12.UltimateChat.Sponge.UCCommands;
-import br.net.fabiozumbi12.UltimateChat.Sponge.UCUtil;
+import br.net.fabiozumbi12.UltimateChat.Sponge.util.UCUtil;
 import br.net.fabiozumbi12.UltimateChat.Sponge.UChat;
-import br.net.fabiozumbi12.UltimateChat.Sponge.config.MainCategory;
-import br.net.fabiozumbi12.UltimateChat.Sponge.config.ProtectionsCategory;
 import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;

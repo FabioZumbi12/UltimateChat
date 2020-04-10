@@ -23,51 +23,35 @@
  3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
  */
 
-package br.net.fabiozumbi12.UltimateChat.Sponge;
+package br.net.fabiozumbi12.UltimateChat.Bukkit.hooks;
 
-import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.data.type.HandTypes;
-import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.event.cause.EventContext;
-import org.spongepowered.api.item.ItemType;
-import org.spongepowered.api.item.enchantment.Enchantment;
-import org.spongepowered.api.item.inventory.ItemStack;
-import org.spongepowered.api.plugin.PluginContainer;
+import com.massivecraft.factions.entity.Faction;
+import com.massivecraft.factions.entity.MPlayer;
+import org.bukkit.entity.Player;
 
-public class UCVHelper7 implements UCVHelper {
-
-    @Override
-    public Cause getCause(CommandSource src) {
-        return Cause.of(EventContext.empty(), src);
-    }
-
-    @Override
-    public Cause getCause(PluginContainer instance) {
-        return Cause.of(EventContext.empty(), instance);
-    }
-
-    @Override
-    public StringBuilder getEnchantments(StringBuilder str, ItemStack item) {
-        for (Enchantment enchant : item.get(Keys.ITEM_ENCHANTMENTS).get()) {
-            str.append("\n ").append(enchant.getType().getTranslation().get()).append(": ").append(enchant.getLevel());
+public class UCFactionsHook {
+    public static String formatFac(String text, Player sender, Object receiver) {
+        MPlayer mp = MPlayer.get(sender.getUniqueId());
+        if (!mp.getFaction().isNone()) {
+            Faction fac = mp.getFaction();
+            text = text
+                    .replace("{fac-id}", fac.getId())
+                    .replace("{fac-name}", fac.getName());
+            if (fac.hasMotd()) {
+                text = text
+                        .replace("{fac-motd}", fac.getMotd());
+            }
+            if (fac.hasDescription()) {
+                text = text
+                        .replace("{fac-description}", fac.getDescription());
+            }
+            if (receiver instanceof Player) {
+                MPlayer recmp = MPlayer.get(((Player) receiver).getUniqueId());
+                text = text
+                        .replace("{fac-relation-name}", fac.getName(recmp))
+                        .replace("{fac-relation-color}", fac.getColorTo(recmp).toString());
+            }
         }
-        return str;
-    }
-
-    @Override
-    public ItemStack getItemInHand(Player sender) {
-        if (sender.getItemInHand(HandTypes.MAIN_HAND).isPresent()) {
-            return sender.getItemInHand(HandTypes.MAIN_HAND).get();
-        } else if (sender.getItemInHand(HandTypes.OFF_HAND).isPresent()) {
-            return sender.getItemInHand(HandTypes.OFF_HAND).get();
-        }
-        return ItemStack.empty();
-    }
-
-    @Override
-    public ItemType getItemName(ItemStack itemStack) {
-        return itemStack.getType();
+        return text;
     }
 }

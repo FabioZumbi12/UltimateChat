@@ -23,8 +23,9 @@
  3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
  */
 
-package br.net.fabiozumbi12.UltimateChat.Bukkit;
+package br.net.fabiozumbi12.UltimateChat.Bukkit.util;
 
+import br.net.fabiozumbi12.UltimateChat.Bukkit.UChat;
 import org.bukkit.ChatColor;
 
 public class UCLogger {

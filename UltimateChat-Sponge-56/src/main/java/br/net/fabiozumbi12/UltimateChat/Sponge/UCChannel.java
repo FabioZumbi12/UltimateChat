@@ -25,7 +25,7 @@
 
 package br.net.fabiozumbi12.UltimateChat.Sponge;
 
-import br.net.fabiozumbi12.UltimateChat.Sponge.UCLogger.timingType;
+import br.net.fabiozumbi12.UltimateChat.Sponge.util.UCLogger.timingType;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import org.spongepowered.api.Sponge;

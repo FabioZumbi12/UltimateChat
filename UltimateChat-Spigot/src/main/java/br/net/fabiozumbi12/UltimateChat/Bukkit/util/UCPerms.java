@@ -23,8 +23,10 @@
  3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
  */
 
-package br.net.fabiozumbi12.UltimateChat.Bukkit;
+package br.net.fabiozumbi12.UltimateChat.Bukkit.util;
 
+import br.net.fabiozumbi12.UltimateChat.Bukkit.UCChannel;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.UChat;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
@@ -36,7 +38,7 @@ public class UCPerms {
 
     private static final HashMap<String, Map<String, Boolean>> cachedPerm = new HashMap<>();
 
-    static boolean hasPermission(CommandSender sender, String perm) {
+    public static boolean hasPermission(CommandSender sender, String perm) {
         if (cachedPerm.containsKey(sender.getName())) {
             Map<String, Boolean> perms = cachedPerm.get(sender.getName());
             if (perms.containsKey(perm)) {
@@ -60,7 +62,7 @@ public class UCPerms {
         return hasPerm(receiver, "chat-spy." + ch) || hasPerm(receiver, "chat-spy.all");
     }
 
-    static boolean cmdPerm(CommandSender p, String cmd) {
+    public static boolean cmdPerm(CommandSender p, String cmd) {
         return hasPerm(p, "cmd." + cmd);
     }
 
@@ -69,12 +71,12 @@ public class UCPerms {
         return defCh.equals(ch) || hasPerm(p, "channel." + ch.getName().toLowerCase() + ".read");
     }
 
-    static boolean channelWritePerm(CommandSender p, UCChannel ch) {
+    public static boolean channelWritePerm(CommandSender p, UCChannel ch) {
         UCChannel defCh = UChat.get().getDefChannel(p instanceof Player ? ((Player) p).getWorld().getName() : null);
         return defCh.equals(ch) || hasPerm(p, "channel." + ch.getName().toLowerCase() + ".write");
     }
 
-    static boolean canIgnore(CommandSender sender, Object toignore) {
+    public static boolean canIgnore(CommandSender sender, Object toignore) {
         return !(toignore instanceof CommandSender) || !hasPermission(sender, "uchat.cant-ignore." + (toignore instanceof Player ? ((Player) toignore).getName() : ((UCChannel) toignore).getName()));
     }
 

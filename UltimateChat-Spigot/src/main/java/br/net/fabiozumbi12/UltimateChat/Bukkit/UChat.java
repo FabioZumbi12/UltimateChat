@@ -35,8 +35,12 @@ import br.net.fabiozumbi12.UltimateChat.Bukkit.config.UCLang;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.discord.UCDInterface;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.discord.UCDiscord;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.discord.UCDiscordSync;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.hooks.UCPlaceHolders;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.hooks.UCPlaceHoldersRelational;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.jedis.UCJedisLoader;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.metrics.Metrics;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCLogger;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCUtil;
 import br.net.fabiozumbi12.translationapi.TranslationAPI;
 import br.net.fabiozumbi12.translationapi.TranslationCore;
 import com.lenis0012.bukkit.marriage2.Marriage;
@@ -83,12 +87,12 @@ public class UChat extends JavaPlugin {
     List<String> msgTogglePlayers = Collections.synchronizedList(new ArrayList<>());
     protected List<String> command = Collections.synchronizedList(new ArrayList<>());
     Map<String, String> tempChannels = Collections.synchronizedMap(new HashMap<>());
-    Map<String, String> tellPlayers = Collections.synchronizedMap(new HashMap<>());
+    public Map<String, String> tellPlayers = Collections.synchronizedMap(new HashMap<>());
     Map<String, String> tempTellPlayers = Collections.synchronizedMap(new HashMap<>());
     Map<String, String> respondTell = Collections.synchronizedMap(new HashMap<>());
-    Map<String, List<String>> ignoringPlayer = Collections.synchronizedMap(new HashMap<>());
-    List<String> mutes = new ArrayList<>();
-    HashMap<String, Integer> timeMute = new HashMap<>();
+    public Map<String, List<String>> ignoringPlayer = Collections.synchronizedMap(new HashMap<>());
+    public List<String> mutes = new ArrayList<>();
+    public HashMap<String, Integer> timeMute = new HashMap<>();
     private FileConfiguration amConfig;
     private int index = 0;
     private UCListener listener;
@@ -549,7 +553,7 @@ public class UChat extends JavaPlugin {
     }
 
 
-    void unMuteInAllChannels(String player) {
+    public void unMuteInAllChannels(String player) {
         for (UCChannel ch : UChat.get().getChannels().values()) {
             if (ch.isMuted(player)) {
                 ch.unMuteThis(player);
@@ -565,7 +569,7 @@ public class UChat extends JavaPlugin {
         }
     }
 
-    UCChannel getDefChannel(String world) {
+    public UCChannel getDefChannel(String world) {
         UCChannel ch = getChannel(config.getString("general.default-channels.default-channel"));
         if (world != null) {
             UCChannel wch = getChannel(config.getString("general.default-channels.worlds." + world + ".channel"));

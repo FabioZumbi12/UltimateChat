@@ -23,9 +23,10 @@
  3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
  */
 
-package br.net.fabiozumbi12.UltimateChat.Bukkit;
+package br.net.fabiozumbi12.UltimateChat.Bukkit.util;
 
-import br.net.fabiozumbi12.UltimateChat.Bukkit.UCLogger.timingType;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.UChat;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCLogger.timingType;
 import com.google.common.base.Utf8;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

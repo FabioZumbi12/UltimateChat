@@ -23,8 +23,10 @@
  3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
  */
 
-package br.net.fabiozumbi12.UltimateChat.Bukkit;
+package br.net.fabiozumbi12.UltimateChat.Bukkit.hooks;
 
+import br.net.fabiozumbi12.UltimateChat.Bukkit.UCMessages;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.UChat;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;

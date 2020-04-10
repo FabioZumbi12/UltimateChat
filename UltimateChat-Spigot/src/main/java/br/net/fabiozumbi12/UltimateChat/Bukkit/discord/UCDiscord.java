@@ -26,6 +26,9 @@
 package br.net.fabiozumbi12.UltimateChat.Bukkit.discord;
 
 import br.net.fabiozumbi12.UltimateChat.Bukkit.*;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCPerms;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCUtil;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UltimateFancy;
 import jdalib.jda.api.JDA;
 import jdalib.jda.api.JDABuilder;
 import jdalib.jda.api.entities.*;

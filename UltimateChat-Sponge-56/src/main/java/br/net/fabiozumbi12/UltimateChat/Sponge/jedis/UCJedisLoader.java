@@ -27,9 +27,8 @@ package br.net.fabiozumbi12.UltimateChat.Sponge.jedis;
 
 import br.net.fabiozumbi12.UltimateChat.Sponge.UCChannel;
 import br.net.fabiozumbi12.UltimateChat.Sponge.UCMessages;
-import br.net.fabiozumbi12.UltimateChat.Sponge.UCUtil;
+import br.net.fabiozumbi12.UltimateChat.Sponge.util.UCUtil;
 import br.net.fabiozumbi12.UltimateChat.Sponge.UChat;
-import br.net.fabiozumbi12.UltimateChat.Sponge.jedis.ChatChannel;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;

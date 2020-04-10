@@ -23,8 +23,11 @@
  3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
  */
 
-package br.net.fabiozumbi12.UltimateChat.Sponge;
+package br.net.fabiozumbi12.UltimateChat.Sponge.util;
 
+import br.net.fabiozumbi12.UltimateChat.Sponge.UCChannel;
+import br.net.fabiozumbi12.UltimateChat.Sponge.UChat;
+import br.net.fabiozumbi12.UltimateChat.Sponge.util.UCPerms;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.source.ConsoleSource;
 import org.spongepowered.api.entity.living.player.Player;
@@ -40,10 +43,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.concurrent.ExecutionException;
 
-public class UCPerms7 implements UCPerms {
+public class UCPerms8 implements UCPerms {
     private final PermissionService permissionService;
 
-    public UCPerms7() {
+    public UCPerms8() {
         this.permissionService = UChat.get().getGame().getServiceManager().getRegistration(PermissionService.class).get().getProvider();
         this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "uchat.channel.local.read", Tristate.TRUE);
         this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "uchat.channel.local.write", Tristate.TRUE);

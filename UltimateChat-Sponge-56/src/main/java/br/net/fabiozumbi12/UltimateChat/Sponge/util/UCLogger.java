@@ -23,8 +23,9 @@
  3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
  */
 
-package br.net.fabiozumbi12.UltimateChat.Sponge;
+package br.net.fabiozumbi12.UltimateChat.Sponge.util;
 
+import br.net.fabiozumbi12.UltimateChat.Sponge.UChat;
 import org.spongepowered.api.Server;
 import org.spongepowered.api.command.source.ConsoleSource;
 
@@ -33,7 +34,7 @@ public class UCLogger {
     private final ConsoleSource console;
     private long start = 0;
 
-    UCLogger(Server serv) {
+    public UCLogger(Server serv) {
         this.console = serv.getConsole();
     }
 

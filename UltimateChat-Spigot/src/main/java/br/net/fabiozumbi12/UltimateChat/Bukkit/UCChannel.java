@@ -25,7 +25,9 @@
 
 package br.net.fabiozumbi12.UltimateChat.Bukkit;
 
-import br.net.fabiozumbi12.UltimateChat.Bukkit.UCLogger.timingType;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCLogger.timingType;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCPerms;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UltimateFancy;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;

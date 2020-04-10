@@ -23,8 +23,9 @@
  3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
  */
 
-package br.net.fabiozumbi12.UltimateChat.Sponge;
+package br.net.fabiozumbi12.UltimateChat.Sponge.util;
 
+import br.net.fabiozumbi12.UltimateChat.Sponge.UChat;
 import me.rojo8399.placeholderapi.Placeholder;
 import me.rojo8399.placeholderapi.PlaceholderService;
 import me.rojo8399.placeholderapi.Source;

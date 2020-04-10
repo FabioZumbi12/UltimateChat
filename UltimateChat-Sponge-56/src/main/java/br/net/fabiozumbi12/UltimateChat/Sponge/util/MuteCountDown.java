@@ -23,52 +23,42 @@
  3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
  */
 
-package br.net.fabiozumbi12.UltimateChat.Sponge;
+package br.net.fabiozumbi12.UltimateChat.Sponge.util;
 
-import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.data.meta.ItemEnchantment;
-import org.spongepowered.api.data.type.HandTypes;
-import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.event.cause.NamedCause;
-import org.spongepowered.api.item.ItemType;
-import org.spongepowered.api.item.ItemTypes;
-import org.spongepowered.api.item.inventory.ItemStack;
-import org.spongepowered.api.plugin.PluginContainer;
+import br.net.fabiozumbi12.UltimateChat.Sponge.UChat;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.scheduler.Task;
 
-public class UCVHelper56 implements UCVHelper {
+import java.util.function.Consumer;
 
-    @Override
-    public Cause getCause(CommandSource src) {
-        return Cause.source(src).named(NamedCause.notifier(src)).build();
+public class MuteCountDown implements Consumer<Task> {
+    final String p;
+    int time;
+
+    public MuteCountDown(String p, int t) {
+        this.p = p;
+        this.time = t * 60;
     }
 
     @Override
-    public Cause getCause(PluginContainer instance) {
-        return Cause.of(NamedCause.owner(instance));
-    }
-
-    @Override
-    public StringBuilder getEnchantments(StringBuilder str, ItemStack item) {
-        for (ItemEnchantment enchant : item.get(Keys.ITEM_ENCHANTMENTS).get()) {
-            str.append("\n ").append(enchant.getEnchantment().getTranslation().get()).append(": ").append(enchant.getLevel());
+    public void accept(Task t) {
+        if (UChat.get().timeMute.containsKey(p)) {
+            time = UChat.get().timeMute.get(p) - 1;
         }
-        return str;
-    }
-
-    @Override
-    public ItemStack getItemInHand(Player sender) {
-        if (sender.getItemInHand(HandTypes.MAIN_HAND).isPresent()) {
-            return sender.getItemInHand(HandTypes.MAIN_HAND).get();
-        } else if (sender.getItemInHand(HandTypes.OFF_HAND).isPresent()) {
-            return sender.getItemInHand(HandTypes.OFF_HAND).get();
+        if (UChat.get().mutes.contains(p)) {
+            if (time > 0) {
+                UChat.get().timeMute.put(p, time);
+            } else {
+                UChat.get().timeMute.remove(p);
+                UChat.get().mutes.remove(p);
+                UChat.get().unMuteInAllChannels(p);
+                if (Sponge.getServer().getPlayer(p).isPresent()) {
+                    UChat.get().getLang().sendMessage(Sponge.getServer().getPlayer(p).get(), UChat.get().getLang().get("channel.player.unmuted.all"));
+                }
+                t.cancel();
+            }
+        } else {
+            t.cancel();
         }
-        return ItemStack.of(ItemTypes.NONE, 1);
-    }
-
-    @Override
-    public ItemType getItemName(ItemStack itemStack) {
-        return itemStack.getItem();
     }
 }

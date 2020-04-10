@@ -23,8 +23,10 @@
  3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
  */
 
-package br.net.fabiozumbi12.UltimateChat.Sponge;
+package br.net.fabiozumbi12.UltimateChat.Sponge.util;
 
+import br.net.fabiozumbi12.UltimateChat.Sponge.UCChannel;
+import br.net.fabiozumbi12.UltimateChat.Sponge.UChat;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.source.ConsoleSource;
 import org.spongepowered.api.entity.living.player.Player;

@@ -23,8 +23,11 @@
  3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
  */
 
-package br.net.fabiozumbi12.UltimateChat.Sponge;
+package br.net.fabiozumbi12.UltimateChat.Sponge.util;
 
+import br.net.fabiozumbi12.UltimateChat.Sponge.UCChannel;
+import br.net.fabiozumbi12.UltimateChat.Sponge.UCMessages;
+import br.net.fabiozumbi12.UltimateChat.Sponge.UChat;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
@@ -51,7 +54,7 @@ public class UCUtil {
         return str.replaceAll("("+symbol+"([A-Fa-fK-Ok-oRr0-9]))", "");
     }
 
-    static boolean sendBroadcast(CommandSource src, String[] args, boolean silent) {
+    public static boolean sendBroadcast(CommandSource src, String[] args, boolean silent) {
         StringBuilder message = new StringBuilder();
         StringBuilder hover = new StringBuilder();
         StringBuilder cmdline = new StringBuilder();

@@ -35,6 +35,10 @@ import br.net.fabiozumbi12.UltimateChat.Sponge.discord.UCDInterface;
 import br.net.fabiozumbi12.UltimateChat.Sponge.discord.UCDiscord;
 import br.net.fabiozumbi12.UltimateChat.Sponge.discord.UCDiscordSync;
 import br.net.fabiozumbi12.UltimateChat.Sponge.jedis.UCJedisLoader;
+import br.net.fabiozumbi12.UltimateChat.Sponge.util.UCLogger;
+import br.net.fabiozumbi12.UltimateChat.Sponge.util.UCPerms;
+import br.net.fabiozumbi12.UltimateChat.Sponge.util.UCPlaceHoldersRelational;
+import br.net.fabiozumbi12.UltimateChat.Sponge.util.UCVHelper;
 import com.google.inject.Inject;
 import ninja.leaping.configurate.objectmapping.GuiceObjectMapperFactory;
 import org.spongepowered.api.Game;
@@ -88,7 +92,7 @@ public class UChat {
     public List<String> command = Collections.synchronizedList(new ArrayList<>());
     public HashMap<String, Integer> timeMute = new HashMap<>();
     public List<String> msgTogglePlayers = Collections.synchronizedList(new ArrayList<>());
-    protected HashMap<String, List<String>> ignoringPlayer = new HashMap<>();
+    public HashMap<String, List<String>> ignoringPlayer = new HashMap<>();
     private UCLogger logger;
     @Inject
     @ConfigDir(sharedRoot = false)
@@ -250,8 +254,8 @@ public class UChat {
             getLogger().info("Sponge version " + v);
 
             if (v.startsWith("5") || v.startsWith("6")) {
-                this.perms = (UCPerms) Class.forName("br.net.fabiozumbi12.UltimateChat.Sponge.UCPerms56").getConstructor().newInstance();
-                this.helper = (UCVHelper) Class.forName("br.net.fabiozumbi12.UltimateChat.Sponge.UCVHelper56").getConstructor().newInstance();
+                this.perms = (UCPerms) Class.forName("br.net.fabiozumbi12.UltimateChat.Sponge.util.UCPerms56").getConstructor().newInstance();
+                this.helper = (UCVHelper) Class.forName("br.net.fabiozumbi12.UltimateChat.Sponge.util.UCVHelper56").getConstructor().newInstance();
                 getLogger().info("Permissions set for API 5 and 6");
             }
             if (v.startsWith("7")) {
@@ -268,12 +272,12 @@ public class UChat {
             try {
                 switch (this.config.root().api.sponge_api) {
                     case 5:
-                        this.perms = (UCPerms) Class.forName("br.net.fabiozumbi12.UltimateChat.Sponge.UCPerms56").getConstructor().newInstance();
-                        this.helper = (UCVHelper) Class.forName("br.net.fabiozumbi12.UltimateChat.Sponge.UCVHelper56").getConstructor().newInstance();
+                        this.perms = (UCPerms) Class.forName("br.net.fabiozumbi12.UltimateChat.Sponge.util.UCPerms56").getConstructor().newInstance();
+                        this.helper = (UCVHelper) Class.forName("br.net.fabiozumbi12.UltimateChat.Sponge.util.UCVHelper56").getConstructor().newInstance();
                         getLogger().info("Permissions set to default classes for API 5");
                     case 6:
-                        this.perms = (UCPerms) Class.forName("br.net.fabiozumbi12.UltimateChat.Sponge.UCPerms56").getConstructor().newInstance();
-                        this.helper = (UCVHelper) Class.forName("br.net.fabiozumbi12.UltimateChat.Sponge.UCVHelper56").getConstructor().newInstance();
+                        this.perms = (UCPerms) Class.forName("br.net.fabiozumbi12.UltimateChat.Sponge.util.UCPerms56").getConstructor().newInstance();
+                        this.helper = (UCVHelper) Class.forName("br.net.fabiozumbi12.UltimateChat.Sponge.util.UCVHelper56").getConstructor().newInstance();
                         getLogger().info("Permissions set to default classes for API 6");
                     case 7:
                         this.perms = (UCPerms) Class.forName("br.net.fabiozumbi12.UltimateChat.Sponge.UCPerms7").getConstructor().newInstance();

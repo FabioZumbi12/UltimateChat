@@ -1,7 +1,7 @@
 package br.net.fabiozumbi12.UltimateChat.Bukkit.discord;
 
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UChat;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.UltimateFancy;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UltimateFancy;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import org.bukkit.Bukkit;
