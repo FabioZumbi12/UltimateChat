@@ -20,7 +20,7 @@ public class UChatBungee implements RawDataListener {
 
     public UChatBungee(UChat plugin) {
         Sponge.getEventManager().registerListener(plugin.instance(), GameStartedServerEvent.class, (event) -> {
-            this.chan = Sponge.getChannelRegistrar().createRawChannel(Sponge.getPluginManager().getPlugin("ultimatechat").get(), "bungee:uchat");
+            this.chan = Sponge.getChannelRegistrar().createRawChannel(plugin.instance(), "bungee:uchat");
             this.listener = this;
             this.chan.addListener(Platform.Type.SERVER, this.listener);
         });
@@ -65,7 +65,5 @@ public class UChatBungee implements RawDataListener {
             }
         }
         Sponge.getServer().getConsole().sendMessage(UCUtil.toText("&7Bungee message to channel " + chan.getName() + " from: " + id));
-
-
     }
 }

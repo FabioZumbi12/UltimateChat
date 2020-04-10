@@ -227,6 +227,9 @@ public class UCUtil {
                 }
 
                 fanci.send(p);
+                if (UChat.get().getJedis() != null) {
+                    UChat.get().getJedis().sendRawMessage(fanci);
+                }
             }
         } else {
             for (Player p : Bukkit.getOnlinePlayers()) {

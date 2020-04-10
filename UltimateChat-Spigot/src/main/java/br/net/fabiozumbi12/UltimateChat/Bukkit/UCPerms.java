@@ -56,7 +56,7 @@ public class UCPerms {
         return sender.hasPermission(perm);
     }
 
-    static boolean hasSpyPerm(CommandSender receiver, String ch) {
+    public static boolean hasSpyPerm(CommandSender receiver, String ch) {
         return hasPerm(receiver, "chat-spy." + ch) || hasPerm(receiver, "chat-spy.all");
     }
 

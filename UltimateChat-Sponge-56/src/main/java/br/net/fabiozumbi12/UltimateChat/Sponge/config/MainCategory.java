@@ -40,6 +40,9 @@ public class MainCategory {
     public DebugCat debug = new DebugCat();
     @Setting(comment = "Available languages: EN-US, PT-BR, FR-FR, FR-ES, HU-HU, RU, SP-ES, ZH-CN and KO-KR")
     public String language = "EN-US";
+    // jedis
+    @Setting(comment = "Jedis configuration.\nUse Jedis to send messages between other servers running Jedis.\nConsider a replecement as Bungeecoord.")
+    public JedisCat jedis = new JedisCat();
     //discord
     @Setting(comment = "Enable the two way chat into discord and minecraft.\nGenerate your bot token following this instructions: https://goo.gl/utfRRv")
     public DiscordCat discord = new DiscordCat();

@@ -100,6 +100,23 @@
 
     </repositories>
 
+
+    <!-- Jedis -->
+    <dependencies>
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>3.2.0</version>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+            <version>2.6.2</version>
+        </dependency>
+    </dependencies>
+
     <scm>
         <connection>scm:git:git@github.com:FabioZumbi12/UltimateChat.git</connection>
         <developerConnection>scm:git:git@github.com:FabioZumbi12/UltimateChat.git</developerConnection>

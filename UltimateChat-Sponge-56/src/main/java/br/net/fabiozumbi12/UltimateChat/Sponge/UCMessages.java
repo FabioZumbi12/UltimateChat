@@ -261,6 +261,11 @@ public class UCMessages {
             UChat.get().getLogger().timings(timingType.END, "UCMessages#send()|after send");
         });
 
+        //send to jedis
+        if (channel != null && !channel.isTell() && UChat.get().getJedis() != null) {
+            UChat.get().getJedis().sendMessage(channel.getName().toLowerCase(), msgPlayers.get(sender));
+        }
+
         //send to jda
         if (channel != null && UChat.get().getUCJDA() != null) {
             if (channel.isTell()) {
@@ -557,6 +562,10 @@ public class UCMessages {
         text = text.replace("{ch-color}", ch.getColor())
                 .replace("{ch-name}", ch.getName())
                 .replace("{ch-alias}", ch.getAlias());
+
+        if (UChat.get().getConfig().root().jedis.enable && ch.useJedis()) {
+            text = text.replace("{jedis-id}", UChat.get().getConfig().root().jedis.server_id);
+        }
 
         if (cmdSender instanceof CommandSource) {
             text = text.replace("{playername}", ((CommandSource) cmdSender).getName());

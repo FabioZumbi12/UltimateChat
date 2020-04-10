@@ -242,6 +242,11 @@ public class UCMessages {
                     });
                 }
 
+                //send to jedis
+                if (!channel.isTell() && UChat.get().getJedis() != null) {
+                    UChat.get().getJedis().sendMessage(channel.getName().toLowerCase(), msgPlayers.get(sender));
+                }
+
                 //send to jda
                 if (UChat.get().getUCJDA() != null) {
                     if (ch.isTell()) {

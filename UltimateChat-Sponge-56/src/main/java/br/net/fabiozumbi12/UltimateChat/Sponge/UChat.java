@@ -34,6 +34,7 @@ import br.net.fabiozumbi12.UltimateChat.Sponge.config.VersionData;
 import br.net.fabiozumbi12.UltimateChat.Sponge.discord.UCDInterface;
 import br.net.fabiozumbi12.UltimateChat.Sponge.discord.UCDiscord;
 import br.net.fabiozumbi12.UltimateChat.Sponge.discord.UCDiscordSync;
+import br.net.fabiozumbi12.UltimateChat.Sponge.jedis.UCJedisLoader;
 import com.google.inject.Inject;
 import ninja.leaping.configurate.objectmapping.GuiceObjectMapperFactory;
 import org.spongepowered.api.Game;
@@ -105,6 +106,7 @@ public class UChat {
     private UCDInterface UCJDA;
     private UCLang lang;
     private UCVHelper helper;
+    private UCJedisLoader jedis;
     private HashMap<List<String>, UCChannel> channels;
     private UChatBungee bungee;
     private UCDiscordSync sync;
@@ -169,6 +171,10 @@ public class UChat {
         return this.helper;
     }
 
+    public UCJedisLoader getJedis() {
+        return this.jedis;
+    }
+
     public HashMap<List<String>, UCChannel> getChannels() {
         return this.channels;
     }
@@ -196,6 +202,9 @@ public class UChat {
             game.getEventManager().registerListeners(plugin, new UCListener());
 
             //init other features
+            // Jedis
+            registerJedis();
+
             //JDA
             registerJDA();
 
@@ -294,11 +303,29 @@ public class UChat {
         }
         this.cmds = new UCCommands(this);
 
+        registerJedis();
         registerJDA();
 
         //fire event
         UChatReloadEvent event = new UChatReloadEvent();
         Sponge.getEventManager().post(event);
+    }
+
+    protected void registerJedis() {
+        if (this.jedis != null) {
+            this.jedis.closePool();
+            this.jedis = null;
+        }
+        if (this.config.root().jedis.enable) {
+            this.logger.info("Init JEDIS...");
+            try {
+                this.jedis = new UCJedisLoader(this.config.root().jedis.ip,
+                        this.config.root().jedis.port,
+                        this.config.root().jedis.pass, new ArrayList<>(getChannels().values()));
+            } catch (Exception e) {
+                this.logger.warning("Could not connect to REDIS server! Check ip, password and port, and if the REDIS server is running.");
+            }
+        }
     }
 
     private void registerJDA() {
@@ -346,6 +373,9 @@ public class UChat {
 
     @Listener
     public void onStopServer(GameStoppingServerEvent e) {
+        if (this.jedis != null) {
+            this.jedis.closePool();
+        }
         if (this.UCJDA != null) {
             this.UCJDA.sendRawToDiscord(lang.get("discord.stop"));
         }

@@ -738,6 +738,16 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
                     //send to player
                     Player receiver = UChat.get().getServer().getPlayer(args[1]);
 
+                    if (receiver == null || !receiver.isOnline()) {
+                        if (UChat.get().getJedis() != null) {
+                            UChat.get().getJedis().sendTellMessage(p, args[1], msg.substring(args[1].length() + 1));
+                            return;
+                        } else {
+                            UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("listener.invalidplayer"));
+                            return;
+                        }
+                    }
+
                     if (receiver == null || !receiver.isOnline() || (!p.canSee(receiver) && !UCPerms.hasPermission(p, "uchat.see-vanish"))) {
                         UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("listener.invalidplayer"));
                         return;

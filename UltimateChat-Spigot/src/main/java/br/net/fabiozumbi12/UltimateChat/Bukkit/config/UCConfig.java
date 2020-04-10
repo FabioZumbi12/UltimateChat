@@ -125,7 +125,7 @@ public class UCConfig {
             channel.set("name", "Global");
             channel.set("alias", "g");
             channel.set("color", "&2");
-            channel.set("jedis", true);
+            channel.set("jedis", false);
             channel.save(g);
 
             File l = new File(chfolder, "local.yml");
@@ -142,7 +142,7 @@ public class UCConfig {
             channel.set("name", "Admin");
             channel.set("alias", "ad");
             channel.set("color", "&b");
-            channel.set("jedis", true);
+            channel.set("jedis", false);
             channel.save(ad);
 
             listOfFiles = chfolder.listFiles();
@@ -259,6 +259,10 @@ public class UCConfig {
 
     public String getString(String key) {
         return plugin.getConfig().getString(key, "");
+    }
+
+    public int getInt(String key, int def) {
+        return plugin.getConfig().getInt(key, def);
     }
 
     public List<String> getStringList(String key) {

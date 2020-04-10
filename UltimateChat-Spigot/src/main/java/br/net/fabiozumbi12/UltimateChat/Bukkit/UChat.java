@@ -35,6 +35,7 @@ import br.net.fabiozumbi12.UltimateChat.Bukkit.config.UCLang;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.discord.UCDInterface;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.discord.UCDiscord;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.discord.UCDiscordSync;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.jedis.UCJedisLoader;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.metrics.Metrics;
 import br.net.fabiozumbi12.translationapi.TranslationAPI;
 import br.net.fabiozumbi12.translationapi.TranslationCore;
@@ -78,7 +79,7 @@ public class UChat extends JavaPlugin {
     static boolean Factions;
     private static boolean Vault = false;
     private static UChat uchat;
-    List<String> isSpy = new ArrayList<>();
+    public List<String> isSpy = new ArrayList<>();
     List<String> msgTogglePlayers = Collections.synchronizedList(new ArrayList<>());
     protected List<String> command = Collections.synchronizedList(new ArrayList<>());
     Map<String, String> tempChannels = Collections.synchronizedMap(new HashMap<>());
@@ -102,6 +103,7 @@ public class UChat extends JavaPlugin {
     private boolean isRelation;
     private uChatAPI ucapi;
     private UCDiscordSync sync;
+    private UCJedisLoader jedis;
 
     public static UChat get() {
         return uchat;
@@ -166,6 +168,10 @@ public class UChat extends JavaPlugin {
 
     public uChatAPI getAPI() {
         return this.ucapi;
+    }
+
+    public UCJedisLoader getJedis() {
+        return this.jedis;
     }
 
     public PluginDescriptionFile getPDF() {
@@ -274,6 +280,8 @@ public class UChat extends JavaPlugin {
             this.ucapi = new uChatAPI();
 
             //init other features
+            //Jedis
+            registerJedis();
             //JDA
             registerJDA();
 
@@ -320,11 +328,30 @@ public class UChat extends JavaPlugin {
         this.registerAliases();
 
         this.registerJDA();
+        this.registerJedis();
         this.initAutomessage();
 
         //ping other plugins when uchat reload
         UChatReloadEvent reloadEvent = new UChatReloadEvent();
         Bukkit.getPluginManager().callEvent(reloadEvent);
+    }
+
+    private void registerJedis() {
+        if (this.jedis != null) {
+            this.jedis.closePool();
+            this.jedis = null;
+        }
+        if (getUCConfig().getBoolean("jedis.enable")) {
+            this.logger.info("Init REDIS...");
+            try {
+                this.jedis = new UCJedisLoader(getUCConfig().getString("jedis.ip"),
+                        getUCConfig().getInt("jedis.port", 6379),
+                        getUCConfig().getString("jedis.pass"), new ArrayList<>(getChannels().values()));
+            } catch (Exception e) {
+                e.printStackTrace();
+                this.logger.warning("Could not connect to REDIS server! Check ip, password and port, and if the REDIS server is running.");
+            }
+        }
     }
 
     private void registerJDA() {

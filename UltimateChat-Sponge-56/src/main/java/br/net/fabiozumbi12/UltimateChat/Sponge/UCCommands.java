@@ -275,6 +275,12 @@ public class UCCommands {
                                                 UChat.get().tempTellPlayers.put(p.getName(), "CONSOLE");
                                                 UChat.get().command.add(p.getName());
                                                 sendPreTell(p, Sponge.getServer().getConsole(), msg);
+                                            }
+
+                                            //send to jedis
+                                            else if (UChat.get().getJedis() != null) {
+                                                UChat.get().getJedis().sendTellMessage(p, recObj.toString(), msg);
+                                                return CommandResult.success();
                                             } else
 
                                             //not found
@@ -1002,7 +1008,7 @@ public class UCCommands {
         p.sendMessage(UCUtil.toText(UChat.get().getLang().get("help.tell.respond")));
     }
 
-    public class ChannelCommandElement extends CommandElement {
+    public static class ChannelCommandElement extends CommandElement {
 
         public ChannelCommandElement(Text key) {
             super(key);
@@ -1026,7 +1032,7 @@ public class UCCommands {
         }
     }
 
-    public class remainJoinedStringsWithTab extends CommandElement {
+    public static class remainJoinedStringsWithTab extends CommandElement {
 
         public remainJoinedStringsWithTab(Text key) {
             super(key);
