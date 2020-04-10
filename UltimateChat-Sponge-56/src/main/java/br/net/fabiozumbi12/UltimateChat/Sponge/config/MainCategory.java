@@ -202,6 +202,8 @@ public class MainCategory {
         public String fakeplayer_channel = "l";
         @Setting(value = "URL-template", comment = "Template to show when players send links or urls.")
         public String URL_template = "&3Click to open &n{url}&r";
+        @Setting(value = "muted-deny-cmds", comment = "Deny muted players to use this commands.")
+        public List<String> muted_deny_cmds = Collections.singletonList("mail");
         @Setting(value = "console-tag", comment = "Tag to show when sent messages from console to channels.")
         public String console_tag = "&6 {console}&3";
         @Setting(value = "custom-tags")

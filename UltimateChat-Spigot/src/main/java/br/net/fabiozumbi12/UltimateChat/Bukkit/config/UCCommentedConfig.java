@@ -94,6 +94,7 @@ public class UCCommentedConfig {
         setDefault("mention.hover-message", "&e{playername} mentioned you!", null);
 
         setDefault("general.URL-template", "&3Click to open &n{url}&r", "Template to show when players send links or urls.");
+        setDefault("general.muted-deny-cmds", Collections.singletonList("mail"), "Deny muted players to use this commands.");
         setDefault("general.console-tag", "&6 {console}&3", "Tag to show when sent messages from console to channels.");
         setDefault("general.remove-from-chat", Arrays.asList("[]", "&7[]", "&7[&7]"), "Remove this from chat (like empty tags)");
         setDefault("general.remove-unnused-placeholderapi", true, "Remove not converted PlaceholdersAPI from tags.");

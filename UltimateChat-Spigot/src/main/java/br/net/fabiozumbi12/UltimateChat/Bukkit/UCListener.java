@@ -658,6 +658,14 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
         Player p = e.getPlayer();
         UChat.get().getUCLogger().debug("PlayerCommandPreprocessEvent - Channel: " + args[0]);
 
+        // Deny command if muted
+        if (UChat.get().mutes.contains(p.getName()) &&
+                UChat.get().getUCConfig().getStringList("general.muted-deny-cmds").contains(args[0])) {
+            UChat.get().getLang().sendMessage(p, "player.muted.denycmd");
+            e.setCancelled(true);
+            return;
+        }
+
         //check tell aliases
         if (UChat.get().getUCConfig().getTellAliases().contains(args[0])) {
             e.setCancelled(true);
@@ -1048,7 +1056,6 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
                 }
             }
         }
-
 
         if (!toCh.isEmpty()) {
             UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.entered").replace("{channel}", toCh));

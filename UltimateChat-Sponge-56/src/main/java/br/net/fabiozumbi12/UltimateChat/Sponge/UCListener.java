@@ -175,6 +175,14 @@ public class UCListener {
 
     @Listener(order = Order.POST)
     public void onCommand(SendCommandEvent e, @First CommandSource p) {
+        // Deny command if muted
+        if (p instanceof Player && UChat.get().mutes.contains(p.getName()) &&
+                UChat.get().getConfig().root().general.muted_deny_cmds.contains(e.getCommand())) {
+            UChat.get().getLang().sendMessage(p, "player.muted.denycmd");
+            e.setCancelled(true);
+            return;
+        }
+
         if (UChat.get().getUCJDA() != null) {
             Calendar cal = Calendar.getInstance();
             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
