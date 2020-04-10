@@ -54,6 +54,7 @@ permissions:
       uchat.cmd.msgtoggle: true
       uchat.cmd.clear: true
       uchat.chat.click-urls: true
+      uchat.chat.hand: true
       uchat.channel.global.read: true
       uchat.channel.global.write: true
       uchat.channel.local.read: true

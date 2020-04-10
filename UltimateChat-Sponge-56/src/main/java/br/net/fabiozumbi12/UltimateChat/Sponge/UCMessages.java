@@ -28,6 +28,7 @@ package br.net.fabiozumbi12.UltimateChat.Sponge;
 import br.net.fabiozumbi12.UltimateChat.Sponge.API.PostFormatChatMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.Sponge.API.SendChannelMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.Sponge.util.UCLogger.timingType;
+import br.net.fabiozumbi12.UltimateChat.Sponge.util.UCPerms;
 import br.net.fabiozumbi12.UltimateChat.Sponge.util.UCUtil;
 import io.github.nucleuspowered.nucleus.api.NucleusAPI;
 import me.rojo8399.placeholderapi.PlaceholderService;
@@ -442,7 +443,7 @@ public class UCMessages {
                     //append text
                     msgBuilder.append(UCUtil.toText(format));
 
-                    if (ch.allowHand() && UChat.get().getConfig().root().general.item_hand.enable && msg.contains(UChat.get().getConfig().root().general.item_hand.placeholder) && sender instanceof Player) {
+                    if (ch.allowHand() && UChat.get().getConfig().root().general.item_hand.enable && msg.contains(UChat.get().getConfig().root().general.item_hand.placeholder) && sender instanceof Player && UChat.get().getPerms().hasPerm(sender, "chat.hand")) {
                         ItemStack hand = UChat.get().getVHelper().getItemInHand(((Player) sender));
                         if (!hand.getItem().equals(ItemTypes.NONE)) msgBuilder.onHover(TextActions.showItem(hand.createSnapshot()));
                     } else if (UChat.get().getConfig().root().mention.hover_message.length() > 0 && StringUtils.containsIgnoreCase(msg, ((CommandSource) receiver).getName())) {
@@ -549,7 +550,7 @@ public class UCMessages {
     public static String formatTags(String tag, String text, Object cmdSender, Object receiver, String msg, UCChannel ch) {
         if (receiver instanceof CommandSource && tag.equals("message")) {
             text = text.replace("{message}", mention(cmdSender, receiver, msg));
-            if (UChat.get().getConfig().root().general.item_hand.enable) {
+            if (UChat.get().getConfig().root().general.item_hand.enable && cmdSender instanceof Player && UChat.get().getPerms().hasPerm((Player)cmdSender, "chat.hand")) {
                 text = text.replace(UChat.get().getConfig().root().general.item_hand.placeholder, formatTags("", UCUtil.toColor(UChat.get().getConfig().root().general.item_hand.format), cmdSender, receiver, msg, ch));
             }
         } else {
@@ -627,10 +628,10 @@ public class UCMessages {
             }
 
             //replace item hand
-            text = text.replace(UChat.get().getConfig().root().general.item_hand.placeholder, UCUtil.toColor(UChat.get().getConfig().root().general.item_hand.format));
-            ItemStack item;
-
-            item = UChat.get().getVHelper().getItemInHand(sender);
+            ItemStack item = UChat.get().getVHelper().getItemInHand(sender);
+            if (UChat.get().getPerms().hasPerm(sender, "chat.hand")){
+                text = text.replace(UChat.get().getConfig().root().general.item_hand.placeholder, UCUtil.toColor(UChat.get().getConfig().root().general.item_hand.format));
+            }
 
             if (text.contains("{hand-") && !item.getItem().getType().equals(ItemTypes.NONE)) {
                 text = text
