@@ -547,7 +547,7 @@ public class UCMessages {
 
             if (text.contains("{world}")) {
                 String world = UChat.get().getUCConfig().getString("general.world-names." + sender.getWorld().getName());
-                text = text.replace("{world}", world != null ? world : sender.getWorld().getName());
+                text = text.replace("{world}", !world.isEmpty() ? world : sender.getWorld().getName());
             }
 
             text = text.replace("{nickname}", sender.getDisplayName());
