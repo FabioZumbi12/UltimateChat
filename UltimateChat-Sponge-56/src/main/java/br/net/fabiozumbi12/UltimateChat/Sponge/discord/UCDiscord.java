@@ -137,83 +137,87 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
         if (e.getMessage().isFromType(ChannelType.PRIVATE)) {
 
             Guild gc = e.getJDA().getGuildById(this.uchat.getDDSync().getGuidId());
-            if (gc.getMemberById(e.getAuthor().getId()).getRoles().stream().anyMatch(r -> this.uchat.getDDSync().isDDAdminRole(r.getId()))){
-                //listen for ;;help
-                if (args.length == 1 && args[0].equalsIgnoreCase(this.uchat.getDDSync().getDDHelpCommand())){
+            try {
+                if (gc.retrieveMemberById(e.getAuthor().getId()).complete(true).getRoles().stream().anyMatch(r -> this.uchat.getDDSync().isDDAdminRole(r.getId()))){
+                    //listen for ;;help
+                    if (args.length == 1 && args[0].equalsIgnoreCase(this.uchat.getDDSync().getDDHelpCommand())){
+                        try {
+                            e.getChannel().sendMessage(this.uchat.getLang().get("discord.sync-admin-help")).complete(true);
+                        } catch (RateLimitedException e1) {
+                            e1.printStackTrace();
+                        }
+                        return;
+                    }
+
+
+                    if (args[0].equalsIgnoreCase(this.uchat.getDDSync().getDDAdminCommand())){
+
+                        //listen ;;admin list
+                        if (args.length == 2 && args[1].equalsIgnoreCase("list")){
+                            try {
+                                e.getChannel().sendMessage(this.uchat.getLang().get("discord.sync-admin-list") + "\n" + this.uchat.getDDSync().getConnectedPlayers()).complete(true);
+                            } catch (RateLimitedException e1) {
+                                e1.printStackTrace();
+                            }
+                        }
+
+                        //listen ;;admin remove <player>|<user id>
+                        if (args.length == 3 && args[1].equalsIgnoreCase("remove")){
+                            if (this.uchat.getDDSync().getSyncNickName(args[2]) != null || this.uchat.getDDSync().getPlayerDDId(args[2]) != null){
+                                String nickName = this.uchat.getDDSync().getSyncNickName(args[2]);
+                                if (nickName == null)
+                                    nickName = this.uchat.getDDSync().getSyncNickName(this.uchat.getDDSync().getPlayerDDId(args[2]));
+                                this.uchat.getDDSync().unlink(nickName);
+                                try {
+                                    e.getChannel().sendMessage(this.uchat.getLang().get("discord.sync-admin-removed").replace("{player}", nickName)).complete(true);
+                                } catch (RateLimitedException e1) {
+                                    e1.printStackTrace();
+                                }
+                            } else {
+                                try {
+                                    e.getChannel().sendMessage(this.uchat.getLang().get("discord.sync-admin-notremoved").replace("{player}", args[2])).complete(true);
+                                } catch (RateLimitedException e1) {
+                                    e1.printStackTrace();
+                                }
+                            }
+                            return;
+                        }
+
+                        //listen ;;admin add player id
+                        if (args.length == 4 && args[1].equalsIgnoreCase("add")){
+                            if (this.uchat.getDDSync().getSyncNickName(args[3]) == null && this.uchat.getDDSync().getPlayerDDId(args[2]) == null){
+                                try {
+                                    this.uchat.getDDSync().setPlayerDDId(args[3], args[2], null);
+                                    e.getChannel().sendMessage(this.uchat.getLang().get("discord.sync-admin-added")
+                                            .replace("{player}", args[2])
+                                            .replace("{id}", args[3]))
+                                            .complete(true);
+                                } catch (RateLimitedException e1) {
+                                    e1.printStackTrace();
+                                }
+                            } else {
+                                try {
+                                    e.getChannel().sendMessage(this.uchat.getLang().get("discord.sync-admin-notadded")
+                                            .replace("{player}", args[2]))
+                                            .complete(true);
+                                } catch (RateLimitedException e1) {
+                                    e1.printStackTrace();
+                                }
+                            }
+                            return;
+                        }
+                        return;
+                    }
+                } else if (args[0].equalsIgnoreCase(this.uchat.getDDSync().getDDHelpCommand()) || args[0].equalsIgnoreCase(this.uchat.getDDSync().getDDAdminCommand())){
                     try {
-                        e.getChannel().sendMessage(this.uchat.getLang().get("discord.sync-admin-help")).complete(true);
+                        e.getChannel().sendMessage(this.uchat.getLang().get("discord.sync-noperm")).complete(true);
                     } catch (RateLimitedException e1) {
                         e1.printStackTrace();
                     }
                     return;
                 }
-
-
-                if (args[0].equalsIgnoreCase(this.uchat.getDDSync().getDDAdminCommand())){
-
-                    //listen ;;admin list
-                    if (args.length == 2 && args[1].equalsIgnoreCase("list")){
-                        try {
-                            e.getChannel().sendMessage(this.uchat.getLang().get("discord.sync-admin-list") + "\n" + this.uchat.getDDSync().getConnectedPlayers()).complete(true);
-                        } catch (RateLimitedException e1) {
-                            e1.printStackTrace();
-                        }
-                    }
-
-                    //listen ;;admin remove <player>|<user id>
-                    if (args.length == 3 && args[1].equalsIgnoreCase("remove")){
-                        if (this.uchat.getDDSync().getSyncNickName(args[2]) != null || this.uchat.getDDSync().getPlayerDDId(args[2]) != null){
-                            String nickName = this.uchat.getDDSync().getSyncNickName(args[2]);
-                            if (nickName == null)
-                                nickName = this.uchat.getDDSync().getSyncNickName(this.uchat.getDDSync().getPlayerDDId(args[2]));
-                            this.uchat.getDDSync().unlink(nickName);
-                            try {
-                                e.getChannel().sendMessage(this.uchat.getLang().get("discord.sync-admin-removed").replace("{player}", nickName)).complete(true);
-                            } catch (RateLimitedException e1) {
-                                e1.printStackTrace();
-                            }
-                        } else {
-                            try {
-                                e.getChannel().sendMessage(this.uchat.getLang().get("discord.sync-admin-notremoved").replace("{player}", args[2])).complete(true);
-                            } catch (RateLimitedException e1) {
-                                e1.printStackTrace();
-                            }
-                        }
-                        return;
-                    }
-
-                    //listen ;;admin add player id
-                    if (args.length == 4 && args[1].equalsIgnoreCase("add")){
-                        if (this.uchat.getDDSync().getSyncNickName(args[3]) == null && this.uchat.getDDSync().getPlayerDDId(args[2]) == null){
-                            try {
-                                this.uchat.getDDSync().setPlayerDDId(args[3], args[2], null);
-                                e.getChannel().sendMessage(this.uchat.getLang().get("discord.sync-admin-added")
-                                        .replace("{player}", args[2])
-                                        .replace("{id}", args[3]))
-                                        .complete(true);
-                            } catch (RateLimitedException e1) {
-                                e1.printStackTrace();
-                            }
-                        } else {
-                            try {
-                                e.getChannel().sendMessage(this.uchat.getLang().get("discord.sync-admin-notadded")
-                                        .replace("{player}", args[2]))
-                                        .complete(true);
-                            } catch (RateLimitedException e1) {
-                                e1.printStackTrace();
-                            }
-                        }
-                        return;
-                    }
-                    return;
-                }
-            } else if (args[0].equalsIgnoreCase(this.uchat.getDDSync().getDDHelpCommand()) || args[0].equalsIgnoreCase(this.uchat.getDDSync().getDDAdminCommand())){
-                try {
-                    e.getChannel().sendMessage(this.uchat.getLang().get("discord.sync-noperm")).complete(true);
-                } catch (RateLimitedException e1) {
-                    e1.printStackTrace();
-                }
-                return;
+            } catch (RateLimitedException rateLimitedException) {
+                rateLimitedException.printStackTrace();
             }
 
             //listen ;;connect code
@@ -425,9 +429,9 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
     public void setPlayerRole(String ddUser, List<String> ddRoleIds, String nick, List<String> configRoles) {
         try {
             Guild gc = this.jda.getGuildById(this.uchat.getDDSync().getGuidId());
-            Member member = gc.getMemberById(ddUser);
+            Member member = gc.retrieveMemberById(ddUser).complete(true);
             if (!nick.isEmpty() && (member.getNickname() == null || !member.getNickname().equals(nick))) {
-                gc.getMember(member.getUser()).modifyNickname(nick).complete(true);
+                gc.retrieveMember(member.getUser()).complete(true).modifyNickname(nick).complete(true);
             }
 
             List<Role> roles = new ArrayList<>();
