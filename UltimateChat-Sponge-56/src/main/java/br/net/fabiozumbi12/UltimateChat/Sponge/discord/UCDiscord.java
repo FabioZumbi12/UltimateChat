@@ -429,7 +429,12 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
     public void setPlayerRole(String ddUser, List<String> ddRoleIds, String nick, List<String> configRoles) {
         try {
             Guild gc = this.jda.getGuildById(this.uchat.getDDSync().getGuidId());
-            Member member = gc.retrieveMemberById(ddUser).complete(true);
+            Member member;
+            try {
+                member = gc.retrieveMemberById(ddUser).complete(true);
+            } catch (RateLimitedException ignored) {
+                member = gc.getMemberById(ddUser);
+            }
             if (!nick.isEmpty() && (member.getNickname() == null || !member.getNickname().equals(nick))) {
                 gc.retrieveMember(member.getUser()).complete(true).modifyNickname(nick).complete(true);
             }

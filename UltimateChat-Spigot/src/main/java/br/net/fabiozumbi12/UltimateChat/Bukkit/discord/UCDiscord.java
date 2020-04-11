@@ -33,6 +33,7 @@ import jdalib.jda.api.JDA;
 import jdalib.jda.api.JDABuilder;
 import jdalib.jda.api.entities.*;
 import jdalib.jda.api.events.message.MessageReceivedEvent;
+import jdalib.jda.api.exceptions.ErrorResponseException;
 import jdalib.jda.api.exceptions.PermissionException;
 import jdalib.jda.api.exceptions.RateLimitedException;
 import jdalib.jda.api.hooks.ListenerAdapter;
@@ -435,16 +436,25 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
     public void setPlayerRole(String ddUser, List<String> ddRoleIds, String nick, List<String> configRoles) {
         try {
             Guild gc = this.jda.getGuildById(this.uchat.getDDSync().getGuidId());
-            Member member = gc.retrieveMemberById(ddUser).complete(true);
+            Member member;
+            try {
+                member = gc.retrieveMemberById(ddUser).complete(true);
+            } catch (RateLimitedException ignored) {
+                member = gc.getMemberById(ddUser);
+            }
             if (!nick.isEmpty() && (member.getNickname() == null || !member.getNickname().equals(nick))) {
-                gc.retrieveMember(member.getUser()).complete(true).modifyNickname(nick).complete(true);
+                member.modifyNickname(nick).complete(true);
             }
 
             List<Role> roles = new ArrayList<>();
             ddRoleIds.forEach(r -> roles.add(gc.getRoleById(r)));
             gc.modifyMemberRoles(member, roles, configRoles.stream().map(gc::getRoleById).filter(r-> r != null && !roles.contains(r)).collect(Collectors.toList())).complete(true);
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (ErrorResponseException e) {
+            UChat.get().getUCLogger().warning("Jda response error: " + e.getLocalizedMessage());
+            UChat.get().getUCLogger().warning("Additional info: User ID:" + ddUser);
+        } catch (RateLimitedException e) {
+            UChat.get().getUCLogger().warning("Jda Rate Limited Exception: " + e.getLocalizedMessage());
+            e.printStackTrace();
         }
     }
 
