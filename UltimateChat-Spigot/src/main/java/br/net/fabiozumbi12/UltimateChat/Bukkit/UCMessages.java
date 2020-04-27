@@ -566,7 +566,7 @@ public class UCMessages {
                         text = text.replace("{hand-name}", item.getItemMeta().getLocalizedName());
                     } else if (meta.hasDisplayName()) {
                         text = text.replace("{hand-name}", item.getItemMeta().getDisplayName());
-                    } else {
+                    } else if (text.contains("{hand-name}")){
                         text = text.replace("{hand-name}", translateItem(item));
                     }
                     if (meta.hasLore()) {
@@ -589,8 +589,10 @@ public class UCMessages {
                     }
                 }
                 text = text.replace("{hand-amount}", String.valueOf(item.getAmount()));
-                text = text.replace("{hand-name}", translateItem(item));
-                text = text.replace("{hand-type}", translateItem(item));
+                if (text.contains("{hand-name}"))
+                    text = text.replace("{hand-name}", translateItem(item));
+                if (text.contains("{hand-type}"))
+                    text = text.replace("{hand-type}", translateItem(item));
             } else {
                 text = text.replace("{hand-name}", UChat.get().getLang().get("chat.emptyslot"));
                 text = text.replace("{hand-type}", "Air");
