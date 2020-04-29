@@ -259,13 +259,13 @@ public class UChat {
                 getLogger().info("Permissions set for API 5 and 6");
             }
             if (v.startsWith("7")) {
-                this.perms = (UCPerms) Class.forName("br.net.fabiozumbi12.UltimateChat.Sponge.UCPerms7").getConstructor().newInstance();
-                this.helper = (UCVHelper) Class.forName("br.net.fabiozumbi12.UltimateChat.Sponge.UCVHelper7").getConstructor().newInstance();
+                this.perms = (UCPerms) Class.forName("br.net.fabiozumbi12.UltimateChat.Sponge.util.UCPerms7").getConstructor().newInstance();
+                this.helper = (UCVHelper) Class.forName("br.net.fabiozumbi12.UltimateChat.Sponge.util.UCVHelper7").getConstructor().newInstance();
                 getLogger().info("Permissions set for API 7");
             }
             if (v.startsWith("8")) {
-                this.perms = (UCPerms) Class.forName("br.net.fabiozumbi12.UltimateChat.Sponge.UCPerms8").getConstructor().newInstance();
-                this.helper = (UCVHelper) Class.forName("br.net.fabiozumbi12.UltimateChat.Sponge.UCVHelper8").getConstructor().newInstance();
+                this.perms = (UCPerms) Class.forName("br.net.fabiozumbi12.UltimateChat.Sponge.util.UCPerms8").getConstructor().newInstance();
+                this.helper = (UCVHelper) Class.forName("br.net.fabiozumbi12.UltimateChat.Sponge.util.UCVHelper8").getConstructor().newInstance();
                 getLogger().info("Permissions set for API 8");
             }
         } catch (Exception e) {
@@ -280,12 +280,12 @@ public class UChat {
                         this.helper = (UCVHelper) Class.forName("br.net.fabiozumbi12.UltimateChat.Sponge.util.UCVHelper56").getConstructor().newInstance();
                         getLogger().info("Permissions set to default classes for API 6");
                     case 7:
-                        this.perms = (UCPerms) Class.forName("br.net.fabiozumbi12.UltimateChat.Sponge.UCPerms7").getConstructor().newInstance();
-                        this.helper = (UCVHelper) Class.forName("br.net.fabiozumbi12.UltimateChat.Sponge.UCVHelper7").getConstructor().newInstance();
+                        this.perms = (UCPerms) Class.forName("br.net.fabiozumbi12.UltimateChat.Sponge.util.UCPerms7").getConstructor().newInstance();
+                        this.helper = (UCVHelper) Class.forName("br.net.fabiozumbi12.UltimateChat.Sponge.util.UCVHelper7").getConstructor().newInstance();
                         getLogger().info("Permissions set to default classes for API 7");
                     case 8:
-                        this.perms = (UCPerms) Class.forName("br.net.fabiozumbi12.UltimateChat.Sponge.UCPerms8").getConstructor().newInstance();
-                        this.helper = (UCVHelper) Class.forName("br.net.fabiozumbi12.UltimateChat.Sponge.UCVHelper8").getConstructor().newInstance();
+                        this.perms = (UCPerms) Class.forName("br.net.fabiozumbi12.UltimateChat.Sponge.util.UCPerms8").getConstructor().newInstance();
+                        this.helper = (UCVHelper) Class.forName("br.net.fabiozumbi12.UltimateChat.Sponge.util.UCVHelper8").getConstructor().newInstance();
                         getLogger().info("Permissions set to default classes for API 8");
                 }
             } catch (NoSuchMethodException | InvocationTargetException ex) {
