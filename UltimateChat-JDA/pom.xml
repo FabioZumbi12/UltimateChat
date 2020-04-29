@@ -127,6 +127,10 @@
                                     <pattern>org.json</pattern>
                                     <shadedPattern>jdalib.org.json</shadedPattern>
                                 </relocation>
+                                <relocation>
+                                    <pattern>com.fasterxml</pattern>
+                                    <shadedPattern>jdalib.com.fasterxml</shadedPattern>
+                                </relocation>
                             </relocations>
                         </configuration>
                     </execution>
