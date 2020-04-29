@@ -138,7 +138,7 @@
 		<!-- PCGF Repo for Marriage Master -->
 		<repository>
 			<id>pcgf-repo</id>
-			<url>https://repo.pcgamingfreaks.at/repository/maven-everything</url>
+			<url>https://repo.pcgamingfreaks.at/repository/maven-everything/</url>
 		</repository>
         <repository>
             <id>Translation-API</id>
