@@ -352,7 +352,7 @@ public class UChat {
                     }
                 }
             }
-        });
+        }).submit(this);
     }
 
     private boolean checkJDA() {
