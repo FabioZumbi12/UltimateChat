@@ -27,6 +27,7 @@ package br.net.fabiozumbi12.UltimateChat.Bukkit;
 
 import br.net.fabiozumbi12.UltimateChat.Bukkit.API.PostFormatChatMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.API.SendChannelMessageEvent;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.hooks.UCDynmap;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCLogger.timingType;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.bungee.UChatBungee;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.hooks.UCFactionsHook;
@@ -248,8 +249,13 @@ public class UCMessages {
                 }
 
                 //send to jedis
-                if (channel != null && !channel.isTell() && UChat.get().getJedis() != null) {
+                if (!channel.isTell() && UChat.get().getJedis() != null) {
                     UChat.get().getJedis().sendMessage(channel.getName().toLowerCase(), msgPlayers.get(sender));
+                }
+
+                //send to dynmap
+                if (channel.useDynmap()) {
+                    UCDynmap.sendToWeb(sender, finalEvmsg);
                 }
 
                 //send to jda
@@ -632,7 +638,7 @@ public class UCMessages {
                 text = text.replace("{prim-group}", group.isEmpty() ? primGroup : group);
 
             }
-            if (text.contains("{clan-") && UChat.SClans) {
+            if (text.contains("{clan-") && UChat.sc != null) {
                 ClanPlayer cp = UChat.sc.getClanManager().getClanPlayer(sender.getUniqueId());
                 SettingsManager scm = UChat.sc.getSettingsManager();
                 if (cp != null) {

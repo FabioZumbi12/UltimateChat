@@ -35,6 +35,7 @@ import br.net.fabiozumbi12.UltimateChat.Bukkit.config.UCLang;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.discord.UCDInterface;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.discord.UCDiscord;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.discord.UCDiscordSync;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.hooks.UCDynmap;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.hooks.UCPlaceHolders;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.hooks.UCPlaceHoldersRelational;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.jedis.UCJedisLoader;
@@ -251,6 +252,10 @@ public class UChat extends JavaPlugin {
             if (checkTAPI()) {
                 tapi = TranslationAPI.getAPI();
                 logger.info("Translation API found. We will use for item translations.");
+            }
+
+            if (checkDynmap()) {
+                logger.info("Dynmap found. Hooked.");
             }
 
             if (Vault) {
@@ -587,7 +592,11 @@ public class UChat extends JavaPlugin {
         return p != null && p.isEnabled();
     }
 
-    //check if plugin Vault is installed
+    private boolean checkDynmap() {
+        Plugin p = Bukkit.getPluginManager().getPlugin("dynmap");
+        return p != null && p.isEnabled();
+    }
+
     private boolean checkVault() {
         Plugin p = Bukkit.getPluginManager().getPlugin("Vault");
         return p != null && p.isEnabled();

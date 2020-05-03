@@ -126,6 +126,7 @@ public class UCConfig {
             channel.set("alias", "g");
             channel.set("color", "&2");
             channel.set("jedis", false);
+            channel.set("dynmap.enable", true);
             channel.save(g);
 
             File l = new File(chfolder, "local.yml");
@@ -133,6 +134,7 @@ public class UCConfig {
             channel.set("name", "Local");
             channel.set("alias", "l");
             channel.set("color", "&e");
+            channel.set("jedis", false);
             channel.set("across-worlds", false);
             channel.set("distance", 40);
             channel.save(l);

@@ -52,7 +52,7 @@ public class UCChannel {
     private List<String> members = new ArrayList<>();
 
     @Deprecated()
-    public UCChannel(String name, String alias, boolean worlds, int dist, String color, String builder, boolean focus, boolean receiversMsg, double cost, boolean isbungee, boolean hand, boolean ownBuilder, boolean isAlias, String aliasSender, String aliasCmd, List<String> availableWorlds, String ddchannel, String ddmode, String ddmcformat, String mcddformat, String ddhover, boolean ddallowcmds, boolean lock) {
+    public UCChannel(String name, String alias, boolean worlds, int dist, String color, String builder, boolean focus, boolean receiversMsg, double cost, boolean isbungee, boolean hand, boolean ownBuilder, boolean isAlias, String aliasSender, String aliasCmd, List<String> availableWorlds, String ddchannel, String ddmode, String ddmcformat, String mcddformat, String ddhover, boolean ddallowcmds, boolean lock, boolean dynenable, String mcdynformat, String dynmcformat) {
         addDefaults();
         properties.put("name", name);
         properties.put("alias", alias);
@@ -71,12 +71,17 @@ public class UCChannel {
         properties.put("channelAlias.sendAs", aliasSender);
         properties.put("channelAlias.cmd", aliasCmd);
         properties.put("available-worlds", availableWorlds);
+
         properties.put("discord.channelID", ddchannel);
         properties.put("discord.mode", ddmode);
         properties.put("discord.hover", ddhover);
         properties.put("discord.allow-server-cmds", ddallowcmds);
         properties.put("discord.format-to-mc", ddmcformat);
         properties.put("discord.format-to-dd", mcddformat);
+
+        properties.put("dynmap.enable", dynenable);
+        properties.put("dynmap.ingame-to-web", mcdynformat);
+        properties.put("dynmap.web-to-ingame", dynmcformat);
     }
 
     public UCChannel(String name, String alias, String color) {
@@ -118,6 +123,7 @@ public class UCChannel {
         properties.put("channelAlias.sendAs", "player");
         properties.put("channelAlias.cmd", "");
         properties.put("available-worlds", new ArrayList<String>());
+
         properties.put("discord.channelID", "");
         properties.put("discord.mode", "none");
         properties.put("discord.allow-bot", true);
@@ -125,6 +131,8 @@ public class UCChannel {
         properties.put("discord.allow-server-cmds", false);
         properties.put("discord.format-to-mc", "{ch-color}[{ch-alias}]&b{dd-rolecolor}[{dd-rolename}]{sender}&r: ");
         properties.put("discord.format-to-dd", ":regional_indicator_g: **{sender}**: {message}");
+
+        properties.put("dynmap.enable", false);
     }
 
     public Properties getProperties() {
@@ -147,6 +155,10 @@ public class UCChannel {
         } else {
             properties.put(key, value);
         }
+    }
+
+    public boolean useDynmap() {
+        return (boolean) properties.get("dynmap.enable");
     }
 
     public boolean allowHand(){

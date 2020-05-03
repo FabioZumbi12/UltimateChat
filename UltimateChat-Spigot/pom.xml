@@ -80,6 +80,13 @@
             <systemPath>${project.basedir}/libs/Factions.jar</systemPath>
         </dependency>
         <dependency>
+            <groupId>Dynmap</groupId>
+            <artifactId>API</artifactId>
+            <version>v3.0-beta10</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/Dynmap-3.0-beta-10-spigot.jar</systemPath>
+        </dependency>
+        <dependency>
             <groupId>at.pcgamingfreaks</groupId>
             <artifactId>MarriageMaster</artifactId>
             <version>1.31.16</version>
