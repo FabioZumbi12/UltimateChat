@@ -249,17 +249,17 @@ public class UCMessages {
                 }
 
                 //send to jedis
-                if (!channel.isTell() && UChat.get().getJedis() != null) {
+                if (channel != null && !channel.isTell() && UChat.get().getJedis() != null) {
                     UChat.get().getJedis().sendMessage(channel.getName().toLowerCase(), msgPlayers.get(sender));
                 }
 
                 //send to dynmap
-                if (channel.useDynmap()) {
+                if (channel != null && channel.useDynmap()) {
                     UCDynmap.sendToWeb(sender, finalEvmsg);
                 }
 
                 //send to jda
-                if (UChat.get().getUCJDA() != null) {
+                if (channel != null && UChat.get().getUCJDA() != null) {
                     if (ch.isTell()) {
                         UChat.get().getUCJDA().sendTellToDiscord(msgPlayers.get(sender).toOldFormat());
                     } else {
