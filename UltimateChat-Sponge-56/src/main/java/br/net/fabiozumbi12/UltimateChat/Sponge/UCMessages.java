@@ -550,11 +550,11 @@ public class UCMessages {
     public static String formatTags(String tag, String text, Object cmdSender, Object receiver, String msg, UCChannel ch) {
         if (receiver instanceof CommandSource && tag.equals("message")) {
             text = text.replace("{message}", mention(cmdSender, receiver, msg));
-            if (UChat.get().getConfig().root().general.item_hand.enable && cmdSender instanceof Player && UChat.get().getPerms().hasPerm((Player)cmdSender, "chat.hand")) {
-                text = text.replace(UChat.get().getConfig().root().general.item_hand.placeholder, formatTags("", UCUtil.toColor(UChat.get().getConfig().root().general.item_hand.format), cmdSender, receiver, msg, ch));
-            }
         } else {
             text = text.replace("{message}", msg);
+        }
+        if (UChat.get().getConfig().root().general.item_hand.enable && cmdSender instanceof Player && UChat.get().getPerms().hasPerm((Player)cmdSender, "chat.hand") && text.contains(UChat.get().getConfig().root().general.item_hand.placeholder)) {
+            text = text.replace(UChat.get().getConfig().root().general.item_hand.placeholder, formatTags("", UCUtil.toColor(UChat.get().getConfig().root().general.item_hand.format), cmdSender, receiver, msg, ch));
         }
         if (tag.equals("message") && !UChat.get().getConfig().root().general.enable_tags_on_messages) {
             return text;

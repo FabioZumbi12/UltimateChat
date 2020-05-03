@@ -495,11 +495,11 @@ public class UCMessages {
     public static String formatTags(String tag, String text, Object cmdSender, Object receiver, String msg, UCChannel ch) {
         if (receiver instanceof CommandSender && tag.equals("message")) {
             text = text.replace("{message}", mention(cmdSender, (CommandSender) receiver, msg));
-            if (UChat.get().getUCConfig().getBoolean("general.item-hand.enable") && cmdSender instanceof Player && UCPerms.hasPerm((Player)cmdSender, "chat.hand")) {
-                text = text.replace(UChat.get().getUCConfig().getString("general.item-hand.placeholder"), formatTags("", ChatColor.translateAlternateColorCodes('&', UChat.get().getUCConfig().getString("general.item-hand.format")), cmdSender, receiver, msg, ch));
-            }
         } else {
             text = text.replace("{message}", msg);
+        }
+        if (UChat.get().getUCConfig().getBoolean("general.item-hand.enable") && cmdSender instanceof Player && UCPerms.hasPerm((Player)cmdSender, "chat.hand") && text.contains(UChat.get().getUCConfig().getString("general.item-hand.placeholder"))) {
+            text = text.replace(UChat.get().getUCConfig().getString("general.item-hand.placeholder"), formatTags("", ChatColor.translateAlternateColorCodes('&', UChat.get().getUCConfig().getString("general.item-hand.format")), cmdSender, receiver, msg, ch));
         }
         if (tag.equals("message") && !UChat.get().getUCConfig().getBoolean("general.enable-tags-on-messages")) {
             return text;
