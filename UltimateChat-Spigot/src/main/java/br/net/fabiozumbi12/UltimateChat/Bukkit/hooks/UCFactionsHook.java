@@ -29,8 +29,10 @@ import com.massivecraft.factions.entity.Faction;
 import com.massivecraft.factions.entity.MPlayer;
 import org.bukkit.entity.Player;
 
-public class UCFactionsHook {
-    public static String formatFac(String text, Player sender, Object receiver) {
+public class UCFactionsHook implements UCFactionsHookInterface {
+
+    @Override
+    public String formatFac(String text, Player sender, Object receiver) {
         MPlayer mp = MPlayer.get(sender.getUniqueId());
         if (!mp.getFaction().isNone()) {
             Faction fac = mp.getFaction();
