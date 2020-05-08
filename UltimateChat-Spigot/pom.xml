@@ -58,7 +58,7 @@
         <dependency>
             <groupId>com.github.SaberLLC</groupId>
             <artifactId>Saber-Factions</artifactId>
-            <version>LATEST</version>
+            <version>2.3.5-STABLE</version>
         </dependency>
 
         <!-- start of local repos -->
