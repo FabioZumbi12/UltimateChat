@@ -668,6 +668,11 @@ public class UCMessages {
             if (UChat.Factions) {
                 text = UCFactionsHook.formatFac(text, sender, receiver);
             }
+            if (UChat.SaberFactions)
+            {
+                //TODO
+                //text = UCSFactionsHook.formatFac(text, sender, receiver);
+            }
             if (text.contains("{marry-")) {
                 if (UChat.MarryReloded && sender.hasMetadata("marriedTo")) {
                     String partner = sender.getMetadata("marriedTo").get(0).asString();

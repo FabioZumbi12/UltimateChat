@@ -82,6 +82,7 @@ public class UChat extends JavaPlugin {
     static TranslationCore tapi;
     static boolean PlaceHolderAPI;
     static boolean Factions;
+    static boolean SaberFactions;
     private static boolean Vault = false;
     private static UChat uchat;
     public List<String> isSpy = new ArrayList<>();
@@ -199,6 +200,7 @@ public class UChat extends JavaPlugin {
             boolean protocolLib = checkPL();
             PlaceHolderAPI = checkPHAPI();
             Factions = checkFac();
+            SaberFactions = checkSFac();
             listener = new UCListener();
 
             getServer().getPluginCommand("uchat").setExecutor(listener);
@@ -641,6 +643,16 @@ public class UChat extends JavaPlugin {
         Plugin p = Bukkit.getPluginManager().getPlugin("Factions");
         try {
             Class.forName("com.massivecraft.factions.RelationParticipator");
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+        return p != null && p.isEnabled();
+    }
+
+    private boolean checkSFac() {
+        Plugin p = Bukkit.getPluginManager().getPlugin("Factions");
+        try {
+            Class.forName("com.massivecraft.factions.FPlayer");
         } catch (ClassNotFoundException e) {
             return false;
         }
