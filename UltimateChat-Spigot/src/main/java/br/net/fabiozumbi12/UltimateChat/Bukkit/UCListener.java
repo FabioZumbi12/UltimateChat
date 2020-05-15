@@ -1078,7 +1078,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
         }
         if (UCPerms.cmdPerm(p, "addfilter")) {
             fancy.coloredText(UChat.get().getLang().get("help.cmd.addfilter") + "\n");
-            fancy.coloredText(UChat.get().getLang().get("help.cmd.dellfilter") + "\n");
+            fancy.coloredText(UChat.get().getLang().get("help.cmd.delfilter") + "\n");
         }
         if (UCPerms.cmdPerm(p, "broadcast")) {
             fancy.coloredText(UChat.get().getLang().get("help.cmd.broadcast") + "\n");
