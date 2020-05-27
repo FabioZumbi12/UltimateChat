@@ -63,7 +63,7 @@ public class UCUtil {
         boolean isCmd = false;
         boolean isUrl = false;
         for (String arg : args) {
-            arg = arg.replace("/n", "\n");
+            arg = arg.replace("\\n", "\n");
             if (arg.contains(UChat.get().getConfig().root().broadcast.on_hover)) {
                 hover.append(" ").append(arg.replace(UChat.get().getConfig().root().broadcast.on_hover, ""));
                 isHover = true;
@@ -93,7 +93,7 @@ public class UCUtil {
             } else if (isUrl) {
                 url.append(" ").append(arg);
             } else {
-                arg = arg.replace("/n", "\n");
+                arg = arg.replace("\\n", "\n");
                 message.append(" ").append(arg);
             }
         }

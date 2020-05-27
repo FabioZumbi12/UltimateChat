@@ -296,7 +296,7 @@ public class UCMessages {
             }
 
             if (UCPerms.hasPerm(sender, "chat.newline")) {
-                evmsg = evmsg.replace("/n", "\n");
+                evmsg = evmsg.replace("\\n", "\n");
             }
         }
         evmsg = ChatColor.translateAlternateColorCodes('&', evmsg);
@@ -376,7 +376,7 @@ public class UCMessages {
 
                 StringBuilder tooltip = new StringBuilder();
                 for (String tp : messages) {
-                    tooltip.append("\n").append(tp.replace("/n", "\n"));
+                    tooltip.append("\n").append(tp.replace("\\n", "\n"));
                 }
                 if (tooltip.length() > 2) {
                     tooltip = new StringBuilder(tooltip.substring(1));
@@ -439,7 +439,7 @@ public class UCMessages {
 
             StringBuilder tooltip = new StringBuilder();
             for (String tp : messages) {
-                tooltip.append("\n").append(tp.replace("/n", "\n"));
+                tooltip.append("\n").append(tp.replace("\\n", "\n"));
             }
             if (tooltip.length() > 2) {
                 tooltip = new StringBuilder(tooltip.substring(1));

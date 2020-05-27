@@ -139,7 +139,7 @@ public class UCLang {
         } else {
             FMsg = loadedLang.get(key).toString();
         }
-        return FMsg.replace("/n", "\n");
+        return FMsg.replace("\\n", "\n");
     }
 
     public Text getText(String key, String additional) {

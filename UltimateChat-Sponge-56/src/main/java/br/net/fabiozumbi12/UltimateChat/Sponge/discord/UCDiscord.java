@@ -305,7 +305,7 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
                         } catch (MalformedURLException ignored) {
                         }
                     } else {
-                        message = message.replace("/n", "\n");
+                        message = message.replace("\\n", "\n");
 
                         //emoji
                         Pattern pe = Pattern.compile(":(.+?):");

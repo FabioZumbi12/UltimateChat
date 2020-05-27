@@ -114,7 +114,7 @@ public class UCUtil {
                 continue;
             }
 
-            arg = arg.replace("/n", "\n");
+            arg = arg.replace("\\n", "\n");
             fancy.coloredText(arg + " ");
             try {
                 fancy.clickOpenURL(new URL(arg));
@@ -141,7 +141,7 @@ public class UCUtil {
         boolean isSug = false;
         boolean isPerm = false;
         for (String arg : args) {
-            arg = arg.replace("/n", "\n");
+            arg = arg.replace("\\n", "\n");
             if (arg.contains(UChat.get().getUCConfig().getString("broadcast.on-hover"))) {
                 hover.append(" ").append(ChatColor.translateAlternateColorCodes('&', arg.replace(UChat.get().getUCConfig().getString("broadcast.on-hover"), "")));
                 isHover = true;

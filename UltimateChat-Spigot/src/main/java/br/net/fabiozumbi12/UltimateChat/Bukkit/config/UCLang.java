@@ -155,7 +155,7 @@ public class UCLang {
 
         FMsg = ChatColor.translateAlternateColorCodes('&', FMsg);
 
-        return FMsg.replace("/n", "\n");
+        return FMsg.replace("\\n", "\n");
     }
 
     public void sendMessage(final Player p, String key) {
