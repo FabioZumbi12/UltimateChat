@@ -656,6 +656,9 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
     public void onCmdChat(PlayerCommandPreprocessEvent e) {
         String[] args = e.getMessage().replace("/", "").split(" ");
         Player p = e.getPlayer();
+
+        if (e.getMessage().trim().length() == 0 || args.length == 0) return;
+
         UChat.get().getUCLogger().debug("PlayerCommandPreprocessEvent - Channel: " + args[0]);
 
         // Deny command if muted
