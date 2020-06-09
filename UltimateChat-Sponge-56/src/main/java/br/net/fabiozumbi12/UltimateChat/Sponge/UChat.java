@@ -210,7 +210,7 @@ public class UChat {
             registerJedis();
 
             //JDA
-            registerJDA();
+            registerJDA(true);
 
             logger.info("Init API module...");
             this.ucapi = new uChatAPI();
@@ -230,9 +230,6 @@ public class UChat {
                     + "                                                                \n"
                     + "&a" + plugin.getName() + " " + plugin.getVersion().get() + " enabled!\n");
 
-            if (this.UCJDA != null) {
-                this.UCJDA.sendRawToDiscord(lang.get("discord.start"));
-            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -308,7 +305,7 @@ public class UChat {
         this.cmds = new UCCommands(this);
 
         registerJedis();
-        registerJDA();
+        registerJDA(false);
 
         //fire event
         UChatReloadEvent event = new UChatReloadEvent();
@@ -332,7 +329,7 @@ public class UChat {
         }
     }
 
-    private void registerJDA() {
+    private void registerJDA(boolean start) {
         Task.builder().async().execute(() -> {
             if (checkJDA()) {
                 this.logger.info("JDA LibLoader is present...");
@@ -349,6 +346,7 @@ public class UChat {
                     } else {
                         this.sync = new UCDiscordSync(this.factory);
                         this.logger.info("JDA connected and ready to use!");
+                        if (start) this.UCJDA.sendRawToDiscord(lang.get("discord.start"));
                     }
                 }
             }

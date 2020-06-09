@@ -289,10 +289,12 @@ public class UChat extends JavaPlugin {
             this.ucapi = new uChatAPI();
 
             //init other features
+
             //Jedis
             registerJedis();
+
             //JDA
-            registerJDA();
+            registerJDA(true);
 
             initAutomessage();
 
@@ -306,10 +308,6 @@ public class UChat extends JavaPlugin {
                     + "  \\____/|_|\\__|_|_| |_| |_|\\__,_|\\__\\___|\\_____|_| |_|\\__,_|\\__|\n"
                     + "                                                                \n"
                     + "&a" + getDescription().getFullName() + " enabled!\n"));
-
-            if (this.UCJDA != null) {
-                this.UCJDA.sendRawToDiscord(lang.get("discord.start"));
-            }
 
             //Metrics
             try {
@@ -336,7 +334,7 @@ public class UChat extends JavaPlugin {
         this.lang = new UCLang();
         this.registerAliases();
 
-        this.registerJDA();
+        this.registerJDA(false);
         this.registerJedis();
         this.initAutomessage();
 
@@ -363,7 +361,7 @@ public class UChat extends JavaPlugin {
         }
     }
 
-    private void registerJDA() {
+    private void registerJDA(boolean start) {
         Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
             if (checkJDA()) {
                 this.logger.info("JDA LibLoader is present...");
@@ -380,11 +378,11 @@ public class UChat extends JavaPlugin {
                     } else {
                         this.sync = new UCDiscordSync();
                         this.logger.info("JDA connected and ready to use!");
+                        if (start) this.UCJDA.sendRawToDiscord(lang.get("discord.start"));
                     }
                 }
             }
         });
-
     }
 
     private void initAutomessage() {
