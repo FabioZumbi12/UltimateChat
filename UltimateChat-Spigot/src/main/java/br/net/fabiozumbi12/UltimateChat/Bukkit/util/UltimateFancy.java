@@ -58,8 +58,9 @@ import java.util.regex.Pattern;
 public class UltimateFancy {
 
     private ChatColor lastColor = ChatColor.WHITE;
+    private ChatColor last2Color = null;
     private JSONArray constructor;
-    private HashMap<String, Boolean> lastformats;
+    private HashMap<String, Boolean> lastFormats;
     private List<JSONObject> workingGroup;
     private List<ExtraElement> pendentElements;
 
@@ -69,7 +70,7 @@ public class UltimateFancy {
     public UltimateFancy() {
         constructor = new JSONArray();
         workingGroup = new ArrayList<>();
-        lastformats = new HashMap<>();
+        lastFormats = new HashMap<>();
         pendentElements = new ArrayList<>();
     }
 
@@ -81,7 +82,7 @@ public class UltimateFancy {
     public UltimateFancy(String text) {
         constructor = new JSONArray();
         workingGroup = new ArrayList<>();
-        lastformats = new HashMap<>();
+        lastFormats = new HashMap<>();
         pendentElements = new ArrayList<>();
         text(text);
     }
@@ -129,7 +130,15 @@ public class UltimateFancy {
 
             Matcher match = Pattern.compile("^" + ChatColor.COLOR_CHAR + "([0-9a-fA-Fk-oK-ORr]).*$").matcher(part);
             if (match.find()) {
-                lastColor = ChatColor.getByChar(match.group(1).charAt(0));
+                ChatColor color = ChatColor.getByChar(match.group(1).charAt(0));
+                if (color.isColor()) {
+                    lastColor = color;
+                    last2Color = null;
+                } else {
+                    // Set a second color if the first color is format
+                    if (lastColor.isColor()) last2Color = lastColor;
+                    lastColor = color;
+                }
                 //fix colors from latest
                 filterColors(workingText);
                 if (part.length() == 2) continue;
@@ -144,9 +153,9 @@ public class UltimateFancy {
             //fix colors after
             filterColors(workingText);
 
-            if (!workingText.containsKey("color")) {
+            /*if (!workingText.containsKey("color")) {
                 workingText.put("color", "white");
-            }
+            }*/
             jsonList.add(workingText);
         }
         return jsonList;
@@ -171,12 +180,8 @@ public class UltimateFancy {
      */
     public UltimateFancy textAtStart(String text) {
         JSONArray jarray = new JSONArray();
-        for (JSONObject jobj : parseColors(text)) {
-            jarray.add(jobj);
-        }
-        for (JSONObject jobj : getStoredElements()) {
-            jarray.add(jobj);
-        }
+        jarray.addAll(parseColors(text));
+        jarray.addAll(getStoredElements());
         this.constructor = jarray;
         return this;
     }
@@ -278,12 +283,24 @@ public class UltimateFancy {
     }
 
     private void filterColors(JSONObject obj) {
-        for (Entry<String, Boolean> format : lastformats.entrySet()) {
+        for (Entry<String, Boolean> format : lastFormats.entrySet()) {
             obj.put(format.getKey(), format.getValue());
         }
-        if (lastColor.isColor()) {
-            obj.put("color", lastColor.name().toLowerCase());
+
+        if (lastColor.equals(ChatColor.RESET) || (lastColor.isColor() || lastColor.isFormat())) {
+            for (String format : lastFormats.keySet()) {
+                if (lastColor.isFormat() && format.equalsIgnoreCase("color")) continue;
+                obj.remove(format);
+            }
+            if (lastColor.equals(ChatColor.RESET)) last2Color = null;
+            lastFormats.clear();
         }
+
+        if (lastColor.isColor()) obj.put("color", lastColor.name().toLowerCase());
+
+        // Set a second color if the first color is format
+        if (last2Color != null) obj.put("color", last2Color.name().toLowerCase());
+
         if (lastColor.isFormat()) {
             String formatStr = lastColor.name().toLowerCase();
             if (lastColor.equals(ChatColor.MAGIC)) {
@@ -292,15 +309,8 @@ public class UltimateFancy {
             if (lastColor.equals(ChatColor.UNDERLINE)) {
                 formatStr = "underlined";
             }
-            lastformats.put(formatStr, true);
+            lastFormats.put(formatStr, true);
             obj.put(formatStr, true);
-        }
-        if (lastColor.equals(ChatColor.RESET)) {
-            obj.put("color", "white");
-            for (String format : lastformats.keySet()) {
-                lastformats.put(format, false);
-                obj.put(format, false);
-            }
         }
     }
 
@@ -429,14 +439,14 @@ public class UltimateFancy {
             try {
                 //get color
                 String colorStr = json.get("color").toString();
-                if (ChatColor.valueOf(colorStr.toUpperCase()) != null) {
+                try {
                     ChatColor color = ChatColor.valueOf(colorStr.toUpperCase());
                     if (color.equals(ChatColor.WHITE)) {
                         result.append(ChatColor.RESET);
                     } else {
                         result.append(color);
                     }
-                }
+                } catch (Exception ignored) {}
 
                 //get format
                 for (ChatColor frmt : ChatColor.values()) {
@@ -525,13 +535,21 @@ public class UltimateFancy {
             objExtraTxt.put("text", ChatColor.stripColor(part));
             if (color.isColor()) {
                 objExtraTxt.put("color", color.name().toLowerCase());
+                objExtraTxt.remove("obfuscated");
+                objExtraTxt.remove("underlined");
+                objExtraTxt.remove(ChatColor.STRIKETHROUGH.name().toLowerCase());
             }
             if (color.equals(ChatColor.RESET)) {
                 objExtraTxt.put("color", "white");
+                objExtraTxt.remove("obfuscated");
+                objExtraTxt.remove("underlined");
+                objExtraTxt.remove(ChatColor.STRIKETHROUGH.name().toLowerCase());
             }
             if (color.isFormat()) {
                 if (color.equals(ChatColor.MAGIC)) {
                     objExtraTxt.put("obfuscated", true);
+                } else if (color.equals(ChatColor.UNDERLINE)) {
+                    objExtraTxt.put("underlined", true);
                 } else {
                     objExtraTxt.put(color.name().toLowerCase(), true);
                 }
@@ -551,7 +569,7 @@ public class UltimateFancy {
         newFanci.constructor = this.constructor;
         newFanci.pendentElements = this.pendentElements;
         newFanci.workingGroup = this.workingGroup;
-        newFanci.lastformats = this.lastformats;
+        newFanci.lastFormats = this.lastFormats;
         return newFanci;
     }
 
@@ -560,7 +578,7 @@ public class UltimateFancy {
      *
      * @author FabioZumbi12
      */
-    public class ExtraElement {
+    public static class ExtraElement {
         private final String action;
         private final JSONObject json;
 
@@ -582,9 +600,9 @@ public class UltimateFancy {
 
 class ReflectionUtil {
     private static String versionString;
-    private static Map<String, Class<?>> loadedNMSClasses = new HashMap<>();
-    private static Map<String, Class<?>> loadedOBCClasses = new HashMap<>();
-    private static Map<Class<?>, Map<String, Method>> loadedMethods = new HashMap<>();
+    private static final Map<String, Class<?>> loadedNMSClasses = new HashMap<>();
+    private static final Map<String, Class<?>> loadedOBCClasses = new HashMap<>();
+    private static final Map<Class<?>, Map<String, Method>> loadedMethods = new HashMap<>();
 
     public static String getVersion() {
         if (versionString == null) {
