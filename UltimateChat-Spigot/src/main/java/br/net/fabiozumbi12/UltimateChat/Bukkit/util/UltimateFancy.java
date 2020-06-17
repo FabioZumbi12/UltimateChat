@@ -153,9 +153,9 @@ public class UltimateFancy {
             //fix colors after
             filterColors(workingText);
 
-            /*if (!workingText.containsKey("color")) {
+            if (!workingText.containsKey("color")) {
                 workingText.put("color", "white");
-            }*/
+            }
             jsonList.add(workingText);
         }
         return jsonList;
