@@ -113,7 +113,7 @@ public class UCChannel {
         properties.put("tag-builder", "world,marry-tag,ch-tags,clan-tag,factions,group-prefix,nickname,group-suffix,message");
         properties.put("need-focus", false);
         properties.put("canLock", true);
-        properties.put("receivers-message", true);
+        properties.put("receivers-message", false);
         properties.put("cost", 0.0);
         properties.put("bungee", false);
         properties.put("allow-hand", true);

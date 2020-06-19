@@ -144,7 +144,7 @@ public class UCCommentedConfig {
         }
         setDefault("general.check-channel-change-world", false, "This will make a check if the player channel is available on destination world and put on the world channel if is not available.");
 
-        setDefault("tell.cmd-aliases", "t,w,m,msg,private,priv,r", null);
+        setDefault("tell.cmd-aliases", "tell,t,w,m,msg,private,priv,r", null);
         setDefault("tell.prefix", "&6[&c{playername} &6-> &c{receivername}&6]: ", null);
         setDefault("tell.format", "{message}", null);
         setDefault("tell.hover-messages", new ArrayList<>(), null);
