@@ -283,6 +283,9 @@ public class UCMessages {
     private static String composeColor(CommandSource sender, String evmsg) {
         if (evmsg == null || evmsg.isEmpty()) return "";
 
+        // Convert real color char to char code
+        evmsg = evmsg.replaceAll("(§([A-Fa-fK-Ok-oRr0-9]))", "&$2");
+
         if (sender instanceof Player) {
             Pattern mat1 = Pattern.compile("(?i)&([A-Fa-f0-9Rr])");
             Pattern mat2 = Pattern.compile("(?i)&([L-Ol-o])");
@@ -307,7 +310,6 @@ public class UCMessages {
                 evmsg = evmsg.replace("\\n", "\n");
             }
         }
-        evmsg = evmsg.replace("§", "&");
         return evmsg;
     }
 

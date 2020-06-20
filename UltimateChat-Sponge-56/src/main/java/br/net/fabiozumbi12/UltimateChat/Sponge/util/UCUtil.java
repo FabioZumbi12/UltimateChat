@@ -42,7 +42,6 @@ import java.net.URL;
 public class UCUtil {
 
     public static Text toText(String str) {
-        str = str.replace("§", "&");
         return TextSerializers.FORMATTING_CODE.deserialize(str);
     }
 

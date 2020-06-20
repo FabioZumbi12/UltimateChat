@@ -274,6 +274,9 @@ public class UCMessages {
     private static String composeColor(CommandSender sender, String evmsg) {
         if (evmsg == null || evmsg.isEmpty()) return "";
 
+        // Convert real color char to char code
+        evmsg = evmsg.replaceAll("(§([A-Fa-fK-Ok-oRr0-9]))", "&$2");
+
         if (sender instanceof Player) {
             Pattern mat1 = Pattern.compile("(?i)&([A-Fa-f0-9Rr])");
             Pattern mat2 = Pattern.compile("(?i)&([L-Ol-o])");
@@ -294,7 +297,6 @@ public class UCMessages {
                     evmsg = evmsg.replaceAll(mat3.pattern(), "");
                 }
             }
-
             if (UCPerms.hasPerm(sender, "chat.newline")) {
                 evmsg = evmsg.replace("\\n", "\n");
             }
