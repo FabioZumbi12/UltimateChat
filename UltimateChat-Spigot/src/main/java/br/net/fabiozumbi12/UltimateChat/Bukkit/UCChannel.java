@@ -455,7 +455,7 @@ public class UCChannel {
     @Deprecated
     public void sendMessage(ConsoleCommandSender sender, String message) {
         if (UChat.get().getUCConfig().getBoolean("api.format-console-messages")) {
-            Bukkit.getScheduler().runTask(UChat.get(), () -> UCMessages.sendFancyMessage(new String[0], message, this, sender, null));
+            UCMessages.sendFancyMessage(new String[0], message, this, sender, null);
         } else {
             UltimateFancy fmsg = new UltimateFancy(message);
             for (Player p : Bukkit.getOnlinePlayers()) {

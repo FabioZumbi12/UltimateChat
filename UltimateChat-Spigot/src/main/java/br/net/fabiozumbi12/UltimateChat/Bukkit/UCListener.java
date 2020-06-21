@@ -28,11 +28,8 @@ package br.net.fabiozumbi12.UltimateChat.Bukkit;
 import br.com.devpaulo.legendchat.api.events.ChatMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.API.PlayerChangeChannelEvent;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.API.SendChannelMessageEvent;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.util.MuteCountDown;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.util.*;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCLogger.timingType;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCPerms;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCUtil;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UltimateFancy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -52,6 +49,7 @@ import org.bukkit.event.world.WorldLoadEvent;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 
 public class UCListener implements CommandExecutor, Listener, TabCompleter {
 
@@ -619,8 +617,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
                         msgb.append(" ").append(arg);
                     }
                     String msg = msgb.toString().substring(1);
-
-                    Bukkit.getScheduler().runTaskAsynchronously(UChat.get(), () -> UCMessages.sendFancyMessage(new String[0], msg, ch, sender, null));
+                    UCMessages.sendFancyMessage(new String[0], msg, ch, sender, null);
                     return true;
                 }
             }
@@ -847,98 +844,109 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onChat(AsyncPlayerChatEvent e) {
+        // Makes sync
+        boolean cancelled = false;
+        try {
+            cancelled = Bukkit.getScheduler().callSyncMethod(UChat.get(), () -> {
+                UChat.get().getUCLogger().debug("AsyncPlayerChatEvent: " + e.getMessage());
+                UChat.get().getUCLogger().timings(timingType.START, "UCListener#onChat()|Listening AsyncPlayerChatEvent");
 
-        UChat.get().getUCLogger().debug("AsyncPlayerChatEvent: " + e.getMessage());
-        UChat.get().getUCLogger().timings(timingType.START, "UCListener#onChat()|Listening AsyncPlayerChatEvent");
+                Player p = e.getPlayer();
 
-        //e.setCancelled(true);
-        Player p = e.getPlayer();
+                //check channel char
+                String rawMsg = e.getMessage();
+                for (UCChannel ch : UChat.get().getChannels().values()) {
+                    if (ch.getCharAlias().isEmpty()) continue;
 
-        //check channel char
-        String rawMsg = e.getMessage();
-        for (UCChannel ch : UChat.get().getChannels().values()) {
-            if (ch.getCharAlias().isEmpty()) continue;
+                    if (ch.getCharAlias().length() == rawMsg.length() && rawMsg.equalsIgnoreCase(ch.getCharAlias())) {
+                        addPlayerToChannel(ch, p);
+                        //e.setCancelled(true);
+                        return true;
+                    }
+                    if (rawMsg.startsWith(ch.getCharAlias())) {
+                        String msg = rawMsg.substring(ch.getCharAlias().length());
+                        sendMessageToPlayer(ch, p, e.getMessage().split(" "), msg);
+                        //e.setCancelled(true);
+                        return true;
+                    }
+                }
 
-            if (ch.getCharAlias().length() == rawMsg.length() && rawMsg.equalsIgnoreCase(ch.getCharAlias())) {
-                addPlayerToChannel(ch, p);
-                e.setCancelled(true);
-                return;
-            }
-            if (rawMsg.startsWith(ch.getCharAlias())) {
-                String msg = rawMsg.substring(ch.getCharAlias().length());
-                sendMessageToPlayer(ch, p, e.getMessage().split(" "), msg);
-                e.setCancelled(true);
-                return;
-            }
+                if (UChat.get().tellPlayers.containsKey(p.getName()) && (!UChat.get().tempTellPlayers.containsKey("CONSOLE") || !UChat.get().tempTellPlayers.get("CONSOLE").equals(p.getName()))) {
+                    Player tellReceiver = UChat.get().getServer().getPlayer(UChat.get().tellPlayers.get(p.getName()));
+                    sendTell(p, tellReceiver, e.getMessage());
+                    e.setCancelled(true);
+                } else if (UChat.get().command.contains(p.getName()) || UChat.get().command.contains("CONSOLE")) {
+                    if (UChat.get().tempTellPlayers.containsKey("CONSOLE")) {
+                        String recStr = UChat.get().tempTellPlayers.get("CONSOLE");
+                        Player pRec = UChat.get().getServer().getPlayer(recStr);
+                        if (pRec.equals(p)) {
+                            sendTell(UChat.get().getServer().getConsoleSender(), p, e.getMessage());
+                            UChat.get().tempTellPlayers.remove("CONSOLE");
+                            UChat.get().command.remove("CONSOLE");
+                        }
+                    } else if (UChat.get().tempTellPlayers.containsKey(p.getName())) {
+                        String recStr = UChat.get().tempTellPlayers.get(p.getName());
+                        if (recStr.equals("CONSOLE")) {
+                            sendTell(p, UChat.get().getServer().getConsoleSender(), e.getMessage());
+                        } else {
+                            sendTell(p, UChat.get().getServer().getPlayer(recStr), e.getMessage());
+                        }
+                        UChat.get().tempTellPlayers.remove(p.getName());
+                        UChat.get().command.remove(p.getName());
+                    } else if (UChat.get().respondTell.containsKey(p.getName())) {
+                        String recStr = UChat.get().respondTell.get(p.getName());
+                        if (recStr.equals("CONSOLE")) {
+                            sendTell(p, UChat.get().getServer().getConsoleSender(), e.getMessage());
+                        } else {
+                            sendTell(p, UChat.get().getServer().getPlayer(recStr), e.getMessage());
+                        }
+                        UChat.get().command.remove(p.getName());
+                    }
+                    //e.setCancelled(true);
+                    return true;
+                } else {
+                    UCChannel ch = UChat.get().getPlayerChannel(p);
+                    if (UChat.get().tempChannels.containsKey(p.getName()) && !UChat.get().tempChannels.get(p.getName()).equals(ch.getAlias())) {
+                        ch = UChat.get().getChannel(UChat.get().tempChannels.get(p.getName()));
+                        UChat.get().getUCLogger().debug("AsyncPlayerChatEvent - TempChannel: " + UChat.get().tempChannels.get(p.getName()));
+                        UChat.get().tempChannels.remove(p.getName());
+                    }
+
+                    if (UChat.get().mutes.contains(p.getName()) || ch.isMuted(p.getName())) {
+                        if (UChat.get().timeMute.containsKey(p.getName())) {
+                            UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.tempmuted").replace("{time}", String.valueOf(UChat.get().timeMute.get(p.getName()))));
+                        } else {
+                            UChat.get().getLang().sendMessage(p, "channel.muted");
+                        }
+                        //e.setCancelled(true);
+                        return true;
+                    }
+
+                    if (ch.isCmdAlias()) {
+                        String start = ch.getAliasCmd();
+                        if (start.startsWith("/")) {
+                            start = start.substring(1);
+                        }
+                        if (ch.getAliasSender().equalsIgnoreCase("console")) {
+                            UCUtil.performCommand(null, Bukkit.getConsoleSender(), start + " " + e.getMessage());
+                        } else {
+                            UCUtil.performCommand(null, p, start + " " + e.getMessage());
+                        }
+                        //e.setCancelled(true);
+                        return true;
+                    } else {
+                        UCMessages.sendFancyMessage(e.getFormat().split(","), e.getMessage(), ch, p, null);
+                        //e.setCancelled(true);
+                        return true;
+                    }
+                }
+                return false;
+            }).get();
+        } catch (InterruptedException | ExecutionException interruptedException) {
+            interruptedException.printStackTrace();
         }
-
-        if (UChat.get().tellPlayers.containsKey(p.getName()) && (!UChat.get().tempTellPlayers.containsKey("CONSOLE") || !UChat.get().tempTellPlayers.get("CONSOLE").equals(p.getName()))) {
-            Player tellreceiver = UChat.get().getServer().getPlayer(UChat.get().tellPlayers.get(p.getName()));
-            sendTell(p, tellreceiver, e.getMessage());
+        if (cancelled) {
             e.setCancelled(true);
-        } else if (UChat.get().command.contains(p.getName()) || UChat.get().command.contains("CONSOLE")) {
-            if (UChat.get().tempTellPlayers.containsKey("CONSOLE")) {
-                String recStr = UChat.get().tempTellPlayers.get("CONSOLE");
-                Player pRec = UChat.get().getServer().getPlayer(recStr);
-                if (pRec.equals(p)) {
-                    sendTell(UChat.get().getServer().getConsoleSender(), p, e.getMessage());
-                    UChat.get().tempTellPlayers.remove("CONSOLE");
-                    UChat.get().command.remove("CONSOLE");
-                }
-            } else if (UChat.get().tempTellPlayers.containsKey(p.getName())) {
-                String recStr = UChat.get().tempTellPlayers.get(p.getName());
-                if (recStr.equals("CONSOLE")) {
-                    sendTell(p, UChat.get().getServer().getConsoleSender(), e.getMessage());
-                } else {
-                    sendTell(p, UChat.get().getServer().getPlayer(recStr), e.getMessage());
-                }
-                UChat.get().tempTellPlayers.remove(p.getName());
-                UChat.get().command.remove(p.getName());
-            } else if (UChat.get().respondTell.containsKey(p.getName())) {
-                String recStr = UChat.get().respondTell.get(p.getName());
-                if (recStr.equals("CONSOLE")) {
-                    sendTell(p, UChat.get().getServer().getConsoleSender(), e.getMessage());
-                } else {
-                    sendTell(p, UChat.get().getServer().getPlayer(recStr), e.getMessage());
-                }
-                //UChat.get().respondTell.remove(p.getName());
-                UChat.get().command.remove(p.getName());
-            }
-            e.setCancelled(true);
-        } else {
-            UCChannel ch = UChat.get().getPlayerChannel(p);
-            if (UChat.get().tempChannels.containsKey(p.getName()) && !UChat.get().tempChannels.get(p.getName()).equals(ch.getAlias())) {
-                ch = UChat.get().getChannel(UChat.get().tempChannels.get(p.getName()));
-                UChat.get().getUCLogger().debug("AsyncPlayerChatEvent - TempChannel: " + UChat.get().tempChannels.get(p.getName()));
-                UChat.get().tempChannels.remove(p.getName());
-            }
-
-            if (UChat.get().mutes.contains(p.getName()) || ch.isMuted(p.getName())) {
-                if (UChat.get().timeMute.containsKey(p.getName())) {
-                    UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.tempmuted").replace("{time}", String.valueOf(UChat.get().timeMute.get(p.getName()))));
-                } else {
-                    UChat.get().getLang().sendMessage(p, "channel.muted");
-                }
-                e.setCancelled(true);
-                return;
-            }
-
-            if (ch.isCmdAlias()) {
-                String start = ch.getAliasCmd();
-                if (start.startsWith("/")) {
-                    start = start.substring(1);
-                }
-                if (ch.getAliasSender().equalsIgnoreCase("console")) {
-                    UCUtil.performCommand(null, Bukkit.getConsoleSender(), start + " " + e.getMessage());
-                } else {
-                    UCUtil.performCommand(null, p, start + " " + e.getMessage());
-                }
-                e.setCancelled(true);
-            } else {
-                final UCChannel fch = ch;
-                UCMessages.sendFancyMessage(e.getFormat().split(","), e.getMessage(), fch, p, null);
-                e.setCancelled(true);
-            }
         }
     }
 
