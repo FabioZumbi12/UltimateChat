@@ -450,19 +450,19 @@ public class UChat extends JavaPlugin {
                 String perm = getAMConfig().getString("messages." + index + ".permission", "");
 
                 String cmd = text;
-                if (hover.isEmpty()) {
+                if (!hover.isEmpty()) {
                     cmd = cmd + " " + getUCConfig().getString("broadcast.on-hover") + hover;
                 }
-                if (onclick.isEmpty()) {
+                if (!onclick.isEmpty()) {
                     cmd = cmd + " " + getUCConfig().getString("broadcast.on-click") + onclick;
                 }
-                if (suggest.isEmpty()) {
+                if (!suggest.isEmpty()) {
                     cmd = cmd + " " + getUCConfig().getString("broadcast.suggest") + suggest;
                 }
-                if (url.isEmpty()) {
+                if (!url.isEmpty()) {
                     cmd = cmd + " " + getUCConfig().getString("broadcast.url") + url;
                 }
-                if (perm.isEmpty()) {
+                if (!perm.isEmpty()) {
                     cmd = cmd + " " + getUCConfig().getString("broadcast.permission") + perm;
                 }
                 if (plays == 0 || getServer().getOnlinePlayers().size() >= plays) {
