@@ -31,7 +31,7 @@
     <artifactId>UltimateChat</artifactId>
     <packaging>pom</packaging>
     <name>UltimateChat</name>
-    <version>1.9.0</version>
+    <version>1.9.1</version>
     <description>Ultimate Chat is an advanced chat hooking into most used plugins to show more info on player chat.
     </description>
 
