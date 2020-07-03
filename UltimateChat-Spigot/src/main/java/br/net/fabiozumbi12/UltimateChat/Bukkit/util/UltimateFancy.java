@@ -28,6 +28,7 @@ package br.net.fabiozumbi12.UltimateChat.Bukkit.util;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UChat;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCLogger.timingType;
 import com.google.common.base.Utf8;
+import jdk.nashorn.internal.runtime.regexp.joni.Regex;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -39,10 +40,7 @@ import org.json.simple.JSONValue;
 
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
@@ -57,6 +55,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings({"unchecked"})
 public class UltimateFancy {
 
+    private String hexColor = "";
     private ChatColor lastColor = ChatColor.WHITE;
     private ChatColor last2Color = null;
     private JSONArray constructor;
@@ -94,7 +93,7 @@ public class UltimateFancy {
      * @return instance of same {@link UltimateFancy}.
      */
     public UltimateFancy coloredTextAndNext(String text) {
-        text = ChatColor.translateAlternateColorCodes('&', text);
+        text = UChatColor.translateAlternateColorCodes(text);
         return this.textAndNext(text);
     }
 
@@ -116,42 +115,92 @@ public class UltimateFancy {
      * @return instance of same {@link UltimateFancy}.
      */
     public UltimateFancy coloredText(String text) {
-        text = ChatColor.translateAlternateColorCodes('&', text);
+        text = UChatColor.translateAlternateColorCodes(text);
         return this.text(text);
     }
 
     private List<JSONObject> parseColors(String text) {
         List<JSONObject> jsonList = new ArrayList<>();
-        for (String part : text.split("(?=" + ChatColor.COLOR_CHAR + ")")) {
-            JSONObject workingText = new JSONObject();
+        List<String> vanillaColors = new ArrayList<>();
 
-            //fix colors before
-            filterColors(workingText);
-
-            Matcher match = Pattern.compile("^" + ChatColor.COLOR_CHAR + "([0-9a-fA-Fk-oK-ORr]).*$").matcher(part);
-            if (match.find()) {
-                ChatColor color = ChatColor.getByChar(match.group(1).charAt(0));
-                if (color.isColor()) {
-                    lastColor = color;
-                    last2Color = null;
-                } else {
-                    // Set a second color if the first color is format
-                    if (lastColor.isColor()) last2Color = lastColor;
-                    lastColor = color;
+        int hexCount = 0;
+        StringBuilder hexValue = new StringBuilder();
+        for (String vColor:text.split("(?=§)")){
+            if (hexCount > 0) {
+                if (hexCount >= 7) {
+                    String lastValue = vanillaColors.get(vanillaColors.size()-1);
+                    vanillaColors.set(vanillaColors.size()-1, lastValue.replace("%uchathex-color%", hexValue.toString()));
+                    hexValue = new StringBuilder();
+                    hexCount = 0;
                 }
-                //fix colors from latest
-                filterColors(workingText);
-                if (part.length() == 2) continue;
+                else {
+                    if (vColor.startsWith("§")){
+                        hexValue.append(vColor.replace("§", ""));
+                        hexCount++;
+                        continue;
+                    } else {
+                        String lastValue = vanillaColors.get(vanillaColors.size()-1);
+                        vanillaColors.set(vanillaColors.size()-1, lastValue.replace("#%uchathex-color%", ""));
+                        hexValue = new StringBuilder();
+                        hexCount = 0;
+                    }
+                }
             }
-            //continue if empty
-            if (ChatColor.stripColor(part).isEmpty()) {
+            if (vColor.startsWith("§x")) {
+                vanillaColors.add("#%uchathex-color%"+vColor.replaceAll("§x", ""));
+                hexCount = 1;
                 continue;
             }
+            if (vColor.startsWith("§#")) {
+                vColor = vColor.substring(1);
+            }
+            vanillaColors.add(vColor);
+        }
 
-            workingText.put("text", ChatColor.stripColor(part));
+        for (String part : vanillaColors) {
+            JSONObject workingText = new JSONObject();
+            Matcher m = Pattern.compile("#[A-Fa-f0-9]{6}|#[A-Fa-f0-9]{3}").matcher(part);
+            // Hex colors
+            if (m.find()) {
+                workingText.put("color", m.group());
+                workingText.put("text", part.replace(m.group(), ""));
 
-            //fix colors after
-            filterColors(workingText);
+                hexColor = m.group();
+                lastColor = ChatColor.WHITE;
+                last2Color = null;
+            } else {
+                hexColor = "";
+
+                // Fix colors before
+                filterColors(workingText);
+
+                // Vanilla collors
+                Matcher matcher1 = Pattern.compile("^§([0-9a-fA-Fk-oK-ORr]).*$").matcher(part);
+                if (matcher1.find()) {
+                    ChatColor color = ChatColor.getByChar(matcher1.group(1).charAt(0));
+                    if (color.isColor()) {
+                        lastColor = color;
+                        last2Color = null;
+                    } else {
+                        // Set a second color if the first color is format
+                        if (lastColor.isColor()) last2Color = lastColor;
+                        lastColor = color;
+                    }
+                    //fix colors from latest
+                    filterColors(workingText);
+                    if (part.length() == 2) continue;
+                }
+
+                //continue if empty
+                if (UChatColor.stripColor(part).isEmpty()) {
+                    continue;
+                }
+
+                workingText.put("text", UChatColor.stripColor(part));
+
+                //fix colors after
+                filterColors(workingText);
+            }
 
             if (!workingText.containsKey("color")) {
                 workingText.put("color", "white");
@@ -287,31 +336,36 @@ public class UltimateFancy {
             obj.put(format.getKey(), format.getValue());
         }
 
-        if (lastColor.equals(ChatColor.RESET) || (lastColor.isColor() || lastColor.isFormat())) {
-            for (String format : lastFormats.keySet()) {
-                if (lastColor.isFormat() && format.equalsIgnoreCase("color")) continue;
-                obj.remove(format);
+        // Parse last color
+        if (!hexColor.isEmpty()) {
+            obj.put("color", hexColor);
+        } else {
+            if (lastColor.equals(ChatColor.RESET) || (lastColor.isColor() || lastColor.isFormat())) {
+                for (String format : lastFormats.keySet()) {
+                    if (lastColor.isFormat() && format.equalsIgnoreCase("color")) continue;
+                    obj.remove(format);
+                }
+                if (lastColor.equals(ChatColor.RESET)) last2Color = null;
+                lastFormats.clear();
             }
-            if (lastColor.equals(ChatColor.RESET)) last2Color = null;
-            lastFormats.clear();
+
+            if (lastColor.isColor()) obj.put("color", lastColor.name().toLowerCase());
+
+            if (lastColor.isFormat()) {
+                String formatStr = lastColor.name().toLowerCase();
+                if (lastColor.equals(ChatColor.MAGIC)) {
+                    formatStr = "obfuscated";
+                }
+                if (lastColor.equals(ChatColor.UNDERLINE)) {
+                    formatStr = "underlined";
+                }
+                lastFormats.put(formatStr, true);
+                obj.put(formatStr, true);
+            }
         }
 
-        if (lastColor.isColor()) obj.put("color", lastColor.name().toLowerCase());
-
-        // Set a second color if the first color is format
+        // Parse second color if the first color is format
         if (last2Color != null) obj.put("color", last2Color.name().toLowerCase());
-
-        if (lastColor.isFormat()) {
-            String formatStr = lastColor.name().toLowerCase();
-            if (lastColor.equals(ChatColor.MAGIC)) {
-                formatStr = "obfuscated";
-            }
-            if (lastColor.equals(ChatColor.UNDERLINE)) {
-                formatStr = "underlined";
-            }
-            lastFormats.put(formatStr, true);
-            obj.put(formatStr, true);
-        }
     }
 
     /**
@@ -471,7 +525,7 @@ public class UltimateFancy {
     }
 
     private JSONObject parseHoverText(String text) {
-        JSONArray extraArr = addColorToArray(ChatColor.translateAlternateColorCodes('&', text));
+        JSONArray extraArr = addColorToArray(UChatColor.translateAlternateColorCodes(text));
         JSONObject objExtra = new JSONObject();
         objExtra.put("text", "");
         objExtra.put("extra", extraArr);
@@ -532,7 +586,7 @@ public class UltimateFancy {
                 color = ChatColor.getByChar(match.group(1).charAt(0));
                 if (part.length() == 2) continue;
             }
-            objExtraTxt.put("text", ChatColor.stripColor(part));
+            objExtraTxt.put("text", UChatColor.stripColor(part));
             if (color.isColor()) {
                 objExtraTxt.put("color", color.name().toLowerCase());
                 objExtraTxt.remove("obfuscated");
@@ -596,6 +650,11 @@ public class UltimateFancy {
         }
     }
 
+    private String formatToJsonHex(String text) {
+        return text
+                .replace("§", "")
+                .replace("x","#");
+    }
 }
 
 class ReflectionUtil {

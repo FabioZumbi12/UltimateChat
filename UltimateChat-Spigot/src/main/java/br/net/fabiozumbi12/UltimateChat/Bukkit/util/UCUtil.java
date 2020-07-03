@@ -33,12 +33,16 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class UCUtil {
 
@@ -69,7 +73,7 @@ public class UCUtil {
     }
 
     public static String colorize(String msg) {
-        return ChatColor.translateAlternateColorCodes('&', msg);
+        return UChatColor.translateAlternateColorCodes(msg);
     }
 
     public static void saveResource(String name, File saveTo) {
@@ -143,7 +147,7 @@ public class UCUtil {
         for (String arg : args) {
             arg = arg.replace("\\n", "\n");
             if (arg.contains(UChat.get().getUCConfig().getString("broadcast.on-hover"))) {
-                hover.append(" ").append(ChatColor.translateAlternateColorCodes('&', arg.replace(UChat.get().getUCConfig().getString("broadcast.on-hover"), "")));
+                hover.append(" ").append(UChatColor.translateAlternateColorCodes(arg.replace(UChat.get().getUCConfig().getString("broadcast.on-hover"), "")));
                 isHover = true;
                 isCmd = false;
                 isUrl = false;
@@ -152,7 +156,7 @@ public class UCUtil {
                 continue;
             }
             if (arg.contains(UChat.get().getUCConfig().getString("broadcast.on-click"))) {
-                cmdline.append(" ").append(ChatColor.translateAlternateColorCodes('&', arg.replace(UChat.get().getUCConfig().getString("broadcast.on-click"), "")));
+                cmdline.append(" ").append(UChatColor.translateAlternateColorCodes(arg.replace(UChat.get().getUCConfig().getString("broadcast.on-click"), "")));
                 isCmd = true;
                 isHover = false;
                 isUrl = false;
@@ -161,7 +165,7 @@ public class UCUtil {
                 continue;
             }
             if (arg.contains(UChat.get().getUCConfig().getString("broadcast.url"))) {
-                url.append(" ").append(ChatColor.translateAlternateColorCodes('&', arg.replace(UChat.get().getUCConfig().getString("broadcast.url"), "")));
+                url.append(" ").append(UChatColor.translateAlternateColorCodes(arg.replace(UChat.get().getUCConfig().getString("broadcast.url"), "")));
                 isCmd = false;
                 isHover = false;
                 isUrl = true;
@@ -170,7 +174,7 @@ public class UCUtil {
                 continue;
             }
             if (arg.contains(UChat.get().getUCConfig().getString("broadcast.suggest"))) {
-                suggest.append(" ").append(ChatColor.translateAlternateColorCodes('&', arg.replace(UChat.get().getUCConfig().getString("broadcast.suggest"), "")));
+                suggest.append(" ").append(UChatColor.translateAlternateColorCodes(arg.replace(UChat.get().getUCConfig().getString("broadcast.suggest"), "")));
                 isCmd = false;
                 isHover = false;
                 isUrl = false;
@@ -189,17 +193,17 @@ public class UCUtil {
             }
 
             if (isCmd) {
-                cmdline.append(" ").append(ChatColor.translateAlternateColorCodes('&', arg));
+                cmdline.append(" ").append(UChatColor.translateAlternateColorCodes(arg));
             } else if (isHover) {
-                hover.append(" ").append(ChatColor.translateAlternateColorCodes('&', arg));
+                hover.append(" ").append(UChatColor.translateAlternateColorCodes(arg));
             } else if (isUrl) {
-                url.append(" ").append(ChatColor.translateAlternateColorCodes('&', arg));
+                url.append(" ").append(UChatColor.translateAlternateColorCodes(arg));
             } else if (isSug) {
-                suggest.append(" ").append(ChatColor.translateAlternateColorCodes('&', arg));
+                suggest.append(" ").append(UChatColor.translateAlternateColorCodes(arg));
             } else if (isPerm) {
                 continue;
             } else {
-                message.append(" ").append(ChatColor.translateAlternateColorCodes('&', arg));
+                message.append(" ").append(UChatColor.translateAlternateColorCodes(arg));
             }
         }
 
@@ -260,5 +264,67 @@ public class UCUtil {
             }
         }
         return true;
+    }
+
+    /*   ------ color util --------   */
+    private static final Map<ChatColor, ColorSet<Integer, Integer, Integer>> colorMap = new HashMap<>();
+
+    public static ChatColor fromHex(String hex) {
+        Color color = Color.decode(hex);
+        return fromRGB(color.getRed(), color.getGreen(), color.getBlue());
+    }
+
+    public static ChatColor fromRGB(int r, int g, int b) {
+        TreeMap<Integer, ChatColor> closest = new TreeMap<>();
+        colorMap.forEach((color, set) -> {
+            int red = Math.abs(r - set.getRed());
+            int green = Math.abs(g - set.getGreen());
+            int blue = Math.abs(b - set.getBlue());
+            closest.put(red + green + blue, color);
+        });
+        return closest.firstEntry().getValue();
+    }
+
+    static {
+        colorMap.put(ChatColor.BLACK, new ColorSet<>(0, 0, 0));
+        colorMap.put(ChatColor.DARK_BLUE, new ColorSet<>(0, 0, 170));
+        colorMap.put(ChatColor.DARK_GREEN, new ColorSet<>(0, 170, 0));
+        colorMap.put(ChatColor.DARK_AQUA, new ColorSet<>(0, 170, 170));
+        colorMap.put(ChatColor.DARK_RED, new ColorSet<>(170, 0, 0));
+        colorMap.put(ChatColor.DARK_PURPLE, new ColorSet<>(170, 0, 170));
+        colorMap.put(ChatColor.GOLD, new ColorSet<>(255, 170, 0));
+        colorMap.put(ChatColor.GRAY, new ColorSet<>(170, 170, 170));
+        colorMap.put(ChatColor.DARK_GRAY, new ColorSet<>(85, 85, 85));
+        colorMap.put(ChatColor.BLUE, new ColorSet<>(85, 85, 255));
+        colorMap.put(ChatColor.GREEN, new ColorSet<>(85, 255, 85));
+        colorMap.put(ChatColor.AQUA, new ColorSet<>(85, 255, 255));
+        colorMap.put(ChatColor.RED, new ColorSet<>(255, 85, 85));
+        colorMap.put(ChatColor.LIGHT_PURPLE, new ColorSet<>(255, 85, 255));
+        colorMap.put(ChatColor.YELLOW, new ColorSet<>(255, 255, 85));
+        colorMap.put(ChatColor.WHITE, new ColorSet<>(255, 255, 255));
+    }
+
+    private static class ColorSet<R, G, B> {
+        R red;
+        G green;
+        B blue;
+
+        ColorSet(R red, G green, B blue) {
+            this.red = red;
+            this.green = green;
+            this.blue = blue;
+        }
+
+        private R getRed() {
+            return red;
+        }
+
+        private G getGreen() {
+            return green;
+        }
+
+        private B getBlue() {
+            return blue;
+        }
     }
 }

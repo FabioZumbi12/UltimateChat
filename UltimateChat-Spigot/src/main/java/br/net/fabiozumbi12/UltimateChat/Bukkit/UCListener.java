@@ -1167,14 +1167,14 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
             if (!UCPerms.channelReadPerm(p, ch)) continue;
             channels.append(", ").append(ch.getName());
         }
-        p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7>> -------------- " + UChat.get().getLang().get("_UChat.prefix") + " Help &7-------------- <<"));
+        p.sendMessage(UChatColor.translateAlternateColorCodes("&7>> -------------- " + UChat.get().getLang().get("_UChat.prefix") + " Help &7-------------- <<"));
         p.sendMessage(UChat.get().getLang().get("help.channels.available").replace("{channels}", channels.toString().substring(2)));
         p.sendMessage(UChat.get().getLang().get("help.channels.enter"));
         p.sendMessage(UChat.get().getLang().get("help.channels.send"));
     }
 
     private void sendTellHelp(Player p) {
-        p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7>> -------------- " + UChat.get().getLang().get("_UChat.prefix") + " Help &7-------------- <<"));
+        p.sendMessage(UChatColor.translateAlternateColorCodes("&7>> -------------- " + UChat.get().getLang().get("_UChat.prefix") + " Help &7-------------- <<"));
         p.sendMessage(UChat.get().getLang().get("help.tell.unlock"));
         p.sendMessage(UChat.get().getLang().get("help.tell.lock"));
         p.sendMessage(UChat.get().getLang().get("help.tell.send"));

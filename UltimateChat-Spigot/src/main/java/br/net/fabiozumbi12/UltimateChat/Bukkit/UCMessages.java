@@ -34,6 +34,7 @@ import br.net.fabiozumbi12.UltimateChat.Bukkit.hooks.UCFactionsHook;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.hooks.UCVaultCache;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCPerms;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCUtil;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UChatColor;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UltimateFancy;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
@@ -179,8 +180,8 @@ public class UCMessages {
                         if (!receiver.equals(sender) && !receivers.contains(receiver) && !receivers.contains(sender) &&
                                 (UChat.get().isSpy.contains(receiver.getName()) && UCPerms.hasSpyPerm(receiver, ch.getName()) && !UCPerms.hasPermission(sender, "uchat.chat-spy.bypass"))) {
                             String spyformat = UChat.get().getUCConfig().getString("general.spy-format");
-                            spyformat = spyformat.replace("{output}", ChatColor.stripColor(sendMessage(sender, receiver, finalEvmsg, ch).toOldFormat()));
-                            receiver.sendMessage(ChatColor.translateAlternateColorCodes('&', spyformat));
+                            spyformat = spyformat.replace("{output}", UChatColor.stripColor(sendMessage(sender, receiver, finalEvmsg, ch).toOldFormat()));
+                            receiver.sendMessage(UChatColor.translateAlternateColorCodes(spyformat));
                         }
                     }
 
@@ -212,8 +213,8 @@ public class UCMessages {
                             if (isIgnoringPlayers(tellReceiver.getName(), sender.getName())) {
                                 spyformat = UChat.get().getLang().get("chat.ignored") + spyformat;
                             }
-                            spyformat = spyformat.replace("{output}", ChatColor.stripColor(sendMessage(sender, tellReceiver, finalEvmsg, ch).toOldFormat()));
-                            receiver.sendMessage(ChatColor.translateAlternateColorCodes('&', spyformat));
+                            spyformat = spyformat.replace("{output}", UChatColor.stripColor(sendMessage(sender, tellReceiver, finalEvmsg, ch).toOldFormat()));
+                            receiver.sendMessage(UChatColor.translateAlternateColorCodes(spyformat));
                         }
                     }
 
@@ -276,6 +277,7 @@ public class UCMessages {
         evmsg = evmsg.replaceAll("(§([A-Fa-fK-Ok-oRr0-9]))", "&$2");
 
         if (sender instanceof Player) {
+            Pattern mat0 = Pattern.compile("(?i)&?#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})");
             Pattern mat1 = Pattern.compile("(?i)&([A-Fa-f0-9Rr])");
             Pattern mat2 = Pattern.compile("(?i)&([L-Ol-o])");
             Pattern mat3 = Pattern.compile("(?i)&([Kk])");
@@ -283,6 +285,11 @@ public class UCMessages {
             if (!UCPerms.hasPerm(sender, "chat.color")) {
                 while (mat1.matcher(evmsg).find()) {
                     evmsg = evmsg.replaceAll(mat1.pattern(), "");
+                }
+            }
+            if (!UCPerms.hasPerm(sender, "chat.color.hex")) {
+                while (mat0.matcher(evmsg).find()) {
+                    evmsg = evmsg.replaceAll(mat0.pattern(), "");
                 }
             }
             if (!UCPerms.hasPerm(sender, "chat.color.formats")) {
@@ -299,7 +306,7 @@ public class UCMessages {
                 evmsg = evmsg.replace("\\n", "\n");
             }
         }
-        evmsg = ChatColor.translateAlternateColorCodes('&', evmsg);
+        evmsg = UChatColor.translateAlternateColorCodes(evmsg);
         return evmsg;
     }
 
@@ -455,7 +462,7 @@ public class UCMessages {
             } else {
                 fanci.text(prefix).next();
             }
-            fanci.text(ChatColor.stripColor(format)).next();
+            fanci.text(UChatColor.stripColor(format)).next();
         }
         return fanci;
     }
@@ -499,7 +506,7 @@ public class UCMessages {
             text = text.replace("{message}", msg);
         }
         if (UChat.get().getUCConfig().getBoolean("general.item-hand.enable") && cmdSender instanceof Player && UCPerms.hasPerm((Player)cmdSender, "chat.hand") && text.contains(UChat.get().getUCConfig().getString("general.item-hand.placeholder"))) {
-            text = text.replace(UChat.get().getUCConfig().getString("general.item-hand.placeholder"), formatTags("", ChatColor.translateAlternateColorCodes('&', UChat.get().getUCConfig().getString("general.item-hand.format")), cmdSender, receiver, msg, ch));
+            text = text.replace(UChat.get().getUCConfig().getString("general.item-hand.placeholder"), formatTags("", UChatColor.translateAlternateColorCodes(UChat.get().getUCConfig().getString("general.item-hand.format")), cmdSender, receiver, msg, ch));
         }
         if (tag.equals("message") && !UChat.get().getUCConfig().getBoolean("general.enable-tags-on-messages")) {
             return text;
@@ -561,7 +568,7 @@ public class UCMessages {
             //replace item hand
             ItemStack item = sender.getItemInHand();
             if (UCPerms.hasPerm(sender, "chat.hand")){
-                text = text.replace(UChat.get().getUCConfig().getString("general.item-hand.placeholder"), ChatColor.translateAlternateColorCodes('&', UChat.get().getUCConfig().getString("general.item-hand.format")));
+                text = text.replace(UChat.get().getUCConfig().getString("general.item-hand.placeholder"), UChatColor.translateAlternateColorCodes(UChat.get().getUCConfig().getString("general.item-hand.format")));
             }
 
             if (text.contains("{hand-") && !sender.getItemInHand().getType().equals(Material.AIR)) {
@@ -727,7 +734,7 @@ public class UCMessages {
 
         //colorize tags (not message)
         if (!tag.equals("message")) {
-            text = ChatColor.translateAlternateColorCodes('&', text);
+            text = UChatColor.translateAlternateColorCodes(text);
         }
 
         //remove blank items
@@ -740,7 +747,7 @@ public class UCMessages {
 
         if (!tag.equals("message")) {
             for (String rpl : UChat.get().getUCConfig().getStringList("general.remove-from-chat")) {
-                text = text.replace(ChatColor.translateAlternateColorCodes('&', rpl), "");
+                text = text.replace(UChatColor.translateAlternateColorCodes(rpl), "");
             }
         }
         if (text.equals(" ") || text.equals("  ")) {

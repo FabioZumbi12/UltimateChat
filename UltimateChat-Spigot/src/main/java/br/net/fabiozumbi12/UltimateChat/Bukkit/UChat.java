@@ -42,6 +42,7 @@ import br.net.fabiozumbi12.UltimateChat.Bukkit.jedis.UCJedisLoader;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.metrics.Metrics;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCLogger;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCUtil;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UChatColor;
 import br.net.fabiozumbi12.translationapi.TranslationAPI;
 import br.net.fabiozumbi12.translationapi.TranslationCore;
 import com.lenis0012.bukkit.marriage2.Marriage;
@@ -299,7 +300,7 @@ public class UChat extends JavaPlugin {
             initAutomessage();
 
             getUCLogger().info("Server Version: " + getServer().getBukkitVersion());
-            getUCLogger().logClear(ChatColor.translateAlternateColorCodes('&', "\n"
+            getUCLogger().logClear(UChatColor.translateAlternateColorCodes("\n"
                     + "&b  _    _ _ _   _                 _        _____ _           _  \n"
                     + " | |  | | | | (_)               | |      / ____| |         | |  \n"
                     + " | |  | | | |_ _ _ __ ___   __ _| |_ ___| |    | |__   __ _| |_ \n"

@@ -27,6 +27,7 @@ package br.net.fabiozumbi12.UltimateChat.Bukkit.jedis;
 
 import br.net.fabiozumbi12.UltimateChat.Bukkit.*;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCPerms;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UChatColor;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UltimateFancy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -113,7 +114,7 @@ public class UCJedisLoader {
 
     public void sendTellMessage(CommandSender sender, String tellReceiver, String msg) {
         UltimateFancy fancy = new UltimateFancy();
-        fancy.textAtStart(ChatColor.translateAlternateColorCodes('&', this.thisId));
+        fancy.textAtStart(UChatColor.translateAlternateColorCodes(this.thisId));
 
         //spy
         if (!UCPerms.hasPerm(sender, "uchat.chat-spy.bypass")) {
@@ -122,8 +123,8 @@ public class UCJedisLoader {
                         UChat.get().isSpy.contains(receiver.getName()) && UCPerms.hasSpyPerm(receiver, "private")) {
                     String spyformat = UChat.get().getUCConfig().getString("general.spy-format");
 
-                    spyformat = spyformat.replace("{output}", ChatColor.stripColor(UCMessages.sendMessage(sender, tellReceiver, msg, new UCChannel("tell")).toOldFormat()));
-                    receiver.sendMessage(ChatColor.translateAlternateColorCodes('&', spyformat));
+                    spyformat = spyformat.replace("{output}", UChatColor.stripColor(UCMessages.sendMessage(sender, tellReceiver, msg, new UCChannel("tell")).toOldFormat()));
+                    receiver.sendMessage(UChatColor.translateAlternateColorCodes(spyformat));
                 }
             }
         }

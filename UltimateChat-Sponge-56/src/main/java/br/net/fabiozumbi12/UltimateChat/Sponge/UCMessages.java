@@ -287,6 +287,7 @@ public class UCMessages {
         evmsg = evmsg.replaceAll("(§([A-Fa-fK-Ok-oRr0-9]))", "&$2");
 
         if (sender instanceof Player) {
+            Pattern mat0 = Pattern.compile("(?i)&?#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})");
             Pattern mat1 = Pattern.compile("(?i)&([A-Fa-f0-9Rr])");
             Pattern mat2 = Pattern.compile("(?i)&([L-Ol-o])");
             Pattern mat3 = Pattern.compile("(?i)&([Kk])");
@@ -294,6 +295,11 @@ public class UCMessages {
             if (!UChat.get().getPerms().hasPerm(sender, "chat.color")) {
                 while (mat1.matcher(evmsg).find()) {
                     evmsg = evmsg.replaceAll(mat1.pattern(), "");
+                }
+            }
+            if (!UChat.get().getPerms().hasPerm(sender, "chat.color.hex")) {
+                while (mat0.matcher(evmsg).find()) {
+                    evmsg = evmsg.replaceAll(mat0.pattern(), "");
                 }
             }
             if (!UChat.get().getPerms().hasPerm(sender, "chat.color.formats")) {

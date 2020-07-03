@@ -28,6 +28,7 @@ package br.net.fabiozumbi12.UltimateChat.Bukkit.config;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UCMessages;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCUtil;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UChat;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -153,7 +154,7 @@ public class UCLang {
             FMsg = loadedlang.get(key).toString();
         }
 
-        FMsg = ChatColor.translateAlternateColorCodes('&', FMsg);
+        FMsg = UChatColor.translateAlternateColorCodes(FMsg);
 
         return FMsg.replace("\\n", "\n");
     }
@@ -164,7 +165,7 @@ public class UCLang {
         }
 
         if (!loadedlang.containsKey(key)) {
-            p.sendMessage(get(p, "_UChat.prefix") + " " + UCMessages.formatTags("", ChatColor.translateAlternateColorCodes('&', key), p, "", "", UChat.get().getPlayerChannel(p)));
+            p.sendMessage(get(p, "_UChat.prefix") + " " + UCMessages.formatTags("", UChatColor.translateAlternateColorCodes(key), p, "", "", UChat.get().getPlayerChannel(p)));
         } else if (get(key).isEmpty()) {
             return;
         } else {
@@ -183,7 +184,7 @@ public class UCLang {
         }
 
         if (loadedlang.get(key) == null) {
-            sender.sendMessage(get(sender, "_UChat.prefix") + " " + UCMessages.formatTags("", ChatColor.translateAlternateColorCodes('&', key), sender, "", "", UChat.get().getPlayerChannel(sender)));
+            sender.sendMessage(get(sender, "_UChat.prefix") + " " + UCMessages.formatTags("", UChatColor.translateAlternateColorCodes(key), sender, "", "", UChat.get().getPlayerChannel(sender)));
         } else if (get(key).equalsIgnoreCase("")) {
             return;
         } else {

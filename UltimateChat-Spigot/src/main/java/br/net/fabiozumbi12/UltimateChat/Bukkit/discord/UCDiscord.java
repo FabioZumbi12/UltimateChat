@@ -28,6 +28,7 @@ package br.net.fabiozumbi12.UltimateChat.Bukkit.discord;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.*;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCPerms;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCUtil;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UChatColor;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UltimateFancy;
 import jdalib.jda.api.JDA;
 import jdalib.jda.api.JDABuilder;
@@ -49,28 +50,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCUtil.fromRGB;
+
 public class UCDiscord extends ListenerAdapter implements UCDInterface {
-    private static final Map<ChatColor, ColorSet<Integer, Integer, Integer>> colorMap = new HashMap<>();
-
-    static {
-        colorMap.put(ChatColor.BLACK, new ColorSet<>(0, 0, 0));
-        colorMap.put(ChatColor.DARK_BLUE, new ColorSet<>(0, 0, 170));
-        colorMap.put(ChatColor.DARK_GREEN, new ColorSet<>(0, 170, 0));
-        colorMap.put(ChatColor.DARK_AQUA, new ColorSet<>(0, 170, 170));
-        colorMap.put(ChatColor.DARK_RED, new ColorSet<>(170, 0, 0));
-        colorMap.put(ChatColor.DARK_PURPLE, new ColorSet<>(170, 0, 170));
-        colorMap.put(ChatColor.GOLD, new ColorSet<>(255, 170, 0));
-        colorMap.put(ChatColor.GRAY, new ColorSet<>(170, 170, 170));
-        colorMap.put(ChatColor.DARK_GRAY, new ColorSet<>(85, 85, 85));
-        colorMap.put(ChatColor.BLUE, new ColorSet<>(85, 85, 255));
-        colorMap.put(ChatColor.GREEN, new ColorSet<>(85, 255, 85));
-        colorMap.put(ChatColor.AQUA, new ColorSet<>(85, 255, 255));
-        colorMap.put(ChatColor.RED, new ColorSet<>(255, 85, 85));
-        colorMap.put(ChatColor.LIGHT_PURPLE, new ColorSet<>(255, 85, 255));
-        colorMap.put(ChatColor.YELLOW, new ColorSet<>(255, 255, 85));
-        colorMap.put(ChatColor.WHITE, new ColorSet<>(255, 255, 255));
-    }
-
     private JDA jda;
     private UChat uchat;
     private int taskId;
@@ -109,18 +91,6 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
         this.jda.getRegisteredListeners().forEach(l -> this.jda.removeEventListener(l));
         this.jda.shutdown();
         this.uchat.getUCLogger().info("JDA disabled!");
-    }
-
-    /*   ------ color util --------   */
-    private static ChatColor fromRGB(int r, int g, int b) {
-        TreeMap<Integer, ChatColor> closest = new TreeMap<>();
-        colorMap.forEach((color, set) -> {
-            int red = Math.abs(r - set.getRed());
-            int green = Math.abs(g - set.getGreen());
-            int blue = Math.abs(b - set.getBlue());
-            closest.put(red + green + blue, color);
-        });
-        return closest.firstEntry().getValue();
     }
 
     public boolean JDAAvailable() {
@@ -379,13 +349,6 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
         String game = uchat.getLang().get("discord.game").replace("{online}", String.valueOf(uchat.getServer().getOnlinePlayers().size()));
         Activity activity = Activity.playing(game);
         jda.getPresence().setActivity(activity);
-
-        /* Game.GameType type = Game.GameType.valueOf(uchat.getUCConfig().getString("discord.game-type").toUpperCase());
-        if (type.equals(Game.GameType.STREAMING) && Game.isValidStreamingUrl(uchat.getUCConfig().getString("discord.twitch"))) {
-            jda.getPresence().setGame(Game.of(type, uchat.getLang().get("discord.game").replace("{online}", String.valueOf(uchat.getServer().getOnlinePlayers().size())), uchat.getUCConfig().getString("discord.twitch")));
-        } else {
-            jda.getPresence().setGame(Game.of(type, uchat.getLang().get("discord.game").replace("{online}", String.valueOf(uchat.getServer().getOnlinePlayers().size()))));
-        } */
     }
 
     public void sendTellToDiscord(String text) {
@@ -463,7 +426,7 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
                 .replace("{ch-alias}", ch.getAlias())
                 .replace("{ch-name}", ch.getName());
         if (e != null) {
-            sender = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', e.getMember().getEffectiveName()));
+            sender = UChatColor.stripColor(UChatColor.translateAlternateColorCodes(e.getMember().getEffectiveName()));
             format = format.replace("{sender}", sender)
                     .replace("{dd-channel}", e.getChannel().getName())
                     .replace("{message}", e.getMessage().getContentRaw());
@@ -478,7 +441,7 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
                 format = format.replace("{dd-rolename}", role.getName());
             }
             if (e.getMember().getNickname() != null) {
-                format = format.replace("{nickname}", ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', e.getMember().getNickname())));
+                format = format.replace("{nickname}", UChatColor.stripColor(UChatColor.translateAlternateColorCodes(e.getMember().getNickname())));
             } else {
                 format = format.replace("{nickname}", sender);
             }
@@ -488,30 +451,6 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
                 .replace("{sender}", sender)
                 .replace("{message}", message);
         format = format.replaceAll("\\{.*\\}", "");
-        return ChatColor.translateAlternateColorCodes('&', format);
-    }
-
-    private static class ColorSet<R, G, B> {
-        R red;
-        G green;
-        B blue;
-
-        ColorSet(R red, G green, B blue) {
-            this.red = red;
-            this.green = green;
-            this.blue = blue;
-        }
-
-        private R getRed() {
-            return red;
-        }
-
-        private G getGreen() {
-            return green;
-        }
-
-        private B getBlue() {
-            return blue;
-        }
+        return UChatColor.translateAlternateColorCodes(format);
     }
 }
