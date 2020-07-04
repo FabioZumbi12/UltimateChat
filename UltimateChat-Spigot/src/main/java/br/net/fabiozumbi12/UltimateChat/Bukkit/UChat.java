@@ -35,9 +35,7 @@ import br.net.fabiozumbi12.UltimateChat.Bukkit.config.UCLang;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.discord.UCDInterface;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.discord.UCDiscord;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.discord.UCDiscordSync;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.hooks.UCDynmap;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.hooks.UCPlaceHolders;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.hooks.UCPlaceHoldersRelational;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.hooks.*;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.jedis.UCJedisLoader;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.metrics.Metrics;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCLogger;
@@ -83,6 +81,8 @@ public class UChat extends JavaPlugin {
     static TranslationCore tapi;
     static boolean PlaceHolderAPI;
     static boolean Factions;
+    static boolean SaberFactions;
+    static UCFactionsHookInterface FactionHook = null;
     private static boolean Vault = false;
     private static UChat uchat;
     public List<String> isSpy = new ArrayList<>();
@@ -199,7 +199,15 @@ public class UChat extends JavaPlugin {
             MarryMasterV2 = checkMM2();
             boolean protocolLib = checkPL();
             PlaceHolderAPI = checkPHAPI();
-            Factions = checkFac();
+
+            if(checkFac()) {
+                FactionHook = new UCFactionsHook();
+            }
+
+            if(checkSFac()) {
+                FactionHook = new UCSFactionsHook();
+            }
+
             listener = new UCListener();
 
             getServer().getPluginCommand("uchat").setExecutor(listener);
@@ -640,6 +648,16 @@ public class UChat extends JavaPlugin {
         Plugin p = Bukkit.getPluginManager().getPlugin("Factions");
         try {
             Class.forName("com.massivecraft.factions.RelationParticipator");
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+        return p != null && p.isEnabled();
+    }
+
+    private boolean checkSFac() {
+        Plugin p = Bukkit.getPluginManager().getPlugin("Factions");
+        try {
+            Class.forName("com.massivecraft.factions.FPlayer");
         } catch (ClassNotFoundException e) {
             return false;
         }

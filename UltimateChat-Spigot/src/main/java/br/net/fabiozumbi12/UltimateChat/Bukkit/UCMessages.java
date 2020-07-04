@@ -672,9 +672,10 @@ public class UCMessages {
                             .replace("{clan-ctag}", cp.getClan().getColorTag());
                 }
             }
-            if (UChat.Factions) {
-                text = UCFactionsHook.formatFac(text, sender, receiver);
+            if (UChat.FactionHook != null) {
+                text = UChat.FactionHook.formatFac(text, sender, receiver);
             }
+
             if (text.contains("{marry-")) {
                 if (UChat.MarryReloded && sender.hasMetadata("marriedTo")) {
                     String partner = sender.getMetadata("marriedTo").get(0).asString();
