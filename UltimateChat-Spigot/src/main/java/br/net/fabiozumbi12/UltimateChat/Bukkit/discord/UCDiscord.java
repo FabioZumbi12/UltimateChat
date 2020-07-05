@@ -415,6 +415,8 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
         } catch (ErrorResponseException e) {
             UChat.get().getUCLogger().warning("Jda response error: " + e.getLocalizedMessage());
             UChat.get().getUCLogger().warning("Additional info: User ID:" + ddUser);
+            if (this.uchat.getDDSync().getSyncNickName(ddUser) != null)
+                this.uchat.getDDSync().unlink(this.uchat.getDDSync().getSyncNickName(ddUser));
         } catch (RateLimitedException e) {
             UChat.get().getUCLogger().warning("Jda Rate Limited Exception: " + e.getLocalizedMessage());
             e.printStackTrace();

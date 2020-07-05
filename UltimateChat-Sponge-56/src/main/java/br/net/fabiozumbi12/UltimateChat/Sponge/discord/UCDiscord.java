@@ -32,6 +32,7 @@ import jdalib.jda.api.JDA;
 import jdalib.jda.api.JDABuilder;
 import jdalib.jda.api.entities.*;
 import jdalib.jda.api.events.message.MessageReceivedEvent;
+import jdalib.jda.api.exceptions.ErrorResponseException;
 import jdalib.jda.api.exceptions.PermissionException;
 import jdalib.jda.api.exceptions.RateLimitedException;
 import jdalib.jda.api.hooks.ListenerAdapter;
@@ -442,8 +443,14 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
             List<Role> roles = new ArrayList<>();
             ddRoleIds.forEach(r -> roles.add(gc.getRoleById(r)));
             gc.modifyMemberRoles(member, roles, configRoles.stream().map(r->gc.getRoleById(r)).filter(r-> r != null && !roles.contains(r)).collect(Collectors.toList())).complete(true);
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (ErrorResponseException e) {
+            UChat.get().getLogger().warning("Jda response error: " + e.getLocalizedMessage());
+            UChat.get().getLogger().warning("Additional info: User ID:" + ddUser);
+            if (this.uchat.getDDSync().getSyncNickName(ddUser) != null)
+                this.uchat.getDDSync().unlink(this.uchat.getDDSync().getSyncNickName(ddUser));
+        } catch (RateLimitedException e) {
+            UChat.get().getLogger().warning("Jda Rate Limited Exception: " + e.getLocalizedMessage());
+            e.printStackTrace();
         }
     }
 
