@@ -89,7 +89,7 @@ public class UltimateFancy {
     /**
      * Root text to show with the colors parsed, close the last text properties and start a new text block.
      *
-     * @param text
+     * @param text text to show with the colors parsed
      * @return instance of same {@link UltimateFancy}.
      */
     public UltimateFancy coloredTextAndNext(String text) {
@@ -100,7 +100,7 @@ public class UltimateFancy {
     /**
      * Root text to show and close the last text properties and start a new text block.
      *
-     * @param text
+     * @param text text to show
      * @return instance of same {@link UltimateFancy}.
      */
     public UltimateFancy textAndNext(String text) {
@@ -111,7 +111,7 @@ public class UltimateFancy {
     /**
      * Root text to show with the colors parsed.
      *
-     * @param text
+     * @param text text to show with the colors parsed
      * @return instance of same {@link UltimateFancy}.
      */
     public UltimateFancy coloredText(String text) {
@@ -213,7 +213,7 @@ public class UltimateFancy {
     /**
      * Root text to show on chat.
      *
-     * @param text
+     * @param text Root text to show on chat
      * @return instance of same {@link UltimateFancy}.
      */
     public UltimateFancy text(String text) {
@@ -224,7 +224,7 @@ public class UltimateFancy {
     /**
      * Root text to show on chat, but in first position.
      *
-     * @param text
+     * @param text Root text to show on chat in first position
      * @return instance of same {@link UltimateFancy}.
      */
     public UltimateFancy textAtStart(String text) {
@@ -235,11 +235,23 @@ public class UltimateFancy {
         return this;
     }
 
+    /**
+     * Root text to show on chat, on last position.
+     *
+     * @param json Append other json
+     * @return instance of same {@link UltimateFancy}.
+     */
     public UltimateFancy appendObject(JSONObject json) {
         workingGroup.add(json);
         return this;
     }
 
+    /**
+     * Root text to show on chat, on last position.
+     *
+     * @param jsonObject Append other json string
+     * @return instance of same {@link UltimateFancy}.
+     */
     public UltimateFancy appendString(String jsonObject) {
         Object obj = JSONValue.parse(jsonObject);
         if (obj instanceof JSONObject) {
@@ -258,20 +270,42 @@ public class UltimateFancy {
         return this;
     }
 
+    /**
+     * Raw working elements from this object
+     *
+     * @return list with raw elements of actual working elements.
+     */
     public List<JSONObject> getWorkingElements() {
         return this.workingGroup;
     }
 
+    /**
+     * Raw elements already stored into this object
+     *
+     * @return list with raw elements of stored json elements.
+     */
     public List<JSONObject> getStoredElements() {
         return new ArrayList<JSONObject>(this.constructor);
     }
 
+    /**
+     * Remove an json element from actual elements
+     *
+     * @param json json element to remove
+     * @return instance of same {@link UltimateFancy}.
+     */
     public UltimateFancy removeObject(JSONObject json) {
         this.workingGroup.remove(json);
         this.constructor.remove(json);
         return this;
     }
 
+    /**
+     * Append text at beginning of all elements stored
+     *
+     * @param json string element to remove
+     * @return instance of same {@link UltimateFancy}.
+     */
     public UltimateFancy appendAtFirst(String json) {
         Object obj = JSONValue.parse(json);
         if (obj instanceof JSONObject) {
@@ -286,6 +320,12 @@ public class UltimateFancy {
         return this;
     }
 
+    /**
+     * Append text at beginning of all elements stored
+     *
+     * @param json json element to remove
+     * @return instance of same {@link UltimateFancy}.
+     */
     public UltimateFancy appendAtFirst(JSONObject json) {
         JSONArray jarray = new JSONArray();
         jarray.add(json);
@@ -294,6 +334,12 @@ public class UltimateFancy {
         return this;
     }
 
+    /**
+     * Append text at the end of all elements stored
+     *
+     * @param json json element to remove
+     * @return instance of same {@link UltimateFancy}.
+     */
     public UltimateFancy appendAtEnd(String json) {
         Object obj = JSONValue.parse(json);
         if (obj instanceof JSONObject) {
@@ -308,6 +354,12 @@ public class UltimateFancy {
         return this;
     }
 
+    /**
+     * Append text at the end of all elements stored
+     *
+     * @param json json element to remove
+     * @return instance of same {@link UltimateFancy}.
+     */
     public UltimateFancy appendAtEnd(JSONObject json) {
         List<JSONObject> jarray = new ArrayList<>(getWorkingElements());
         jarray.add(json);
@@ -315,6 +367,11 @@ public class UltimateFancy {
         return this;
     }
 
+    /**
+     * Get all elements stored as Fancy elements
+     *
+     * @return instance of same {@link UltimateFancy}.
+     */
     public List<UltimateFancy> getFancyElements() {
         next();
         List<UltimateFancy> list = new ArrayList<>();
@@ -326,6 +383,12 @@ public class UltimateFancy {
         return list;
     }
 
+    /**
+     * Append other fancy element
+     *
+     * @param fancy json element to remove
+     * @return instance of same {@link UltimateFancy}.
+     */
     public UltimateFancy appendFancy(UltimateFancy fancy) {
         this.appendAtEnd(fancy.toJson());
         return this;
@@ -402,7 +465,7 @@ public class UltimateFancy {
     }
 
     /**
-     * Close the last text properties and start a new text block.
+     * Close the last text properties and start a new text element.
      *
      * @return instance of same {@link UltimateFancy}.
      */
@@ -628,7 +691,7 @@ public class UltimateFancy {
     }
 
     /**
-     * An imutable pair of actions and {@link JSONObject} values.
+     * An immutable pair of actions and {@link JSONObject} values.
      *
      * @author FabioZumbi12
      */
@@ -649,14 +712,13 @@ public class UltimateFancy {
             return this.json;
         }
     }
-
-    private String formatToJsonHex(String text) {
-        return text
-                .replace("§", "")
-                .replace("x","#");
-    }
 }
 
+/**
+ * Help get native itemstack properties
+ * 
+ * @author FabioZumbi12
+ */
 class ReflectionUtil {
     private static String versionString;
     private static final Map<String, Class<?>> loadedNMSClasses = new HashMap<>();

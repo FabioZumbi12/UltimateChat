@@ -91,7 +91,7 @@ public class PostFormatChatMessageEvent extends Event implements Cancellable {
     /**
      * Get the message of a receiver, or {@code null} if the receiver is not on list.
      *
-     * @param receiver {@CommandSender}
+     * @param receiver {@code @CommandSender}
      * @return {@code Text} or null if no receivers on this map.
      */
     public UltimateFancy getReceiverMessage(CommandSender receiver) {

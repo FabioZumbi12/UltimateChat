@@ -36,6 +36,8 @@ import org.spongepowered.api.event.impl.AbstractEvent;
 /**
  * <p>Event fired when a player change from channel A to channel B.</p>
  * <i>Channel A may be null if the channel is deleted by in-game delete commmand.</i>
+ *
+ * @author FabioZumbi12
  */
 public class PlayerChangeChannelEvent extends AbstractEvent implements Event, Cancellable {
     private Player player;

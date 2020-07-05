@@ -38,7 +38,7 @@ import java.util.HashMap;
 
 /**
  * This event listen all text to be sent to players formated and colored, ready to send to chat.<p>
- * This event includes console. This event will listen to private messages too.<p>
+ * This event includes console. This event will listen to private messages too.
  * <p>
  * Cancelling this event will not cancel SendMessageEvent.Chat but only will replace the channel.
  *
@@ -67,7 +67,7 @@ public class PostFormatChatMessageEvent extends AbstractEvent implements Cancell
     /**
      * Get the message of a receiver, or {@code null} if the receiver is not on list.
      *
-     * @param receiver {@CommandSource}
+     * @param receiver {@code @CommandSource}
      * @return {@code Text} or null if no receivers on this map.
      */
     public Text getReceiverMessage(CommandSource receiver) {

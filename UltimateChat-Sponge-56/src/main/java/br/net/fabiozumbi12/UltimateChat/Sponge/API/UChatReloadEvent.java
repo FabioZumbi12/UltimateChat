@@ -32,6 +32,8 @@ import org.spongepowered.api.event.impl.AbstractEvent;
 
 /**
  * <p>This event tells to event handlers when UChat reloads to let listeners reload your channels or for other UChat changes.</p>
+ *
+ * @author FabioZumbi12
  */
 public class UChatReloadEvent extends AbstractEvent implements Event {
 

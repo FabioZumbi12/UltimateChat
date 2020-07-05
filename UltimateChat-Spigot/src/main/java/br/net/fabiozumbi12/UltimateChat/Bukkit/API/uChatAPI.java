@@ -37,6 +37,11 @@ import org.bukkit.entity.Player;
 import java.io.IOException;
 import java.util.*;
 
+/**
+ * UltimateChat API main class
+ *
+ * @author FabioZumbi12
+ */
 public class uChatAPI {
 
     public boolean registerNewTag(String tagName, String format, String clickCmd, List<String> hoverMessages, String clickUrl) {

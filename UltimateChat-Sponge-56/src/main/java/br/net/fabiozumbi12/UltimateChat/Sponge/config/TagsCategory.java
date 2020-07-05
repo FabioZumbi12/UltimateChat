@@ -53,14 +53,6 @@ public class TagsCategory {
     public TagsCategory() {
     }
 
-    /**
-     * @param format
-     * @param click_cmd
-     * @param hover_messages
-     * @param permission
-     * @param show_in_worlds
-     * @param hide_in_worlds
-     */
     public TagsCategory(String format, String click_cmd, List<String> hover_messages, String permission, List<String> show_in_worlds, List<String> hide_in_worlds, String click_url) {
         this.format = format;
         this.click_cmd = click_cmd;
