@@ -128,7 +128,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 
         AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(true, p, msg, pls);
         UChat.get().getUCLogger().timings(timingType.START, "UCListener#onCommand()|Fire AsyncPlayerChatEvent");
-        UChat.get().getServer().getPluginManager().callEvent(event);
+        Bukkit.getScheduler().runTaskAsynchronously(UChat.get(), () -> UChat.get().getServer().getPluginManager().callEvent(event));
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
@@ -796,7 +796,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
         pls.add(p);
         AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(true, p, msg, pls);
         UChat.get().getUCLogger().timings(timingType.START, "UCListener#sendPreTell()|Fire AsyncPlayerChatEvent");
-        UChat.get().getServer().getPluginManager().callEvent(event);
+        Bukkit.getScheduler().runTaskAsynchronously(UChat.get(), () -> UChat.get().getServer().getPluginManager().callEvent(event));
     }
 
     @EventHandler

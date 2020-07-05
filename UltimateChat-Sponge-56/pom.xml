@@ -73,7 +73,8 @@
             <groupId>com.github.rojo8399</groupId>
             <artifactId>PlaceholderAPI</artifactId>
             <version>LATEST</version>
-            <scope>provided</scope>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/PlaceholderAPI-4.4.jar</systemPath>
         </dependency>
 
         <!-- Discord bridge -->

@@ -54,11 +54,6 @@
             <url>http://repo.drnaylor.co.uk/artifactory/list/minecraft</url>
         </repository>
 
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-
         <!-- Spigot repos -->
         <repository>
             <id>spigot-repo</id>

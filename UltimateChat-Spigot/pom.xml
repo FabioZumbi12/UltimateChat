@@ -55,14 +55,15 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- start of local repos -->
+
         <dependency>
             <groupId>com.github.SaberLLC</groupId>
             <artifactId>Saber-Factions</artifactId>
-            <version>2.3.5-STABLE</version>
+            <version>LATEST</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/SaberFactions.jar</systemPath>
         </dependency>
-
-        <!-- start of local repos -->
-
         <dependency>
             <groupId>SimpleClans</groupId>
             <artifactId>SimpleClans</artifactId>
@@ -157,6 +158,10 @@
             <id>Translation-API</id>
             <url>https://raw.githubusercontent.com/FabioZumbi12/TranslationAPI/mvn-repo/</url>
         </repository>
+        <!--<repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>-->
     </repositories>
 
     <build>
