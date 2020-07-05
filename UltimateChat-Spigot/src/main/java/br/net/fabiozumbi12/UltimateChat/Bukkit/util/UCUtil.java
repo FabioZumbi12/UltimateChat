@@ -91,10 +91,11 @@ public class UCUtil {
     }
 
     public static void performCommand(final Player to, final CommandSender sender, final String command) {
-        Bukkit.getScheduler().runTask(UChat.get(), () -> {
+        Bukkit.getScheduler().callSyncMethod(UChat.get(), () -> {
             if (to == null || to.isOnline()) {
                 UChat.get().getServer().dispatchCommand(sender, command);
             }
+            return null;
         });
     }
 

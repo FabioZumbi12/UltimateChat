@@ -189,8 +189,8 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
                         if (args.length == 1) {
                             //ch list
                             if (args[0].equalsIgnoreCase("list")) {
+                                UChat.get().getLang().sendMessage(p, "&7------------------------------------------");
                                 UltimateFancy fancy = new UltimateFancy();
-                                fancy.coloredText("&7------------------------------------------\n");
                                 fancy.coloredText(UChat.get().getLang().get("help.channels.available").replace("{channels}", "")).next();
                                 boolean first = true;
                                 for (UCChannel ch : UChat.get().getChannels().values()) {
@@ -206,7 +206,8 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
                                                 .next();
                                     }
                                 }
-                                fancy.coloredText("\n&7------------------------------------------").send(p);
+                                fancy.send(p);
+                                UChat.get().getLang().sendMessage(p, "&7------------------------------------------");
                                 return;
                             }
 
@@ -1077,64 +1078,66 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
     }
 
     private void sendHelp(CommandSender p) {
-        UltimateFancy fancy = new UltimateFancy();
-        fancy.coloredText("\n&7--------------- " + UChat.get().getLang().get("_UChat.prefix") + " Help &7---------------\n");
-        fancy.coloredText(UChat.get().getLang().get("help.channels.enter") + "\n");
-        fancy.coloredText(UChat.get().getLang().get("help.channels.send") + "\n");
-        fancy.coloredText(UChat.get().getLang().get("help.channels.list") + "\n");
+        UChat.get().getLang().sendMessage(p, "&7--------------- " + UChat.get().getLang().get("_UChat.prefix") + " Help &7---------------");
+        UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("help.channels.enter"));
+        UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("help.channels.send"));
+        UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("help.channels.list"));
         if (UCPerms.cmdPerm(p, "tell")) {
-            fancy.coloredText(UChat.get().getLang().get("help.tell.lock") + "\n");
-            fancy.coloredText(UChat.get().getLang().get("help.tell.send") + "\n");
-            fancy.coloredText(UChat.get().getLang().get("help.tell.respond") + "\n");
+            UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("help.tell.lock"));
+            UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("help.tell.send"));
+            UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("help.tell.respond"));
         }
         if (UCPerms.cmdPerm(p, "addfilter")) {
-            fancy.coloredText(UChat.get().getLang().get("help.cmd.addfilter") + "\n");
-            fancy.coloredText(UChat.get().getLang().get("help.cmd.delfilter") + "\n");
+            UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("help.cmd.addfilter"));
+            UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("help.cmd.delfilter"));
         }
         if (UCPerms.cmdPerm(p, "broadcast")) {
-            fancy.coloredText(UChat.get().getLang().get("help.cmd.broadcast") + "\n");
+            UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("help.cmd.broadcast"));
         }
         if (UCPerms.cmdPerm(p, "umsg")) {
-            fancy.coloredText(UChat.get().getLang().get("help.cmd.umsg") + "\n");
+            UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("help.cmd.umsg"));
         }
         if (UCPerms.cmdPerm(p, "clear")) {
-            fancy.coloredText(UChat.get().getLang().get("help.cmd.clear") + "\n");
+            UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("help.cmd.clear"));
         }
         if (UCPerms.cmdPerm(p, "clear-all")) {
-            fancy.coloredText(UChat.get().getLang().get("help.cmd.clear-all") + "\n");
+            UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("help.cmd.clear-all"));
         }
         if (UCPerms.cmdPerm(p, "spy")) {
-            fancy.coloredText(UChat.get().getLang().get("help.cmd.spy") + "\n");
+            UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("help.cmd.spy"));
         }
         if (UCPerms.cmdPerm(p, "mute")) {
-            fancy.coloredText(UChat.get().getLang().get("help.cmd.mute") + "\n");
+            UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("help.cmd.mute"));
         }
         if (UCPerms.cmdPerm(p, "tempmute")) {
-            fancy.coloredText(UChat.get().getLang().get("help.cmd.tempmute") + "\n");
+            UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("help.cmd.tempmute"));
         }
         if (UCPerms.cmdPerm(p, "ignore.player")) {
-            fancy.coloredText(UChat.get().getLang().get("help.cmd.ignore.player") + "\n");
+            UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("help.cmd.ignore.player"));
         }
         if (UCPerms.cmdPerm(p, "ignore.channel")) {
-            fancy.coloredText(UChat.get().getLang().get("help.cmd.ignore.channel") + "\n");
+            UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("help.cmd.ignore.channel"));
         }
         if (UCPerms.cmdPerm(p, "msgtoggle")) {
-            fancy.coloredText(UChat.get().getLang().get("help.cmd.msgtoggle") + "\n");
+            UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("help.cmd.msgtoggle"));
         }
         if (UCPerms.cmdPerm(p, "cmd.reload")) {
-            fancy.coloredText(UChat.get().getLang().get("help.cmd.reload") + "\n");
+            UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("help.cmd.reload"));
         }
         if (UCPerms.cmdPerm(p, "chconfig")) {
-            fancy.coloredText(UChat.get().getLang().get("help.cmd.chconfig") + "\n");
+            UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("help.cmd.chconfig"));
         }
         if (UCPerms.cmdPerm(p, "newchannel")) {
-            fancy.coloredText(UChat.get().getLang().get("help.cmd.newchannel") + "\n");
+            UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("help.cmd.newchannel"));
         }
         if (UCPerms.cmdPerm(p, "delchannel")) {
-            fancy.coloredText(UChat.get().getLang().get("help.cmd.delchannel") + "\n");
+            UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("help.cmd.delchannel"));
         }
-        fancy.coloredText("&7------------------------------------------\n");
-        fancy.coloredText(UChat.get().getLang().get("help.channels.available").replace("{channels}", "") + " ").next();
+        UChat.get().getLang().sendMessage(p, "&7------------------------------------------");
+
+        UltimateFancy fancy = new UltimateFancy();
+        fancy.text(UChat.get().getLang().get("_UChat.prefix") + " " + UChat.get().getLang().get("help.channels.available").replace("{channels}", "")).next();
+
         boolean first = true;
         for (UCChannel ch : UChat.get().getChannels().values()) {
             if (!(p instanceof Player) || UCPerms.channelReadPerm(p, ch)) {
@@ -1149,16 +1152,17 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
                         .next();
             }
         }
-        fancy.coloredText("\n&7------------------------------------------");
+        fancy.send(p);
+
+        UChat.get().getLang().sendMessage(p, "&7------------------------------------------");
         if (UCPerms.hasPerm(p, "admin")) {
-            String jarversion = new java.io.File(UCListener.class.getProtectionDomain()
+            String jarVersion = new java.io.File(UCListener.class.getProtectionDomain()
                     .getCodeSource()
                     .getLocation()
                     .getPath())
                     .getName();
-            fancy.coloredText("\n&8&o- UChat full version: " + jarversion);
+            UChat.get().getLang().sendMessage(p, "&8&o- UChat full version: " + jarVersion);
         }
-        fancy.send(p);
     }
 
     private void sendChannelHelp(Player p) {
