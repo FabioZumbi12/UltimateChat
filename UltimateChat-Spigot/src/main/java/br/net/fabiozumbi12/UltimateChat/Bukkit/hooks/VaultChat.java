@@ -37,7 +37,9 @@ public class VaultChat {
         }
         StringBuilder gprefixes = new StringBuilder();
         for (String g : UCVaultCache.getVaultPerms(sender).getPlayerGroups()) {
-            gprefixes.append(UChat.get().getVaultChat().getGroupPrefix(sender.getWorld().getName(), g));
+            String pref = UChat.get().getVaultChat().getGroupPrefix(sender.getWorld().getName(), g);
+            if (pref != null)
+                gprefixes.append(UChat.get().getVaultChat().getGroupPrefix(sender.getWorld().getName(), g));
         }
         String gps = gprefixes.toString();
 
@@ -90,7 +92,9 @@ public class VaultChat {
         String[] groups = UCVaultCache.getVaultPerms(sender).getPlayerGroups();
         for (String group : groups) {
             if (UChat.get().getUCConfig().getStringList("general.dont-show-groups").contains(group)) continue;
-            gps.append(UChat.get().getVaultChat().getGroupPrefix(sender.getWorld(), group));
+            String prefix = UChat.get().getVaultChat().getGroupPrefix(sender.getWorld(), group);
+            if (prefix != null)
+                gps.append(UChat.get().getVaultChat().getGroupPrefix(sender.getWorld(), group));
         }
 
         getPlayerPrefixes(sender.getName(), gps.toString());
@@ -106,7 +110,9 @@ public class VaultChat {
         StringBuilder gps = new StringBuilder();
         String[] groups = UCVaultCache.getVaultPerms(sender).getPlayerGroups();
         for (String group : groups) {
-            gps.append(UChat.get().getVaultChat().getGroupSuffix(sender.getWorld(), group));
+            String suf = UChat.get().getVaultChat().getGroupSuffix(sender.getWorld(), group);
+            if (suf != null)
+                gps.append(UChat.get().getVaultChat().getGroupSuffix(sender.getWorld(), group));
         }
 
         getPlayerSuffixes(sender.getName(), gps.toString());
