@@ -23,17 +23,15 @@
  3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
  */
 
-package br.net.fabiozumbi12.UltimateChat.Bukkit.util;
+package br.net.fabiozumbi12.UltimateFancy;
 
-import br.net.fabiozumbi12.UltimateChat.Bukkit.UChat;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCLogger.timingType;
 import com.google.common.base.Utf8;
-import jdk.nashorn.internal.runtime.regexp.joni.Regex;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -42,12 +40,11 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Class to generate JSON elements to use with UltimateChat.
+ * Class to generate JSON elements.
  *
  * @author FabioZumbi12
  */
@@ -56,17 +53,20 @@ import java.util.regex.Pattern;
 public class UltimateFancy {
 
     private String hexColor = "";
+    private String lastRGBColor = "";
     private ChatColor lastColor = ChatColor.WHITE;
     private ChatColor last2Color = null;
     private JSONArray constructor;
     private HashMap<String, Boolean> lastFormats;
     private List<JSONObject> workingGroup;
     private List<ExtraElement> pendentElements;
+    private final JavaPlugin plugin;
 
     /**
      * Creates a new instance of UltimateFancy.
      */
-    public UltimateFancy() {
+    public UltimateFancy(JavaPlugin plugin) {
+        this.plugin = plugin;
         constructor = new JSONArray();
         workingGroup = new ArrayList<>();
         lastFormats = new HashMap<>();
@@ -78,7 +78,8 @@ public class UltimateFancy {
      *
      * @param text {@code String}
      */
-    public UltimateFancy(String text) {
+    public UltimateFancy(JavaPlugin plugin, String text) {
+        this.plugin = plugin;
         constructor = new JSONArray();
         workingGroup = new ArrayList<>();
         lastFormats = new HashMap<>();
@@ -162,12 +163,21 @@ public class UltimateFancy {
             Matcher m = Pattern.compile("#[A-Fa-f0-9]{6}|#[A-Fa-f0-9]{3}").matcher(part);
             // Hex colors
             if (m.find()) {
+
+                // Fix colors before
+                filterColors(workingText);
+
                 workingText.put("color", m.group());
                 workingText.put("text", part.replace(m.group(), ""));
 
                 hexColor = m.group();
-                lastColor = ChatColor.WHITE;
-                last2Color = null;
+                lastRGBColor = hexColor;
+                if (lastColor.isColor()) lastColor = ChatColor.WHITE;
+                if (last2Color != null && last2Color.isColor()) last2Color = null;
+
+                //fix colors from latest
+                filterColors(workingText);
+                if (part.length() == 2) continue;
             } else {
                 hexColor = "";
 
@@ -181,10 +191,12 @@ public class UltimateFancy {
                     if (color.isColor()) {
                         lastColor = color;
                         last2Color = null;
+                        lastRGBColor = "";
                     } else {
                         // Set a second color if the first color is format
                         if (lastColor.isColor()) last2Color = lastColor;
                         lastColor = color;
+                        lastRGBColor = "";
                     }
                     //fix colors from latest
                     filterColors(workingText);
@@ -377,7 +389,7 @@ public class UltimateFancy {
         List<UltimateFancy> list = new ArrayList<>();
         for (Object obj : this.constructor) {
             if (obj instanceof JSONObject) {
-                list.add(new UltimateFancy().appendAtEnd((JSONObject) obj));
+                list.add(new UltimateFancy(plugin).appendAtEnd((JSONObject) obj));
             }
         }
         return list;
@@ -403,32 +415,39 @@ public class UltimateFancy {
         if (!hexColor.isEmpty()) {
             obj.put("color", hexColor);
         } else {
-            if (lastColor.equals(ChatColor.RESET) || (lastColor.isColor() || lastColor.isFormat())) {
-                for (String format : lastFormats.keySet()) {
-                    if (lastColor.isFormat() && format.equalsIgnoreCase("color")) continue;
-                    obj.remove(format);
-                }
-                if (lastColor.equals(ChatColor.RESET)) last2Color = null;
-                lastFormats.clear();
-            }
-
             if (lastColor.isColor()) obj.put("color", lastColor.name().toLowerCase());
+        }
 
-            if (lastColor.isFormat()) {
-                String formatStr = lastColor.name().toLowerCase();
-                if (lastColor.equals(ChatColor.MAGIC)) {
-                    formatStr = "obfuscated";
-                }
-                if (lastColor.equals(ChatColor.UNDERLINE)) {
-                    formatStr = "underlined";
-                }
-                lastFormats.put(formatStr, true);
-                obj.put(formatStr, true);
+        if (lastColor.equals(ChatColor.RESET) || (lastColor.isColor() || lastColor.isFormat())) {
+            for (String format : lastFormats.keySet()) {
+                if (lastColor.isFormat() && format.equalsIgnoreCase("color")) continue;
+                obj.remove(format);
             }
+            if (lastColor.equals(ChatColor.RESET)) {
+                last2Color = null;
+                lastRGBColor = "";
+            }
+            lastFormats.clear();
+        }
+
+        if (lastColor.isFormat()) {
+            String formatStr = lastColor.name().toLowerCase();
+            if (lastColor.equals(ChatColor.MAGIC)) {
+                formatStr = "obfuscated";
+            }
+            if (lastColor.equals(ChatColor.UNDERLINE)) {
+                formatStr = "underlined";
+            }
+            lastFormats.put(formatStr, true);
+            obj.put(formatStr, true);
         }
 
         // Parse second color if the first color is format
-        if (last2Color != null) obj.put("color", last2Color.name().toLowerCase());
+        if (last2Color != null)
+            obj.put("color", last2Color.name().toLowerCase());
+        else if (!lastRGBColor.isEmpty()) {
+            obj.put("color", lastRGBColor);
+        }
     }
 
     /**
@@ -439,19 +458,23 @@ public class UltimateFancy {
     public void send(CommandSender to) {
         next();
         if (to instanceof Player) {
-            if (UChat.get().getUCConfig().getBoolean("general.json-events")) {
-                UChat.get().getUCLogger().timings(timingType.END, "UltimateFancy#send()|json-events:true|before tellraw");
-                UCUtil.performCommand((Player) to, Bukkit.getConsoleSender(), "tellraw " + to.getName() + " " + toJson());
-                UChat.get().getUCLogger().timings(timingType.END, "UltimateFancy#send()|json-events:true|after tellraw");
+            performCommand((Player) to);
+        } else {
+            to.sendMessage(toOldFormat());
+        }
+    }
+
+    public void send(CommandSender to, boolean json) {
+        next();
+        if (to instanceof Player) {
+            if (json) {
+                performCommand((Player) to);
             } else {
-                UChat.get().getUCLogger().timings(timingType.END, "UltimateFancy#send()|json-events:false|before send");
                 to.sendMessage(toOldFormat());
-                UChat.get().getUCLogger().timings(timingType.END, "UltimateFancy#send()|json-events:false|after send");
             }
         } else {
             to.sendMessage(toOldFormat());
         }
-        UChat.get().getUCLogger().debug("JSON: " + toJson());
     }
 
     @Override
@@ -587,6 +610,12 @@ public class UltimateFancy {
         return result.toString();
     }
 
+    private void performCommand(Player to) {
+        Bukkit.getScheduler().callSyncMethod(plugin, () -> {
+            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + to.getName() + " " + toJson());
+            return null;
+        });
+    }
     private JSONObject parseHoverText(String text) {
         JSONArray extraArr = addColorToArray(UChatColor.translateAlternateColorCodes(text));
         JSONObject objExtra = new JSONObject();
@@ -633,7 +662,6 @@ public class UltimateFancy {
             nmsItemStackObj = asNMSCopyMethod.invoke(null, itemStack);
             itemAsJsonObject = saveNmsItemStackMethod.invoke(nmsItemStackObj, nmsNbtTagCompoundObj);
         } catch (Throwable t) {
-            UChat.get().getLogger().log(Level.SEVERE, "failed to serialize itemstack to nms item", t);
             return null;
         }
         return itemAsJsonObject.toString();
@@ -682,7 +710,7 @@ public class UltimateFancy {
 
     @Override
     public UltimateFancy clone() {
-        UltimateFancy newFanci = new UltimateFancy();
+        UltimateFancy newFanci = new UltimateFancy(plugin);
         newFanci.constructor = this.constructor;
         newFanci.pendentElements = this.pendentElements;
         newFanci.workingGroup = this.workingGroup;
@@ -711,6 +739,30 @@ public class UltimateFancy {
         public JSONObject getJson() {
             return this.json;
         }
+    }
+}
+
+/**
+ * Class to use with new rgb colors from 1.16
+ */
+class UChatColor {
+
+    public static final String HEX_PATTERN = "&?#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})";
+
+    public static String stripColor(String text) {
+        text = ChatColor.stripColor(text);
+        text = text.replaceAll(HEX_PATTERN, "");
+        return text;
+    }
+
+    public static String translateAlternateColorCodes(String text) {
+        Matcher matcher = Pattern.compile(HEX_PATTERN).matcher(text);
+        while (matcher.find()) {
+            String toReplace = matcher.group(0);
+            String find = matcher.group(1);
+            text = text.replace(toReplace, "§#"+find);
+        }
+        return ChatColor.translateAlternateColorCodes('&',text);
     }
 }
 
