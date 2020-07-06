@@ -26,7 +26,7 @@
 package br.net.fabiozumbi12.UltimateChat.Bukkit.API;
 
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UCChannel;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UltimateFancy;
+import br.net.fabiozumbi12.UltimateFancy.UltimateFancy;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;

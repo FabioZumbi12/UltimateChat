@@ -1,0 +1,6 @@
+name: UltimateChat
+main: br.net.fabiozumbi12.UltimateFancy.PluginLoader
+version: ${project.version}
+author: FabioZumbi12
+description: Chat API for advanced chat plugins
+api-version: 1.13

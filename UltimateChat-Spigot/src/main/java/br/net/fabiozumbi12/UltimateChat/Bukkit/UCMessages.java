@@ -30,13 +30,12 @@ import br.net.fabiozumbi12.UltimateChat.Bukkit.API.SendChannelMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.hooks.UCDynmap;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCLogger.timingType;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.bungee.UChatBungee;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.hooks.UCFactionsHook;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.hooks.UCVaultCache;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCPerms;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCUtil;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UChatColor;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UltimateFancy;
 import me.clip.placeholderapi.PlaceholderAPI;
+import br.net.fabiozumbi12.UltimateFancy.UltimateFancy;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import net.sacredlabyrinth.phaed.simpleclans.managers.SettingsManager;
 import org.apache.commons.lang.StringUtils;
@@ -223,7 +222,7 @@ public class UCMessages {
                         msgPlayers.put(tellReceiver, sendMessage(sender, tellReceiver, finalEvmsg, ch));
                     }
                     if (isIgnoringPlayers(tellReceiver.getName(), sender.getName())) {
-                        msgPlayers.put(UChat.get().getServer().getConsoleSender(), new UltimateFancy(UChat.get().getLang().get("chat.ignored") + msgPlayers.get(sender).toOldFormat()));
+                        msgPlayers.put(UChat.get().getServer().getConsoleSender(), new UltimateFancy(UChat.get(), UChat.get().getLang().get("chat.ignored") + msgPlayers.get(sender).toOldFormat()));
                     }
                 }
 
@@ -343,7 +342,7 @@ public class UCMessages {
 
     @SuppressWarnings("deprecation")
     public static UltimateFancy sendMessage(CommandSender sender, Object receiver, String msg, UCChannel ch) {
-        UltimateFancy fanci = new UltimateFancy();
+        UltimateFancy fanci = new UltimateFancy(UChat.get());
 
         if (!ch.getName().equals("tell")) {
             String[] defaultBuilder = UChat.get().getUCConfig().getDefBuilder();

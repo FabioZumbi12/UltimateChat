@@ -29,7 +29,6 @@ import br.net.fabiozumbi12.UltimateChat.Bukkit.*;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCPerms;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCUtil;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UChatColor;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UltimateFancy;
 import jdalib.jda.api.JDA;
 import jdalib.jda.api.JDABuilder;
 import jdalib.jda.api.entities.*;
@@ -38,6 +37,7 @@ import jdalib.jda.api.exceptions.ErrorResponseException;
 import jdalib.jda.api.exceptions.PermissionException;
 import jdalib.jda.api.exceptions.RateLimitedException;
 import jdalib.jda.api.hooks.ListenerAdapter;
+import br.net.fabiozumbi12.UltimateFancy.UltimateFancy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -255,7 +255,7 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
                     UCUtil.performCommand(null, Bukkit.getServer().getConsoleSender(), message);
                     used++;
                 } else {
-                    UltimateFancy fancy = new UltimateFancy();
+                    UltimateFancy fancy = new UltimateFancy(UChat.get());
 
                     //format prefixes tags
                     String formated = formatTags(ch.getDiscordtoMCFormat(), ch, e, "", "");

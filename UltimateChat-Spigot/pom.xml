@@ -132,6 +132,12 @@
             <version>LATEST</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
+            <artifactId>UltimateFancy</artifactId>
+            <version>1.9.1</version>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- Discord bridge -->
         <dependency>
@@ -158,10 +164,6 @@
             <id>Translation-API</id>
             <url>https://raw.githubusercontent.com/FabioZumbi12/TranslationAPI/mvn-repo/</url>
         </repository>
-        <!--<repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>-->
     </repositories>
 
     <build>

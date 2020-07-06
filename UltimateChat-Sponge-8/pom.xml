@@ -77,6 +77,12 @@
             <version>LATEST</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
+            <artifactId>UltimateFancy</artifactId>
+            <version>LATEST</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -96,6 +102,7 @@
                         <configuration>
                             <artifactSet>
                                 <includes>
+                                    <include>br.net.fabiozumbi12.UltimateChat:UltimateFancy</include>
                                     <include>br.net.fabiozumbi12.UltimateChat:UltimateChat-Bungee</include>
                                     <include>br.net.fabiozumbi12.UltimateChat:UltimateChat-Spigot</include>
                                     <include>br.net.fabiozumbi12.UltimateChat:UltimateChat-Sponge-56</include>

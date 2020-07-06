@@ -30,6 +30,7 @@ import br.net.fabiozumbi12.UltimateChat.Bukkit.API.PlayerChangeChannelEvent;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.API.SendChannelMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.util.*;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCLogger.timingType;
+import br.net.fabiozumbi12.UltimateFancy.UltimateFancy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -190,7 +191,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
                             //ch list
                             if (args[0].equalsIgnoreCase("list")) {
                                 UChat.get().getLang().sendMessage(p, "&7------------------------------------------");
-                                UltimateFancy fancy = new UltimateFancy();
+                                UltimateFancy fancy = new UltimateFancy(UChat.get());
                                 fancy.coloredText(UChat.get().getLang().get("help.channels.available").replace("{channels}", "")).next();
                                 boolean first = true;
                                 for (UCChannel ch : UChat.get().getChannels().values()) {
@@ -1135,7 +1136,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
         }
         UChat.get().getLang().sendMessage(p, "&7------------------------------------------");
 
-        UltimateFancy fancy = new UltimateFancy();
+        UltimateFancy fancy = new UltimateFancy(UChat.get());
         fancy.text(UChat.get().getLang().get("_UChat.prefix") + " " + UChat.get().getLang().get("help.channels.available").replace("{channels}", "")).next();
 
         boolean first = true;

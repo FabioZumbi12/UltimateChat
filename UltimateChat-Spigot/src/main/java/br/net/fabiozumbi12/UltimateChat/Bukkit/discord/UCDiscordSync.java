@@ -1,9 +1,9 @@
 package br.net.fabiozumbi12.UltimateChat.Bukkit.discord;
 
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UChat;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UltimateFancy;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
+import br.net.fabiozumbi12.UltimateFancy.UltimateFancy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.*;
@@ -267,12 +267,12 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
                     code = getPlayerPending(p.getName());
                 }
                 if (addPendingCode(p.getName(), code)) {
-                    UltimateFancy fancy = new UltimateFancy(UChat.get().getLang().get("_UChat.prefix") + " " + UChat.get().getLang().get("discord.sync-done").replace("{code}", code));
+                    UltimateFancy fancy = new UltimateFancy(UChat.get() ,UChat.get().getLang().get("_UChat.prefix") + " " + UChat.get().getLang().get("discord.sync-done").replace("{code}", code));
                     fancy.hoverShowText(UChat.get().getLang().get("discord.sync-click"));
                     fancy.clickSuggestCmd(code);
                     fancy.send(p);
                 } else {
-                    UltimateFancy fancy = new UltimateFancy(UChat.get().getLang().get("_UChat.prefix") + " " + UChat.get().getLang().get("discord.sync-fail"));
+                    UltimateFancy fancy = new UltimateFancy(UChat.get(), UChat.get().getLang().get("_UChat.prefix") + " " + UChat.get().getLang().get("discord.sync-fail"));
                     fancy.send(p);
                 }
             }
@@ -283,12 +283,12 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
                     code = getPlayerPending(p);
                 }
                 if (addPendingCode(p, code)) {
-                    UltimateFancy fancy = new UltimateFancy(UChat.get().getLang().get("_UChat.prefix") + " " + UChat.get().getLang().get("discord.sync-done").replace("{code}", code));
+                    UltimateFancy fancy = new UltimateFancy(UChat.get(), UChat.get().getLang().get("_UChat.prefix") + " " + UChat.get().getLang().get("discord.sync-done").replace("{code}", code));
                     fancy.hoverShowText(UChat.get().getLang().get("discord.sync-click"));
                     fancy.clickSuggestCmd(code);
                     fancy.send(commandSender);
                 } else {
-                    UltimateFancy fancy = new UltimateFancy(UChat.get().getLang().get("_UChat.prefix") + " " + UChat.get().getLang().get("discord.sync-fail"));
+                    UltimateFancy fancy = new UltimateFancy(UChat.get(), UChat.get().getLang().get("_UChat.prefix") + " " + UChat.get().getLang().get("discord.sync-fail"));
                     fancy.send(commandSender);
                 }
             }

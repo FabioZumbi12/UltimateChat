@@ -28,9 +28,8 @@ package br.net.fabiozumbi12.UltimateChat.Bukkit.jedis;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.*;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCPerms;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UChatColor;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UltimateFancy;
+import br.net.fabiozumbi12.UltimateFancy.UltimateFancy;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import redis.clients.jedis.Jedis;
@@ -113,7 +112,7 @@ public class UCJedisLoader {
     }
 
     public void sendTellMessage(CommandSender sender, String tellReceiver, String msg) {
-        UltimateFancy fancy = new UltimateFancy();
+        UltimateFancy fancy = new UltimateFancy(UChat.get());
         fancy.textAtStart(UChatColor.translateAlternateColorCodes(this.thisId));
 
         //spy

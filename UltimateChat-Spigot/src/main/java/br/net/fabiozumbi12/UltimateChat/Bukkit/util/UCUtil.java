@@ -28,12 +28,12 @@ package br.net.fabiozumbi12.UltimateChat.Bukkit.util;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UCChannel;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UCMessages;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UChat;
+import br.net.fabiozumbi12.UltimateFancy.UltimateFancy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -111,7 +111,7 @@ public class UCUtil {
             return true;
         }
 
-        UltimateFancy fancy = new UltimateFancy();
+        UltimateFancy fancy = new UltimateFancy(UChat.get());
         boolean first = true;
         for (String arg : args) {
             if (first) {
@@ -219,7 +219,7 @@ public class UCUtil {
         }
 
         if (UChat.get().getUCConfig().getBoolean("general.json-events")) {
-            UltimateFancy fanci = new UltimateFancy();
+            UltimateFancy fanci = new UltimateFancy(UChat.get());
             fanci.coloredText(finalMsg);
 
             if (hover.toString().length() > 1) {
@@ -269,11 +269,6 @@ public class UCUtil {
 
     /*   ------ color util --------   */
     private static final Map<ChatColor, ColorSet<Integer, Integer, Integer>> colorMap = new HashMap<>();
-
-    public static ChatColor fromHex(String hex) {
-        Color color = Color.decode(hex);
-        return fromRGB(color.getRed(), color.getGreen(), color.getBlue());
-    }
 
     public static ChatColor fromRGB(int r, int g, int b) {
         TreeMap<Integer, ChatColor> closest = new TreeMap<>();

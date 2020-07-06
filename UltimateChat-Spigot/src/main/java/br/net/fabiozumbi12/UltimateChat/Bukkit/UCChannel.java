@@ -27,7 +27,7 @@ package br.net.fabiozumbi12.UltimateChat.Bukkit;
 
 import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCLogger.timingType;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCPerms;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UltimateFancy;
+import br.net.fabiozumbi12.UltimateFancy.UltimateFancy;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -392,7 +392,7 @@ public class UCChannel {
      */
     @Deprecated
     public void sendMessage(Player sender, String message) {
-        sendMessage(sender, new UltimateFancy(message), false);
+        sendMessage(sender, new UltimateFancy(UChat.get(), message), false);
     }
 
     /**
@@ -457,7 +457,7 @@ public class UCChannel {
         if (UChat.get().getUCConfig().getBoolean("api.format-console-messages")) {
             UCMessages.sendFancyMessage(new String[0], message, this, sender, null);
         } else {
-            UltimateFancy fmsg = new UltimateFancy(message);
+            UltimateFancy fmsg = new UltimateFancy(UChat.get(), message);
             for (Player p : Bukkit.getOnlinePlayers()) {
                 UCChannel chp = UChat.get().getPlayerChannel(p);
                 if (UCPerms.channelReadPerm(p, this) && !this.isIgnoring(p.getName()) && (!this.neeFocus() || chp.equals(this))) {
