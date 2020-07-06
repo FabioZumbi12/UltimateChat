@@ -1,0 +1,176 @@
+<!--
+  Copyright @FabioZumbi12
+
+  This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
+   damages arising from the use of this class.
+
+  Permission is granted to anyone to use this class for any purpose, including commercial plugins, and to alter it and
+  redistribute it freely, subject to the following restrictions:
+  1 - The origin of this class must not be misrepresented; you must not claim that you wrote the original software. If you
+  use this class in other plugins, an acknowledgment in the plugin documentation would be appreciated but is not required.
+  2 - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original class.
+  3 - This notice may not be removed or altered from any source distribution.
+
+  Esta classe é fornecida "como está", sem qualquer garantia expressa ou implícita. Em nenhum caso os autores serão
+  responsabilizados por quaisquer danos decorrentes do uso desta classe.
+
+  É concedida permissão a qualquer pessoa para usar esta classe para qualquer finalidade, incluindo plugins pagos, e para
+  alterá-lo e redistribuí-lo livremente, sujeito às seguintes restrições:
+  1 - A origem desta classe não deve ser deturpada; você não deve afirmar que escreveu a classe original. Se você usar esta
+   classe em um plugin, uma confirmação de autoria na documentação do plugin será apreciada, mas não é necessária.
+  2 - Versões de origem alteradas devem ser claramente marcadas como tal e não devem ser deturpadas como sendo a
+  classe original.
+  3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
+  -->
+
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
+        <artifactId>UltimateChat</artifactId>
+        <version>1.9.1</version>
+    </parent>
+    <artifactId>UltimateChat-Spigot</artifactId>
+
+    <dependencies>
+        <!--Spigot-API-->
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>${mineVersion}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>${mineVersion}</version>
+            <classifier>javadoc</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>me.clip</groupId>
+            <artifactId>placeholderapi</artifactId>
+            <version>LATEST</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- start of local repos -->
+
+        <dependency>
+            <groupId>com.github.SaberLLC</groupId>
+            <artifactId>Saber-Factions</artifactId>
+            <version>LATEST</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/SaberFactions.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>SimpleClans</groupId>
+            <artifactId>SimpleClans</artifactId>
+            <version>v1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/SimpleClans.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>MassiveCore</groupId>
+            <artifactId>MassiveCore</artifactId>
+            <version>v1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/MassiveCore.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>Factions</groupId>
+            <artifactId>Factions</artifactId>
+            <version>v1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/Factions.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>Dynmap</groupId>
+            <artifactId>API</artifactId>
+            <version>v3.0-beta10</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/Dynmap-3.0-beta-10-spigot.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>at.pcgamingfreaks</groupId>
+            <artifactId>MarriageMaster</artifactId>
+            <version>1.31.16</version>
+            <scope>provided</scope>
+        </dependency>
+		<dependency>
+			<groupId>at.pcgamingfreaks</groupId>
+			<artifactId>MarriageMaster-API</artifactId>
+			<version>2.0.1</version>
+			<scope>provided</scope>
+		</dependency>
+        <dependency>
+            <groupId>com.lenis0012.bukkit</groupId>
+            <artifactId>marriage2</artifactId>
+            <version>2.0.15</version>
+        </dependency>
+        <dependency>
+            <groupId>net.milkbowl.vault</groupId>
+            <artifactId>VaultAPI</artifactId>
+            <version>1.7</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.ess3</groupId>
+            <artifactId>EssentialsX</artifactId>
+            <version>2.16.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.comphenix.protocol</groupId>
+            <artifactId>ProtocolLib-API</artifactId>
+            <version>LATEST</version>
+        </dependency>
+        <dependency>
+            <groupId>br.net.fabiozumbi12</groupId>
+            <artifactId>TranslationAPI</artifactId>
+            <version>LATEST</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
+            <artifactId>UltimateFancy</artifactId>
+            <version>1.9.1</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Discord bridge -->
+        <dependency>
+            <groupId>JDALib</groupId>
+            <artifactId>Loader</artifactId>
+            <version>v4.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/../UltimateChat-JDA/target/UltimateChat-JDA.jar</systemPath>
+        </dependency>
+    </dependencies>
+
+    <repositories>
+        <repository>
+            <id>maven-restlet</id>
+            <name>Public online Restlet repository</name>
+            <url>http://maven.restlet.com</url>
+        </repository>
+		<!-- PCGF Repo for Marriage Master -->
+		<repository>
+			<id>pcgf-repo</id>
+			<url>https://repo.pcgamingfreaks.at/repository/maven-everything/</url>
+		</repository>
+        <repository>
+            <id>Translation-API</id>
+            <url>https://raw.githubusercontent.com/FabioZumbi12/TranslationAPI/mvn-repo/</url>
+        </repository>
+    </repositories>
+
+    <build>
+        <finalName>DONT-DOWNLOAD-Spigot-Reference</finalName>
+    </build>
+
+    <properties>
+        <mineVersion>1.16.1-R0.1-SNAPSHOT</mineVersion>
+    </properties>
+</project>
