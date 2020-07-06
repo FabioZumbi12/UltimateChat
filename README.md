@@ -23,4 +23,44 @@ Check WIKI for:
 * API Usage
 * ...and more
 
+## APIs:
+
+**Repository:**  
+```xml
+<repositories> 
+    <repository> 
+        <id>ultimatechat-repo</id> 
+        <url>https://raw.githubusercontent.com/FabioZumbi12/UltimateChat/mvn-repo/</url> 
+    </repository> 
+</repositories>
+```
+
+
+**UltimateChat API:**  
+```xml
+<dependencies>
+    <dependency>
+        <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
+        <artifactId>UltimateChat-[version]</artifactId>
+        <version>LATEST</version>
+        <scope>provided</scope>
+    </dependency> 
+</dependencies>
+```
+Check ultimatechat version here: https://github.com/FabioZumbi12/UltimateChat/tree/mvn-repo/br/net/fabiozumbi12/UltimateChat  
+
+
+**UltimateFancy API:**
+```xml
+<dependencies>
+    <dependency>
+        <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
+        <artifactId>UltimateFancy</artifactId>
+        <version>LATEST</version>
+        <scope>provided</scope>
+    </dependency> 
+</dependencies>
+```
+
+## Wiki:
 UltimateChat WIKI: [Click Here!](https://github.com/FabioZumbi12/UltimateChat/wiki)
