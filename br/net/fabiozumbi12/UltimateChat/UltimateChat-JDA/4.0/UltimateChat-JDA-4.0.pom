@@ -1,0 +1,147 @@
+<!--
+  Copyright @FabioZumbi12
+
+  This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
+   damages arising from the use of this class.
+
+  Permission is granted to anyone to use this class for any purpose, including commercial plugins, and to alter it and
+  redistribute it freely, subject to the following restrictions:
+  1 - The origin of this class must not be misrepresented; you must not claim that you wrote the original software. If you
+  use this class in other plugins, an acknowledgment in the plugin documentation would be appreciated but is not required.
+  2 - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original class.
+  3 - This notice may not be removed or altered from any source distribution.
+
+  Esta classe é fornecida "como está", sem qualquer garantia expressa ou implícita. Em nenhum caso os autores serão
+  responsabilizados por quaisquer danos decorrentes do uso desta classe.
+
+  É concedida permissão a qualquer pessoa para usar esta classe para qualquer finalidade, incluindo plugins pagos, e para
+  alterá-lo e redistribuí-lo livremente, sujeito às seguintes restrições:
+  1 - A origem desta classe não deve ser deturpada; você não deve afirmar que escreveu a classe original. Se você usar esta
+   classe em um plugin, uma confirmação de autoria na documentação do plugin será apreciada, mas não é necessária.
+  2 - Versões de origem alteradas devem ser claramente marcadas como tal e não devem ser deturpadas como sendo a
+  classe original.
+  3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
+  -->
+
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
+        <artifactId>UltimateChat</artifactId>
+        <version>1.9.1</version>
+    </parent>
+    <artifactId>UltimateChat-JDA</artifactId>
+    <version>4.0</version>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>1.15.2-R0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.spongepowered</groupId>
+            <artifactId>spongeapi</artifactId>
+            <version>${spongeVersion}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.dv8tion</groupId>
+            <artifactId>JDA</artifactId>
+            <version>4.1.1_129</version>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <finalName>DONT-DOWNLOAD-UltimateChat-JDA-reference</finalName>
+        <plugins>
+
+            <!-- Ignore deploy to github -->
+            <plugin>
+                <groupId>com.github.github</groupId>
+                <artifactId>site-maven-plugin</artifactId>
+                <version>0.11</version>
+                <executions>
+                    <execution>
+                        <id>deploying</id>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <artifactSet>
+                                <includes>
+                                    <include>net.dv8tion:JDA</include>
+                                    <include>com.google.code.findbugs:jsr305</include>
+                                    <include>com.neovisionaries:nv-websocket-client</include>
+                                    <include>com.squareup.okhttp3:okhttp</include>
+                                    <include>org.apache.commons:commons-collections4</include>
+                                    <include>net.sf.trove4j:trove4j</include>
+                                    <include>com.fasterxml.jackson.core:jackson-core</include>
+                                    <include>com.fasterxml.jackson.core:jackson-databind</include>
+                                    <include>com.fasterxml.jackson.core:jackson-annotations</include>
+                                    <include>com.squareup.okio:okio</include>
+                                </includes>
+                            </artifactSet>
+                            <minimizeJar>true</minimizeJar>
+                            <outputFile>${project.basedir}/target/UltimateChat-JDA.jar</outputFile>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <includes>
+                                        <include>**</include>
+                                    </includes>
+                                </filter>
+                            </filters>
+                            <relocations>
+                                <relocation>
+                                    <pattern>com.google</pattern>
+                                    <shadedPattern>jdalib.com.google</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>net.dv8tion.jda</pattern>
+                                    <shadedPattern>jdalib.jda</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.apache</pattern>
+                                    <shadedPattern>jdalib.org.apache</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.reflections</pattern>
+                                    <shadedPattern>jdalib.org.reflections</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.json</pattern>
+                                    <shadedPattern>jdalib.org.json</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.fasterxml</pattern>
+                                    <shadedPattern>jdalib.com.fasterxml</shadedPattern>
+                                </relocation>
+                            </relocations>
+                        </configuration>
+                    </execution>
+                </executions>
+                <configuration>
+                    <createDependencyReducedPom>false</createDependencyReducedPom>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <properties>
+        <spongeVersion>7.1.0-SNAPSHOT</spongeVersion>
+    </properties>
+</project>
