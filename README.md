@@ -50,14 +50,15 @@ Check WIKI for:
 Check ultimatechat version here: https://github.com/FabioZumbi12/UltimateChat/tree/mvn-repo/br/net/fabiozumbi12/UltimateChat  
 
 
-**UltimateFancy API:**
+**UltimateFancy API:**  
+You need to shade UltimateFancy into your plugin or compile the jar.  
 ```xml
 <dependencies>
     <dependency>
         <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
         <artifactId>UltimateFancy</artifactId>
         <version>LATEST</version>
-        <scope>provided</scope>
+        <scope>compile</scope>
     </dependency> 
 </dependencies>
 ```
