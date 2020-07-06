@@ -45,6 +45,12 @@ Check WIKI for:
         <version>LATEST</version>
         <scope>provided</scope>
     </dependency> 
+    <dependency>
+        <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
+        <artifactId>UltimateChat-[version]</artifactId>
+        <version>LATEST</version>
+        <classifier>javadoc</classifier>
+    </dependency>
 </dependencies>
 ```
 Check ultimatechat version here: https://github.com/FabioZumbi12/UltimateChat/tree/mvn-repo/br/net/fabiozumbi12/UltimateChat  
@@ -60,6 +66,12 @@ You need to shade UltimateFancy into your plugin or compile the jar.
         <version>LATEST</version>
         <scope>compile</scope>
     </dependency> 
+    <dependency>
+        <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
+        <artifactId>UltimateFancy</artifactId>
+        <version>LATEST</version>
+        <classifier>javadoc</classifier>
+    </dependency>
 </dependencies>
 ```
 
