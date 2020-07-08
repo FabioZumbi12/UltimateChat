@@ -56,6 +56,8 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -375,6 +377,11 @@ public class UChat extends JavaPlugin {
             if (checkJDA()) {
                 this.logger.info("JDA LibLoader is present...");
                 if (this.UCJDA != null) {
+                    if (this.sync != null) {
+                        if (sc != null)
+                            HandlerList.unregisterAll(this.sync.ddSimpleClansChat);
+                        this.sync = null;
+                    }
                     Bukkit.getScheduler().cancelTask(this.UCJDA.getTaskId());
                     this.UCJDA.shutdown();
                     this.UCJDA = null;
@@ -386,6 +393,9 @@ public class UChat extends JavaPlugin {
                         this.logger.info("JDA is not available due errors before...");
                     } else {
                         this.sync = new UCDiscordSync();
+                        if (sc != null)
+                            Bukkit.getPluginManager().registerEvents(this.sync.ddSimpleClansChat, this);
+
                         this.logger.info("JDA connected and ready to use!");
                         if (start) this.UCJDA.sendRawToDiscord(lang.get("discord.start"));
                     }

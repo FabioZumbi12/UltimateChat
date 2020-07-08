@@ -42,6 +42,10 @@ public interface UCDInterface {
 
     void sendToDiscord(CommandSender sender, String text, UCChannel ch);
 
+    void sendToChannel(String id, String text);
+
+    String getSyncNickName(String ddId);
+
     void updateGame(String text);
 
     void sendCommandsToDiscord(String text);

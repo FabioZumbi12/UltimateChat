@@ -33,13 +33,14 @@ import jdalib.jda.api.JDA;
 import jdalib.jda.api.JDABuilder;
 import jdalib.jda.api.Permission;
 import jdalib.jda.api.entities.*;
+import br.net.fabiozumbi12.UltimateFancy.UltimateFancy;
 import jdalib.jda.api.events.message.MessageReceivedEvent;
 import jdalib.jda.api.exceptions.ErrorResponseException;
 import jdalib.jda.api.exceptions.PermissionException;
 import jdalib.jda.api.exceptions.RateLimitedException;
 import jdalib.jda.api.hooks.ListenerAdapter;
-import br.net.fabiozumbi12.UltimateFancy.UltimateFancy;
 import net.sacredlabyrinth.phaed.simpleclans.Clan;
+import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -235,6 +236,70 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
             return;
         }
 
+        // Check clan channel
+        String channelId = e.getTextChannel().getId();
+        Optional<Map.Entry<String, Object>> clanCfg = UChat.get().getDDSync().getConfig().getConfigurationSection("simple-clans-sync.clans").getValues(true)
+                .entrySet().stream().filter(entry -> entry.getValue().equals(channelId)).findFirst();
+        if (clanCfg.isPresent()) {
+            Clan clan = UChat.sc.getClanManager().getClan(clanCfg.get().getKey().split("\\.")[0]);
+            if (clan != null) {
+
+                String leaderColor = UChat.sc.getSettingsManager().getClanChatLeaderColor();
+                String memberColor = UChat.sc.getSettingsManager().getClanChatMemberColor();
+                String memberRank = UChat.sc.getSettingsManager().getClanChatRank();
+                String rankColor = UChat.sc.getSettingsManager().getClanChatRankColor();
+
+                final String[] chatTemplate = {UChat.sc.getSettingsManager().getClanChatFormat()
+                        .replace("%clan%", clan.getTag().toUpperCase())};
+
+                String finalMessage = message;
+                String nickColor = memberColor;
+
+                String sender = UChat.get().getDDSync().getSyncNickName(e.getAuthor().getId());
+
+                Optional<ClanPlayer> optionalClanPlayer = clan.getMembers().stream().filter(cp -> cp.getName().equalsIgnoreCase(sender)).findFirst();
+                if (sender != null && optionalClanPlayer.isPresent()) {
+                    ClanPlayer member = optionalClanPlayer.get();
+                    if (member.isLeader()) {
+                        nickColor = leaderColor;
+                    }
+                    chatTemplate[0] = chatTemplate[0]
+                            .replace("%player%", member.getName())
+                            .replace("%nick-color%", nickColor)
+                            .replace("%message%", finalMessage)
+                            .replace("%rank%", member.getRankDisplayName().isEmpty() ? "" : memberRank.replace("%rank%", rankColor + member.getRankDisplayName()));
+
+                    clan.getMembers().forEach(members -> {
+                        if (members.toPlayer() != null) {
+                            UltimateFancy fancy = formatDDMessage(e, ChatColor.translateAlternateColorCodes('&', chatTemplate[0]), null);
+                            fancy.send(members.toPlayer());
+                        }
+                    });
+                    UltimateFancy consoleFancy = formatDDMessage(e, ChatColor.AQUA + "[Discord] " + ChatColor.DARK_GRAY + ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', chatTemplate[0])), null);
+                    consoleFancy.send(Bukkit.getConsoleSender());
+                } else {
+                    // If not member or sender is not sync
+                    String senderString = ChatColor.AQUA + "[Discord] ";
+                    if (sender != null) {
+                        senderString += sender;
+                    } else {
+                        senderString += e.getAuthor().getName();
+                    }
+                    String finalMessage1 = message;
+                    String finalSenderString = senderString;
+                    clan.getMembers().forEach(members -> {
+                        if (members.toPlayer() != null) {
+                            UltimateFancy fancy = formatDDMessage(e, ChatColor.translateAlternateColorCodes('&', finalSenderString + ": " + finalMessage1), null);
+                            fancy.send(members.toPlayer());
+                        }
+                    });
+                    UltimateFancy consoleFancy = formatDDMessage(e, ChatColor.AQUA + "[Discord] " + ChatColor.DARK_GRAY + ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', message)), null);
+                    consoleFancy.send(Bukkit.getConsoleSender());
+                }
+            }
+            return;
+        }
+
         if (e.getMember().getUser().isFake()) return;
         int used = 0;
 
@@ -262,71 +327,7 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
                     }
                     UCUtil.performCommand(null, Bukkit.getServer().getConsoleSender(), message);
                 } else {
-                    UltimateFancy fancy = new UltimateFancy(UChat.get());
-
-                    //format prefixes tags
-                    String formated = formatTags(ch.getDiscordtoMCFormat(), ch, e, "", "");
-
-                    //add dd channel name to hover
-                    String hovered = formatTags(ch.getDiscordHover(), ch, e, "", "");
-                    fancy.text(formated);
-                    if (!hovered.isEmpty()) {
-                        fancy.hoverShowText(hovered);
-                    }
-                    fancy.next();
-
-                    //format message
-                    if (!e.getMessage().getAttachments().isEmpty()) {
-                        try {
-                            fancy.clickOpenURL(new URL(e.getMessage().getAttachments().get(0).getUrl()));
-                            fancy.hoverShowText(e.getMessage().getAttachments().get(0).getFileName());
-                            if (message.isEmpty()) {
-                                fancy.text("- Attachment -");
-                            } else {
-                                fancy.text(message);
-                            }
-                        } catch (MalformedURLException ignore) {
-                        }
-                    } else {
-                        message = message.replace("\\n", "\n");
-
-                        //emoji
-                        Pattern pe = Pattern.compile(":(.+?):");
-                        Matcher me = pe.matcher(message);
-                        if (me.find())
-                            message = message.replaceAll("<:(.+?)>", ":" + me.group(1) + ":");
-                        else
-                            message = message.replaceAll("<:(.+?)>", ":?:");
-
-                        //user and role name
-                        Pattern pp = Pattern.compile("<@(.+?)>");
-                        Matcher mp = pp.matcher(message);
-                        if (mp.find()){
-                            if (e.getMessage().getMentionedRoles().stream().findFirst().isPresent()){
-                                String role = e.getMessage().getMentionedRoles().stream().findFirst().get().getName();
-                                message = message.replaceAll("<@(.+?)>", "@" + role);
-                            } else
-                            if (e.getMessage().getMentionedMembers().stream().findFirst().isPresent()){
-                                String nick = e.getMessage().getMentionedMembers().stream().findFirst().get().getNickname();
-                                if (nick == null || nick.isEmpty())
-                                    nick = e.getMessage().getMentionedMembers().stream().findFirst().get().getEffectiveName();
-
-                                message = message.replaceAll("<@(.+?)>", "@" + nick);
-                            }
-                            else
-                                message = message.replaceAll("<@(.+?)>", "@?");
-                        }
-
-                        //channel
-                        Pattern pc = Pattern.compile("<#(.+?)>");
-                        Matcher mc = pc.matcher(message);
-                        if (mc.find() && e.getMessage().getMentionedChannels().stream().anyMatch(chg -> chg.getId().equals(mc.group(1))))
-                            message = message.replaceAll("<#(.+?)>", "#" + e.getMessage().getMentionedChannels().stream().filter(chg -> chg.getId().equals(mc.group(1))).findFirst().get().getName());
-                        else
-                            message = message.replaceAll("<#(.+?)>", "#?");
-
-                        fancy.text(message);
-                    }
+                    UltimateFancy fancy = formatDDMessage(e, message, ch);
                     ch.sendMessage(uchat.getServer().getConsoleSender(), fancy, true);
                 }
                 used++;
@@ -350,6 +351,77 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
             }
             UCUtil.performCommand(null, Bukkit.getServer().getConsoleSender(), message);
         }
+    }
+
+    private UltimateFancy formatDDMessage(MessageReceivedEvent e, String message, UCChannel ch) {
+        UltimateFancy fancy = new UltimateFancy(UChat.get());
+
+        if (ch != null) {
+            //format prefixes tags
+            String formated = formatTags(ch.getDiscordtoMCFormat(), ch, e, "", "");
+
+            //add dd channel name to hover
+            String hovered = formatTags(ch.getDiscordHover(), ch, e, "", "");
+            fancy.text(formated);
+            if (!hovered.isEmpty()) {
+                fancy.hoverShowText(hovered);
+            }
+            fancy.next();
+        }
+
+        //format message
+        if (!e.getMessage().getAttachments().isEmpty()) {
+            try {
+                fancy.clickOpenURL(new URL(e.getMessage().getAttachments().get(0).getUrl()));
+                fancy.hoverShowText(e.getMessage().getAttachments().get(0).getFileName());
+                if (message.isEmpty()) {
+                    fancy.text("- Attachment -");
+                } else {
+                    fancy.text(message);
+                }
+            } catch (MalformedURLException ignore) {
+            }
+        } else {
+            message = message.replace("\\n", "\n");
+
+            //emoji
+            Pattern pe = Pattern.compile(":(.+?):");
+            Matcher me = pe.matcher(message);
+            if (me.find())
+                message = message.replaceAll("<:(.+?)>", ":" + me.group(1) + ":");
+            else
+                message = message.replaceAll("<:(.+?)>", ":?:");
+
+            //user and role name
+            Pattern pp = Pattern.compile("<@(.+?)>");
+            Matcher mp = pp.matcher(message);
+            if (mp.find()){
+                if (e.getMessage().getMentionedRoles().stream().findFirst().isPresent()){
+                    String role = e.getMessage().getMentionedRoles().stream().findFirst().get().getName();
+                    message = message.replaceAll("<@(.+?)>", "@" + role);
+                } else
+                if (e.getMessage().getMentionedMembers().stream().findFirst().isPresent()){
+                    String nick = e.getMessage().getMentionedMembers().stream().findFirst().get().getNickname();
+                    if (nick == null || nick.isEmpty())
+                        nick = e.getMessage().getMentionedMembers().stream().findFirst().get().getEffectiveName();
+
+                    message = message.replaceAll("<@(.+?)>", "@" + nick);
+                }
+                else
+                    message = message.replaceAll("<@(.+?)>", "@?");
+            }
+
+            //channel
+            Pattern pc = Pattern.compile("<#(.+?)>");
+            Matcher mc = pc.matcher(message);
+            if (mc.find() && e.getMessage().getMentionedChannels().stream().anyMatch(chg -> chg.getId().equals(mc.group(1))))
+                message = message.replaceAll("<#(.+?)>", "#" + e.getMessage().getMentionedChannels().stream().filter(chg -> chg.getId().equals(mc.group(1))).findFirst().get().getName());
+            else
+                message = message.replaceAll("<#(.+?)>", "#?");
+
+            fancy.text(message);
+        }
+        return fancy;
     }
 
     public void updateGame(String text) {
@@ -389,7 +461,7 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
         }
     }
 
-    private void sendToChannel(String id, String text) {
+    public void sendToChannel(String id, String text) {
         if (id.isEmpty()) return;
         text = text.replaceAll("([&" + ChatColor.COLOR_CHAR + "]([a-fA-Fk-oK-ORr0-9]))", "");
         TextChannel ch = jda.getTextChannelById(id);
@@ -401,6 +473,11 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
             uchat.getUCLogger().warning("JDA: The channel ID [" + id + "] is incorrect, not available or Discord is offline, in maintenance or some other connection problem.");
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public String getSyncNickName(String ddId) {
+        return null;
     }
 
     public void setPlayerRole(String ddUser, List<String> ddRoleIds, String nick, List<String> configRoles) {

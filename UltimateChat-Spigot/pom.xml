@@ -65,11 +65,10 @@
             <systemPath>${project.basedir}/libs/SaberFactions.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>SimpleClans</groupId>
+            <groupId>net.sacredlabyrinth.phaed.simpleclans</groupId>
             <artifactId>SimpleClans</artifactId>
-            <version>v1</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/SimpleClans.jar</systemPath>
+            <version>LATEST</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -163,6 +162,10 @@
         <repository>
             <id>Translation-API</id>
             <url>https://raw.githubusercontent.com/FabioZumbi12/TranslationAPI/mvn-repo/</url>
+        </repository>
+        <repository>
+            <id>bintray-roinujnosde-bukkit-plugins</id>
+            <url>https://dl.bintray.com/roinujnosde/bukkit-plugins</url>
         </repository>
     </repositories>
 

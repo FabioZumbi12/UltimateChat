@@ -1,14 +1,13 @@
 package br.net.fabiozumbi12.UltimateChat.Bukkit.discord;
 
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UChat;
+import br.net.fabiozumbi12.UltimateFancy.UltimateFancy;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
-import br.net.fabiozumbi12.UltimateFancy.UltimateFancy;
+import com.massivecraft.massivecore.store.Coll;
 import jdalib.jda.api.Permission;
 import jdalib.jda.api.entities.*;
 import jdalib.jda.api.exceptions.RateLimitedException;
-import jdalib.jda.api.managers.RoleManager;
-import jdalib.jda.internal.utils.PermissionUtil;
 import net.sacredlabyrinth.phaed.simpleclans.Clan;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import org.bukkit.Bukkit;
@@ -24,20 +23,21 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.*;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.*;
 
 import static org.bukkit.Bukkit.getServer;
 
 public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
     private final HashMap<String, String> comments;
-    private YamlConfiguration sync;
+    private final YamlConfiguration sync;
     private int taskId = 0;
+    public DDSimpleClansChat ddSimpleClansChat;
 
     public UCDiscordSync() {
         this.comments = new HashMap<>();
         this.sync = new YamlConfiguration();
+        this.ddSimpleClansChat = new DDSimpleClansChat();
 
         File config = new File(UChat.get().getDataFolder(), "discord-sync.yml");
         if (config.exists()) {
@@ -87,6 +87,8 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
         setDefault("simple-clans-sync.templates.text-channel", "chat", null);
         setDefault("simple-clans-sync.templates.voice-channel", "audio", null);
         setDefault("simple-clans-sync.templates.topic", "{name}({tag}) - {clan-members} members", null);
+        setDefault("simple-clans-sync.templates.chat-to-discord-member", ":shield: **{player}**{rank}: {message}", null);
+        setDefault("simple-clans-sync.templates.chat-to-discord-leader", ":crown: **{player}**{rank}: {message}", null);
 
         setDefault("simple-clans-sync.clans.DEFAULT", null, "Don't change this, this is an example of a synchronized clan\nDon't remove clan channels manually from discord!!");
         setDefault("simple-clans-sync.clans.DEFAULT.role", "1234567890", null);
@@ -319,6 +321,10 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
             }
         });
     }
+
+    public YamlConfiguration getConfig() {
+        return this.sync;
+    }
     
     public void unload() {
         Bukkit.getScheduler().cancelTask(this.taskId);
@@ -383,7 +389,7 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
         saveConfig();
     }
 
-    String getSyncNickName(String ddId) {
+    public String getSyncNickName(String ddId) {
         try {
             for (String key : this.sync.getConfigurationSection("sync-database.sync-players").getKeys(false)) {
                 if (this.sync.getString("sync-database.sync-players." + key).equals(ddId)) return key;
@@ -408,6 +414,27 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
     }
 
     void unlink(String player){
+        String playerId = this.sync.getString("sync-database.sync-players." + player);
+        if (playerId != null) {
+            Guild guild = UChat.get().getUCJDA().getJda().getGuildById(this.sync.getString("guild-id"));
+            Member member = guild.getMemberById(playerId);
+            if (member != null) {
+                List<Role> memberRoles = new ArrayList<>(member.getRoles());
+
+                // Remove clan roles
+                memberRoles.removeIf(r -> this.sync.getConfigurationSection("simple-clans-sync.clans").getValues(true).entrySet().stream().anyMatch(map -> map.getValue().equals(r.getId())));
+
+                // Remove in-game groups roles
+                memberRoles.removeIf(r -> this.sync.getConfigurationSection("group-ids").getValues(true).entrySet().stream().anyMatch(map -> map.getValue().equals(r.getId())));
+
+                try {
+                    guild.modifyMemberRoles(member, memberRoles).complete(true);
+                } catch (RateLimitedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
         this.sync.set("sync-database.sync-players." + player, null);
         saveConfig();
     }
@@ -422,7 +449,6 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
         }
         return salt.toString();
     }
-
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
