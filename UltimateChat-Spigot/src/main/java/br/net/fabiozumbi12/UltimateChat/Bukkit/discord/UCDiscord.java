@@ -31,6 +31,7 @@ import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCUtil;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UChatColor;
 import jdalib.jda.api.JDA;
 import jdalib.jda.api.JDABuilder;
+import jdalib.jda.api.Permission;
 import jdalib.jda.api.entities.*;
 import jdalib.jda.api.events.message.MessageReceivedEvent;
 import jdalib.jda.api.exceptions.ErrorResponseException;
@@ -38,14 +39,17 @@ import jdalib.jda.api.exceptions.PermissionException;
 import jdalib.jda.api.exceptions.RateLimitedException;
 import jdalib.jda.api.hooks.ListenerAdapter;
 import br.net.fabiozumbi12.UltimateFancy.UltimateFancy;
+import net.sacredlabyrinth.phaed.simpleclans.Clan;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import javax.security.auth.login.LoginException;
+import java.awt.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -54,7 +58,7 @@ import static br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCUtil.fromRGB;
 
 public class UCDiscord extends ListenerAdapter implements UCDInterface {
     private JDA jda;
-    private UChat uchat;
+    private final UChat uchat;
     private int taskId;
 
     public UCDiscord(UChat plugin) {
@@ -99,6 +103,10 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
 
     public int getTaskId() {
         return this.taskId;
+    }
+
+    public JDA getJda() {
+        return this.jda;
     }
 
     @Override
@@ -253,7 +261,6 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
                         if (count > 0) continue;
                     }
                     UCUtil.performCommand(null, Bukkit.getServer().getConsoleSender(), message);
-                    used++;
                 } else {
                     UltimateFancy fancy = new UltimateFancy(UChat.get());
 
@@ -321,8 +328,8 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
                         fancy.text(message);
                     }
                     ch.sendMessage(uchat.getServer().getConsoleSender(), fancy, true);
-                    used++;
                 }
+                used++;
             }
         }
 

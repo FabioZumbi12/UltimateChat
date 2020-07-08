@@ -71,7 +71,7 @@ import java.util.*;
 public class UChat extends JavaPlugin {
 
     static boolean SClans;
-    static SimpleClans sc;
+    public static SimpleClans sc;
     static boolean MarryReloded;
     static boolean MarryMasterV1;
 	static boolean MarryMasterV2;

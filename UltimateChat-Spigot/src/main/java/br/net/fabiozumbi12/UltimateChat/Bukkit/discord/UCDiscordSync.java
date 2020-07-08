@@ -4,6 +4,13 @@ import br.net.fabiozumbi12.UltimateChat.Bukkit.UChat;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import br.net.fabiozumbi12.UltimateFancy.UltimateFancy;
+import jdalib.jda.api.Permission;
+import jdalib.jda.api.entities.*;
+import jdalib.jda.api.exceptions.RateLimitedException;
+import jdalib.jda.api.managers.RoleManager;
+import jdalib.jda.internal.utils.PermissionUtil;
+import net.sacredlabyrinth.phaed.simpleclans.Clan;
+import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.*;
@@ -13,10 +20,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.SimplePluginManager;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.bukkit.Bukkit.getServer;
 
@@ -61,6 +71,29 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
                         "The role need to be MENTIONABLE to allow you to get the id");
         setDefault("group-ids.group-example", Collections.singletonList("1234567890123"), null);
 
+        // Sync simple clans
+        setDefault("simple-clans-sync", null, "Enable SimpleClans role synchronization with sync players?\n" +
+                "BY ENABLING THIS, ALL CLAN CHANNELS AND CATEGORIES WILL BE CREATED AT ONCE!! Test in a test guild if possible!!\n" +
+                "Before enable this, check if you bot have the ADMINISTRATION permission, needed to handle role permissions");
+        setDefault("simple-clans-sync.enable", false, null);
+        setDefault("simple-clans-sync.whitelist", Collections.singletonList("DEFAULT"), "Only this clans tags will be sync with server.\n" +
+                "Add \"ALL\" to list to allow all clans.\n" +
+                "Remove a clan from here to delete the role and clan channels from discord.");
+
+        setDefault("simple-clans-sync.templates", null, "Templates for Discord category and channels");
+        setDefault("simple-clans-sync.templates.role", "\uD83D\uDEA9 Clan - {tag}", null);
+        setDefault("simple-clans-sync.templates.role-color", "0fc5f0", null);
+        setDefault("simple-clans-sync.templates.category", "\uD83D\uDEA9 {name}", null);
+        setDefault("simple-clans-sync.templates.text-channel", "chat", null);
+        setDefault("simple-clans-sync.templates.voice-channel", "audio", null);
+
+        setDefault("simple-clans-sync.clans.DEFAULT", null, "Don't change this, this is an example of a synchronized clan\nDon't remove clan channels manually from discord!!");
+        setDefault("simple-clans-sync.clans.DEFAULT.role", "1234567890", null);
+        setDefault("simple-clans-sync.clans.DEFAULT.category", "1234567890", null);
+        setDefault("simple-clans-sync.clans.DEFAULT.text-channel", "1234567890", null);
+        setDefault("simple-clans-sync.clans.DEFAULT.voice-channel", "1234567890", null);
+
+        // Register command
         if (getServer().getPluginCommand("discord-sync").isRegistered()) {
             try {
                 Field field = SimplePluginManager.class.getDeclaredField("commandMap");
@@ -71,20 +104,49 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
             }
         }
 
+        // Enable sync
         if (this.sync.getBoolean("enable-sync")) {
             UChat.get().registerAliases("discord-sync", Arrays.asList("discord-sync","dd-sync"), true, "uchat.discord-sync.cmd.base", this);
 
             final int interval = this.sync.getInt("update-interval");
             taskId = Bukkit.getScheduler().runTaskTimerAsynchronously(UChat.get(), () -> {
+
+                // Init SimpleClans integration
+                if (this.sync.getBoolean("simple-clans-sync.enable") && UChat.sc != null) {
+                    // Update clans
+                    updateClans();
+                }
+
                 if (this.sync.getConfigurationSection("group-ids").getValues(false).isEmpty())
                     return;
 
                 final int[] delay = {0};
                 Bukkit.getOnlinePlayers().forEach(p -> {
                     if (getPlayerDDId(p.getName()) != null) {
-                        String pId = getPlayerDDId(p.getName());
+                        String playerDDId = getPlayerDDId(p.getName());
                         Bukkit.getScheduler().runTaskLaterAsynchronously(UChat.get(), () -> {
+                            // Set role by Clan tag
+                            if (UChat.sc != null && this.sync.getBoolean("simple-clans-sync.enable")) {
+                                List<String> whitelistClans = this.sync.getStringList("simple-clans-sync.whitelist");
+                                ClanPlayer playerClan = UChat.sc.getClanManager().getClanPlayer(p);
+                                if (playerClan != null && playerClan.getClan().isVerified() &&
+                                        (whitelistClans.contains("ALL") || whitelistClans.contains(playerClan.getClan().getTag().toUpperCase()))) {
+                                    Clan clan = playerClan.getClan();
+                                    String roleId = this.sync.getString("simple-clans-sync.clans." + clan.getTag().toUpperCase() + ".role");
+                                    if (roleId != null) {
+                                        Role role = UChat.get().getUCJDA().getJda().getRoleById(roleId);
+                                        Guild guild = UChat.get().getUCJDA().getJda().getGuildById(this.sync.getString("guild-id"));
+                                        try {
+                                            Member member = guild.retrieveMemberById(playerDDId).complete(true);
+                                            guild.addRoleToMember(member, role).complete(true);
+                                        } catch (RateLimitedException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                }
+                            }
 
+                            // Set nick
                             String nick = "";
                             if (this.sync.getBoolean("name.to-discord")) {
                                 if (this.sync.getBoolean("name.display-name"))
@@ -92,14 +154,15 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
                                 else
                                     nick = p.getName();
                             }
-                            String group = UChat.get().getVaultPerms().getPrimaryGroup(p);
 
+                            // Set role by in-game group
+                            String group = UChat.get().getVaultPerms().getPrimaryGroup(p);
                             List<String> roles = getDDRoleByInGameGroup(group);
                             if (!roles.isEmpty()) {
                                 if (this.sync.getBoolean("require-perms"))
                                     roles.removeIf(r -> !p.hasPermission("uchat.discord-sync.role." + r));
 
-                                UChat.get().getUCJDA().setPlayerRole(pId, roles, nick, getConfigRoles());
+                                UChat.get().getUCJDA().setPlayerRole(playerDDId, roles, nick, getConfigRoles());
                             }
 
                             delay[0] += 10;
@@ -113,6 +176,117 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
         saveConfig();
     }
 
+    private void updateClans(){
+
+        // Clear deleted clans
+        Set<String> delClans = this.sync.getConfigurationSection("simple-clans-sync.clans").getKeys(false);
+        List<String> whitelistClans = this.sync.getStringList("simple-clans-sync.whitelist");
+        delClans.forEach(dc -> {
+            if (dc.equals("DEFAULT")) return;
+
+            if (UChat.sc.getClanManager().getClan(dc) == null || (!whitelistClans.contains("ALL") && !whitelistClans.contains(dc))) {
+                String roleId = this.sync.getString("simple-clans-sync.clans." + dc + ".role", "0");
+                String categoryId = this.sync.getString("simple-clans-sync.clans." + dc + ".category", "0");
+                String chatId = this.sync.getString("simple-clans-sync.clans." + dc + ".text-channel", "0");
+                String audioId = this.sync.getString("simple-clans-sync.clans." + dc + ".voice-channel", "0");
+                try {
+                    // Remove before queue delete on dd
+                    this.sync.set("simple-clans-sync.clans." + dc, null);
+                    saveConfig();
+
+                    UChat.get().getUCJDA().getJda().getRoleById(roleId).delete().complete(true);
+                    UChat.get().getUCJDA().getJda().getCategoryById(categoryId).delete().complete(true);
+                    UChat.get().getUCJDA().getJda().getTextChannelById(chatId).delete().complete(true);
+                    UChat.get().getUCJDA().getJda().getVoiceChannelById(audioId).delete().complete(true);
+                } catch (RateLimitedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        // Create new clans
+        UChat.sc.getClanManager().getClans().stream().filter(Clan::isVerified).forEach(clan -> {
+            if (!clan.isVerified()) return;
+
+            String tag = clan.getTag().toUpperCase();
+            String name = clan.getName();
+            if (!this.sync.contains("simple-clans-sync.clans." + tag)) {
+                if (!whitelistClans.contains("ALL") && !whitelistClans.contains(tag)) return;
+
+                Guild guild = UChat.get().getUCJDA().getJda().getGuildById(this.sync.getString("guild-id"));
+                try {
+                    // Role creation
+                    Role role = guild.createRole().complete(true);
+                    role.getManager().setName(this.sync.getString("simple-clans-sync.templates.role","Clan " + tag)
+                            .replace("{tag}", tag)
+                            .replace("{name}", name)
+                    )
+                            .setColor(Color.decode("#"+this.sync.getString("simple-clans-sync.templates.role-color")))
+                            .setMentionable(false)
+                            .complete(true);
+
+                    // Category and channels creation
+                    Category category = guild.createCategory(this.sync.getString("simple-clans-sync.templates.category")
+                            .replace("{tag}", tag)
+                            .replace("{name}", name)).complete(true);
+                    TextChannel text = category.createTextChannel(this.sync.getString("simple-clans-sync.templates.text-channel")
+                            .replace("{tag}", tag)
+                            .replace("{name}", name)).complete(true);
+                    VoiceChannel voice = category.createVoiceChannel(this.sync.getString("simple-clans-sync.templates.voice-channel")
+                            .replace("{tag}", tag)
+                            .replace("{name}", name)).complete(true);
+
+                    Role publicRole = guild.getPublicRole();
+
+                    // Need to assign role to category
+                    category.putPermissionOverride(publicRole).complete(true);
+                    category.putPermissionOverride(role).complete(true);
+
+                    // Assign role to text channel
+                    text.putPermissionOverride(publicRole).complete(true);
+                    text.putPermissionOverride(role).complete(true);
+                    text.getRolePermissionOverrides().forEach(roleOver -> {
+                        try {
+                            if (roleOver.getRole().equals(role)) {
+                                roleOver.getManager().grant(Permission.MESSAGE_READ, Permission.MESSAGE_WRITE).complete(true);
+                            }
+                            if (roleOver.getRole().equals(publicRole)) {
+                                roleOver.getManager().deny(Permission.MESSAGE_READ, Permission.MESSAGE_WRITE).complete(true);
+                            }
+                        } catch (RateLimitedException e) {
+                            e.printStackTrace();
+                        }
+                    });
+
+                    // Assign role to voice channel
+                    voice.putPermissionOverride(publicRole).complete(true);
+                    voice.putPermissionOverride(role).complete(true);
+                    voice.getRolePermissionOverrides().forEach(roleOver -> {
+                        try {
+                            if (roleOver.getRole().equals(role)) {
+                                roleOver.getManager().grant(Permission.VOICE_CONNECT).complete(true);
+                            }
+                            if (roleOver.getRole().equals(publicRole)) {
+                                roleOver.getManager().deny(Permission.VOICE_CONNECT).complete(true);
+                            }
+                        } catch (RateLimitedException e) {
+                            e.printStackTrace();
+                        }
+                    });
+
+                    // Save all
+                    this.sync.set("simple-clans-sync.clans." + tag + ".role", role.getId());
+                    this.sync.set("simple-clans-sync.clans." + tag + ".category", category.getId());
+                    this.sync.set("simple-clans-sync.clans." + tag + ".text-channel", text.getId());
+                    this.sync.set("simple-clans-sync.clans." + tag + ".voice-channel", voice.getId());
+                    saveConfig();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+    
     public void unload() {
         Bukkit.getScheduler().cancelTask(this.taskId);
     }
@@ -269,7 +443,7 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
                 if (addPendingCode(p.getName(), code)) {
                     UltimateFancy fancy = new UltimateFancy(UChat.get() ,UChat.get().getLang().get("_UChat.prefix") + " " + UChat.get().getLang().get("discord.sync-done").replace("{code}", code));
                     fancy.hoverShowText(UChat.get().getLang().get("discord.sync-click"));
-                    fancy.clickSuggestCmd(code);
+                    fancy.clickSuggestCmd(this.sync.getString("discord-cmds.connect") + " " + code);
                     fancy.send(p);
                 } else {
                     UltimateFancy fancy = new UltimateFancy(UChat.get(), UChat.get().getLang().get("_UChat.prefix") + " " + UChat.get().getLang().get("discord.sync-fail"));
@@ -317,6 +491,30 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
             }
             return true;
         }
+
+        // Simple Clans sync
+        if (args.length == 2) {
+            if (args[0].equalsIgnoreCase("addclan") && commandSender.hasPermission("uchat.discord-sync.cmd.addclan")) {
+                List<String> clans = this.sync.getStringList("simple-clans-sync.whitelist");
+                clans.add(args[1].toUpperCase());
+                this.sync.set("simple-clans-sync.whitelist", clans);
+                saveConfig();
+                UChat.get().getLang().sendMessage(commandSender,  UChat.get().getLang().get("discord.sync-add-clan").replace("{clan}", args[1].toUpperCase()));
+                return true;
+            }
+            if (args[0].equalsIgnoreCase("delclan") && commandSender.hasPermission("uchat.discord-sync.cmd.delclan")) {
+                List<String> clans = this.sync.getStringList("simple-clans-sync.whitelist");
+                if (clans.remove(args[1].toUpperCase())) {
+                    this.sync.set("simple-clans-sync.whitelist", clans);
+                    UChat.get().getLang().sendMessage(commandSender,  UChat.get().getLang().get("discord.sync-removed-clan").replace("{clan}", args[1].toUpperCase()));
+                } else {
+                    UChat.get().getLang().sendMessage(commandSender,  UChat.get().getLang().get("discord.sync-no-clan").replace("{clan}", args[1].toUpperCase()));
+                }
+                saveConfig();
+                return true;
+            }
+        }
+
         return false;
     }
 
@@ -324,6 +522,10 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
     public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] args) {
         List<String> tab = new ArrayList<>();
         if (args.length == 1) {
+            if (commandSender.hasPermission("uchat.discord-sync.cmd.addclan"))
+                tab.add("addclan");
+            if (commandSender.hasPermission("uchat.discord-sync.cmd.delclan"))
+                tab.add("delclan");
             if (commandSender.hasPermission("uchat.discord-sync.cmd.generate"))
                 tab.add("gen");
             if (commandSender.hasPermission("uchat.discord-sync.cmd.unlink"))
@@ -353,7 +555,7 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
         comments.put(key, comment);
     }
 
-    private void saveConfig() {
+    public void saveConfig() {
         StringBuilder b = new StringBuilder();
         this.sync.options().header(null);
 

@@ -26,12 +26,15 @@
 package br.net.fabiozumbi12.UltimateChat.Bukkit.discord;
 
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UCChannel;
+import jdalib.jda.api.JDA;
 import org.bukkit.command.CommandSender;
 
 import java.util.List;
 
 public interface UCDInterface {
     boolean JDAAvailable();
+
+    JDA getJda();
 
     void sendTellToDiscord(String text);
 
@@ -48,4 +51,5 @@ public interface UCDInterface {
     void setPlayerRole(String ddUser, List<String> ddRoleName, String nick, List<String> configRoles);
 
     void shutdown();
+
 }
