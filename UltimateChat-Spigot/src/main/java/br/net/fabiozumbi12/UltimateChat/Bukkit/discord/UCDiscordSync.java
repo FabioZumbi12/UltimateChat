@@ -80,12 +80,13 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
                 "Add \"ALL\" to list to allow all clans.\n" +
                 "Remove a clan from here to delete the role and clan channels from discord.");
 
-        setDefault("simple-clans-sync.templates", null, "Templates for Discord category and channels");
+        setDefault("simple-clans-sync.templates", null, "Templates for Discord category and channels.\nPlaceholders: {tag}, {name} and {clan-members}");
         setDefault("simple-clans-sync.templates.role", "\uD83D\uDEA9 Clan - {tag}", null);
         setDefault("simple-clans-sync.templates.role-color", "0fc5f0", null);
-        setDefault("simple-clans-sync.templates.category", "\uD83D\uDEA9 {name}", null);
+        setDefault("simple-clans-sync.templates.category", "\uD83D\uDEA9 {name} ({clan-members})", null);
         setDefault("simple-clans-sync.templates.text-channel", "chat", null);
         setDefault("simple-clans-sync.templates.voice-channel", "audio", null);
+        setDefault("simple-clans-sync.templates.topic", "{name}({tag}) - {clan-members} members", null);
 
         setDefault("simple-clans-sync.clans.DEFAULT", null, "Don't change this, this is an example of a synchronized clan\nDon't remove clan channels manually from discord!!");
         setDefault("simple-clans-sync.clans.DEFAULT.role", "1234567890", null);
@@ -210,14 +211,17 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
 
             String tag = clan.getTag().toUpperCase();
             String name = clan.getName();
+            String members = String.valueOf(clan.getMembers().size());
+            Guild guild = UChat.get().getUCJDA().getJda().getGuildById(this.sync.getString("guild-id"));
+
             if (!this.sync.contains("simple-clans-sync.clans." + tag)) {
                 if (!whitelistClans.contains("ALL") && !whitelistClans.contains(tag)) return;
 
-                Guild guild = UChat.get().getUCJDA().getJda().getGuildById(this.sync.getString("guild-id"));
                 try {
                     // Role creation
                     Role role = guild.createRole().complete(true);
                     role.getManager().setName(this.sync.getString("simple-clans-sync.templates.role","Clan " + tag)
+                            .replace("{clan-members}", members)
                             .replace("{tag}", tag)
                             .replace("{name}", name)
                     )
@@ -227,12 +231,14 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
 
                     // Category and channels creation
                     Category category = guild.createCategory(this.sync.getString("simple-clans-sync.templates.category")
+                            .replace("{clan-members}", members)
                             .replace("{tag}", tag)
                             .replace("{name}", name)).complete(true);
                     TextChannel text = category.createTextChannel(this.sync.getString("simple-clans-sync.templates.text-channel")
-                            .replace("{tag}", tag)
+                            .replace("{clan-members}", members)
                             .replace("{name}", name)).complete(true);
                     VoiceChannel voice = category.createVoiceChannel(this.sync.getString("simple-clans-sync.templates.voice-channel")
+                            .replace("{clan-members}", members)
                             .replace("{tag}", tag)
                             .replace("{name}", name)).complete(true);
 
@@ -281,6 +287,33 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
                     this.sync.set("simple-clans-sync.clans." + tag + ".voice-channel", voice.getId());
                     saveConfig();
                 } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                // Update text channel description
+                String chatId = this.sync.getString("simple-clans-sync.clans." + tag + ".text-channel", "0");
+                String categoryId = this.sync.getString("simple-clans-sync.clans." + tag + ".category", "0");
+                try {
+                    TextChannel textChanel = guild.getTextChannelById(chatId);
+                    Category category = guild.getCategoryById(categoryId);
+                    if (textChanel != null) {
+                        textChanel.getManager()
+                                .setTopic(this.sync.getString("simple-clans-sync.templates.topic")
+                                        .replace("{clan-members}", members)
+                                        .replace("{tag}", tag)
+                                        .replace("{name}", name))
+                                .setName(this.sync.getString("simple-clans-sync.templates.text-channel")
+                                        .replace("{clan-members}", members)
+                                        .replace("{tag}", tag)
+                                        .replace("{name}", name)).complete(true);
+                    }
+                    if (category != null) {
+                        category.getManager().setName(this.sync.getString("simple-clans-sync.templates.category")
+                                .replace("{clan-members}", members)
+                                .replace("{tag}", tag)
+                                .replace("{name}", name)).complete(true);
+                    }
+                } catch (RateLimitedException e) {
                     e.printStackTrace();
                 }
             }
