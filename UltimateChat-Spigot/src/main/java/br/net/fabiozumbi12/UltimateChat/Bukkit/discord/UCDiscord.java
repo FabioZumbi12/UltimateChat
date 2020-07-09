@@ -275,7 +275,7 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
                             fancy.send(members.toPlayer());
                         }
                     });
-                    UltimateFancy consoleFancy = formatDDMessage(e, ChatColor.AQUA + "[Discord] " + ChatColor.DARK_GRAY + ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', chatTemplate[0])), null);
+                    UltimateFancy consoleFancy = formatDDMessage(e, ChatColor.DARK_GRAY + ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', chatTemplate[0])), null);
                     consoleFancy.send(Bukkit.getConsoleSender());
                 } else {
                     // If not member or sender is not sync
@@ -293,7 +293,7 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
                             fancy.send(members.toPlayer());
                         }
                     });
-                    UltimateFancy consoleFancy = formatDDMessage(e, ChatColor.AQUA + "[Discord] " + ChatColor.DARK_GRAY + ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', message)), null);
+                    UltimateFancy consoleFancy = formatDDMessage(e, finalSenderString + ": " + ChatColor.DARK_GRAY + ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', message)), null);
                     consoleFancy.send(Bukkit.getConsoleSender());
                 }
             }
