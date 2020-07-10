@@ -80,7 +80,7 @@ public class UCChatProtection implements Listener {
             } else {
                 msgSpam.put(msg, msgSpam.get(msg) + 1);
                 if (msgSpam.get(msg) >= UChat.get().getUCConfig().getProtInt("chat-protection.antispam.count-of-same-message")) {
-                    UCUtil.performCommand(p, UChat.get().getServer().getConsoleSender(), UChat.get().getUCConfig().getProtString("chat-protection.antispam.cmd-action").replace("{player}", p.getName()));
+                    UCUtil.performCommand(UChat.get().getServer().getConsoleSender(), UChat.get().getUCConfig().getProtString("chat-protection.antispam.cmd-action").replace("{player}", p.getName()));
                     msgSpam.remove(msg);
                 } else {
                     UChat.get().getLang().sendMessage(p, UChat.get().getUCConfig().getProtMsg("chat-protection.antispam.wait-message"));
@@ -124,12 +124,12 @@ public class UCChatProtection implements Listener {
                     if (!chs.isEmpty()) {
                         for (String cha : chs) {
                             if (cha.equalsIgnoreCase(ch.getName()) || cha.equalsIgnoreCase(ch.getAlias())) {
-                                UCUtil.performCommand(p, UChat.get().getServer().getConsoleSender(), action.replace("{player}", p.getName()));
+                                UCUtil.performCommand(UChat.get().getServer().getConsoleSender(), action.replace("{player}", p.getName()));
                                 break;
                             }
                         }
                     } else {
-                        UCUtil.performCommand(p, UChat.get().getServer().getConsoleSender(), action.replace("{player}", p.getName()));
+                        UCUtil.performCommand(UChat.get().getServer().getConsoleSender(), action.replace("{player}", p.getName()));
                     }
                 }
             }
@@ -238,7 +238,7 @@ public class UCChatProtection implements Listener {
                         //mute counter
                         new MuteCountDown(p.getName(), time).runTaskTimer(UChat.get(), 20, 20);
                     } else {
-                        UCUtil.performCommand(p, UChat.get().getServer().getConsoleSender(), UChat.get().getUCConfig().getProtString("chat-protection.anti-ip.punish.cmd-punish").replace("{player}", p.getName()));
+                        UCUtil.performCommand(UChat.get().getServer().getConsoleSender(), UChat.get().getUCConfig().getProtString("chat-protection.anti-ip.punish.cmd-punish").replace("{player}", p.getName()));
                     }
                     UrlSpam.remove(p);
                 }

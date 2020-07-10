@@ -287,7 +287,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
                             if (!p.isOnline()) {
                                 break;
                             }
-                            UCUtil.performCommand(p, Bukkit.getConsoleSender(), "tellraw " + p.getName() + " {\"text\":\" \"}");
+                            UCUtil.sendTellRaw(p, Bukkit.getConsoleSender(), "{\"text\":\" \"}");
                         }
                         UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("cmd.clear.cleared"));
                         return true;
@@ -303,7 +303,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
                                 if (!play.isOnline()) {
                                     continue;
                                 }
-                                UCUtil.performCommand(play, Bukkit.getConsoleSender(), "tellraw " + play.getName() + " {\"text\":\" \"}");
+                                UCUtil.sendTellRaw(play, Bukkit.getConsoleSender(), "{\"text\":\" \"}");
                             }
                         }
                         UChat.get().getLang().sendMessage(p, "cmd.clear.cleared");
@@ -930,9 +930,9 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
                             start = start.substring(1);
                         }
                         if (ch.getAliasSender().equalsIgnoreCase("console")) {
-                            UCUtil.performCommand(null, Bukkit.getConsoleSender(), start + " " + e.getMessage());
+                            UCUtil.performCommand(Bukkit.getConsoleSender(), start + " " + e.getMessage());
                         } else {
-                            UCUtil.performCommand(null, p, start + " " + e.getMessage());
+                            UCUtil.performCommand(p, start + " " + e.getMessage());
                         }
                         //e.setCancelled(true);
                         return true;

@@ -236,6 +236,8 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
             return;
         }
 
+        if (e.getMember().getUser().isFake()) return;
+
         // Check clan channel
         String channelId = e.getTextChannel().getId();
         Optional<Map.Entry<String, Object>> clanCfg = UChat.get().getDDSync().getConfig().getConfigurationSection("simple-clans-sync.clans").getValues(true)
@@ -275,11 +277,11 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
                             fancy.send(members.toPlayer());
                         }
                     });
-                    UltimateFancy consoleFancy = formatDDMessage(e, ChatColor.DARK_GRAY + ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', chatTemplate[0])), null);
+                    UltimateFancy consoleFancy = formatDDMessage(e, ChatColor.AQUA + "Discord -> " + ChatColor.DARK_GRAY + ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', chatTemplate[0])), null);
                     consoleFancy.send(Bukkit.getConsoleSender());
                 } else {
                     // If not member or sender is not sync
-                    String senderString = ChatColor.AQUA + "[Discord] ";
+                    String senderString = ChatColor.AQUA + "Discord -> ";
                     if (sender != null) {
                         senderString += sender;
                     } else {
@@ -300,7 +302,6 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
             return;
         }
 
-        if (e.getMember().getUser().isFake()) return;
         int used = 0;
 
         for (UCChannel ch : this.uchat.getChannels().values()) {
@@ -325,7 +326,7 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
                         }
                         if (count > 0) continue;
                     }
-                    UCUtil.performCommand(null, Bukkit.getServer().getConsoleSender(), message);
+                    UCUtil.performCommand(Bukkit.getServer().getConsoleSender(), message);
                 } else {
                     UltimateFancy fancy = formatDDMessage(e, message, ch);
                     ch.sendMessage(uchat.getServer().getConsoleSender(), fancy, true);
@@ -349,7 +350,7 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
                 }
                 if (count > 0) return;
             }
-            UCUtil.performCommand(null, Bukkit.getServer().getConsoleSender(), message);
+            UCUtil.performCommand(Bukkit.getServer().getConsoleSender(), message);
         }
     }
 

@@ -82,13 +82,13 @@ public class UChatBungee implements PluginMessageListener, Listener {
             if (chan.neeFocus()) {
                 for (String receiver : chan.getMembers()) {
                     if (Bukkit.getPlayer(receiver) != null) {
-                        UCUtil.performCommand(Bukkit.getPlayer(receiver), Bukkit.getConsoleSender(), "tellraw " + receiver + " " + json);
+                        UCUtil.sendTellRaw(Bukkit.getPlayer(receiver), Bukkit.getConsoleSender(), json);
                     }
                 }
             } else {
                 for (Player receiver : Bukkit.getServer().getOnlinePlayers()) {
                     if (UCPerms.channelReadPerm(receiver, chan)) {
-                        UCUtil.performCommand(receiver, Bukkit.getConsoleSender(), "tellraw " + receiver.getName() + " " + json);
+                        UCUtil.sendTellRaw(receiver, Bukkit.getConsoleSender(), json);
                     }
                 }
             }

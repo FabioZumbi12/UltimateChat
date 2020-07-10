@@ -612,7 +612,9 @@ public class UltimateFancy {
 
     private void performCommand(Player to) {
         Bukkit.getScheduler().callSyncMethod(plugin, () -> {
-            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + to.getName() + " " + toJson());
+            if (Bukkit.getOnlinePlayers().stream().anyMatch(p -> p.getName().equals(to.getName()))) {
+                Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + to.getName() + " " + toJson());
+            }
             return null;
         });
     }

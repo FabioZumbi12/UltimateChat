@@ -90,13 +90,20 @@ public class UCUtil {
         }
     }
 
-    public static void performCommand(final Player to, final CommandSender sender, final String command) {
+    public static void performCommand(final CommandSender sender, final String command) {
         Bukkit.getScheduler().callSyncMethod(UChat.get(), () -> {
-            if (to == null || to.isOnline()) {
-                UChat.get().getServer().dispatchCommand(sender, command);
-            }
+            UChat.get().getServer().dispatchCommand(sender, command);
             return null;
         });
+    }
+
+    public static void sendTellRaw(final Player to, final CommandSender sender, final String command) {
+        if (to != null && Bukkit.getOnlinePlayers().stream().anyMatch(p -> p.getName().equals(to.getName()))) {
+            Bukkit.getScheduler().callSyncMethod(UChat.get(), () -> {
+                UChat.get().getServer().dispatchCommand(sender, "tellraw " + to.getName() + " " +command);
+                return null;
+            });
+        }
     }
 
     public static boolean sendUmsg(CommandSender sender, String[] args) {

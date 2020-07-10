@@ -60,7 +60,7 @@ public class ChatChannel extends JedisPubSub {
                             if (tellresp[2].equals("false")) {
                                 UChat.get().getLang().sendMessage(sender, UChat.get().getLang().get("listener.invalidplayer"));
                             } else {
-                                UCUtil.performCommand(sender, Bukkit.getConsoleSender(), "tellraw " + sender.getName() + " " + tellresp[3]);
+                                UCUtil.sendTellRaw(sender, Bukkit.getConsoleSender(), tellresp[3]);
                             }
                         }
                     }
@@ -85,7 +85,7 @@ public class ChatChannel extends JedisPubSub {
                     Bukkit.getConsoleSender().sendMessage(UCUtil.colorize("&7Private message from server " + id + " to player " + tellrec));
 
                     //send
-                    UCUtil.performCommand(play, Bukkit.getConsoleSender(), "tellraw " + play.getName() + " " + messagef);
+                    UCUtil.sendTellRaw(play, Bukkit.getConsoleSender(), messagef);
                     return;
                 }
 
@@ -102,13 +102,13 @@ public class ChatChannel extends JedisPubSub {
                         if (ch.neeFocus()) {
                             for (String receiver : ch.getMembers()) {
                                 if (Bukkit.getPlayer(receiver) != null) {
-                                    UCUtil.performCommand(Bukkit.getPlayer(receiver), Bukkit.getConsoleSender(), "tellraw " + receiver + " " + messagef);
+                                    UCUtil.sendTellRaw(Bukkit.getPlayer(receiver), Bukkit.getConsoleSender(), messagef);
                                 }
                             }
                         } else {
                             for (Player receiver : Bukkit.getServer().getOnlinePlayers()) {
                                 if (UCPerms.channelReadPerm(receiver, ch)) {
-                                    UCUtil.performCommand(receiver, Bukkit.getConsoleSender(), "tellraw " + receiver.getName() + " " + messagef);
+                                    UCUtil.sendTellRaw(receiver, Bukkit.getConsoleSender(), messagef);
                                 }
                             }
                         }
@@ -120,7 +120,7 @@ public class ChatChannel extends JedisPubSub {
                     String id = msgc[0];
                     String messagef = msgc[1];
                     for (Player receiver : Bukkit.getServer().getOnlinePlayers()) {
-                        UCUtil.performCommand(receiver, Bukkit.getConsoleSender(), "tellraw " + receiver.getName() + " " + messagef);
+                        UCUtil.sendTellRaw(receiver, Bukkit.getConsoleSender(), messagef);
                     }
                     Bukkit.getConsoleSender().sendMessage(UCUtil.colorize("&7Raw Message from: " + id));
                 }
