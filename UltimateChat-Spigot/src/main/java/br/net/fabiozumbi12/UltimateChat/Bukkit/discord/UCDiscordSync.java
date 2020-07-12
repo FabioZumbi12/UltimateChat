@@ -120,31 +120,59 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
                     updateClans();
                 }
 
-                if (this.sync.getConfigurationSection("group-ids").getValues(false).isEmpty())
-                    return;
-
                 final int[] delay = {0};
                 Bukkit.getOnlinePlayers().forEach(p -> {
                     if (getPlayerDDId(p.getName()) != null) {
                         String playerDDId = getPlayerDDId(p.getName());
                         Bukkit.getScheduler().runTaskLaterAsynchronously(UChat.get(), () -> {
+
                             // Set role by Clan tag
                             if (UChat.sc != null && this.sync.getBoolean("simple-clans-sync.enable")) {
                                 List<String> whitelistClans = this.sync.getStringList("simple-clans-sync.whitelist");
                                 ClanPlayer playerClan = UChat.sc.getClanManager().getClanPlayer(p);
-                                if (playerClan != null && playerClan.getClan().isVerified() &&
-                                        (whitelistClans.contains("ALL") || whitelistClans.contains(playerClan.getClan().getTag().toUpperCase()))) {
-                                    Clan clan = playerClan.getClan();
-                                    String roleId = this.sync.getString("simple-clans-sync.clans." + clan.getTag().toUpperCase() + ".role");
-                                    if (roleId != null) {
-                                        Role role = UChat.get().getUCJDA().getJda().getRoleById(roleId);
-                                        Guild guild = UChat.get().getUCJDA().getJda().getGuildById(this.sync.getString("guild-id"));
-                                        try {
-                                            Member member = guild.retrieveMemberById(playerDDId).complete(true);
-                                            guild.addRoleToMember(member, role).complete(true);
-                                        } catch (RateLimitedException e) {
-                                            e.printStackTrace();
+                                Guild guild = UChat.get().getUCJDA().getJda().getGuildById(this.sync.getString("guild-id"));
+
+                                if (playerClan != null) {
+                                    try {
+                                        Member member = guild.retrieveMemberById(playerDDId).complete(true);
+                                        List<Role> memberRoles = new ArrayList<>(member.getRoles());
+
+                                        if (playerClan.getClan().isVerified() &&
+                                                (whitelistClans.contains("ALL") || whitelistClans.contains(playerClan.getClan().getTag().toUpperCase()))) {
+                                            Clan clan = playerClan.getClan();
+                                            String roleId = this.sync.getString("simple-clans-sync.clans." + clan.getTag().toUpperCase() + ".role");
+                                            Role role = UChat.get().getUCJDA().getJda().getRoleById(roleId);
+
+                                            if (role != null && !memberRoles.contains(role)) {
+                                                // Remove other clan roles
+                                                memberRoles.removeIf(r -> this.sync.getConfigurationSection("simple-clans-sync.clans").getValues(true).entrySet().stream().anyMatch(map -> map.getValue().equals(r.getId())));
+                                                memberRoles.add(role);
+                                                guild.modifyMemberRoles(member, memberRoles).complete(true);
+                                            }
+                                        } else {
+                                            // Remove clan roles if clan is not verified or is not whitelisted
+                                            if (memberRoles.removeIf(r -> this.sync.getConfigurationSection("simple-clans-sync.clans").getValues(true).entrySet().stream().anyMatch(map -> map.getValue().equals(r.getId())))) {
+                                                guild.modifyMemberRoles(member, memberRoles).complete(true);
+                                            }
                                         }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                } else {
+                                    try {
+                                        Member member = guild.retrieveMemberById(playerDDId).complete(true);
+                                        if (member != null) {
+                                            List<Role> memberRoles = new ArrayList<>(member.getRoles());
+                                            // Remove clan roles if found
+                                            if (memberRoles.removeIf(r -> this.sync.getConfigurationSection("simple-clans-sync.clans").getValues(true).entrySet().stream().anyMatch(map -> map.getValue().equals(r.getId())))) {
+                                                guild.modifyMemberRoles(member, memberRoles).complete(true);
+                                            }
+                                        } else {
+                                            this.sync.set("sync-database.sync-players." + p.getName(), null);
+                                            saveConfig();
+                                        }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
                                     }
                                 }
                             }
@@ -172,7 +200,7 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
                         }, delay[0]);
                     }
                 });
-            }, 20, 20 * (60 * (Math.max(interval, 1)))/*secs*/).getTaskId();
+            }, 20, 20 * (30 * (Math.max(interval, 1)))/*secs*/).getTaskId();
 
             UChat.get().getUCLogger().info("- Discord Sync in use!");
         }
