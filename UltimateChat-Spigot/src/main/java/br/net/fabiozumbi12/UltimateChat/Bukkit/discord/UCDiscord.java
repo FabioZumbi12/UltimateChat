@@ -463,13 +463,13 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
     }
 
     public void sendToChannel(String id, String text) {
-        if (id.isEmpty()) return;
-        text = text.replaceAll("([&" + ChatColor.COLOR_CHAR + "]([a-fA-Fk-oK-ORr0-9]))", "");
-        TextChannel ch = jda.getTextChannelById(id);
         try {
+            if (id.isEmpty()) return;
+            text = text.replaceAll("([&" + ChatColor.COLOR_CHAR + "]([a-fA-Fk-oK-ORr0-9]))", "");
+            TextChannel ch = jda.getTextChannelById(id);
             ch.sendMessage(text).queue();
         } catch (PermissionException e) {
-            uchat.getUCLogger().severe("JDA: No permission to send messages to channel " + ch.getName() + ".");
+            uchat.getUCLogger().severe("JDA: No permission to send messages to channel " + id + ".");
         } catch (Exception e) {
             uchat.getUCLogger().warning("JDA: The channel ID [" + id + "] is incorrect, not available or Discord is offline, in maintenance or some other connection problem.");
             e.printStackTrace();
