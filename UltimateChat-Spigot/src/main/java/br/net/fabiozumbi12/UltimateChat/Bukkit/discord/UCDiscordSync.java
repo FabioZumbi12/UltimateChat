@@ -488,7 +488,7 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
             return true;
         }
 
-        //d-sync list
+        //dd-sync list
         if (args.length == 1 && args[0].equalsIgnoreCase("list") && commandSender.hasPermission("uchat.discord-sync.cmd.addgroup")) {
             StringBuilder list = new StringBuilder();
             for (String key : this.sync.getConfigurationSection("group-ids").getKeys(false)) {
@@ -498,7 +498,7 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
             return true;
         }
 
-        //d-sync addgroup group id
+        //dd-sync addgroup group id
         if (args.length == 3 && args[0].equalsIgnoreCase("addgroup") && commandSender.hasPermission("uchat.discord-sync.cmd.addgroup")) {
             List<String> groups = this.sync.getStringList("group-ids." + args[1]);
             if (!groups.contains(args[2])) groups.add(args[2]);
@@ -510,7 +510,7 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
             return true;
         }
 
-        //d-sync removegroup group
+        //dd-sync removegroup group
         if (args.length == 2 && args[0].equalsIgnoreCase("removegroup") && commandSender.hasPermission("uchat.discord-sync.cmd.addgroup")) {
             this.sync.set("group-ids." + args[1], null);
             saveConfig();
@@ -519,7 +519,7 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
             return true;
         }
 
-        //d-sync generate
+        //dd-sync generate
         if (args[0].equalsIgnoreCase("gen") && commandSender.hasPermission("uchat.discord-sync.cmd.generate")) {
             if (args.length == 1 && commandSender instanceof Player) {
                 Player p = (Player) commandSender;
@@ -556,7 +556,7 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
             return true;
         }
 
-        //d-sync unlink
+        //dd-sync unlink
         if (args[0].equalsIgnoreCase("unlink") && commandSender.hasPermission("uchat.discord-sync.cmd.unlink")) {
             if (args.length == 1 && commandSender instanceof Player) {
                 Player p = (Player) commandSender;
