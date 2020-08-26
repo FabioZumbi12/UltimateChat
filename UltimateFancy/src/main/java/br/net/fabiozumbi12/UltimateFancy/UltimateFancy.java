@@ -188,16 +188,17 @@ public class UltimateFancy {
                 Matcher matcher1 = Pattern.compile("^§([0-9a-fA-Fk-oK-ORr]).*$").matcher(part);
                 if (matcher1.find()) {
                     ChatColor color = ChatColor.getByChar(matcher1.group(1).charAt(0));
+                    if (color == null) color = ChatColor.WHITE;
+
                     if (color.isColor()) {
                         lastColor = color;
                         last2Color = null;
-                        lastRGBColor = "";
                     } else {
                         // Set a second color if the first color is format
                         if (lastColor.isColor()) last2Color = lastColor;
                         lastColor = color;
-                        lastRGBColor = "";
                     }
+                    lastRGBColor = "";
                     //fix colors from latest
                     filterColors(workingText);
                     if (part.length() == 2) continue;
