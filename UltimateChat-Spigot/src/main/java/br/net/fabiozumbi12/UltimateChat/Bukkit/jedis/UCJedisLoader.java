@@ -32,6 +32,7 @@ import br.net.fabiozumbi12.UltimateFancy.UltimateFancy;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitTask;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
@@ -86,6 +87,7 @@ public class UCJedisLoader {
     protected JedisPool getPool() {
         return this.pool;
     }
+    private BukkitTask reconChecker;
 
     private boolean connectPool() {
         if (this.pool == null || this.pool.isClosed()) {
@@ -95,17 +97,22 @@ public class UCJedisLoader {
                 this.pool = new JedisPool(poolCfg, ip, port, 0, auth);
             }
 
-            Jedis jedis = null;
-            try {
-                jedis = this.pool.getResource();
-                jedis.exists(String.valueOf(System.currentTimeMillis()));
-                return true;
-            } catch (JedisConnectionException e) {
-                UChat.get().getUCLogger().warning("REDIS not conected! Try again with /chat reload, or check the status of your Redis server.");
-                pool.destroy();
-                pool = null;
-                e.printStackTrace();
-            }
+            reconChecker = Bukkit.getScheduler().runTaskTimer(UChat.get(), () -> {
+                Jedis jedis;
+                try{
+                    jedis = pool.getResource();
+                    jedis.ping();
+                } catch (JedisConnectionException e) {
+                    UChat.get().getUCLogger().info("REDIS connection lost, trying to reconnect...");
+                    if (psl != null) psl.poison();
+                    if (pool != null) pool.destroy();
+                    if (auth.isEmpty()) {
+                        this.pool = new JedisPool(poolCfg, ip, port, 0);
+                    } else {
+                        this.pool = new JedisPool(poolCfg, ip, port, 0, auth);
+                    }
+                }
+            }, 600, 600);
             return false;
         }
         return true;
@@ -174,11 +181,11 @@ public class UCJedisLoader {
         UChat.get().getUCLogger().info("Closing REDIS...");
         if (psl != null) psl.poison();
         if (pool != null) pool.destroy();
+        if (reconChecker != null) reconChecker.cancel();
         UChat.get().getUCLogger().info("REDIS closed.");
     }
 
     private class PubSubListener implements Runnable {
-        private Jedis rsc;
 
         private PubSubListener() {
         }
@@ -186,7 +193,7 @@ public class UCJedisLoader {
         @Override
         public void run() {
             try {
-                rsc = pool.getResource();
+                Jedis rsc = pool.getResource();
                 rsc.subscribe(channel, channels);
             } catch (JedisException | ClassCastException ignored) {
             }

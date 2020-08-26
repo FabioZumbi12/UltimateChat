@@ -32,6 +32,8 @@ import br.net.fabiozumbi12.UltimateChat.Sponge.UChat;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.scheduler.SpongeExecutorService;
+import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.Text.Builder;
 import org.spongepowered.api.text.serializer.TextSerializers;
@@ -44,6 +46,7 @@ import redis.clients.jedis.exceptions.JedisException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class UCJedisLoader {
     protected HashMap<String, String> tellPlayers = new HashMap<>();
@@ -90,6 +93,7 @@ public class UCJedisLoader {
     protected JedisPool getPool() {
         return this.pool;
     }
+    private Task reconChecker;
 
     private boolean connectPool() {
         if (this.pool == null || this.pool.isClosed()) {
@@ -99,17 +103,22 @@ public class UCJedisLoader {
                 this.pool = new JedisPool(poolCfg, ip, port, 0, auth);
             }
 
-            Jedis jedis = null;
-            try {
-                jedis = this.pool.getResource();
-                jedis.exists(String.valueOf(System.currentTimeMillis()));
-                return true;
-            } catch (JedisConnectionException e) {
-                UChat.get().getLogger().warning("REDIS not connected! Try again with /chat reload, or check the status of your Redis server.");
-                pool.destroy();
-                pool = null;
-                e.printStackTrace();
-            }
+            reconChecker = Sponge.getScheduler().createSyncExecutor(UChat.get()).scheduleAtFixedRate(() -> {
+                Jedis jedis;
+                try{
+                    jedis = pool.getResource();
+                    jedis.ping();
+                } catch (JedisConnectionException e) {
+                    UChat.get().getLogger().info("REDIS connection lost, trying to reconnect...");
+                    if (psl != null) psl.poison();
+                    if (pool != null) pool.destroy();
+                    if (auth.isEmpty()) {
+                        this.pool = new JedisPool(poolCfg, ip, port, 0);
+                    } else {
+                        this.pool = new JedisPool(poolCfg, ip, port, 0, auth);
+                    }
+                }
+            }, 10, 10, TimeUnit.MINUTES).getTask();
             return false;
         }
         return true;
@@ -183,6 +192,7 @@ public class UCJedisLoader {
         UChat.get().getLogger().info("Closing REDIS...");
         if (psl != null) psl.poison();
         if (pool != null) pool.destroy();
+        if (reconChecker != null) reconChecker.cancel();
         UChat.get().getLogger().info("REDIS closed.");
     }
 
