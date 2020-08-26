@@ -236,7 +236,7 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
             return;
         }
 
-        if (e.getMember().getUser().isFake()) return;
+        if (e.getMember() == null || e.getMember().getUser().isFake()) return;
 
         // Check clan channel
         String channelId = e.getTextChannel().getId();

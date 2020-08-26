@@ -253,7 +253,7 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
             return;
         }
 
-        if (e.getMember().getUser().isFake()) return;
+        if (e.getMember() == null || e.getMember().getUser().isFake()) return;
         int used = 0;
 
         for (UCChannel ch : this.uchat.getChannels().values()) {
