@@ -866,6 +866,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
                 e.setCancelled(true);
             }
         }
+        if (e.isCancelled()) return;
 
         if (UChat.get().tellPlayers.containsKey(p.getName()) && (!UChat.get().tempTellPlayers.containsKey("CONSOLE") || !UChat.get().tempTellPlayers.get("CONSOLE").equals(p.getName()))) {
             Player tellReceiver = UChat.get().getServer().getPlayer(UChat.get().tellPlayers.get(p.getName()));

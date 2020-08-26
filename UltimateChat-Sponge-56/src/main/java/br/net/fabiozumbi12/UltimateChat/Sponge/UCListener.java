@@ -85,15 +85,14 @@ public class UCListener {
             if (ch.getCharAlias().length() == rawMsg.length() && rawMsg.equalsIgnoreCase(ch.getCharAlias())) {
                 UCCommands.addPlayerToChannel(ch, p);
                 e.setMessageCancelled(true);
-                return;
             }
             if (rawMsg.startsWith(ch.getCharAlias())) {
                 String msg = rawMsg.substring(ch.getCharAlias().length());
                 UCCommands.sendMessageToPlayer(p, ch, msg);
                 e.setMessageCancelled(true);
-                return;
             }
         }
+        if (e.isMessageCancelled()) return;
 
         UChat.get().getLogger().timings(UCLogger.timingType.START, "UCListener#onChat()|Listening AsyncPlayerChatEvent");
 
