@@ -96,9 +96,9 @@ public class UCMessages {
 
         Text srcText = Text.builder(event.getMessage(), evmsg).build();
 
+        UCChannel ch;
         if (event.getChannel() != null) {
-
-            UCChannel ch = event.getChannel();
+            ch = event.getChannel();
 
             if (sender instanceof Player && !ch.availableWorlds().isEmpty() && !ch.availableInWorld(((Player) sender).getWorld())) {
                 UChat.get().getLang().sendMessage(sender, UChat.get().getLang().get("channel.notavailable").replace("{channel}", ch.getName()));
@@ -216,7 +216,7 @@ public class UCMessages {
                 return null;
             }
 
-            channel = new UCChannel("tell");
+            ch = new UCChannel("tell");
 
             //send spy
             for (Player receiver : Sponge.getServer().getOnlinePlayers()) {
@@ -226,12 +226,12 @@ public class UCMessages {
                     if (isIgnoringPlayers(tellReceiver.getName(), sender.getName())) {
                         spyformat = UChat.get().getLang().get("chat.ignored") + spyformat;
                     }
-                    spyformat = spyformat.replace("{output}", UCUtil.stripColor('&', sendMessage(sender, tellReceiver, srcText, channel).toPlain()));
+                    spyformat = spyformat.replace("{output}", UCUtil.stripColor('&', sendMessage(sender, tellReceiver, srcText, ch).toPlain()));
                     receiver.sendMessage(UCUtil.toText(spyformat));
                 }
             }
 
-            Text to = sendMessage(sender, tellReceiver, srcText, channel);
+            Text to = sendMessage(sender, tellReceiver, srcText, ch);
             msgPlayers.put(sender, to);
             if (!isIgnoringPlayers(tellReceiver.getName(), sender.getName())) {
                 msgPlayers.put(tellReceiver, to);
@@ -248,14 +248,14 @@ public class UCMessages {
         }
 
         //fire post event
-        PostFormatChatMessageEvent postEvent = new PostFormatChatMessageEvent(sender, msgPlayers, channel);
+        PostFormatChatMessageEvent postEvent = new PostFormatChatMessageEvent(sender, msgPlayers, ch);
         Sponge.getEventManager().post(postEvent);
         if (postEvent.isCancelled()) {
             return null;
         }
 
-        if (channel != null && !channel.isTell() && channel.isBungee()) {
-            UChat.get().getBungee().sendBungee(channel, msgPlayers.get(sender));
+        if (!ch.isTell() && ch.isBungee()) {
+            UChat.get().getBungee().sendBungee(ch, msgPlayers.get(sender));
         }
         msgPlayers.forEach((send, text) -> {
             UChat.get().getLogger().timings(timingType.END, "UCMessages#send()|before send");
@@ -264,16 +264,16 @@ public class UCMessages {
         });
 
         //send to jedis
-        if (channel != null && !channel.isTell() && UChat.get().getJedis() != null) {
-            UChat.get().getJedis().sendMessage(channel.getName().toLowerCase(), msgPlayers.get(sender));
+        if (!ch.isTell() && UChat.get().getJedis() != null) {
+            UChat.get().getJedis().sendMessage(ch.getName().toLowerCase(), msgPlayers.get(sender));
         }
 
         //send to jda
-        if (channel != null && UChat.get().getUCJDA() != null) {
-            if (channel.isTell()) {
+        if (UChat.get().getUCJDA() != null) {
+            if (ch.isTell()) {
                 UChat.get().getUCJDA().sendTellToDiscord(msgPlayers.get(sender).toPlain());
             } else {
-                UChat.get().getUCJDA().sendToDiscord(sender, evmsg, channel);
+                UChat.get().getUCJDA().sendToDiscord(sender, evmsg, ch);
             }
         }
 
