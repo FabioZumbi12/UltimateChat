@@ -150,17 +150,25 @@ public class UCLang {
         return UCUtil.toText(get(key));
     }
 
+    private String getPrefix(final CommandSource sender) {
+        String prefix = get(sender, "_UChat.prefix");
+        if (UCUtil.stripColor('&', prefix).isEmpty()) {
+            return prefix;
+        }
+        return prefix + " ";
+    }
+
     public void sendMessage(final CommandSource p, String key) {
         if (DelayedMessage.containsKey(p) && DelayedMessage.get(p).equals(key)) {
             return;
         }
 
         if (loadedLang.get(key) == null) {
-            p.sendMessage(UCUtil.toText(get(p, "_UChat.prefix") + " " + UCMessages.formatTags("", key, p, "", "", UChat.get().getPlayerChannel(p))));
+            p.sendMessage(UCUtil.toText(getPrefix(p) + " " + UCMessages.formatTags("", key, p, "", "", UChat.get().getPlayerChannel(p))));
         } else if (get(key).equalsIgnoreCase("")) {
             return;
         } else {
-            p.sendMessage(UCUtil.toText(get(p, "_UChat.prefix") + " " + get(p, key)));
+            p.sendMessage(UCUtil.toText(getPrefix(p) + " " + get(p, key)));
         }
 
         DelayedMessage.put(p, key);
