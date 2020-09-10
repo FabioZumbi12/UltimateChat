@@ -188,7 +188,7 @@ public class UCListener {
             Task.builder().async().execute(() -> UChat.get().getUCJDA().sendCommandsToDiscord(UChat.get().getLang().get("discord.command")
                     .replace("{player}", p.getName())
                     .replace("{cmd}", "/" + e.getCommand() + " " + e.getArguments())
-                    .replace("{time-now}", sdf.format(cal.getTime()))));
+                    .replace("{time-now}", sdf.format(cal.getTime())))).submit(UChat.get());
         }
     }
 
@@ -196,7 +196,7 @@ public class UCListener {
     public void onDeath(DestructEntityEvent.Death e, @Getter("getTargetEntity") Player p) {
         if (UChat.get().getUCJDA() != null && !p.hasPermission(UChat.get().getConfig().root().discord.vanish_perm)) {
             Task.builder().async().execute(() ->
-                    UChat.get().getUCJDA().sendRawToDiscord(UChat.get().getLang().get("discord.death").replace("{player}", p.getName())));
+                    UChat.get().getUCJDA().sendRawToDiscord(UChat.get().getLang().get("discord.death").replace("{player}", p.getName()))).submit(UChat.get());
         }
     }
 
@@ -211,7 +211,7 @@ public class UCListener {
 
         if (UChat.get().getUCJDA() != null && !p.hasPermission(UChat.get().getConfig().root().discord.vanish_perm)) {
             Task.builder().async().execute(() ->
-                    UChat.get().getUCJDA().sendRawToDiscord(UChat.get().getLang().get("discord.join").replace("{player}", p.getName())));
+                    UChat.get().getUCJDA().sendRawToDiscord(UChat.get().getLang().get("discord.join").replace("{player}", p.getName()))).submit(UChat.get());
         }
         if (UChat.get().getConfig().root().general.spy_enabled_onjoin && p.hasPermission("uchat.cmd.spy") && !UChat.get().isSpy.contains(p.getName())) {
             UChat.get().isSpy.add(p.getName());
@@ -237,7 +237,7 @@ public class UCListener {
 
         if (UChat.get().getUCJDA() != null && UChat.get().getUCJDA().JDAAvailable() && !p.hasPermission(UChat.get().getConfig().root().discord.vanish_perm)) {
             Task.builder().async().execute(() ->
-                    UChat.get().getUCJDA().sendRawToDiscord(UChat.get().getLang().get("discord.leave").replace("{player}", p.getName())));
+                    UChat.get().getUCJDA().sendRawToDiscord(UChat.get().getLang().get("discord.leave").replace("{player}", p.getName()))).submit(UChat.get());
         }
     }
 
