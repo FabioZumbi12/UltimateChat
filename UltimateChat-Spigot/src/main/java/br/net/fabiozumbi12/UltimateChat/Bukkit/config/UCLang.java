@@ -165,11 +165,11 @@ public class UCLang {
         }
 
         if (!loadedlang.containsKey(key)) {
-            p.sendMessage(get(p, "_UChat.prefix") + " " + UCMessages.formatTags("", UChatColor.translateAlternateColorCodes(key), p, "", "", UChat.get().getPlayerChannel(p)));
+            p.sendMessage(get(p, "_UChat.prefix") + UCMessages.formatTags("", UChatColor.translateAlternateColorCodes(key), p, "", "", UChat.get().getPlayerChannel(p)));
         } else if (get(key).isEmpty()) {
             return;
         } else {
-            p.sendMessage(get(p, "_UChat.prefix") + " " + get(p, key));
+            p.sendMessage(get(p, "_UChat.prefix") + get(p, key));
         }
 
         delayedMessage.put(p, key);
@@ -184,11 +184,11 @@ public class UCLang {
         }
 
         if (loadedlang.get(key) == null) {
-            sender.sendMessage(get(sender, "_UChat.prefix") + " " + UCMessages.formatTags("", UChatColor.translateAlternateColorCodes(key), sender, "", "", UChat.get().getPlayerChannel(sender)));
+            sender.sendMessage(get(sender, "_UChat.prefix") + UCMessages.formatTags("", UChatColor.translateAlternateColorCodes(key), sender, "", "", UChat.get().getPlayerChannel(sender)));
         } else if (get(key).equalsIgnoreCase("")) {
             return;
         } else {
-            sender.sendMessage(get(sender, "_UChat.prefix") + " " + get(sender, key));
+            sender.sendMessage(get(sender, "_UChat.prefix") + get(sender, key));
         }
 
         if (sender instanceof Player) {
