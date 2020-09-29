@@ -40,7 +40,6 @@ import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import net.sacredlabyrinth.phaed.simpleclans.managers.SettingsManager;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
@@ -587,7 +586,7 @@ public class UCMessages {
                             lorestr.append("\n ").append(lore);
                         }
                         if (lorestr.length() >= 2) {
-                            text = text.replace("{hand-lore}", lorestr.toString().substring(0, lorestr.length() - 1));
+                            text = text.replace("{hand-lore}", lorestr.substring(0, lorestr.length() - 1));
                         }
                     }
                     if (meta.hasEnchants()) {
@@ -596,7 +595,7 @@ public class UCMessages {
                             str.append("\n ").append(enchant.getKey().getName()).append(": ").append(enchant.getValue());
                         }
                         if (str.length() >= 2) {
-                            text = text.replace("{hand-enchants}", str.toString().substring(0, str.length() - 1));
+                            text = text.replace("{hand-enchants}", str.substring(0, str.length() - 1));
                         }
                     }
                 }
@@ -636,7 +635,7 @@ public class UCMessages {
                     for (String g : pgs) {
                         groups.append(g).append(",");
                     }
-                    text = text.replace("{player-groups}", groups.toString().substring(0, groups.length() - 1));
+                    text = text.replace("{player-groups}", groups.substring(0, groups.length() - 1));
 
                 }
                 String primGroup = UCVaultCache.getVaultPerms(sender).getPrimaryGroup();
@@ -695,14 +694,6 @@ public class UCMessages {
                             .replace("{marry-partner}", partner)
                             .replace("{marry-prefix}", prefix)
                             .replace("{marry-suffix}", gender);
-                }
-                if (UChat.MarryMasterV1) {
-                    if (UChat.mm.HasPartner(sender)) {
-                        text = text
-                                .replace("{marry-partner}", UChat.mm.DB.GetPartner(sender))
-                                .replace("{marry-prefix}", UChat.mm.config.GetPrefix().replace("<heart>", ChatColor.RED + "❤" + ChatColor.WHITE))
-                                .replace("{marry-suffix}", UChat.mm.config.GetSuffix().replace("<heart>", ChatColor.RED + "❤" + ChatColor.WHITE));
-                    }
                 }
 	            if (UChat.MarryMasterV2) {
 		            if (UChat.mm2.getPlayerData(sender).isMarried() && UChat.mm2.getPlayerData(sender).getPartner() != null) {

@@ -75,15 +75,12 @@ public class UChat extends JavaPlugin {
     static boolean SClans;
     public static SimpleClans sc;
     static boolean MarryReloded;
-    static boolean MarryMasterV1;
 	static boolean MarryMasterV2;
     static MarriageMaster mm;
     static MarriageMasterPlugin mm2;
     static Marriage mapi;
     static TranslationCore tapi;
     static boolean PlaceHolderAPI;
-    static boolean Factions;
-    static boolean SaberFactions;
     static UCFactionsHookInterface FactionHook = null;
     private static boolean Vault = false;
     private static UChat uchat;
@@ -197,7 +194,6 @@ public class UChat extends JavaPlugin {
             Vault = checkVault();
             SClans = checkSC();
             MarryReloded = checkMR();
-            MarryMasterV1 = checkMM();
             MarryMasterV2 = checkMM2();
             boolean protocolLib = checkPL();
             PlaceHolderAPI = checkPHAPI();
@@ -246,10 +242,6 @@ public class UChat extends JavaPlugin {
                 logger.info("Marriage Reloaded found. Hooked.");
             }
 
-            if (MarryMasterV1) {
-	            mm = (MarriageMaster) Bukkit.getPluginManager().getPlugin("MarriageMaster");
-	            logger.info("MarryMaster v1.x found. Hooked.");
-            }
 	        if (MarryMasterV2) {
 		        mm2 = (MarriageMasterPlugin) Bukkit.getPluginManager().getPlugin("MarriageMaster");
 		        logger.info("MarryMaster found. Hooked.");
