@@ -101,7 +101,7 @@ public class UCUtil {
             return false;
         }
 
-        String finalMsg = UCMessages.formatTags("", message.toString().substring(1), src, src, message.toString().substring(1), new UCChannel("broadcast"));
+        String finalMsg = UCMessages.formatTags("", message.substring(1), src, src, message.substring(1), new UCChannel("broadcast"));
 
         if (!silent) {
             Sponge.getServer().getConsole().sendMessage(UCUtil.toText("> Broadcast: &r" + finalMsg));
@@ -111,29 +111,29 @@ public class UCUtil {
         fanci.append(UCUtil.toText(finalMsg));
 
         if (hover.toString().length() > 1) {
-            fanci.onHover(TextActions.showText(UCUtil.toText(hover.toString().substring(1))));
+            fanci.onHover(TextActions.showText(UCUtil.toText(hover.substring(1))));
             if (!silent) {
-                Sponge.getServer().getConsole().sendMessage(UCUtil.toText("&8> OnHover: &r" + hover.toString().substring(1)));
+                Sponge.getServer().getConsole().sendMessage(UCUtil.toText("&8> OnHover: &r" + hover.substring(1)));
             }
         }
 
         if (cmdline.toString().length() > 1 && !silent) {
-            Sponge.getServer().getConsole().sendMessage(UCUtil.toText("&8> OnClick: &r" + cmdline.toString().substring(1)));
+            Sponge.getServer().getConsole().sendMessage(UCUtil.toText("&8> OnClick: &r" + cmdline.substring(1)));
         }
 
         if (url.toString().length() > 1) {
             try {
-                fanci.onClick(TextActions.openUrl(new URL(url.toString().substring(1))));
+                fanci.onClick(TextActions.openUrl(new URL(url.substring(1))));
             } catch (MalformedURLException ignored) {
             }
             if (!silent) {
-                Sponge.getServer().getConsole().sendMessage(UCUtil.toText("&8> Url: &r" + url.toString().substring(1)));
+                Sponge.getServer().getConsole().sendMessage(UCUtil.toText("&8> Url: &r" + url.substring(1)));
             }
         }
 
         for (Player p : Sponge.getServer().getOnlinePlayers()) {
             if (cmdline.toString().length() > 1) {
-                fanci.onClick(TextActions.runCommand("/" + cmdline.toString().substring(1).replace("{clicked}", p.getName())));
+                fanci.onClick(TextActions.runCommand("/" + cmdline.substring(1).replace("{clicked}", p.getName())));
             }
             p.sendMessage(fanci.build());
             if (UChat.get().getJedis() != null) {

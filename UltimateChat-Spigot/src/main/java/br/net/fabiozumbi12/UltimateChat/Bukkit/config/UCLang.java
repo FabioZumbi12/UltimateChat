@@ -54,7 +54,7 @@ public class UCLang {
             return Collections.enumeration(new TreeSet<>(super.keySet()));
         }
     };    
-    private String pathLang;
+    private final String pathLang;
 
     public UCLang() {
         pathLang = UChat.get().getDataFolder() + File.separator + "lang" + UChat.get().getUCConfig().getString("language") + ".properties";

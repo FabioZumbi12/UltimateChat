@@ -219,7 +219,7 @@ public class UCUtil {
             return false;
         }
 
-        String finalMsg = UCMessages.formatTags("", message.toString().substring(1), src, src, message.toString().substring(1), new UCChannel("broadcast"));
+        String finalMsg = UCMessages.formatTags("", message.substring(1), src, src, message.substring(1), new UCChannel("broadcast"));
 
         if (!silent) {
             Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_GRAY + "> Broadcast: " + ChatColor.RESET + finalMsg);
@@ -230,21 +230,21 @@ public class UCUtil {
             fanci.coloredText(finalMsg);
 
             if (hover.toString().length() > 1) {
-                fanci.hoverShowText(hover.toString().substring(1));
+                fanci.hoverShowText(hover.substring(1));
                 if (!silent) {
-                    Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_GRAY + "> OnHover: " + ChatColor.RESET + hover.toString().substring(1));
+                    Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_GRAY + "> OnHover: " + ChatColor.RESET + hover.substring(1));
                 }
             }
 
             if (cmdline.toString().length() > 1 && !silent) {
-                Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_GRAY + "> OnClick: " + ChatColor.RESET + cmdline.toString().substring(1));
+                Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_GRAY + "> OnClick: " + ChatColor.RESET + cmdline.substring(1));
             }
 
             if (url.toString().length() > 1) {
                 try {
-                    fanci.clickOpenURL(new URL(url.toString().substring(1)));
+                    fanci.clickOpenURL(new URL(url.substring(1)));
                     if (!silent) {
-                        Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_GRAY + "> Url: " + ChatColor.RESET + url.toString().substring(1));
+                        Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_GRAY + "> Url: " + ChatColor.RESET + url.substring(1));
                     }
                 } catch (MalformedURLException ignore) {
                 }
@@ -254,10 +254,10 @@ public class UCUtil {
                 if (!perm.isEmpty() && !UCPerms.hasPerm(p, perm)) continue;
 
                 if (cmdline.toString().length() > 1) {
-                    fanci.clickRunCmd("/" + cmdline.toString().substring(1).replace("{clicked}", p.getName()));
+                    fanci.clickRunCmd("/" + cmdline.substring(1).replace("{clicked}", p.getName()));
                 }
                 if (suggest.toString().length() > 1) {
-                    fanci.clickSuggestCmd(suggest.toString().substring(1).replace("{clicked}", p.getName()));
+                    fanci.clickSuggestCmd(suggest.substring(1).replace("{clicked}", p.getName()));
                 }
 
                 fanci.send(p);

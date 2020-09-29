@@ -178,7 +178,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
                         for (String arg : args) {
                             msgBuild.append(" ").append(arg);
                         }
-                        String msg = msgBuild.toString().substring(1);
+                        String msg = msgBuild.substring(1);
                         if (ch != null) {
                             sendMessageToPlayer(ch, p, args, msg);
                             return;
@@ -618,7 +618,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
                     for (String arg : args) {
                         msgb.append(" ").append(arg);
                     }
-                    String msg = msgb.toString().substring(1);
+                    String msg = msgb.substring(1);
                     UCMessages.sendFancyMessage(new String[0], msg, ch, sender, null);
                     return true;
                 }
@@ -1155,7 +1155,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
             channels.append(", ").append(ch.getName());
         }
         p.sendMessage(UChatColor.translateAlternateColorCodes("&7>> -------------- " + UChat.get().getLang().get("_UChat.prefix") + " Help &7-------------- <<"));
-        p.sendMessage(UChat.get().getLang().get("help.channels.available").replace("{channels}", channels.toString().substring(2)));
+        p.sendMessage(UChat.get().getLang().get("help.channels.available").replace("{channels}", channels.substring(2)));
         p.sendMessage(UChat.get().getLang().get("help.channels.enter"));
         p.sendMessage(UChat.get().getLang().get("help.channels.send"));
     }

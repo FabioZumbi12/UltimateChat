@@ -101,7 +101,7 @@ public class UCCommands {
             }
 
             //fire event
-            PlayerChangeChannelEvent event = new PlayerChangeChannelEvent((Player) src, UChat.get().getPlayerChannel(src), ch);
+            PlayerChangeChannelEvent event = new PlayerChangeChannelEvent(src, UChat.get().getPlayerChannel(src), ch);
             Sponge.getEventManager().post(event);
             if (event.isCancelled()) {
                 return;
@@ -147,7 +147,7 @@ public class UCCommands {
         }
 
         //fire event
-        PlayerChangeChannelEvent event = new PlayerChangeChannelEvent((Player) src, UChat.get().getPlayerChannel(src), ch);
+        PlayerChangeChannelEvent event = new PlayerChangeChannelEvent(src, UChat.get().getPlayerChannel(src), ch);
         Sponge.getEventManager().post(event);
         if (event.isCancelled()) {
             return;

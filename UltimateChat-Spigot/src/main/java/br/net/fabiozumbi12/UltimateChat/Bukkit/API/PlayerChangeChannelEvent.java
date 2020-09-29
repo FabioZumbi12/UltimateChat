@@ -39,9 +39,9 @@ import org.bukkit.event.HandlerList;
  */
 public class PlayerChangeChannelEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
-    private Player player;
-    private UCChannel channelTo;
-    private UCChannel channelFrom;
+    private final Player player;
+    private final UCChannel channelTo;
+    private final UCChannel channelFrom;
     private boolean isCancelled;
 
     public PlayerChangeChannelEvent(Player p, UCChannel from, UCChannel to) {

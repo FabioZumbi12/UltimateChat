@@ -46,13 +46,13 @@ import java.util.List;
 public class UCJedisLoader {
     protected HashMap<String, String> tellPlayers = new HashMap<>();
     private JedisPool pool;
-    private String[] channels;
-    private ChatChannel channel;
-    private String thisId;
-    private String ip;
-    private int port;
-    private String auth;
-    private JedisPoolConfig poolCfg;
+    private final String[] channels;
+    private final ChatChannel channel;
+    private final String thisId;
+    private final String ip;
+    private final int port;
+    private final String auth;
+    private final JedisPoolConfig poolCfg;
     private PubSubListener psl;
 
     public UCJedisLoader(String ip, int port, String auth, List<UCChannel> channels) {

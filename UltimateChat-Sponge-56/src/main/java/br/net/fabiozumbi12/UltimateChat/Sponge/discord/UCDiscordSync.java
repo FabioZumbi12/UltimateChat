@@ -33,11 +33,10 @@ public class UCDiscordSync {
     private ConfigurationLoader<CommentedConfigurationNode> cfgLoader;
     private DiscordSync sync;
     private UUID taskId = null;
-    private File syncFile = new File(UChat.get().configDir(), "discord-sync.conf");
-    private final CommandManager manager;
+    private final File syncFile = new File(UChat.get().configDir(), "discord-sync.conf");
 
     public UCDiscordSync(ObjectMapperFactory factory) {
-        manager = Sponge.getCommandManager();
+        CommandManager manager = Sponge.getCommandManager();
         try {
             if (!syncFile.exists()) {
                 syncFile.createNewFile();

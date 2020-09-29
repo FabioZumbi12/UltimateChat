@@ -74,7 +74,7 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
     }
 
     private JDA jda;
-    private UChat uchat;
+    private final UChat uchat;
 
     public UCDiscord(UChat plugin) {
         this.uchat = plugin;

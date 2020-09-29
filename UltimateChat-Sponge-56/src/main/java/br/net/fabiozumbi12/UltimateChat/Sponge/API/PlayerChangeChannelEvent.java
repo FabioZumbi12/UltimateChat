@@ -40,9 +40,9 @@ import org.spongepowered.api.event.impl.AbstractEvent;
  * @author FabioZumbi12
  */
 public class PlayerChangeChannelEvent extends AbstractEvent implements Event, Cancellable {
-    private Player player;
-    private UCChannel channelTo;
-    private UCChannel channelFrom;
+    private final Player player;
+    private final UCChannel channelTo;
+    private final UCChannel channelFrom;
     private boolean isCancelled;
 
     public PlayerChangeChannelEvent(Player p, UCChannel from, UCChannel to) {

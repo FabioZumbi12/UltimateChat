@@ -35,7 +35,7 @@ import java.util.Arrays;
 
 public class UCPlaceHoldersRelational extends PlaceholderExpansion implements Relational {
 
-    private UChat plugin;
+    private final UChat plugin;
 
     public UCPlaceHoldersRelational(UChat plugin) {
         this.plugin = plugin;

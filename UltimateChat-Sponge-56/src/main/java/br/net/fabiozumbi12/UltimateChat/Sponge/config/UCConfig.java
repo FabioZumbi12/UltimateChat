@@ -49,8 +49,8 @@ import java.util.Map.Entry;
 
 public class UCConfig {
 
-    private File defConfig = new File(UChat.get().configDir(), "config.conf");
-    private File defProt = new File(UChat.get().configDir(), "protections.conf");
+    private final File defConfig = new File(UChat.get().configDir(), "config.conf");
+    private final File defProt = new File(UChat.get().configDir(), "protections.conf");
 
     private CommentedConfigurationNode configRoot;
     private ConfigurationLoader<CommentedConfigurationNode> cfgLoader;

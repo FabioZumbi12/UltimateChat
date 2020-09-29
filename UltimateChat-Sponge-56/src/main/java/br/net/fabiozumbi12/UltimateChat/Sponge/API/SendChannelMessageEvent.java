@@ -73,7 +73,7 @@ public class SendChannelMessageEvent extends AbstractEvent implements Cancellabl
      * @return {@code true} if removed or {@code false} if dont contains the replacer.
      */
     public boolean removeTag(String tagname) {
-        if (this.registeredTags.keySet().contains(tagname)) {
+        if (this.registeredTags.containsKey(tagname)) {
             this.registeredTags.remove(tagname);
             return true;
         }
@@ -88,7 +88,7 @@ public class SendChannelMessageEvent extends AbstractEvent implements Cancellabl
      * @return {@code true} if added or {@code false} if already contains the tag.
      */
     public boolean addTag(String tagname, String value) {
-        if (!this.registeredTags.keySet().contains(tagname)) {
+        if (!this.registeredTags.containsKey(tagname)) {
             this.registeredTags.put(tagname, value);
             return true;
         }

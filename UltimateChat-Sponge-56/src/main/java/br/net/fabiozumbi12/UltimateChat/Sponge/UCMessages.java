@@ -243,7 +243,7 @@ public class UCMessages {
             msgPlayers.put(Sponge.getServer().getConsole(), to);
         }
 
-        if (!msgPlayers.keySet().contains(Sponge.getServer().getConsole())) {
+        if (!msgPlayers.containsKey(Sponge.getServer().getConsole())) {
             msgPlayers.put(Sponge.getServer().getConsole(), msgPlayers.values().stream().findAny().get());
         }
 
@@ -650,14 +650,14 @@ public class UCMessages {
                         lorestr.append("\n ").append(line.toPlain());
                     }
                     if (lorestr.length() >= 2) {
-                        text = text.replace("{hand-lore}", lorestr.toString().substring(0, lorestr.length() - 1));
+                        text = text.replace("{hand-lore}", lorestr.substring(0, lorestr.length() - 1));
                     }
                 }
                 if (item.get(Keys.ITEM_ENCHANTMENTS).isPresent()) {
                     StringBuilder str = new StringBuilder();
                     str.append(UChat.get().getVHelper().getEnchantments(str, item));
                     if (str.length() >= 2) {
-                        text = text.replace("{hand-enchants}", str.toString().substring(0, str.length() - 1));
+                        text = text.replace("{hand-enchants}", str.substring(0, str.length() - 1));
                     }
                 }
                 text = text.replace("{hand-amount}", String.valueOf(item.getQuantity()));

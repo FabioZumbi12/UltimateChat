@@ -35,7 +35,7 @@ import java.util.Arrays;
 
 public class UCPlaceHolders extends PlaceholderExpansion {
 
-    private UChat plugin;
+    private final UChat plugin;
 
     public UCPlaceHolders(UChat plugin) {
         this.plugin = plugin;
