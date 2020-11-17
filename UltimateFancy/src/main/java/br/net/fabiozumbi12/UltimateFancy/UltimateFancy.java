@@ -457,6 +457,7 @@ public class UltimateFancy {
      * @param to {@link CommandSender}
      */
     public void send(CommandSender to) {
+        UltimateFancy.this.plugin.getLogger().severe("Sender1: " + to.getName());
         next();
         if (to instanceof Player) {
             performCommand((Player) to);
@@ -466,6 +467,7 @@ public class UltimateFancy {
     }
 
     public void send(CommandSender to, boolean json) {
+        UltimateFancy.this.plugin.getLogger().severe("Sender2: " + to.getName());
         next();
         if (to instanceof Player) {
             if (json) {
@@ -614,11 +616,21 @@ public class UltimateFancy {
     private void performCommand(Player to) {
         Bukkit.getScheduler().callSyncMethod(plugin, () -> {
             if (Bukkit.getOnlinePlayers().stream().anyMatch(p -> p.equals(to))) {
-                Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "tellraw \"" + to.getName() + "\" " + toJson());
+                String toName = to.getName();
+
+                Pattern p = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
+                Matcher m = p.matcher(toName);
+                boolean b = m.find();
+
+                if (b)
+                    toName = "\"" + toName +"\"";
+
+                Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + toName + " " + toJson());
             }
             return null;
         });
     }
+    
     private JSONObject parseHoverText(String text) {
         JSONArray extraArr = addColorToArray(UChatColor.translateAlternateColorCodes(text));
         JSONObject objExtra = new JSONObject();
