@@ -457,7 +457,6 @@ public class UltimateFancy {
      * @param to {@link CommandSender}
      */
     public void send(CommandSender to) {
-        UltimateFancy.this.plugin.getLogger().severe("Sender1: " + to.getName());
         next();
         if (to instanceof Player) {
             performCommand((Player) to);
@@ -467,7 +466,6 @@ public class UltimateFancy {
     }
 
     public void send(CommandSender to, boolean json) {
-        UltimateFancy.this.plugin.getLogger().severe("Sender2: " + to.getName());
         next();
         if (to instanceof Player) {
             if (json) {
