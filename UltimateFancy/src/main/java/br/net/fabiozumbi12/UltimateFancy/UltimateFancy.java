@@ -616,7 +616,7 @@ public class UltimateFancy {
             if (Bukkit.getOnlinePlayers().stream().anyMatch(p -> p.equals(to))) {
                 String toName = to.getName();
 
-                Pattern p = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
+                Pattern p = Pattern.compile("[^a-z0-9_ ]", Pattern.CASE_INSENSITIVE);
                 Matcher m = p.matcher(toName);
                 boolean b = m.find();
 
