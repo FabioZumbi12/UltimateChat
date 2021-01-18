@@ -131,6 +131,7 @@ public class UCCommentedConfig {
         setDefault("general.item-hand.format", "&6[{hand-amount} {hand-type}]{group-suffix}", "Text to show on chat when using @hand.\n" +
                 "Placeholders: {hand-amount}, {hand-type}, {hand-name}");
         setDefault("general.item-hand.placeholder", "@hand", "Placeholder to use on chat by players to show your item in hand.");
+        setDefault("general.item-hand.blacklist", Collections.singletonList("SHULKER_BOX"), "Blacklisted itens for hand command.");
 
         setDefault("general.world-names", null, "Example alias for rename world name to other name. Support color codes.");
         if (!UChat.get().getConfig().contains("general.world-names")) {

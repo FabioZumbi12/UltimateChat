@@ -32,6 +32,7 @@ import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UChatColor;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.io.IOException;
@@ -319,5 +320,9 @@ public class UCConfig {
 
     public String getColorStr(String key) {
         return UChatColor.translateAlternateColorCodes(plugin.getConfig().getString(key));
+    }
+
+    public boolean hasBlackListed(ItemStack itemStack) {
+        return plugin.getConfig().getStringList("general.item-hand.blacklist").stream().anyMatch(i -> i.equalsIgnoreCase(itemStack.getType().name()));
     }
 }
