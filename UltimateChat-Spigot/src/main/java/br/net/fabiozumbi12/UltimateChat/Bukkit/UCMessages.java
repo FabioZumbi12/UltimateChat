@@ -27,15 +27,15 @@ package br.net.fabiozumbi12.UltimateChat.Bukkit;
 
 import br.net.fabiozumbi12.UltimateChat.Bukkit.API.PostFormatChatMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.API.SendChannelMessageEvent;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.hooks.UCDynmap;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCLogger.timingType;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.bungee.UChatBungee;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.hooks.UCDynmap;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.hooks.UCVaultCache;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCLogger.timingType;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCPerms;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCUtil;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UChatColor;
-import me.clip.placeholderapi.PlaceholderAPI;
 import br.net.fabiozumbi12.UltimateFancy.UltimateFancy;
+import me.clip.placeholderapi.PlaceholderAPI;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import net.sacredlabyrinth.phaed.simpleclans.managers.SettingsManager;
 import org.apache.commons.lang.StringUtils;

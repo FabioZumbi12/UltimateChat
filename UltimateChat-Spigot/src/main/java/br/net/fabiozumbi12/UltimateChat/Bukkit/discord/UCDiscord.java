@@ -25,15 +25,15 @@
 
 package br.net.fabiozumbi12.UltimateChat.Bukkit.discord;
 
-import br.net.fabiozumbi12.UltimateChat.Bukkit.*;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.UCChannel;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.UChat;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCPerms;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCUtil;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UChatColor;
+import br.net.fabiozumbi12.UltimateFancy.UltimateFancy;
 import jdalib.jda.api.JDA;
 import jdalib.jda.api.JDABuilder;
-import jdalib.jda.api.Permission;
 import jdalib.jda.api.entities.*;
-import br.net.fabiozumbi12.UltimateFancy.UltimateFancy;
 import jdalib.jda.api.events.message.MessageReceivedEvent;
 import jdalib.jda.api.exceptions.ErrorResponseException;
 import jdalib.jda.api.exceptions.PermissionException;
@@ -46,11 +46,12 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import javax.security.auth.login.LoginException;
-import java.awt.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;

@@ -4,7 +4,6 @@ import br.net.fabiozumbi12.UltimateChat.Bukkit.UChat;
 import br.net.fabiozumbi12.UltimateFancy.UltimateFancy;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
-import com.massivecraft.massivecore.store.Coll;
 import jdalib.jda.api.Permission;
 import jdalib.jda.api.entities.*;
 import jdalib.jda.api.exceptions.RateLimitedException;

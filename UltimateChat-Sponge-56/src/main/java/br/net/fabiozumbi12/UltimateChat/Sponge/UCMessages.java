@@ -28,7 +28,6 @@ package br.net.fabiozumbi12.UltimateChat.Sponge;
 import br.net.fabiozumbi12.UltimateChat.Sponge.API.PostFormatChatMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.Sponge.API.SendChannelMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.Sponge.util.UCLogger.timingType;
-import br.net.fabiozumbi12.UltimateChat.Sponge.util.UCPerms;
 import br.net.fabiozumbi12.UltimateChat.Sponge.util.UCUtil;
 import io.github.nucleuspowered.nucleus.api.NucleusAPI;
 import me.rojo8399.placeholderapi.PlaceholderService;

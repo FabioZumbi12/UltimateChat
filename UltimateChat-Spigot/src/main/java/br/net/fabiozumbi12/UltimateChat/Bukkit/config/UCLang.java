@@ -26,8 +26,8 @@
 package br.net.fabiozumbi12.UltimateChat.Bukkit.config;
 
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UCMessages;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCUtil;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UChat;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCUtil;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

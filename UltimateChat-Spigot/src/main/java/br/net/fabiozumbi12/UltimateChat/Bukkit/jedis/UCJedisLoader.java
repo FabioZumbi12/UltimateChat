@@ -25,7 +25,9 @@
 
 package br.net.fabiozumbi12.UltimateChat.Bukkit.jedis;
 
-import br.net.fabiozumbi12.UltimateChat.Bukkit.*;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.UCChannel;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.UCMessages;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.UChat;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCPerms;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UChatColor;
 import br.net.fabiozumbi12.UltimateFancy.UltimateFancy;

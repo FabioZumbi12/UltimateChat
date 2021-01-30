@@ -26,8 +26,8 @@
 package br.net.fabiozumbi12.UltimateChat.Sponge.discord;
 
 import br.net.fabiozumbi12.UltimateChat.Sponge.UCChannel;
-import br.net.fabiozumbi12.UltimateChat.Sponge.util.UCUtil;
 import br.net.fabiozumbi12.UltimateChat.Sponge.UChat;
+import br.net.fabiozumbi12.UltimateChat.Sponge.util.UCUtil;
 import jdalib.jda.api.JDA;
 import jdalib.jda.api.JDABuilder;
 import jdalib.jda.api.entities.*;

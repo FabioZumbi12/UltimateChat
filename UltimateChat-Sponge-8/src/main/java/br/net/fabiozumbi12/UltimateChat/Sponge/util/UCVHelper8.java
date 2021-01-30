@@ -25,7 +25,6 @@
 
 package br.net.fabiozumbi12.UltimateChat.Sponge.util;
 
-import br.net.fabiozumbi12.UltimateChat.Sponge.util.UCVHelper;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.type.HandTypes;

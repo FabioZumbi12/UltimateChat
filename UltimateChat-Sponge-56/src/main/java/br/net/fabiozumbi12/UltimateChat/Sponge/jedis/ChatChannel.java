@@ -26,8 +26,8 @@
 package br.net.fabiozumbi12.UltimateChat.Sponge.jedis;
 
 import br.net.fabiozumbi12.UltimateChat.Sponge.UCChannel;
-import br.net.fabiozumbi12.UltimateChat.Sponge.util.UCUtil;
 import br.net.fabiozumbi12.UltimateChat.Sponge.UChat;
+import br.net.fabiozumbi12.UltimateChat.Sponge.util.UCUtil;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import redis.clients.jedis.JedisPubSub;

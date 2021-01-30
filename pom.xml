@@ -234,6 +234,7 @@
         <module>UltimateChat-JDA</module>
         <module>UltimateChat-Spigot</module>
         <module>UltimateChat-Bungee</module>
+        <module>UltimateChat-Velocity</module>
         <module>UltimateChat-Sponge-56</module>
         <module>UltimateChat-Sponge-7</module>
         <module>UltimateChat-Sponge-8</module>

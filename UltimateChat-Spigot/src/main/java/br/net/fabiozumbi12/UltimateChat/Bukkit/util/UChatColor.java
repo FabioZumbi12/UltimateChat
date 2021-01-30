@@ -1,8 +1,6 @@
 package br.net.fabiozumbi12.UltimateChat.Bukkit.util;
 
-import br.net.fabiozumbi12.UltimateChat.Bukkit.UChat;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

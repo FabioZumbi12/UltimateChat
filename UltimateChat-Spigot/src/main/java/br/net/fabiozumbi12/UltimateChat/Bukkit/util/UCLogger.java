@@ -26,7 +26,6 @@
 package br.net.fabiozumbi12.UltimateChat.Bukkit.util;
 
 import br.net.fabiozumbi12.UltimateChat.Bukkit.UChat;
-import org.bukkit.ChatColor;
 
 public class UCLogger {
 
