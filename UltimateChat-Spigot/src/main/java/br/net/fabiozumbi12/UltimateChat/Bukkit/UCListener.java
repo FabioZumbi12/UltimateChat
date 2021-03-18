@@ -53,7 +53,6 @@ import org.bukkit.event.world.WorldLoadEvent;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.logging.Level;
 
 public class UCListener implements CommandExecutor, Listener, TabCompleter {
 

@@ -511,10 +511,10 @@ public class UChat extends JavaPlugin {
         for (Command cmd : PluginCommandYamlParser.parse(uchat)) {
             if (cmd.getName().equals(name)) {
                 if (shouldReg) {
-                    PluginCommand pc = getServer().getPluginCommand(name);
-                    if(pc != null) {
-                        pc.setExecutor((CommandExecutor) cmdListener);
-                        pc.setTabCompleter((TabCompleter) cmdListener);
+                    PluginCommand pluginCommand = getServer().getPluginCommand(name);
+                    if(pluginCommand != null) {
+                        pluginCommand.setExecutor((CommandExecutor) cmdListener);
+                        pluginCommand.setTabCompleter((TabCompleter) cmdListener);
                         cmd.setAliases(aliases1);
                         cmd.setLabel(name);
                         if (perm != null) cmd.setPermission(perm);
