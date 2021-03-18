@@ -516,11 +516,17 @@ public class UChat extends JavaPlugin {
         for (Command cmd : PluginCommandYamlParser.parse(uchat)) {
             if (cmd.getName().equals(name)) {
                 if (shouldReg) {
-                    getServer().getPluginCommand(name).setExecutor((CommandExecutor) cmdListener);
-                    getServer().getPluginCommand(name).setTabCompleter((TabCompleter) cmdListener);
-                    cmd.setAliases(aliases1);
-                    cmd.setLabel(name);
-                    if (perm != null) cmd.setPermission(perm);
+                    PluginCommand pc = getServer().getPluginCommand(name);
+                    if(pc != null) {
+                        getServer().getPluginCommand(name).setExecutor((CommandExecutor) cmdListener);
+                        getServer().getPluginCommand(name).setTabCompleter((TabCompleter) cmdListener);
+                        cmd.setAliases(aliases1);
+                        cmd.setLabel(name);
+                        if (perm != null) cmd.setPermission(perm);
+                    }
+                    else {
+                        getLogger().info("Saved us from a nasty mistake there! " + name);
+                    }
                 }
                 try {
                     Field field = SimplePluginManager.class.getDeclaredField("commandMap");
