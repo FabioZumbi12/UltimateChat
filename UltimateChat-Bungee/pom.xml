@@ -57,7 +57,7 @@
         </dependency>
     </dependencies>
     <properties>
-        <mineVersion>1.15-SNAPSHOT</mineVersion>
+        <mineVersion>1.16-R0.5-SNAPSHOT</mineVersion>
     </properties>
 
     <build>

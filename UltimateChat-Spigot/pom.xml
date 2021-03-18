@@ -123,7 +123,7 @@
         <dependency>
             <groupId>com.comphenix.protocol</groupId>
             <artifactId>ProtocolLib</artifactId>
-            <version>LATEST</version>
+            <version>4.5.0</version>
         </dependency>
         <dependency>
             <groupId>br.net.fabiozumbi12</groupId>

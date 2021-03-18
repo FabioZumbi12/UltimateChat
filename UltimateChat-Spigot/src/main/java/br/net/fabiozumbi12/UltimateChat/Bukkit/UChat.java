@@ -511,23 +511,30 @@ public class UChat extends JavaPlugin {
         for (Command cmd : PluginCommandYamlParser.parse(uchat)) {
             if (cmd.getName().equals(name)) {
                 if (shouldReg) {
-                    getServer().getPluginCommand(name).setExecutor((CommandExecutor) cmdListener);
-                    getServer().getPluginCommand(name).setTabCompleter((TabCompleter) cmdListener);
-                    cmd.setAliases(aliases1);
-                    cmd.setLabel(name);
-                    if (perm != null) cmd.setPermission(perm);
+                    PluginCommand pluginCommand = getServer().getPluginCommand(name);
+                    if(pluginCommand != null) {
+                        pluginCommand.setExecutor((CommandExecutor) cmdListener);
+                        pluginCommand.setTabCompleter((TabCompleter) cmdListener);
+                        cmd.setAliases(aliases1);
+                        cmd.setLabel(name);
+                        if (perm != null) cmd.setPermission(perm);
+                    }
+                    else {
+                        getLogger().warning("Can't register command for alias " + name);
+                    }
                 }
                 try {
                     Field field = SimplePluginManager.class.getDeclaredField("commandMap");
                     field.setAccessible(true);
                     CommandMap commandMap = (CommandMap) (field.get(getServer().getPluginManager()));
+                    PluginCommand pluginCommand = getServer().getPluginCommand(name);
                     if (shouldReg) {
                         Method register = commandMap.getClass().getMethod("register", String.class, Command.class);
                         register.invoke(commandMap, cmd.getName(), cmd);
                         ((PluginCommand) cmd).setExecutor((CommandExecutor) cmdListener);
                         ((PluginCommand) cmd).setTabCompleter((TabCompleter) cmdListener);
-                    } else if (getServer().getPluginCommand(name).isRegistered()) {
-                        getServer().getPluginCommand(name).unregister(commandMap);
+                    } else if (pluginCommand != null && pluginCommand.isRegistered()) {
+                        pluginCommand.unregister(commandMap);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
