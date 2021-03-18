@@ -499,15 +499,10 @@ public class UChat extends JavaPlugin {
      * Needed to be called after register or unregister channels.
      */
     void registerAliases() {
-        getLogger().info("1");
         registerAliases("channel", getChAliases(), true, null, listener);
-        getLogger().info("2");
         registerAliases("tell", config.getTellAliases(), true, null, listener);
-        getLogger().info("3");
         registerAliases("umsg", config.getMsgAliases(), true, null, listener);
-        getLogger().info("4");
         registerAliases("ubroadcast", config.getBroadcastAliases(), config.getBoolean("broadcast.enable"), null, listener);
-        getLogger().info("5");
     }
 
     public void registerAliases(String name, List<String> aliases, boolean shouldReg, String perm, Object cmdListener) {
@@ -518,8 +513,8 @@ public class UChat extends JavaPlugin {
                 if (shouldReg) {
                     PluginCommand pc = getServer().getPluginCommand(name);
                     if(pc != null) {
-                        getServer().getPluginCommand(name).setExecutor((CommandExecutor) cmdListener);
-                        getServer().getPluginCommand(name).setTabCompleter((TabCompleter) cmdListener);
+                        pc.setExecutor((CommandExecutor) cmdListener);
+                        pc.setTabCompleter((TabCompleter) cmdListener);
                         cmd.setAliases(aliases1);
                         cmd.setLabel(name);
                         if (perm != null) cmd.setPermission(perm);

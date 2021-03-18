@@ -1022,9 +1022,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 
     @EventHandler
     public void onCreateWorld(WorldLoadEvent e) {
-        UChat.get().getLogger().log(Level.INFO, "Creating World: '" + e.getWorld().getName() + "'...");
         UChat.get().reload();
-        UChat.get().getLogger().log(Level.INFO, "Created World: '" + e.getWorld().getName() + "'!");
     }
 
     @EventHandler
