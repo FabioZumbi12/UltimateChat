@@ -53,6 +53,7 @@ import org.bukkit.event.world.WorldLoadEvent;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.logging.Level;
 
 public class UCListener implements CommandExecutor, Listener, TabCompleter {
 
@@ -1021,7 +1022,9 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
 
     @EventHandler
     public void onCreateWorld(WorldLoadEvent e) {
+        UChat.get().getLogger().log(Level.INFO, "Creating World: '" + e.getWorld().getName() + "'...");
         UChat.get().reload();
+        UChat.get().getLogger().log(Level.INFO, "Created World: '" + e.getWorld().getName() + "'!");
     }
 
     @EventHandler
