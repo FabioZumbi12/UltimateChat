@@ -241,8 +241,11 @@ public class UChat extends JavaPlugin {
             }
 
 	        if (MarryMasterV2) {
-		        mm2 = (MarriageMasterPlugin) Bukkit.getPluginManager().getPlugin("MarriageMaster");
-		        logger.info("MarryMaster found. Hooked.");
+	            Plugin mm2pl = Bukkit.getPluginManager().getPlugin("MarriageMaster");
+	            if (mm2pl instanceof MarriageMasterPlugin) {
+                    mm2 = (MarriageMasterPlugin) mm2pl;
+                    logger.info("MarryMaster found. Hooked.");
+                }
 	        }
 
             if (SClans) {
