@@ -245,6 +245,9 @@ public class UChat extends JavaPlugin {
 	            if (mm2pl instanceof MarriageMasterPlugin) {
                     mm2 = (MarriageMasterPlugin) mm2pl;
                     logger.info("MarryMaster found. Hooked.");
+                } else {
+	                MarryMasterV2 = false;
+                    logger.info("MarryMaster not compatible.");
                 }
 	        }
 
