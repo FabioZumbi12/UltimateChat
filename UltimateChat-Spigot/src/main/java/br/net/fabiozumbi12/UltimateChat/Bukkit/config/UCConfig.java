@@ -59,6 +59,9 @@ public class UCConfig {
         if (!protections.exists()) {
             UCUtil.saveResource("/assets/ultimatechat/protections.yml", new File(UChat.get().getDataFolder(), "protections.yml"));
             plugin.getUCLogger().info("Created protections file: " + protections.getPath());
+
+            //load protections file
+            Prots = updateFile(protections);
         }
 
         //------------------------------ Add default Values ----------------------------//
@@ -67,9 +70,6 @@ public class UCConfig {
         comConfig.addDefaults();
 
         /*------------------------------------------------------------------------------------*/
-
-        //load protections file
-        Prots = updateFile(protections);
 
         /* Load Channels */
         loadChannels();
