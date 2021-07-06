@@ -102,7 +102,7 @@ public class UCJedisLoader {
                 this.pool = new JedisPool(poolCfg, ip, port, 0, auth);
             }
 
-            reconChecker = Sponge.getScheduler().createSyncExecutor(UChat.get()).scheduleAtFixedRate(() -> {
+            reconChecker = Sponge.getScheduler().createAsyncExecutor(UChat.get()).scheduleAtFixedRate(() -> {
                 Jedis jedis;
                 try{
                     jedis = pool.getResource();

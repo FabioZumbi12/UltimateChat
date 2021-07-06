@@ -99,7 +99,7 @@ public class UCJedisLoader {
                 this.pool = new JedisPool(poolCfg, ip, port, 0, auth);
             }
 
-            reconChecker = Bukkit.getScheduler().runTaskTimer(UChat.get(), () -> {
+            reconChecker = Bukkit.getScheduler().runTaskLaterAsynchronously(UChat.get(), () -> {
                 Jedis jedis;
                 try{
                     jedis = pool.getResource();
@@ -114,7 +114,7 @@ public class UCJedisLoader {
                         this.pool = new JedisPool(poolCfg, ip, port, 0, auth);
                     }
                 }
-            }, 600, 600);
+            }, 600);
             return false;
         }
         return true;
