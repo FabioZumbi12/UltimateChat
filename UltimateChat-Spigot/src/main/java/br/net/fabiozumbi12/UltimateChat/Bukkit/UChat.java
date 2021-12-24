@@ -374,8 +374,8 @@ public class UChat extends JavaPlugin {
                 this.logger.info("JDA LibLoader is present...");
                 if (this.UCJDA != null) {
                     if (this.sync != null) {
-                        if (sc != null)
-                            HandlerList.unregisterAll(this.sync.ddSimpleClansChat);
+                        /*if (sc != null)
+                            HandlerList.unregisterAll(this.sync.ddSimpleClansChat);*/
                         this.sync = null;
                     }
                     Bukkit.getScheduler().cancelTask(this.UCJDA.getTaskId());
@@ -389,8 +389,8 @@ public class UChat extends JavaPlugin {
                         this.logger.info("JDA is not available due errors before...");
                     } else {
                         this.sync = new UCDiscordSync();
-                        if (sc != null)
-                            Bukkit.getPluginManager().registerEvents(this.sync.ddSimpleClansChat, this);
+                        /*if (sc != null)
+                            Bukkit.getPluginManager().registerEvents(this.sync.ddSimpleClansChat, this);*/
 
                         this.logger.info("JDA connected and ready to use!");
                         if (start) this.UCJDA.sendRawToDiscord(lang.get("discord.start"));

@@ -41,6 +41,7 @@ import jdalib.jda.api.exceptions.RateLimitedException;
 import jdalib.jda.api.hooks.ListenerAdapter;
 import net.sacredlabyrinth.phaed.simpleclans.Clan;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
+import net.sacredlabyrinth.phaed.simpleclans.managers.SettingsManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -247,15 +248,13 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
             Clan clan = UChat.sc.getClanManager().getClan(clanCfg.get().getKey().split("\\.")[0]);
             if (clan != null) {
 
-                String leaderColor = UChat.sc.getSettingsManager().getClanChatLeaderColor();
-                String memberColor = UChat.sc.getSettingsManager().getClanChatMemberColor();
-                String memberRank = UChat.sc.getSettingsManager().getClanChatRank();
-                String rankColor = UChat.sc.getSettingsManager().getClanChatRankColor();
+                String leaderColor = UChat.sc.getSettingsManager().getString(SettingsManager.ConfigField.ALLYCHAT_LEADER_COLOR);
+                String memberColor = UChat.sc.getSettingsManager().getString(SettingsManager.ConfigField.CLANCHAT_MEMBER_COLOR);
+                String memberRank = UChat.sc.getSettingsManager().getString(SettingsManager.ConfigField.CLANCHAT_RANK);
 
-                final String[] chatTemplate = {UChat.sc.getSettingsManager().getClanChatFormat()
+                final String[] chatTemplate = {UChat.sc.getSettingsManager().getString(SettingsManager.ConfigField.CLANCHAT_FORMAT)
                         .replace("%clan%", clan.getTag().toUpperCase())};
 
-                String finalMessage = message;
                 String nickColor = memberColor;
 
                 String sender = UChat.get().getDDSync().getSyncNickName(e.getAuthor().getId());
@@ -269,8 +268,8 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
                     chatTemplate[0] = chatTemplate[0]
                             .replace("%player%", member.getName())
                             .replace("%nick-color%", nickColor)
-                            .replace("%message%", finalMessage)
-                            .replace("%rank%", member.getRankDisplayName().isEmpty() ? "" : memberRank.replace("%rank%", rankColor + member.getRankDisplayName()));
+                            .replace("%message%", message)
+                            .replace("%rank%", member.getRankDisplayName().isEmpty() ? "" : memberRank.replace("%rank%", member.getRankDisplayName()));
 
                     clan.getMembers().forEach(members -> {
                         if (members.toPlayer() != null) {

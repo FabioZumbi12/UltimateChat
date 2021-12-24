@@ -31,12 +31,10 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
     private final HashMap<String, String> comments;
     private final YamlConfiguration sync;
     private int taskId = 0;
-    public DDSimpleClansChat ddSimpleClansChat;
 
     public UCDiscordSync() {
         this.comments = new HashMap<>();
         this.sync = new YamlConfiguration();
-        this.ddSimpleClansChat = new DDSimpleClansChat();
 
         File config = new File(UChat.get().getDataFolder(), "discord-sync.yml");
         if (config.exists()) {

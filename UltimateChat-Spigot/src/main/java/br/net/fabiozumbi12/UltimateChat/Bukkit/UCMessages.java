@@ -611,18 +611,21 @@ public class UCMessages {
             }
 
             if (UChat.get().getVaultChat() != null && (text.contains("-prefix") || text.contains("-suffix"))) {
+                try{
+                    text = text.replace("{group-all-prefixes}", UCVaultCache.getVaultChat(sender).getPlayerPrefixes())
+                            .replace("{group-all-suffixes}", UCVaultCache.getVaultChat(sender).getPlayerSuffixes());
 
-                text = text.replace("{group-all-prefixes}", UCVaultCache.getVaultChat(sender).getPlayerPrefixes());
-                text = text.replace("{group-all-suffixes}", UCVaultCache.getVaultChat(sender).getPlayerSuffix());
-
-                text = text
-                        .replace("{group-suffix}", UCVaultCache.getVaultChat(sender).getPlayerSuffix())
-                        .replace("{group-prefix}", UCVaultCache.getVaultChat(sender).getPlayerPrefix());
-                String[] pgs = UCVaultCache.getVaultPerms(sender).getPlayerGroups();
-                if (pgs.length > 0) {
                     text = text
-                            .replace("{player-groups-prefixes}", UCVaultCache.getVaultChat(sender).getGroupPrefixes())
-                            .replace("{player-groups-suffixes}", UCVaultCache.getVaultChat(sender).getGroupSuffixes());
+                            .replace("{group-suffix}", UCVaultCache.getVaultChat(sender).getPlayerSuffix())
+                            .replace("{group-prefix}", UCVaultCache.getVaultChat(sender).getPlayerPrefix());
+                    String[] pgs = UCVaultCache.getVaultPerms(sender).getPlayerGroups();
+                    if (pgs.length > 0) {
+                        text = text
+                                .replace("{player-groups-prefixes}", UCVaultCache.getVaultChat(sender).getGroupPrefixes())
+                                .replace("{player-groups-suffixes}", UCVaultCache.getVaultChat(sender).getGroupSuffixes());
+                    }
+                } catch (Exception exception){
+                    UChat.get().getUCLogger().warning("It seems VaultChat can't get the suffix/prefix for some reason. Check the server logs when starting or reloading UChat.");
                 }
             }
             if (UChat.get().getVaultEco() != null && text.contains("{balance}")) {
@@ -649,14 +652,14 @@ public class UCMessages {
                 SettingsManager scm = UChat.sc.getSettingsManager();
                 if (cp != null) {
                     String fulltag =
-                            scm.getTagBracketColor()
-                                    + scm.getTagBracketLeft()
-                                    + scm.getTagDefaultColor()
+                            scm.getString(SettingsManager.ConfigField.TAG_BRACKET_COLOR)
+                                    + scm.getString(SettingsManager.ConfigField.TAG_BRACKET_LEFT)
+                                    + scm.getString(SettingsManager.ConfigField.TAG_DEFAULT_COLOR)
                                     + cp.getClan().getColorTag()
-                                    + scm.getTagBracketColor()
-                                    + scm.getTagBracketRight()
-                                    + scm.getTagSeparatorColor()
-                                    + scm.getTagSeparator();
+                                    + scm.getString(SettingsManager.ConfigField.TAG_BRACKET_COLOR)
+                                    + scm.getString(SettingsManager.ConfigField.TAG_BRACKET_RIGHT)
+                                    + scm.getString(SettingsManager.ConfigField.TAG_SEPARATOR_COLOR)
+                                    + scm.getString(SettingsManager.ConfigField.TAG_SEPARATOR_char);
 
                     text = text
                             .replace("{clan-tag}", cp.getTag())

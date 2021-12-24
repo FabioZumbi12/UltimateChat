@@ -4,6 +4,7 @@ import br.net.fabiozumbi12.UltimateChat.Bukkit.UChat;
 import net.sacredlabyrinth.phaed.simpleclans.Clan;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import net.sacredlabyrinth.phaed.simpleclans.events.ChatEvent;
+import net.sacredlabyrinth.phaed.simpleclans.managers.SettingsManager;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -18,7 +19,7 @@ public class DDSimpleClansChat implements Listener {
         if (chatId != null) {
             String rank = "";
             if (!clanPlayer.getRankDisplayName().isEmpty()) {
-                rank = UChat.sc.getSettingsManager().getClanChatRank()
+                rank = UChat.sc.getSettingsManager().getString(SettingsManager.ConfigField.CLANCHAT_RANK)
                         .replace("%rank%", clanPlayer.getRankDisplayName());
             }
 

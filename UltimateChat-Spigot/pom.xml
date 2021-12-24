@@ -59,13 +59,6 @@
         <!-- start of local repos -->
 
         <dependency>
-            <groupId>net.sacredlabyrinth.phaed.simpleclans</groupId>
-            <artifactId>SimpleClans</artifactId>
-            <version>LATEST</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
             <groupId>MassiveCore</groupId>
             <artifactId>MassiveCore</artifactId>
             <version>v1</version>
@@ -86,6 +79,13 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/libs/Dynmap-3.0-beta-10-spigot.jar</systemPath>
         </dependency>
+        <dependency>
+            <groupId>Marriage</groupId>
+            <artifactId>Marriage</artifactId>
+            <version>v1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/Marriage.jar</systemPath>
+        </dependency>
 
         <dependency>
             <groupId>com.github.SaberLLC</groupId>
@@ -104,11 +104,6 @@
 			<version>LATEST</version>
 			<scope>provided</scope>
 		</dependency>
-        <dependency>
-            <groupId>com.lenis0012.bukkit</groupId>
-            <artifactId>marriage2</artifactId>
-            <version>2.0.15</version>
-        </dependency>
         <dependency>
             <groupId>net.milkbowl.vault</groupId>
             <artifactId>VaultAPI</artifactId>
@@ -137,6 +132,12 @@
             <version>1.9.1</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>net.sacredlabyrinth.phaed.simpleclans</groupId>
+            <artifactId>SimpleClans</artifactId>
+            <version>2.16.0</version>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- Discord bridge -->
         <dependency>
@@ -150,26 +151,26 @@
 
     <repositories>
         <repository>
+            <id>codemc-repo-simpleclans</id>
+            <url>https://repo.codemc.org/repository/maven-public</url>
+        </repository>
+        <repository>
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
         <repository>
             <id>maven-restlet</id>
             <name>Public online Restlet repository</name>
-            <url>http://maven.restlet.com</url>
+            <url>https://maven.restlet.com</url>
         </repository>
 		<!-- PCGF Repo for Marriage Master -->
 		<repository>
 			<id>pcgf-repo</id>
-			<url>https://repo.pcgamingfreaks.at/repository/maven-everything/</url>
+			<url>https://repo.pcgamingfreaks.at/repository/maven-everything</url>
 		</repository>
         <repository>
             <id>Translation-API</id>
             <url>https://raw.githubusercontent.com/FabioZumbi12/TranslationAPI/mvn-repo/</url>
-        </repository>
-        <repository>
-            <id>bintray-roinujnosde-bukkit-plugins</id>
-            <url>https://dl.bintray.com/roinujnosde/bukkit-plugins</url>
         </repository>
         <repository>
             <id>jitpack.io</id>
@@ -186,6 +187,6 @@
     </build>
 
     <properties>
-        <mineVersion>1.17-R0.1-SNAPSHOT</mineVersion>
+        <mineVersion>1.18-R0.1-SNAPSHOT</mineVersion>
     </properties>
 </project>
