@@ -245,14 +245,14 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
         Optional<Map.Entry<String, Object>> clanCfg = UChat.get().getDDSync().getConfig().getConfigurationSection("simple-clans-sync.clans").getValues(true)
                 .entrySet().stream().filter(entry -> entry.getValue().equals(channelId)).findFirst();
         if (clanCfg.isPresent()) {
-            Clan clan = UChat.sc.getClanManager().getClan(clanCfg.get().getKey().split("\\.")[0]);
+            Clan clan = UChat.get().getHooks().getSc().getClanManager().getClan(clanCfg.get().getKey().split("\\.")[0]);
             if (clan != null) {
 
-                String leaderColor = UChat.sc.getSettingsManager().getString(SettingsManager.ConfigField.ALLYCHAT_LEADER_COLOR);
-                String memberColor = UChat.sc.getSettingsManager().getString(SettingsManager.ConfigField.CLANCHAT_MEMBER_COLOR);
-                String memberRank = UChat.sc.getSettingsManager().getString(SettingsManager.ConfigField.CLANCHAT_RANK);
+                String leaderColor = UChat.get().getHooks().getSc().getSettingsManager().getString(SettingsManager.ConfigField.ALLYCHAT_LEADER_COLOR);
+                String memberColor = UChat.get().getHooks().getSc().getSettingsManager().getString(SettingsManager.ConfigField.CLANCHAT_MEMBER_COLOR);
+                String memberRank = UChat.get().getHooks().getSc().getSettingsManager().getString(SettingsManager.ConfigField.CLANCHAT_RANK);
 
-                final String[] chatTemplate = {UChat.sc.getSettingsManager().getString(SettingsManager.ConfigField.CLANCHAT_FORMAT)
+                final String[] chatTemplate = {UChat.get().getHooks().getSc().getSettingsManager().getString(SettingsManager.ConfigField.CLANCHAT_FORMAT)
                         .replace("%clan%", clan.getTag().toUpperCase())};
 
                 String nickColor = memberColor;

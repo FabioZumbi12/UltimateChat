@@ -50,9 +50,9 @@ public class UCPerms {
     }
 
     private static boolean testPerm(CommandSender sender, String perm) {
-        if (UChat.get().getVaultPerms() != null) {
+        if (UChat.get().getHooks().getVaultPerms() != null) {
             UChat.get().getUCLogger().debug("UCPerms#hasPermission - Get from Vault");
-            return UChat.get().getVaultPerms().has(sender, perm);
+            return UChat.get().getHooks().getVaultPerms().has(sender, perm);
         }
         UChat.get().getUCLogger().debug("UCPerms#hasPermission - Get directly from Player");
         return sender.hasPermission(perm);

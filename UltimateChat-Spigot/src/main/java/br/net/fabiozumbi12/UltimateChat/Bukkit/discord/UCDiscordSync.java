@@ -114,7 +114,7 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
             taskId = Bukkit.getScheduler().runTaskTimerAsynchronously(UChat.get(), () -> {
 
                 // Init SimpleClans integration
-                if (this.sync.getBoolean("simple-clans-sync.enable") && UChat.sc != null) {
+                if (this.sync.getBoolean("simple-clans-sync.enable") && UChat.get().getHooks().getSc() != null) {
                     // Update clans
                     updateClans();
                 }
@@ -126,9 +126,9 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
                         Bukkit.getScheduler().runTaskLaterAsynchronously(UChat.get(), () -> {
 
                             // Set role by Clan tag
-                            if (UChat.sc != null && this.sync.getBoolean("simple-clans-sync.enable")) {
+                            if (UChat.get().getHooks().getSc() != null && this.sync.getBoolean("simple-clans-sync.enable")) {
                                 List<String> whitelistClans = this.sync.getStringList("simple-clans-sync.whitelist");
-                                ClanPlayer playerClan = UChat.sc.getClanManager().getClanPlayer(p);
+                                ClanPlayer playerClan = UChat.get().getHooks().getSc().getClanManager().getClanPlayer(p);
                                 Guild guild = UChat.get().getUCJDA().getJda().getGuildById(this.sync.getString("guild-id"));
 
                                 if (playerClan != null) {
@@ -186,7 +186,7 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
                             }
 
                             // Set role by in-game group
-                            String group = UChat.get().getVaultPerms().getPrimaryGroup(p);
+                            String group = UChat.get().getHooks().getVaultPerms().getPrimaryGroup(p);
                             List<String> roles = getDDRoleByInGameGroup(group);
                             if (!roles.isEmpty()) {
                                 if (this.sync.getBoolean("require-perms"))
@@ -214,7 +214,7 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
         delClans.forEach(dc -> {
             if (dc.equals("DEFAULT")) return;
 
-            if (UChat.sc.getClanManager().getClan(dc) == null || (!whitelistClans.contains("ALL") && !whitelistClans.contains(dc))) {
+            if (UChat.get().getHooks().getSc().getClanManager().getClan(dc) == null || (!whitelistClans.contains("ALL") && !whitelistClans.contains(dc))) {
                 String roleId = this.sync.getString("simple-clans-sync.clans." + dc + ".role", "0");
                 String categoryId = this.sync.getString("simple-clans-sync.clans." + dc + ".category", "0");
                 String chatId = this.sync.getString("simple-clans-sync.clans." + dc + ".text-channel", "0");
@@ -235,7 +235,7 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
         });
 
         // Create new clans
-        UChat.sc.getClanManager().getClans().stream().filter(Clan::isVerified).forEach(clan -> {
+        UChat.get().getHooks().getSc().getClanManager().getClans().stream().filter(Clan::isVerified).forEach(clan -> {
             if (!clan.isVerified()) return;
 
             String tag = clan.getTag().toUpperCase();

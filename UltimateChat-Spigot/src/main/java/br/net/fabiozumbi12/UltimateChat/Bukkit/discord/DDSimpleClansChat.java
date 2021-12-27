@@ -19,7 +19,7 @@ public class DDSimpleClansChat implements Listener {
         if (chatId != null) {
             String rank = "";
             if (!clanPlayer.getRankDisplayName().isEmpty()) {
-                rank = UChat.sc.getSettingsManager().getString(SettingsManager.ConfigField.CLANCHAT_RANK)
+                rank = UChat.get().getHooks().getSc().getSettingsManager().getString(SettingsManager.ConfigField.CLANCHAT_RANK)
                         .replace("%rank%", clanPlayer.getRankDisplayName());
             }
 

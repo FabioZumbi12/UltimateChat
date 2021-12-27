@@ -25,8 +25,6 @@
 
 package br.net.fabiozumbi12.UltimateChat.Bukkit;
 
-import at.pcgamingfreaks.MarriageMaster.Bukkit.API.MarriageMasterPlugin;
-import at.pcgamingfreaks.MarriageMaster.Bukkit.MarriageMaster;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.API.UChatReloadEvent;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.API.uChatAPI;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.bungee.UChatBungee;
@@ -35,20 +33,12 @@ import br.net.fabiozumbi12.UltimateChat.Bukkit.config.UCLang;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.discord.UCDInterface;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.discord.UCDiscord;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.discord.UCDiscordSync;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.hooks.*;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.hooks.HooksManager;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.jedis.UCJedisLoader;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.metrics.Metrics;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCLogger;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCUtil;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UChatColor;
-import br.net.fabiozumbi12.translationapi.TranslationAPI;
-import br.net.fabiozumbi12.translationapi.TranslationCore;
-import com.lenis0012.bukkit.marriage2.Marriage;
-import com.lenis0012.bukkit.marriage2.MarriageAPI;
-import net.milkbowl.vault.chat.Chat;
-import net.milkbowl.vault.economy.Economy;
-import net.milkbowl.vault.permission.Permission;
-import net.sacredlabyrinth.phaed.simpleclans.SimpleClans;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -58,7 +48,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -70,17 +59,6 @@ import java.util.*;
 
 public class UChat extends JavaPlugin {
 
-    static boolean SClans;
-    public static SimpleClans sc;
-    static boolean MarryReloded;
-	static boolean MarryMasterV2;
-    static MarriageMaster mm;
-    static MarriageMasterPlugin mm2;
-    static Marriage mapi;
-    static TranslationCore tapi;
-    static boolean PlaceHolderAPI;
-    static UCFactionsHookInterface FactionHook = null;
-    private static boolean Vault = false;
     private static UChat uchat;
     public List<String> isSpy = new ArrayList<>();
     List<String> msgTogglePlayers = Collections.synchronizedList(new ArrayList<>());
@@ -100,13 +78,10 @@ public class UChat extends JavaPlugin {
     private UCConfig config;
     private UCDInterface UCJDA;
     private UCLang lang;
-    private Permission perms;
-    private Economy econ;
-    private Chat chat;
-    private boolean isRelation;
     private uChatAPI ucapi;
     private UCDiscordSync sync;
     private UCJedisLoader jedis;
+    private HooksManager hooksManager;
 
     public static UChat get() {
         return uchat;
@@ -144,31 +119,6 @@ public class UChat extends JavaPlugin {
         return this.lang;
     }
 
-    public Permission getVaultPerms() {
-        if (Vault && perms != null) {
-            return this.perms;
-        }
-        return null;
-    }
-
-    public Economy getVaultEco() {
-        if (Vault && econ != null) {
-            return this.econ;
-        }
-        return null;
-    }
-
-    public Chat getVaultChat() {
-        if (Vault && chat != null) {
-            return this.chat;
-        }
-        return null;
-    }
-
-    public boolean isRelation() {
-        return this.isRelation;
-    }
-
     public uChatAPI getAPI() {
         return this.ucapi;
     }
@@ -181,6 +131,10 @@ public class UChat extends JavaPlugin {
         return this.getDescription();
     }
 
+    public HooksManager getHooks(){
+        return hooksManager;
+    }
+
     public void onEnable() {
         try {
             uchat = this;
@@ -188,21 +142,6 @@ public class UChat extends JavaPlugin {
             config = new UCConfig(this);
             lang = new UCLang();
             amConfig = new YamlConfiguration();
-            //check hooks
-            Vault = checkVault();
-            SClans = checkSC();
-            MarryReloded = checkMR();
-            MarryMasterV2 = checkMM2();
-            boolean protocolLib = checkPL();
-            PlaceHolderAPI = checkPHAPI();
-
-            if(checkFac()) {
-                FactionHook = new UCFactionsHook();
-            }
-
-            if(checkSFac()) {
-                FactionHook = new UCSFactionsHook();
-            }
 
             listener = new UCListener();
 
@@ -216,81 +155,7 @@ public class UChat extends JavaPlugin {
             //register aliases
             registerAliases();
 
-            if (protocolLib) {
-                logger.info("ProtocolLib found. Hooked.");
-            }
-
-            if (PlaceHolderAPI) {
-                try {
-                    Class.forName("me.clip.placeholderapi.expansion.Relational");
-                    if (new UCPlaceHoldersRelational(this).register()) {
-                        isRelation = true;
-                        logger.info("PlaceHolderAPI found. Hooked and registered some chat placeholders with relational tag feature.");
-                    }
-                } catch (ClassNotFoundException ex) {
-                    if (new UCPlaceHolders(this).register()) {
-                        isRelation = false;
-                        logger.info("PlaceHolderAPI found. Hooked and registered some chat placeholders.");
-                    }
-                }
-            }
-
-            if (MarryReloded) {
-                mapi = MarriageAPI.getInstance();
-                logger.info("Marriage Reloaded found. Hooked.");
-            }
-
-	        if (MarryMasterV2) {
-	            Plugin mm2pl = Bukkit.getPluginManager().getPlugin("MarriageMaster");
-	            if (mm2pl instanceof MarriageMasterPlugin) {
-                    mm2 = (MarriageMasterPlugin) mm2pl;
-                    logger.info("MarryMaster found. Hooked.");
-                } else {
-	                MarryMasterV2 = false;
-                    logger.info("MarryMaster not compatible.");
-                }
-	        }
-
-            if (SClans) {
-                sc = SimpleClans.getInstance();
-                logger.info("SimpleClans found. Hooked.");
-            }
-
-            if (checkTAPI()) {
-                tapi = TranslationAPI.getAPI();
-                logger.info("Translation API found. We will use for item translations.");
-            }
-
-            if (checkDynmap()) {
-                logger.info("Dynmap found. Hooked.");
-            }
-
-            if (Vault) {
-                RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
-                RegisteredServiceProvider<Chat> rschat = getServer().getServicesManager().getRegistration(Chat.class);
-                RegisteredServiceProvider<Permission> rsperm = getServer().getServicesManager().getRegistration(Permission.class);
-                //Economy
-                if (rsp == null) {
-                    logger.warning("Vault found Economy, but for some reason cant be used.");
-                } else {
-                    econ = rsp.getProvider();
-                    logger.info("Vault economy found. Hooked.");
-                }
-                //Chat
-                if (rschat == null) {
-                    logger.warning("Vault found chat, but for some reason cant be used.");
-                } else {
-                    chat = rschat.getProvider();
-                    logger.info("Vault chat found. Hooked.");
-                }
-                //Perms
-                if (rsperm == null) {
-                    logger.warning("Vault found permissions, but for some reason cant be used.");
-                } else {
-                    perms = rsperm.getProvider();
-                    logger.info("Vault perms found. Hooked.");
-                }
-            }
+            hooksManager = new HooksManager(this);
 
             logger.info("Init API module...");
             this.ucapi = new uChatAPI();
@@ -374,7 +239,7 @@ public class UChat extends JavaPlugin {
                 this.logger.info("JDA LibLoader is present...");
                 if (this.UCJDA != null) {
                     if (this.sync != null) {
-                        if (sc != null)
+                        if (hooksManager.getSc() != null)
                             HandlerList.unregisterAll(this.sync.ddSimpleClansChat);
                         this.sync = null;
                     }
@@ -389,7 +254,7 @@ public class UChat extends JavaPlugin {
                         this.logger.info("JDA is not available due errors before...");
                     } else {
                         this.sync = new UCDiscordSync();
-                        if (sc != null)
+                        if (hooksManager.getSc() != null)
                             Bukkit.getPluginManager().registerEvents(this.sync.ddSimpleClansChat, this);
 
                         this.logger.info("JDA connected and ready to use!");
@@ -489,7 +354,7 @@ public class UChat extends JavaPlugin {
             } else {
                 index++;
             }
-        }, loop * 20, loop * 20);
+        }, loop * 20L, loop * 20L);
     }
 
     public void onDisable() {
@@ -609,71 +474,6 @@ public class UChat extends JavaPlugin {
 
     private boolean checkJDA() {
         Plugin p = Bukkit.getPluginManager().getPlugin("JDALibLoaderBukkit");
-        return p != null && p.isEnabled();
-    }
-
-    private boolean checkDynmap() {
-        Plugin p = Bukkit.getPluginManager().getPlugin("dynmap");
-        return p != null && p.isEnabled();
-    }
-
-    private boolean checkVault() {
-        Plugin p = Bukkit.getPluginManager().getPlugin("Vault");
-        return p != null && p.isEnabled();
-    }
-
-    private boolean checkSC() {
-        Plugin p = Bukkit.getPluginManager().getPlugin("SimpleClans");
-        return p != null && p.isEnabled();
-    }
-
-    private boolean checkMR() {
-        Plugin p = Bukkit.getPluginManager().getPlugin("Marriage");
-        return p != null && p.isEnabled();
-    }
-
-    private boolean checkMM() {
-        Plugin p = Bukkit.getPluginManager().getPlugin("MarriageMaster");
-        return p != null && p.isEnabled() && p.getDescription().getVersion().startsWith("1.");
-    }
-
-	private boolean checkMM2() {
-		Plugin p = Bukkit.getPluginManager().getPlugin("MarriageMaster");
-		return p != null && p.isEnabled() && !p.getDescription().getVersion().startsWith("1.");
-	}
-
-    private boolean checkPL() {
-        Plugin p = Bukkit.getPluginManager().getPlugin("ProtocolLib");
-        return p != null && p.isEnabled();
-    }
-
-    private boolean checkPHAPI() {
-        Plugin p = Bukkit.getPluginManager().getPlugin("PlaceholderAPI");
-        return p != null && p.isEnabled();
-    }
-
-    private boolean checkTAPI() {
-        Plugin p = Bukkit.getPluginManager().getPlugin("TranslationAPI");
-        return p != null && p.isEnabled();
-    }
-
-    private boolean checkFac() {
-        Plugin p = Bukkit.getPluginManager().getPlugin("Factions");
-        try {
-            Class.forName("com.massivecraft.factions.RelationParticipator");
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
-        return p != null && p.isEnabled();
-    }
-
-    private boolean checkSFac() {
-        Plugin p = Bukkit.getPluginManager().getPlugin("Factions");
-        try {
-            Class.forName("com.massivecraft.factions.FPlayer");
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
         return p != null && p.isEnabled();
     }
 }

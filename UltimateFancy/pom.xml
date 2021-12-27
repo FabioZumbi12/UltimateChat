@@ -11,7 +11,7 @@
     <artifactId>UltimateFancy</artifactId>
 
     <properties>
-        <mineVersion>1.16.1-R0.1-SNAPSHOT</mineVersion>
+        <mineVersion>1.18.1-R0.1-SNAPSHOT</mineVersion>
     </properties>
 
     <dependencies> <!--Spigot-API-->

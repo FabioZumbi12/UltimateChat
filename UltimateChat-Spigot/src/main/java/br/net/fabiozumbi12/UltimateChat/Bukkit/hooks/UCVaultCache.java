@@ -41,11 +41,11 @@ public class UCVaultCache {
     static final HashMap<String, String> gSuffix = new HashMap<>();
     static final HashMap<String, String> gPrefix = new HashMap<>();
 
-    public static VaultPerms getVaultPerms(Player sender) {
-        return new VaultPerms(sender);
+    public static UCVaultPermsHook getVaultPerms(Player sender) {
+        return new UCVaultPermsHook(sender);
     }
 
-    public static VaultChat getVaultChat(Player sender) {
-        return new VaultChat(sender);
+    public static UCVaultChatHook getVaultChat(Player sender) {
+        return new UCVaultChatHook(sender);
     }
 }

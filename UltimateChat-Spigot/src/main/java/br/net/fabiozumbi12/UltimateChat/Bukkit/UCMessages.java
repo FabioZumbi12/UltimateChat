@@ -28,14 +28,13 @@ package br.net.fabiozumbi12.UltimateChat.Bukkit;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.API.PostFormatChatMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.API.SendChannelMessageEvent;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.bungee.UChatBungee;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.hooks.UCDynmap;
+import br.net.fabiozumbi12.UltimateChat.Bukkit.hooks.UCDynmapHook;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.hooks.UCVaultCache;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCLogger.timingType;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCPerms;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UCUtil;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UChatColor;
 import br.net.fabiozumbi12.UltimateFancy.UltimateFancy;
-import me.clip.placeholderapi.PlaceholderAPI;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import net.sacredlabyrinth.phaed.simpleclans.managers.SettingsManager;
 import org.apache.commons.lang.StringUtils;
@@ -104,12 +103,12 @@ public class UCMessages {
                         return;
                     }
 
-                    if (!UCPerms.hasPerm(sender, "bypass.cost") && UChat.get().getVaultEco() != null && sender instanceof Player && ch.getCost() > 0) {
-                        if (UChat.get().getVaultEco().getBalance((Player) sender, ((Player) sender).getWorld().getName()) < ch.getCost()) {
+                    if (!UCPerms.hasPerm(sender, "bypass.cost") && UChat.get().getHooks().getVaultEco() != null && sender instanceof Player && ch.getCost() > 0) {
+                        if (UChat.get().getHooks().getVaultEco().getBalance((Player) sender, ((Player) sender).getWorld().getName()) < ch.getCost()) {
                             UChat.get().getLang().sendMessage(sender, UChat.get().getLang().get("channel.cost").replace("{value}", "" + ch.getCost()));
                             return;
                         } else {
-                            UChat.get().getVaultEco().withdrawPlayer((Player) sender, ((Player) sender).getWorld().getName(), ch.getCost());
+                            UChat.get().getHooks().getVaultEco().withdrawPlayer((Player) sender, ((Player) sender).getWorld().getName(), ch.getCost());
                         }
                     }
 
@@ -252,7 +251,7 @@ public class UCMessages {
 
                     //send to dynmap
                     if (ch.useDynmap()) {
-                        UCDynmap.sendToWeb(sender, finalEvmsg);
+                        UCDynmapHook.sendToWeb(sender, finalEvmsg);
                     }
 
                     //send to jda
@@ -610,7 +609,7 @@ public class UCMessages {
                 text = text.replace("{hand-type}", "Air");
             }
 
-            if (UChat.get().getVaultChat() != null && (text.contains("-prefix") || text.contains("-suffix"))) {
+            if (UChat.get().getHooks().getVaultChat() != null && (text.contains("-prefix") || text.contains("-suffix"))) {
                 try{
                     text = text.replace("{group-all-prefixes}", UCVaultCache.getVaultChat(sender).getPlayerPrefixes())
                             .replace("{group-all-suffixes}", UCVaultCache.getVaultChat(sender).getPlayerSuffixes());
@@ -628,11 +627,11 @@ public class UCMessages {
                     UChat.get().getUCLogger().warning("It seems VaultChat can't get the suffix/prefix for some reason. Check the server logs when starting or reloading UChat.");
                 }
             }
-            if (UChat.get().getVaultEco() != null && text.contains("{balance}")) {
+            if (UChat.get().getHooks().getVaultEco() != null && text.contains("{balance}")) {
                 text = text
-                        .replace("{balance}", "" + UChat.get().getVaultEco().getBalance(sender, sender.getWorld().getName()));
+                        .replace("{balance}", "" + UChat.get().getHooks().getVaultEco().getBalance(sender, sender.getWorld().getName()));
             }
-            if (UChat.get().getVaultPerms() != null && (text.contains("-group}") || text.contains("-groups}"))) {
+            if (UChat.get().getHooks().getVaultPerms() != null && (text.contains("-group}") || text.contains("-groups}"))) {
                 String[] pgs = UCVaultCache.getVaultPerms(sender).getPlayerGroups();
                 if (pgs.length > 0) {
                     StringBuilder groups = new StringBuilder();
@@ -647,9 +646,9 @@ public class UCMessages {
                 text = text.replace("{prim-group}", group.isEmpty() ? primGroup : group);
 
             }
-            if (text.contains("{clan-") && UChat.sc != null) {
-                ClanPlayer cp = UChat.sc.getClanManager().getClanPlayer(sender.getUniqueId());
-                SettingsManager scm = UChat.sc.getSettingsManager();
+            if (text.contains("{clan-") && UChat.get().getHooks().getSc() != null) {
+                ClanPlayer cp = UChat.get().getHooks().getSc().getClanManager().getClanPlayer(sender.getUniqueId());
+                SettingsManager scm = UChat.get().getHooks().getSc().getSettingsManager();
                 if (cp != null) {
                     String fulltag =
                             scm.getString(SettingsManager.ConfigField.TAG_BRACKET_COLOR)
@@ -674,21 +673,21 @@ public class UCMessages {
                             .replace("{clan-ctag}", cp.getClan().getColorTag());
                 }
             }
-            if (UChat.FactionHook != null) {
-                text = UChat.FactionHook.formatFac(text, sender, receiver);
+            if (UChat.get().getHooks().getFactions() != null) {
+                text = UChat.get().getHooks().getFactions().formatFac(text, sender, receiver);
             }
 
             if (text.contains("{marry-")) {
-                if (UChat.MarryReloded && sender.hasMetadata("marriedTo")) {
+                if (UChat.get().getHooks().getMarriageReloaded() != null && sender.hasMetadata("marriedTo")) {
                     String partner = sender.getMetadata("marriedTo").get(0).asString();
-                    String prefix = UChat.mapi.getBukkitConfig("config.yml").getString("chat.status-format");
-                    UChat.mapi.getMPlayer(sender.getUniqueId()).getGender().getChatPrefix();
+                    String prefix = UChat.get().getHooks().getMarriageReloaded().getBukkitConfig("config.yml").getString("chat.status-format");
+                    UChat.get().getHooks().getMarriageReloaded().getMPlayer(sender.getUniqueId()).getGender().getChatPrefix();
                     prefix = prefix
                             .replace("{icon:male}", "♂")
                             .replace("{icon:female}", "♀")
                             .replace("{icon:genderless}", "⚤")
                             .replace("{icon:heart}", "❤");
-                    String gender = UChat.mapi.getMPlayer(sender.getUniqueId()).getGender().getChatPrefix();
+                    String gender = UChat.get().getHooks().getMarriageReloaded().getMPlayer(sender.getUniqueId()).getGender().getChatPrefix();
                     gender = gender
                             .replace("{icon:male}", "♂")
                             .replace("{icon:female}", "♀")
@@ -699,22 +698,18 @@ public class UCMessages {
                             .replace("{marry-prefix}", prefix)
                             .replace("{marry-suffix}", gender);
                 }
-	            if (UChat.MarryMasterV2) {
-		            if (UChat.mm2.getPlayerData(sender).isMarried() && UChat.mm2.getPlayerData(sender).getPartner() != null) {
-			            text = text.replace("{marry-partner}", UChat.mm2.getPlayerData(sender).getPartner().getName())
-					            .replace("{marry-prefix}", UChat.mm2.getPrefixSuffixFormatter().formatPrefix(UChat.mm2.getPlayerData(sender).getMarriageData(UChat.mm2.getPlayerData(sender).getPartner()), UChat.mm2.getPlayerData(sender).getPartner()))
-					            .replace("{marry-suffix}", UChat.mm2.getPrefixSuffixFormatter().formatSuffix(UChat.mm2.getPlayerData(sender).getMarriageData(UChat.mm2.getPlayerData(sender).getPartner()), UChat.mm2.getPlayerData(sender).getPartner()));
-		            }
+	            if (UChat.get().getHooks().getMarriage2() != null) {
+                    text = UChat.get().getHooks().getMarriage2().parseMarryTags(text, sender);
 	            }
             }
 
-            if (UChat.PlaceHolderAPI) {
-                if (receiver instanceof Player && UChat.get().isRelation()) {
+            if (UChat.get().getHooks().getPHAPI() != null) {
+                if (receiver instanceof Player && UChat.get().getHooks().isRelation()) {
                     while (text.contains("%rel_")) {
-                        text = PlaceholderAPI.setRelationalPlaceholders(sender, (Player) receiver, text);
+                        text = UChat.get().getHooks().getPHAPI().setRelationalPlaceholders(sender, (Player) receiver, text);
                     }
                 }
-                text = PlaceholderAPI.setPlaceholders(sender, text);
+                text = UChat.get().getHooks().getPHAPI().setPlaceholders(sender, text);
                 if (tag.equals("message")) {
                     text = composeColor(sender, text);
                 }
@@ -759,6 +754,6 @@ public class UCMessages {
     }
 
     private static String translateItem(ItemStack itemStack) {
-        return UChat.tapi == null ? UCUtil.capitalize(itemStack.getType().toString()) : UChat.tapi.translateItem(itemStack.getType(), "en-us", true);
+        return UChat.get().getHooks().getTAPI() == null ? UCUtil.capitalize(itemStack.getType().toString()) : UChat.get().getHooks().getTAPI().translateItem(itemStack.getType(), "en-us", true);
     }
 }

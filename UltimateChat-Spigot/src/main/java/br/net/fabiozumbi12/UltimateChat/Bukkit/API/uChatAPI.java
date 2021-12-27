@@ -94,15 +94,15 @@ public class uChatAPI {
     }
 
     public Chat getVaultChat() {
-        return UChat.get().getVaultChat();
+        return UChat.get().getHooks().getVaultChat();
     }
 
     public Economy getVaultEco() {
-        return UChat.get().getVaultEco();
+        return UChat.get().getHooks().getVaultEco();
     }
 
     public Permission getVaultPerms() {
-        return UChat.get().getVaultPerms();
+        return UChat.get().getHooks().getVaultPerms();
     }
 
     /**

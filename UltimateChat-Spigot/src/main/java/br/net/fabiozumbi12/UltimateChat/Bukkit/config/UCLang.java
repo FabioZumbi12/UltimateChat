@@ -160,43 +160,51 @@ public class UCLang {
     }
 
     public void sendMessage(final Player p, String key) {
-        if (delayedMessage.containsKey(p) && delayedMessage.get(p).equals(key)) {
-            return;
-        }
+        try {
+            if (delayedMessage.containsKey(p) && delayedMessage.get(p).equals(key)) {
+                return;
+            }
 
-        if (!loadedlang.containsKey(key)) {
-            p.sendMessage(get(p, "_UChat.prefix") + UCMessages.formatTags("", UChatColor.translateAlternateColorCodes(key), p, "", "", UChat.get().getPlayerChannel(p)));
-        } else if (get(key).isEmpty()) {
-            return;
-        } else {
-            p.sendMessage(get(p, "_UChat.prefix") + get(p, key));
-        }
+            if (!loadedlang.containsKey(key)) {
+                p.sendMessage(get(p, "_UChat.prefix") + UCMessages.formatTags("", UChatColor.translateAlternateColorCodes(key), p, "", "", UChat.get().getPlayerChannel(p)));
+            } else if (get(key).isEmpty()) {
+                return;
+            } else {
+                p.sendMessage(get(p, "_UChat.prefix") + get(p, key));
+            }
 
-        delayedMessage.put(p, key);
-        Bukkit.getScheduler().scheduleSyncDelayedTask(UChat.get(), () -> {
-            delayedMessage.remove(p);
-        }, 20);
-    }
-
-    public void sendMessage(CommandSender sender, String key) {
-        if (sender instanceof Player && delayedMessage.containsKey(sender) && delayedMessage.get(sender).equals(key)) {
-            return;
-        }
-
-        if (loadedlang.get(key) == null) {
-            sender.sendMessage(get(sender, "_UChat.prefix") + UCMessages.formatTags("", UChatColor.translateAlternateColorCodes(key), sender, "", "", UChat.get().getPlayerChannel(sender)));
-        } else if (get(key).equalsIgnoreCase("")) {
-            return;
-        } else {
-            sender.sendMessage(get(sender, "_UChat.prefix") + get(sender, key));
-        }
-
-        if (sender instanceof Player) {
-            final Player p = (Player) sender;
             delayedMessage.put(p, key);
             Bukkit.getScheduler().scheduleSyncDelayedTask(UChat.get(), () -> {
                 delayedMessage.remove(p);
             }, 20);
+        } catch (Exception ex){
+            Bukkit.getLogger().warning("Error on sendMessage: " + ex.getLocalizedMessage());
+        }
+    }
+
+    public void sendMessage(CommandSender sender, String key) {
+        try {
+            if (sender instanceof Player && delayedMessage.containsKey(sender) && delayedMessage.get(sender).equals(key)) {
+                return;
+            }
+
+            if (loadedlang.get(key) == null) {
+                sender.sendMessage(get(sender, "_UChat.prefix") + UCMessages.formatTags("", UChatColor.translateAlternateColorCodes(key), sender, "", "", UChat.get().getPlayerChannel(sender)));
+            } else if (get(key).equalsIgnoreCase("")) {
+                return;
+            } else {
+                sender.sendMessage(get(sender, "_UChat.prefix") + get(sender, key));
+            }
+
+            if (sender instanceof Player) {
+                final Player p = (Player) sender;
+                delayedMessage.put(p, key);
+                Bukkit.getScheduler().scheduleSyncDelayedTask(UChat.get(), () -> {
+                    delayedMessage.remove(p);
+                }, 20);
+            }
+        } catch (Exception ex){
+            Bukkit.getLogger().warning("Error on sendMessage: " + ex.getLocalizedMessage());
         }
     }
 }
