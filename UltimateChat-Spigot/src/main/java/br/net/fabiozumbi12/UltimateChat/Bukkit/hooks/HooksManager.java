@@ -68,63 +68,6 @@ public class HooksManager {
 
     public HooksManager(UChat plugin){
 
-        if(checkFac()) {
-            FactionHook = new UCFactionsHook();
-        }
-
-        if(checkSFac()) {
-            FactionHook = new UCSFactionsHook();
-        }
-
-        if (checkPL()) {
-            plugin.getUCLogger().info("ProtocolLib found. Hooked.");
-        }
-
-        if (checkPHAPI()) {
-            phapi = new UCPHAPIHook();
-            try {
-                Class.forName("me.clip.placeholderapi.expansion.Relational");
-                if (new UCPlaceHoldersRelational(plugin).register()) {
-                    isRelation = true;
-                    plugin.getUCLogger().info("PlaceHolderAPI found. Hooked and registered some chat placeholders with relational tag feature.");
-                }
-            } catch (ClassNotFoundException ex) {
-                if (new UCPlaceHolders(plugin).register()) {
-                    isRelation = false;
-                    plugin.getUCLogger().info("PlaceHolderAPI found. Hooked and registered some chat placeholders.");
-                }
-            }
-        }
-
-        if (checkMR()) {
-            mapi = MarriageAPI.getInstance();
-            plugin.getUCLogger().info("Marriage Reloaded found. Hooked.");
-        }
-
-        if (checkMM2()) {
-            Plugin mm2pl = Bukkit.getPluginManager().getPlugin("MarriageMaster");
-            if (mm2pl != null) {
-                mm2 = new UCMarriageMasterHook(mm2pl);
-                plugin.getUCLogger().info("MarryMaster found. Hooked.");
-            } else {
-                plugin.getUCLogger().info("MarryMaster not compatible or not installed.");
-            }
-        }
-
-        if (checkSC()) {
-            sc = SimpleClans.getInstance();
-            plugin.getUCLogger().info("SimpleClans found. Hooked.");
-        }
-
-        if (checkTAPI()) {
-            tapi = TranslationAPI.getAPI();
-            plugin.getUCLogger().info("Translation API found. We will use for item translations.");
-        }
-
-        if (checkDynmap()) {
-            plugin.getUCLogger().info("Dynmap found. Hooked.");
-        }
-
         if (checkVault()) {
             RegisteredServiceProvider<Economy> rsp = plugin.getServer().getServicesManager().getRegistration(Economy.class);
             RegisteredServiceProvider<Chat> rschat = plugin.getServer().getServicesManager().getRegistration(Chat.class);
@@ -150,6 +93,63 @@ public class HooksManager {
                 perms = rsperm.getProvider();
                 plugin.getUCLogger().info("Vault perms found. Hooked.");
             }
+        }
+
+        if (checkPL()) {
+            plugin.getUCLogger().info("ProtocolLib found. Hooked.");
+        }
+
+        if (checkPHAPI()) {
+            phapi = new UCPHAPIHook();
+            try {
+                Class.forName("me.clip.placeholderapi.expansion.Relational");
+                if (new UCPlaceHoldersRelational(plugin).register()) {
+                    isRelation = true;
+                    plugin.getUCLogger().info("PlaceHolderAPI found. Hooked and registered some chat placeholders with relational tag feature.");
+                }
+            } catch (ClassNotFoundException ex) {
+                if (new UCPlaceHolders(plugin).register()) {
+                    isRelation = false;
+                    plugin.getUCLogger().info("PlaceHolderAPI found. Hooked and registered some chat placeholders.");
+                }
+            }
+        }
+
+        if (checkSC()) {
+            sc = SimpleClans.getInstance();
+            plugin.getUCLogger().info("SimpleClans found. Hooked.");
+        }
+
+        if(checkFac()) {
+            FactionHook = new UCFactionsHook();
+        }
+
+        if(checkSFac()) {
+            FactionHook = new UCSFactionsHook();
+        }
+
+        if (checkMR()) {
+            mapi = MarriageAPI.getInstance();
+            plugin.getUCLogger().info("Marriage Reloaded found. Hooked.");
+        }
+
+        if (checkMM2()) {
+            Plugin mm2pl = Bukkit.getPluginManager().getPlugin("MarriageMaster");
+            if (mm2pl != null) {
+                mm2 = new UCMarriageMasterHook(mm2pl);
+                plugin.getUCLogger().info("MarryMaster found. Hooked.");
+            } else {
+                plugin.getUCLogger().info("MarryMaster not compatible or not installed.");
+            }
+        }
+
+        if (checkTAPI()) {
+            tapi = TranslationAPI.getAPI();
+            plugin.getUCLogger().info("Translation API found. We will use for item translations.");
+        }
+
+        if (checkDynmap()) {
+            plugin.getUCLogger().info("Dynmap found. Hooked.");
         }
     }
 

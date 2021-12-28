@@ -145,6 +145,8 @@ public class UChat extends JavaPlugin {
 
             listener = new UCListener();
 
+            hooksManager = new HooksManager(this);
+
             getServer().getPluginCommand("uchat").setExecutor(listener);
             getServer().getPluginManager().registerEvents(listener, this);
             getServer().getPluginManager().registerEvents(new UCChatProtection(), this);
@@ -155,12 +157,8 @@ public class UChat extends JavaPlugin {
             //register aliases
             registerAliases();
 
-            hooksManager = new HooksManager(this);
-
             logger.info("Init API module...");
             this.ucapi = new uChatAPI();
-
-            //init other features
 
             //Jedis
             registerJedis();
