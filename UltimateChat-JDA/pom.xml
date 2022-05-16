@@ -99,6 +99,7 @@
                                     <include>com.fasterxml.jackson.core:jackson-databind</include>
                                     <include>com.fasterxml.jackson.core:jackson-annotations</include>
                                     <include>com.squareup.okio:okio</include>
+                                    <include>org.slf4j.Logger</include>
                                 </includes>
                             </artifactSet>
                             <minimizeJar>true</minimizeJar>

@@ -658,7 +658,7 @@ public class UCMessages {
                                     + scm.getString(SettingsManager.ConfigField.TAG_BRACKET_COLOR)
                                     + scm.getString(SettingsManager.ConfigField.TAG_BRACKET_RIGHT)
                                     + scm.getString(SettingsManager.ConfigField.TAG_SEPARATOR_COLOR)
-                                    + scm.getString(SettingsManager.ConfigField.TAG_SEPARATOR_char);
+                                    + scm.getString(SettingsManager.ConfigField.TAG_SEPARATOR_CHAR);
 
                     text = text
                             .replace("{clan-tag}", cp.getTag())
