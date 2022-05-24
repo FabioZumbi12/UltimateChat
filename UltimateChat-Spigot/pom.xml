@@ -141,8 +141,7 @@
         <dependency>
             <groupId>net.sacredlabyrinth.phaed.simpleclans</groupId>
             <artifactId>SimpleClans</artifactId>
-            <version>2.16.0</version>
-            <scope>provided</scope>
+            <version>2.16.2</version>
         </dependency>
 
         <!-- Discord bridge -->
@@ -161,8 +160,8 @@
             <url>https://repo.mikeprimm.com</url>
         </repository>
         <repository>
-            <id>codemc-repo-simpleclans</id>
-            <url>https://repo.codemc.org/repository/maven-public</url>
+            <id>roinujnosde-repo</id>
+            <url>https://repo.roinujnosde.me/releases/</url>
         </repository>
         <repository>
             <id>spigot-repo</id>
