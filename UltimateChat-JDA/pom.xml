@@ -43,7 +43,7 @@
         <dependency>
             <groupId>org.spongepowered</groupId>
             <artifactId>spongeapi</artifactId>
-            <version>${spongeVersion}</version>
+            <version>7.4.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
@@ -99,7 +99,7 @@
                                     <include>com.fasterxml.jackson.core:jackson-databind</include>
                                     <include>com.fasterxml.jackson.core:jackson-annotations</include>
                                     <include>com.squareup.okio:okio</include>
-                                    <include>org.slf4j.Logger</include>
+                                    <include>org.slf4j:slf4j-api</include>
                                 </includes>
                             </artifactSet>
                             <minimizeJar>true</minimizeJar>
@@ -147,7 +147,4 @@
             </plugin>
         </plugins>
     </build>
-    <properties>
-        <spongeVersion>7.1.0-SNAPSHOT</spongeVersion>
-    </properties>
 </project>
