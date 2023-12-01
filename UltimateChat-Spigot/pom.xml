@@ -38,14 +38,14 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>${mineVersion}</version>
+            <version>1.20.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>${mineVersion}</version>
+            <version>1.20.2-R0.1-SNAPSHOT</version>
             <classifier>javadoc</classifier>
         </dependency>
 
@@ -87,12 +87,6 @@
             <systemPath>${project.basedir}/libs/Marriage.jar</systemPath>
         </dependency>
 
-        <!--<dependency>
-            <groupId>us.dynmap</groupId>
-            <artifactId>DynmapCoreAPI</artifactId>
-            <version>LATEST</version>
-            <scope>provided</scope>
-        </dependency>-->
         <dependency>
             <groupId>com.github.SaberLLC</groupId>
             <artifactId>Saber-Factions</artifactId>
@@ -101,13 +95,13 @@
         <dependency>
             <groupId>at.pcgamingfreaks</groupId>
             <artifactId>MarriageMaster</artifactId>
-            <version>LATEST</version>
+            <version>2.7.2-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 		<dependency>
 			<groupId>at.pcgamingfreaks</groupId>
 			<artifactId>MarriageMaster-API-Bukkit</artifactId>
-			<version>LATEST</version>
+			<version>2.7.2-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
         <dependency>
@@ -119,7 +113,7 @@
         <dependency>
             <groupId>net.ess3</groupId>
             <artifactId>EssentialsX</artifactId>
-            <version>2.16.1</version>
+            <version>2.17.2</version>
         </dependency>
         <dependency>
             <groupId>com.comphenix.protocol</groupId>
@@ -129,19 +123,13 @@
         <dependency>
             <groupId>br.net.fabiozumbi12</groupId>
             <artifactId>TranslationAPI</artifactId>
-            <version>LATEST</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
-            <artifactId>UltimateFancy</artifactId>
-            <version>1.9.1</version>
+            <version>1.2</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>net.sacredlabyrinth.phaed.simpleclans</groupId>
             <artifactId>SimpleClans</artifactId>
-            <version>2.16.2</version>
+            <version>2.19.2</version>
         </dependency>
 
         <!-- Discord bridge -->
@@ -151,6 +139,26 @@
             <version>v4.0</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/../UltimateChat-JDA/target/UltimateChat-JDA.jar</systemPath>
+        </dependency>
+
+        <!-- shade all -->
+        <dependency>
+            <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
+            <artifactId>UltimateChat-Bungee</artifactId>
+            <version>1.9.1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
+            <artifactId>UltimateFancy</artifactId>
+            <version>1.9.1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
+            <artifactId>UltimateChat-Velocity</artifactId>
+            <version>1.9.1</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 
@@ -185,17 +193,75 @@
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
-        <repository>
-            <id>placeholderapi</id>
-            <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
-        </repository>
     </repositories>
 
     <build>
         <finalName>DONT-DOWNLOAD-Spigot-Reference</finalName>
+        <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.5.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <artifactSet>
+                                <includes>
+                                    <include>br.net.fabiozumbi12.UltimateChat:UltimateFancy</include>
+                                    <include>br.net.fabiozumbi12.UltimateChat:UltimateChat-Bungee</include>
+                                    <include>br.net.fabiozumbi12.UltimateChat:UltimateChat-Velocity</include>
+                                    <include>br.net.fabiozumbi12.UltimateChat:UltimateChat-Spigot</include>
+                                    <include>redis.clients:jedis</include>
+                                    <include>org.apache.commons:commons-pool2</include>
+                                </includes>
+                            </artifactSet>
+                            <relocations>
+                                <relocation>
+                                    <pattern>redis.clients</pattern>
+                                    <shadedPattern>br.net.fabiozumbi12.UltimateChat.jedis</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.apache.commons.pool2</pattern>
+                                    <shadedPattern>br.net.fabiozumbi12.UltimateChat.apache.commons.pool2</shadedPattern>
+                                </relocation>
+                            </relocations>
+                            <filters>
+                                <filter>
+                                    <artifact>br.net.fabiozumbi12.UltimateChat:*</artifact>
+                                    <includes>
+                                        <include>**</include>
+                                    </includes>
+                                </filter>
+                                <filter>
+                                    <artifact>redis.clients:jedis</artifact>
+                                    <includes>
+                                        <include>**</include>
+                                    </includes>
+                                </filter>
+                                <filter>
+                                    <artifact>org.apache.commons:commons-pool2</artifact>
+                                    <includes>
+                                        <include>**</include>
+                                    </includes>
+                                </filter>
+                            </filters>
+                            <outputFile>
+                                ${project.basedir}/target/UltimateChat-${project.version}-b${BUILD_NUMBER}-Universal.jar
+                            </outputFile>
+                        </configuration>
+                    </execution>
+                </executions>
+                <configuration>
+                    <createDependencyReducedPom>false</createDependencyReducedPom>
+                </configuration>
+            </plugin>
+
+        </plugins>
     </build>
 
-    <properties>
-        <mineVersion>1.18.1-R0.1-SNAPSHOT</mineVersion>
-    </properties>
 </project>

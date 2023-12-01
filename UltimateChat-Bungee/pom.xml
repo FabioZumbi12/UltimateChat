@@ -44,21 +44,18 @@
         <dependency>
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-api</artifactId>
-            <version>${mineVersion}</version>
+            <version>1.19-R0.1-SNAPSHOT</version>
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-api</artifactId>
-            <version>${mineVersion}</version>
+            <version>1.19-R0.1-SNAPSHOT</version>
             <type>javadoc</type>
             <scope>provided</scope>
         </dependency>
     </dependencies>
-    <properties>
-        <mineVersion>1.16-R0.5-SNAPSHOT</mineVersion>
-    </properties>
 
     <build>
         <finalName>DONT-DOWNLOAD-BungeeCoord-reference</finalName>

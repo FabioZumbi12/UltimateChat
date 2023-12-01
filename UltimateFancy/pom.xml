@@ -10,28 +10,24 @@
     </parent>
     <artifactId>UltimateFancy</artifactId>
 
-    <properties>
-        <mineVersion>1.18.1-R0.1-SNAPSHOT</mineVersion>
-    </properties>
-
     <dependencies> <!--Spigot-API-->
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>${mineVersion}</version>
+            <version>1.20.2-R0.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>${mineVersion}</version>
+            <version>1.20.2-R0.1-SNAPSHOT</version>
             <classifier>javadoc</classifier>
         </dependency>
 
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
             <artifactId>json-simple</artifactId>
-            <version>1.1</version>
+            <version>1.1.1</version>
         </dependency>
 
     </dependencies>
@@ -58,7 +54,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>2.4.3</version>
+                <version>3.5.1</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
