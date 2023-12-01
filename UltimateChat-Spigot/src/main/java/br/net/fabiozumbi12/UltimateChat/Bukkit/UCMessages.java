@@ -37,7 +37,6 @@ import br.net.fabiozumbi12.UltimateChat.Bukkit.util.UChatColor;
 import br.net.fabiozumbi12.UltimateFancy.UltimateFancy;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import net.sacredlabyrinth.phaed.simpleclans.managers.SettingsManager;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -418,7 +417,7 @@ public class UCMessages {
                     if (ch.allowHand() && UChat.get().getUCConfig().getBoolean("general.item-hand.enable") && msg.contains(UChat.get().getUCConfig().getString("general.item-hand.placeholder")) && sender instanceof Player && UCPerms.hasPerm(sender, "chat.hand")) {
                         if (!((Player) sender).getItemInHand().getType().equals(Material.AIR) && !UChat.get().getUCConfig().hasBlackListed(((Player) sender).getItemInHand()))
                             fanci.text(format).hoverShowItem(((Player) sender).getItemInHand()).next();
-                    } else if (!msg.equals(mention(sender, (CommandSender) receiver, msg)) && UChat.get().getUCConfig().getString("mention.hover-message").length() > 0 && StringUtils.containsIgnoreCase(msg, ((CommandSender) receiver).getName())) {
+                    } else if (!msg.equals(mention(sender, (CommandSender) receiver, msg)) && UChat.get().getUCConfig().getString("mention.hover-message").length() > 0 && msg.toLowerCase().contains(((CommandSender) receiver).getName().toLowerCase())) {
                         tooltip = new StringBuilder(formatTags("", UChat.get().getUCConfig().getString("mention.hover-message"), sender, receiver, msg, ch));
                         fanci.text(format).hoverShowText(tooltip.toString()).next();
                     } else if (tooltip.length() > 0) {
@@ -480,7 +479,7 @@ public class UCMessages {
                         }
 
                         for (Sound sound : Sound.values()) {
-                            if (StringUtils.containsIgnoreCase(sound.toString(), UChat.get().getUCConfig().getString("mention.playsound"))) {
+                            if (UChat.get().getUCConfig().getString("mention.playsound").toLowerCase().contains(sound.toString().toLowerCase())){
                                 p.playSound(p.getLocation(), sound, 1F, 1F);
                                 break;
                             }
