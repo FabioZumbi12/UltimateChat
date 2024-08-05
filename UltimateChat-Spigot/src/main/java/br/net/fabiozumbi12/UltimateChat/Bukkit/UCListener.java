@@ -86,6 +86,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
             return;
         }
         ch.addMember(p);
+        UChat.get().tempChannels.remove(p.getName());
         UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.entered").replace("{channel}", ch.getName()));
     }
 
@@ -121,6 +122,7 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
                 return;
             }
             ch.addMember(p);
+            UChat.get().tempChannels.remove(p.getName());
             UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("channel.entered").replace("{channel}", ch.getName()));
         }
 
