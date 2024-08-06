@@ -38,10 +38,7 @@ import org.json.simple.JSONValue;
 
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -497,9 +494,9 @@ public class UltimateFancy {
      * @return instance of same {@link UltimateFancy}.
      */
     public UltimateFancy next() {
-        if (workingGroup.size() > 0) {
+        if (!workingGroup.isEmpty()) {
             for (JSONObject obj : workingGroup) {
-                if (obj.containsKey("text") && obj.get("text").toString().length() > 0) {
+                if (obj.containsKey("text") && !obj.get("text").toString().isEmpty()) {
                     for (ExtraElement element : pendentElements) {
                         obj.put(element.getAction(), element.getJson());
                     }
@@ -564,8 +561,8 @@ public class UltimateFancy {
         JSONObject jItem = parseHoverItem(item);
         if (Utf8.encodedLength(jItem.toJSONString()) > 32767)
             pendentElements.add(new ExtraElement("hoverEvent", parseHoverItem(new ItemStack(item.getType()))));
-
-        pendentElements.add(new ExtraElement("hoverEvent", jItem));
+        else
+            pendentElements.add(new ExtraElement("hoverEvent", jItem));
         return this;
     }
 
@@ -656,18 +653,36 @@ public class UltimateFancy {
         String jItem = convertItemStackToJson(item);
         if (Utf8.encodedLength(jItem) > 32767)
             obj.put("value", convertItemStackToJson(new ItemStack(item.getType())));
-
-        obj.put("value", jItem);
+        else
+            obj.put("value", jItem);
         return obj;
     }
 
     private String convertItemStackToJson(ItemStack itemStack) {
         Class<?> craftItemStackClazz = ReflectionUtil.getOBCClass("inventory.CraftItemStack");
-        Method asNMSCopyMethod = ReflectionUtil.getMethod(craftItemStackClazz, "asNMSCopy", ItemStack.class);
+        Method asNMSCopyMethod;
+        try {
+            asNMSCopyMethod = ReflectionUtil.getMethod(craftItemStackClazz, "asNMSCopy", ItemStack.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
 
-        Class<?> nmsItemStackClazz = ReflectionUtil.getNMSClass("ItemStack");
-        Class<?> nbtTagCompoundClazz = ReflectionUtil.getNMSClass("NBTTagCompound");
-        Method saveNmsItemStackMethod = ReflectionUtil.getMethod(nmsItemStackClazz, "save", nbtTagCompoundClazz);
+        Class<?> nmsItemStackClazz = ReflectionUtil.getNMSClassItem("ItemStack");
+        Class<?> nbtTagCompoundClazz = ReflectionUtil.getNMSClassNbt("NBTTagCompound");
+
+        Method saveNmsItemStackMethod;
+
+        try{
+            saveNmsItemStackMethod = ReflectionUtil.getMethod(nmsItemStackClazz, "save", nbtTagCompoundClazz); // <= 1.17
+        } catch (Exception t1){
+            try{
+                saveNmsItemStackMethod = ReflectionUtil.getMethod(nmsItemStackClazz, "b", nbtTagCompoundClazz); // <= 1.20.4
+            } catch (Exception t2){
+                t2.printStackTrace();
+                return null;
+            }
+        }
 
         Object nmsNbtTagCompoundObj;
         Object nmsItemStackObj;
@@ -678,6 +693,7 @@ public class UltimateFancy {
             nmsItemStackObj = asNMSCopyMethod.invoke(null, itemStack);
             itemAsJsonObject = saveNmsItemStackMethod.invoke(nmsItemStackObj, nmsNbtTagCompoundObj);
         } catch (Throwable t) {
+            t.printStackTrace();
             return null;
         }
         return itemAsJsonObject.toString();
@@ -799,10 +815,13 @@ class ReflectionUtil {
             versionString = name.substring(name.lastIndexOf('.') + 1) + ".";
         }
 
+        if (versionString.equals("craftbukkit."))
+            versionString = "";
+
         return versionString;
     }
 
-    public static Class<?> getNMSClass(String nmsClassName) {
+    public static Class<?> getNMSClassNbt(String nmsClassName) {
         if (loadedNMSClasses.containsKey(nmsClassName)) {
             return loadedNMSClasses.get(nmsClassName);
         }
@@ -812,9 +831,43 @@ class ReflectionUtil {
 
         try {
             clazz = Class.forName(clazzName);
-        } catch (Throwable t) {
-            t.printStackTrace();
-            return loadedNMSClasses.put(nmsClassName, null);
+        } catch (Throwable t1) {
+            try {
+                clazzName = "net.minecraft.nbt." + nmsClassName;
+                clazz = Class.forName(clazzName);
+            } catch (Throwable t2) {
+                try {
+                    clazzName = "net.minecraft.core." + nmsClassName;
+                    clazz = Class.forName(clazzName);
+                } catch (Throwable t3) {
+                    t3.printStackTrace();
+                    return null;
+                }
+            }
+        }
+
+        loadedNMSClasses.put(nmsClassName, clazz);
+        return clazz;
+    }
+
+    public static Class<?> getNMSClassItem(String nmsClassName) {
+        if (loadedNMSClasses.containsKey(nmsClassName)) {
+            return loadedNMSClasses.get(nmsClassName);
+        }
+
+        String clazzName = "net.minecraft.server." + getVersion() + nmsClassName;
+        Class<?> clazz;
+
+        try {
+            clazz = Class.forName(clazzName);
+        } catch (Throwable t1) {
+            try {
+                clazzName = "net.minecraft.world.item." + nmsClassName;
+                clazz = Class.forName(clazzName);
+            } catch (Throwable t2) {
+                t2.printStackTrace();
+                return null;
+            }
         }
 
         loadedNMSClasses.put(nmsClassName, clazz);
@@ -833,7 +886,6 @@ class ReflectionUtil {
             clazz = Class.forName(clazzName);
         } catch (Throwable t) {
             t.printStackTrace();
-            loadedOBCClasses.put(obcClassName, null);
             return null;
         }
 
@@ -841,7 +893,7 @@ class ReflectionUtil {
         return clazz;
     }
 
-    public static Method getMethod(Class<?> clazz, String methodName, Class<?>... params) {
+    public static Method getMethod(Class<?> clazz, String methodName, Class<?>... params) throws Exception {
         if (!loadedMethods.containsKey(clazz)) {
             loadedMethods.put(clazz, new HashMap<>());
         }
@@ -852,16 +904,9 @@ class ReflectionUtil {
             return methods.get(methodName);
         }
 
-        try {
-            Method method = clazz.getMethod(methodName, params);
-            methods.put(methodName, method);
-            loadedMethods.put(clazz, methods);
-            return method;
-        } catch (Exception e) {
-            e.printStackTrace();
-            methods.put(methodName, null);
-            loadedMethods.put(clazz, methods);
-            return null;
-        }
+        Method method = clazz.getMethod(methodName, params);
+        methods.put(methodName, method);
+        loadedMethods.put(clazz, methods);
+        return method;
     }
 }
