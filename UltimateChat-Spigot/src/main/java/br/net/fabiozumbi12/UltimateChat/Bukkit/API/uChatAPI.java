@@ -75,7 +75,7 @@ public class uChatAPI {
         if (tagBuilder == null || tagBuilder.equals("")) {
             tagBuilder = UChat.get().getUCConfig().getString("general.default-tag-builder");
         }
-        UCChannel ch = new UCChannel(chName, chAlias, crossWorlds, distance, color, tagBuilder, needFocus, receiverMsg, cost, bungee, true, false, false, "player", "", new ArrayList<>(), "", ddmode, ddmcformat, mcddformat, ddhover, ddallowcmds, true, dynenable, mcdynformat, dynmcformat);
+        UCChannel ch = new UCChannel(chName, chAlias, crossWorlds, distance, color, tagBuilder, needFocus, receiverMsg, cost, bungee, true, false, false, "player", "", new ArrayList<>(), "", ddmode, ddmcformat, mcddformat, ddhover, ddallowcmds, true, dynenable, mcdynformat, dynmcformat, false);
         UChat.get().getUCConfig().addChannel(ch);
         UChat.get().reload();
         return true;

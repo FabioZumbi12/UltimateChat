@@ -64,7 +64,7 @@ public class UCChatProtection implements Listener {
                 chatSpam.put(p, msg);
                 Bukkit.getScheduler().scheduleSyncDelayedTask(UChat.get(), () -> {
                     chatSpam.remove(p);
-                }, UChat.get().getUCConfig().getProtInt("chat-protection.antispam.time-between-messages") * 20);
+                }, UChat.get().getUCConfig().getProtInt("chat-protection.antispam.time-between-messages") * 20L);
             } else if (!chatSpam.get(p).equalsIgnoreCase(msg)) {
                 UChat.get().getLang().sendMessage(p, UChat.get().getUCConfig().getProtMsg("chat-protection.antispam.cooldown-msg"));
                 return null;
@@ -76,7 +76,7 @@ public class UCChatProtection implements Listener {
                 final String nmsg = msg;
                 Bukkit.getScheduler().scheduleSyncDelayedTask(UChat.get(), () -> {
                     msgSpam.remove(nmsg);
-                }, UChat.get().getUCConfig().getProtInt("chat-protection.antispam.time-between-same-messages") * 20);
+                }, UChat.get().getUCConfig().getProtInt("chat-protection.antispam.time-between-same-messages") * 20L);
             } else {
                 msgSpam.put(msg, msgSpam.get(msg) + 1);
                 if (msgSpam.get(msg) >= UChat.get().getUCConfig().getProtInt("chat-protection.antispam.count-of-same-message")) {
@@ -248,11 +248,10 @@ public class UCChatProtection implements Listener {
 
     @EventHandler
     public void onPlayerChat(SendChannelMessageEvent e) {
-        if (!(e.getSender() instanceof Player)) {
+        if (!(e.getSender() instanceof Player p)) {
             return;
         }
 
-        final Player p = (Player) e.getSender();
         String msg = e.getMessage();
         UCChannel ch = e.getChannel();
 

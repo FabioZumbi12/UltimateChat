@@ -121,7 +121,7 @@ public class UCMessages {
                         for (Player play : ((Player) sender).getNearbyEntities(ch.getDistance(), ch.getDistance(), ch.getDistance()).stream()
                                 .filter(ent -> ent instanceof Player)
                                 .map(ent -> (Player) ent)
-                                .collect(Collectors.toList())) {
+                                .toList()) {
                             if (UCPerms.channelReadPerm(play, ch)) {
                                 if (!ch.availableWorlds().isEmpty() && !ch.availableInWorld(play.getWorld())) {
                                     continue;
@@ -417,10 +417,10 @@ public class UCMessages {
                     if (ch.allowHand() && UChat.get().getUCConfig().getBoolean("general.item-hand.enable") && msg.contains(UChat.get().getUCConfig().getString("general.item-hand.placeholder")) && sender instanceof Player && UCPerms.hasPerm(sender, "chat.hand")) {
                         if (!((Player) sender).getItemInHand().getType().equals(Material.AIR) && !UChat.get().getUCConfig().hasBlackListed(((Player) sender).getItemInHand()))
                             fanci.text(format).hoverShowItem(((Player) sender).getItemInHand()).next();
-                    } else if (!msg.equals(mention(sender, (CommandSender) receiver, msg)) && UChat.get().getUCConfig().getString("mention.hover-message").length() > 0 && msg.toLowerCase().contains(((CommandSender) receiver).getName().toLowerCase())) {
+                    } else if (!msg.equals(mention(sender, (CommandSender) receiver, msg)) && !UChat.get().getUCConfig().getString("mention.hover-message").isEmpty() && msg.toLowerCase().contains(((CommandSender) receiver).getName().toLowerCase())) {
                         tooltip = new StringBuilder(formatTags("", UChat.get().getUCConfig().getString("mention.hover-message"), sender, receiver, msg, ch));
                         fanci.text(format).hoverShowText(tooltip.toString()).next();
-                    } else if (tooltip.length() > 0) {
+                    } else if (!tooltip.isEmpty()) {
                         fanci.text(format).hoverShowText(tooltip.toString()).next();
                     } else {
                         fanci.text(format).next();
@@ -428,7 +428,7 @@ public class UCMessages {
                 } else {
                     format = formatTags(tag, format, sender, receiver, msg, ch);
                     tooltip = new StringBuilder(formatTags("", tooltip.toString(), sender, receiver, msg, ch));
-                    if (tooltip.length() > 0) {
+                    if (!tooltip.isEmpty()) {
                         fanci.text(format).hoverShowText(tooltip.toString()).next();
                     } else {
                         fanci.text(format).next();
