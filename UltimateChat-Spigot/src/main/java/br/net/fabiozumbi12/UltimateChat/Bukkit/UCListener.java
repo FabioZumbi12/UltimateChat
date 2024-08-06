@@ -865,15 +865,15 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
             if (ch.getCharAlias().length() == rawMsg.length() && rawMsg.equalsIgnoreCase(ch.getCharAlias())) {
                 addPlayerToChannel(ch, p);
                 e.setCancelled(true);
-                AsyncPlayerChatEvent newEvent = new AsyncPlayerChatEvent(true, e.getPlayer(), e.getMessage(), new HashSet<>());
-                Bukkit.getPluginManager().callEvent(newEvent);
             }
             if (rawMsg.startsWith(ch.getCharAlias())) {
                 String msg = rawMsg.substring(ch.getCharAlias().length());
                 sendMessageToPlayer(ch, p, e.getMessage().split(" "), msg);
                 e.setCancelled(true);
-                AsyncPlayerChatEvent newEvent = new AsyncPlayerChatEvent(true, e.getPlayer(), e.getMessage(), new HashSet<>());
-                Bukkit.getPluginManager().callEvent(newEvent);
+                if (!ch.compatCancelChatEvent()){
+                    AsyncPlayerChatEvent newEvent = new AsyncPlayerChatEvent(true, e.getPlayer(), e.getMessage(), new HashSet<>());
+                    Bukkit.getPluginManager().callEvent(newEvent);
+                }
             }
         }
         if (e.isCancelled()) return;
@@ -882,8 +882,6 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
             Player tellReceiver = UChat.get().getServer().getPlayer(UChat.get().tellPlayers.get(p.getName()));
             sendTell(p, tellReceiver, e.getMessage());
             e.setCancelled(true);
-            AsyncPlayerChatEvent newEvent = new AsyncPlayerChatEvent(true, e.getPlayer(), e.getMessage(), new HashSet<>());
-            Bukkit.getPluginManager().callEvent(newEvent);
         } else if (UChat.get().command.contains(p.getName()) || UChat.get().command.contains("CONSOLE")) {
             if (UChat.get().tempTellPlayers.containsKey("CONSOLE")) {
                 String recStr = UChat.get().tempTellPlayers.get("CONSOLE");
@@ -912,8 +910,6 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
                 UChat.get().command.remove(p.getName());
             }
             e.setCancelled(true);
-            AsyncPlayerChatEvent newEvent = new AsyncPlayerChatEvent(true, e.getPlayer(), e.getMessage(), new HashSet<>());
-            Bukkit.getPluginManager().callEvent(newEvent);
         } else {
             UCChannel ch = UChat.get().getPlayerChannel(p);
             if (UChat.get().tempChannels.containsKey(p.getName()) && !UChat.get().tempChannels.get(p.getName()).equals(ch.getAlias())) {
@@ -929,8 +925,6 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
                     UChat.get().getLang().sendMessage(p, "channel.muted");
                 }
                 e.setCancelled(true);
-                AsyncPlayerChatEvent newEvent = new AsyncPlayerChatEvent(true, e.getPlayer(), e.getMessage(), new HashSet<>());
-                Bukkit.getPluginManager().callEvent(newEvent);
             }
 
             if (ch.isCmdAlias()) {
@@ -947,8 +941,10 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
                 UCMessages.sendFancyMessage(e.getFormat().split(","), e.getMessage(), ch, p, null);
             }
             e.setCancelled(true);
-            AsyncPlayerChatEvent newEvent = new AsyncPlayerChatEvent(true, e.getPlayer(), e.getMessage(), new HashSet<>());
-            Bukkit.getPluginManager().callEvent(newEvent);
+            if (!ch.compatCancelChatEvent()){
+                AsyncPlayerChatEvent newEvent = new AsyncPlayerChatEvent(true, e.getPlayer(), e.getMessage(), new HashSet<>());
+                Bukkit.getPluginManager().callEvent(newEvent);
+            }
         }
     }
 

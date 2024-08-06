@@ -52,7 +52,7 @@ public class UCChannel {
     private List<String> members = new ArrayList<>();
 
     @Deprecated()
-    public UCChannel(String name, String alias, boolean worlds, int dist, String color, String builder, boolean focus, boolean receiversMsg, double cost, boolean isbungee, boolean hand, boolean ownBuilder, boolean isAlias, String aliasSender, String aliasCmd, List<String> availableWorlds, String ddchannel, String ddmode, String ddmcformat, String mcddformat, String ddhover, boolean ddallowcmds, boolean lock, boolean dynenable, String mcdynformat, String dynmcformat) {
+    public UCChannel(String name, String alias, boolean worlds, int dist, String color, String builder, boolean focus, boolean receiversMsg, double cost, boolean isbungee, boolean hand, boolean ownBuilder, boolean isAlias, String aliasSender, String aliasCmd, List<String> availableWorlds, String ddchannel, String ddmode, String ddmcformat, String mcddformat, String ddhover, boolean ddallowcmds, boolean lock, boolean dynenable, String mcdynformat, String dynmcformat, boolean chatEvent) {
         addDefaults();
         properties.put("name", name);
         properties.put("alias", alias);
@@ -82,6 +82,8 @@ public class UCChannel {
         properties.put("dynmap.enable", dynenable);
         properties.put("dynmap.ingame-to-web", mcdynformat);
         properties.put("dynmap.web-to-ingame", dynmcformat);
+
+        properties.put("compat.cancel-chat-event", chatEvent);
     }
 
     public UCChannel(String name, String alias, String color) {
@@ -133,6 +135,7 @@ public class UCChannel {
         properties.put("discord.format-to-dd", ":regional_indicator_g: **{sender}**: {message}");
 
         properties.put("dynmap.enable", false);
+        properties.put("compat.cancel-chat-event", false);
     }
 
     public Properties getProperties() {
@@ -155,6 +158,10 @@ public class UCChannel {
         } else {
             properties.put(key, value);
         }
+    }
+
+    public boolean compatCancelChatEvent(){
+        return (boolean) properties.get("compat.cancel-chat-event");
     }
 
     public boolean useDynmap() {
