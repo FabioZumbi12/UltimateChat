@@ -23,56 +23,46 @@ Check WIKI for:
 * API Usage
 * ...and more
 
-## APIs:
+## API repository:
 
 **Repository:**  
-```xml
-<repositories> 
-    <repository> 
-        <id>ultimatechat-repo</id> 
-        <url>https://raw.githubusercontent.com/FabioZumbi12/UltimateChat/mvn-repo/</url> 
-    </repository> 
-</repositories>
-```
-
-
-**UltimateChat API:**  
+UltimateChat is hosted on Maven Central
+### Maven
 ```xml
 <dependencies>
     <dependency>
         <groupId>io.github.fabiozumbi12.UltimateChat</groupId>
-        <artifactId>UltimateChat-[version]</artifactId>
-        <version>LATEST</version>
-        <scope>provided</scope>
-    </dependency> 
+        <artifactId>UltimateChat-Spigot</artifactId>
+        <version>1.9.2</version>
+        <exclusions>
+            <exclusion>
+                <!-- We don't need any of the dependencies -->
+                <groupId>*</groupId>
+                <artifactId>*</artifactId>
+            </exclusion>
+        </exclusions>
+    </dependency>
+
+    <!-- Import Javadocs -->
     <dependency>
         <groupId>io.github.fabiozumbi12.UltimateChat</groupId>
-        <artifactId>UltimateChat-[version]</artifactId>
-        <version>LATEST</version>
+        <artifactId>UltimateChat-Spigot</artifactId>
+        <version>1.9.2</version>
         <classifier>javadoc</classifier>
-    </dependency>
-</dependencies>
+    </dependency> 
+</dependencies>  
 ```
-Check ultimatechat version here: https://github.com/FabioZumbi12/UltimateChat/tree/mvn-repo/br/net/fabiozumbi12/UltimateChat  
 
+### Gradle:
+```
+repositories {
+    mavenCentral()
+    maven { url = 'https://s01.oss.sonatype.org/content/repositories/snapshots/' } // Only for snapshots
+}
 
-**UltimateFancy API:**  
-You need to shade UltimateFancy into your plugin or compile the jar.  
-```xml
-<dependencies>
-    <dependency>
-        <groupId>io.github.fabiozumbi12.UltimateChat</groupId>
-        <artifactId>UltimateFancy</artifactId>
-        <version>LATEST</version>
-        <scope>compile</scope>
-    </dependency> 
-    <dependency>
-        <groupId>io.github.fabiozumbi12.UltimateChat</groupId>
-        <artifactId>UltimateFancy</artifactId>
-        <version>LATEST</version>
-        <classifier>javadoc</classifier>
-    </dependency>
-</dependencies>
+dependencies {
+    compileOnly ("io.github.fabiozumbi12.UltimateChat:UltimateChat-Spigot:1.9.2"){ exclude(group: "*") }
+}
 ```
 
 ## Wiki:

@@ -32,8 +32,25 @@
     <packaging>pom</packaging>
     <name>UltimateChat</name>
     <version>1.9.2</version>
+
     <description>Ultimate Chat is an advanced chat hooking into most used plugins to show more info on player chat.
     </description>
+    <url>https://github.com/FabioZumbi12/RedProtect</url>
+
+    <licenses>
+        <license>
+            <name>GNU General Public License v3.0</name>
+            <url>https://www.gnu.org/licenses/gpl-3.0.en.html</url>
+            <distribution>repo</distribution>
+            <comments>Permissions of this strong copyleft license are conditioned on making available complete source code of licensed works and modifications, which include larger works using a licensed work, under the same license. Copyright and license notices must be preserved. Contributors provide an express grant of patent rights.</comments>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <name>Fabio F. Magalhães</name>
+            <url>https://github.com/FabioZumbi12</url>
+        </developer>
+    </developers>
 
     <repositories>
         <!-- Spigot repos -->
@@ -83,7 +100,7 @@
         <dependency>
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
-            <version>5.0.0-alpha2</version>
+            <version>5.1.3</version>
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
@@ -96,18 +113,14 @@
 
     <scm>
         <connection>scm:git:git@github.com:FabioZumbi12/UltimateChat.git</connection>
-        <developerConnection>scm:git:git@github.com:FabioZumbi12/UltimateChat.git</developerConnection>
         <url>https://github.com/FabioZumbi12/UltimateChat/tree/master</url>
-        <tag>${project.artifactId}</tag>
     </scm>
 
-    <!-- maven site -->
     <distributionManagement>
-        <repository>
-            <id>internal.repo</id>
-            <name>Temporary Staging Repository</name>
-            <url>file://${project.build.directory}/mvn-repo</url>
-        </repository>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
     </distributionManagement>
 
     <build>
@@ -161,49 +174,64 @@
                 </executions>
             </plugin>
 
-            <!-- Deploy to github for maven repo -->
+            <!-- sign packages to sonatype deploy
+            https://central.sonatype.org/publish/publish-maven/#distribution-management-and-authentication -->
             <plugin>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <version>2.8.1</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <id>spigot-plugins</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Deploy to maven central for maven repo -->
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.13</version>
+                <extensions>true</extensions>
                 <configuration>
-                    <altDeploymentRepository>internal.repo::default::file://${project.build.directory}/mvn-repo
-                    </altDeploymentRepository>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                    <stagingProgressTimeoutMinutes>10</stagingProgressTimeoutMinutes>
                 </configuration>
             </plugin>
 
+            <!-- Javadoc and sources for sonatype deploy -->
             <plugin>
-                <groupId>com.github.github</groupId>
-                <artifactId>site-maven-plugin</artifactId>
-                <version>0.12</version>
-                <configuration>
-                    <noJekyll>true</noJekyll>
-                    <message>Maven artifacts for ${project.artifactId} ${project.version}</message>
-                    <merge>true</merge>
-                    <outputDirectory>${project.build.directory}/mvn-repo</outputDirectory>
-                    <branch>refs/heads/mvn-repo</branch>
-                    <includes>
-                        <include>**/*</include>
-                    </includes>
-                    <repositoryName>UltimateChat</repositoryName>
-                    <repositoryOwner>FabioZumbi12</repositoryOwner>
-                </configuration>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.2.0</version>
                 <executions>
                     <execution>
-                        <id>deploying</id>
+                        <id>attach-sources</id>
                         <goals>
-                            <goal>site</goal>
+                            <goal>jar-no-fork</goal>
                         </goals>
-                        <phase>deploy</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
 
-            <!-- Javadoc -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.2.0</version>
-            </plugin>
         </plugins>
     </build>
     <properties>

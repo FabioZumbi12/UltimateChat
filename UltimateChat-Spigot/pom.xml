@@ -223,11 +223,11 @@
                             <relocations>
                                 <relocation>
                                     <pattern>redis.clients</pattern>
-                                    <shadedPattern>io.github.fabiozumbi12.UltimateChat.jedis</shadedPattern>
+                                    <shadedPattern>br.net.fabiozumbi12.UltimateChat.jedis</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.apache.commons.pool2</pattern>
-                                    <shadedPattern>io.github.fabiozumbi12.UltimateChat.apache.commons.pool2</shadedPattern>
+                                    <shadedPattern>br.net.fabiozumbi12.UltimateChat.apache.commons.pool2</shadedPattern>
                                 </relocation>
                             </relocations>
                             <filters>

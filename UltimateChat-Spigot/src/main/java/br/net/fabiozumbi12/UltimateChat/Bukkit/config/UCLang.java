@@ -116,7 +116,7 @@ public class UCLang {
 
         if (loadedlang.get("_lang.version") != null) {
             int langv = Integer.parseInt(loadedlang.get("_lang.version").toString().replace(".", ""));
-            int rpv = Integer.parseInt(UChat.get().getPDF().getVersion().replace(".", ""));
+            int rpv = Integer.parseInt(UChat.get().getPDF().getVersion().split("-")[0].replace(".", ""));
             if (langv < rpv || langv == 0) {
                 UChat.get().getUCLogger().warning("Your lang file is outdated. Probally need strings updates!");
                 UChat.get().getUCLogger().warning("Lang file version: " + loadedlang.get("_lang.version"));
