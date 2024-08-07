@@ -6,6 +6,9 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import jdalib.jda.api.Permission;
 import jdalib.jda.api.entities.*;
+import jdalib.jda.api.entities.channel.concrete.Category;
+import jdalib.jda.api.entities.channel.concrete.TextChannel;
+import jdalib.jda.api.entities.channel.concrete.VoiceChannel;
 import jdalib.jda.api.exceptions.RateLimitedException;
 import net.sacredlabyrinth.phaed.simpleclans.Clan;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
@@ -274,19 +277,19 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
                     Role publicRole = guild.getPublicRole();
 
                     // Need to assign role to category
-                    category.putPermissionOverride(publicRole).complete(true);
-                    category.putPermissionOverride(role).complete(true);
+                    category.upsertPermissionOverride(publicRole).complete(true);
+                    category.upsertPermissionOverride(role).complete(true);
 
                     // Assign role to text channel
-                    text.putPermissionOverride(publicRole).complete(true);
-                    text.putPermissionOverride(role).complete(true);
+                    text.upsertPermissionOverride(publicRole).complete(true);
+                    text.upsertPermissionOverride(role).complete(true);
                     text.getRolePermissionOverrides().forEach(roleOver -> {
                         try {
                             if (roleOver.getRole().equals(role)) {
-                                roleOver.getManager().grant(Permission.MESSAGE_READ, Permission.MESSAGE_WRITE).complete(true);
+                                roleOver.getManager().grant(Permission.MESSAGE_SEND).complete(true);
                             }
                             if (roleOver.getRole().equals(publicRole)) {
-                                roleOver.getManager().deny(Permission.MESSAGE_READ, Permission.MESSAGE_WRITE).complete(true);
+                                roleOver.getManager().deny(Permission.MESSAGE_SEND).complete(true);
                             }
                         } catch (RateLimitedException e) {
                             e.printStackTrace();
@@ -294,8 +297,8 @@ public class UCDiscordSync implements CommandExecutor, Listener, TabCompleter {
                     });
 
                     // Assign role to voice channel
-                    voice.putPermissionOverride(publicRole).complete(true);
-                    voice.putPermissionOverride(role).complete(true);
+                    voice.upsertPermissionOverride(publicRole).complete(true);
+                    voice.upsertPermissionOverride(role).complete(true);
                     voice.getRolePermissionOverrides().forEach(roleOver -> {
                         try {
                             if (roleOver.getRole().equals(role)) {
