@@ -61,7 +61,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly ("io.github.fabiozumbi12.UltimateChat:UltimateChat-Spigot:1.9.3-SNAPSHOT"){ exclude(group: "*") }
+    compileOnly ("io.github.fabiozumbi12.UltimateChat:UltimateChat-Spigot:1.9.3-SNAPSHOT"){ exclude(group = "*")}
 }
 ```
 
