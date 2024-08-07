@@ -27,7 +27,7 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
+    <groupId>io.github.fabiozumbi12.UltimateChat</groupId>
     <artifactId>UltimateChat</artifactId>
     <packaging>pom</packaging>
     <name>UltimateChat</name>
@@ -36,11 +36,6 @@
     </description>
 
     <repositories>
-        <repository>
-            <id>nucleus-api</id>
-            <url>https://repo.drnaylor.co.uk/artifactory/list/minecraft</url>
-        </repository>
-
         <!-- Spigot repos -->
         <repository>
             <id>spigot-repo</id>

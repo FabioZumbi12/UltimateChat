@@ -40,13 +40,13 @@ Check WIKI for:
 ```xml
 <dependencies>
     <dependency>
-        <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
+        <groupId>io.github.fabiozumbi12.UltimateChat</groupId>
         <artifactId>UltimateChat-[version]</artifactId>
         <version>LATEST</version>
         <scope>provided</scope>
     </dependency> 
     <dependency>
-        <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
+        <groupId>io.github.fabiozumbi12.UltimateChat</groupId>
         <artifactId>UltimateChat-[version]</artifactId>
         <version>LATEST</version>
         <classifier>javadoc</classifier>
@@ -61,13 +61,13 @@ You need to shade UltimateFancy into your plugin or compile the jar.
 ```xml
 <dependencies>
     <dependency>
-        <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
+        <groupId>io.github.fabiozumbi12.UltimateChat</groupId>
         <artifactId>UltimateFancy</artifactId>
         <version>LATEST</version>
         <scope>compile</scope>
     </dependency> 
     <dependency>
-        <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
+        <groupId>io.github.fabiozumbi12.UltimateChat</groupId>
         <artifactId>UltimateFancy</artifactId>
         <version>LATEST</version>
         <classifier>javadoc</classifier>
