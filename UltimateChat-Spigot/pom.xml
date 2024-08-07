@@ -29,7 +29,7 @@
     <parent>
         <groupId>io.github.fabiozumbi12.UltimateChat</groupId>
         <artifactId>UltimateChat</artifactId>
-        <version>1.9.2</version>
+        <version>1.9.3-SNAPSHOT</version>
     </parent>
     <artifactId>UltimateChat-Spigot</artifactId>
 
@@ -145,19 +145,19 @@
         <dependency>
             <groupId>io.github.fabiozumbi12.UltimateChat</groupId>
             <artifactId>UltimateChat-Bungee</artifactId>
-            <version>1.9.2</version>
+            <version>1.9.3-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>io.github.fabiozumbi12.UltimateChat</groupId>
             <artifactId>UltimateFancy</artifactId>
-            <version>1.9.2</version>
+            <version>1.9.3-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>io.github.fabiozumbi12.UltimateChat</groupId>
             <artifactId>UltimateChat-Velocity</artifactId>
-            <version>1.9.2</version>
+            <version>1.9.3-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

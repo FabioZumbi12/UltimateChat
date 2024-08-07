@@ -6,7 +6,7 @@
     <parent>
         <artifactId>UltimateChat</artifactId>
         <groupId>io.github.fabiozumbi12.UltimateChat</groupId>
-        <version>1.9.2</version>
+        <version>1.9.3-SNAPSHOT</version>
     </parent>
     <artifactId>UltimateFancy</artifactId>
 
