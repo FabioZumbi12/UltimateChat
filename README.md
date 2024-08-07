@@ -1,4 +1,4 @@
-![logo](https://media-elerium.cursecdn.com/attachments/123/595/uchat.png)  
+![logo](https://media.forgecdn.net/attachments/123/595/uchat.png)  
 Ultimate and advanced Chat for Spigot, Sponge and BungeeCoord
 
 ## Available versions:
