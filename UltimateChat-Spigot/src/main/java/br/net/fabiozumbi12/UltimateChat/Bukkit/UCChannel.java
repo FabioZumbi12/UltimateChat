@@ -257,6 +257,7 @@ public class UCChannel {
         for (UCChannel ch : UChat.get().getChannels().values()) {
             ch.removeMember(p);
         }
+        UChat.get().tempChannels.remove(p);
         this.members.add(p);
         return this;
     }
@@ -447,6 +448,7 @@ public class UCChannel {
                 }
             }
             message.send(sender);
+            UChat.get().tempChannels.remove(sender.getName());
         } else {
             UChat.get().getUCLogger().timings(timingType.START, "UCChannel#sendMessage()|Fire MessageChannelEvent");
             Bukkit.getScheduler().runTask(UChat.get(), () -> UCMessages.sendFancyMessage(new String[0], message.toOldFormat(), this, sender, null));
@@ -473,6 +475,7 @@ public class UCChannel {
                 }
             }
             fmsg.send(sender);
+            UChat.get().tempChannels.remove(sender.getName());
         }
     }
 
