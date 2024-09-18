@@ -135,7 +135,7 @@ public class UCChannel {
         properties.put("discord.format-to-dd", ":regional_indicator_g: **{sender}**: {message}");
 
         properties.put("dynmap.enable", false);
-        properties.put("compat.cancel-chat-event", false);
+        properties.put("compat.cancel-chat-event", true);
     }
 
     public Properties getProperties() {
