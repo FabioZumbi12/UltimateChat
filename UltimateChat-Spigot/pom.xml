@@ -38,21 +38,21 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.20.2-R0.1-SNAPSHOT</version>
+            <version>1.21.5-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.20.2-R0.1-SNAPSHOT</version>
+            <version>1.21.5-R0.1-SNAPSHOT</version>
             <classifier>javadoc</classifier>
         </dependency>
 
         <dependency>
             <groupId>me.clip</groupId>
             <artifactId>placeholderapi</artifactId>
-            <version>2.10.9</version>
+            <version>2.11.6</version>
             <scope>provided</scope>
         </dependency>
 
@@ -174,12 +174,7 @@
         <repository>
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-        </repository>
-        <repository>
-            <id>maven-restlet</id>
-            <name>Public online Restlet repository</name>
-            <url>https://maven.restlet.com</url>
-        </repository>
+        </repository>       
 		<!-- PCGF Repo for Marriage Master -->
 		<repository>
 			<id>pcgf-repo</id>
@@ -225,10 +220,10 @@
                                     <pattern>redis.clients</pattern>
                                     <shadedPattern>br.net.fabiozumbi12.UltimateChat.jedis</shadedPattern>
                                 </relocation>
-                                <!--<relocation>
+                                <relocation>
                                     <pattern>org.apache.commons.pool2</pattern>
                                     <shadedPattern>br.net.fabiozumbi12.UltimateChat.apache.commons.pool2</shadedPattern>
-                                </relocation>-->
+                                </relocation>
                             </relocations>
                             <filters>
                                 <filter>

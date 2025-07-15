@@ -485,7 +485,52 @@ public class UltimateFancy {
 
     private String toJson() {
         next();
+
         return "[\"\"," + constructor.toJSONString().substring(1);
+    }
+
+    private String serializeToSNBT(JSONArray constructor){
+        StringBuilder serialized = new StringBuilder("[");
+
+        constructor.forEach((a) -> {
+            var json = ((JSONObject)a);
+            getJsonPairValue(json, serialized);
+        });
+
+        serialized.append("]");
+        return serialized.toString();
+    }
+
+    private void getJsonPairValue(JSONObject json, StringBuilder serialized){
+        json.forEach((key, value) ->{
+            if (!key.equals("text") && !key.equals("value"))
+                serialized.append("{");
+
+            serialized.append(key).append(":");
+
+            if (value instanceof JSONObject) {
+                getJsonPairValue((JSONObject) value, serialized);
+            }
+            else if (value instanceof JSONArray) {
+                ((JSONArray) value).forEach((j) -> getJsonPairValue((JSONObject) j, serialized));
+            }
+            else if (value instanceof ExtraElement){
+                getExtraElement((ExtraElement) value, serialized);
+            }
+             else {
+                serialized.append("'").append(value.toString()).append("'");
+            }
+
+            if (key.equals("color") || key.equals("action"))
+                serialized.append(",");
+            else
+                serialized.append("},");
+        });
+    }
+
+    private void getExtraElement(ExtraElement extra, StringBuilder serialized){
+        serialized.append(extra.action).append(",");
+        getJsonPairValue(extra.json,serialized);
     }
 
     /**
@@ -623,7 +668,10 @@ public class UltimateFancy {
                 if (b)
                     toName = "\"" + toName +"\"";
 
-                Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + toName + " " + toJson());
+                var receiver = Bukkit.getPlayer(toName);
+                if (receiver != null)
+                    receiver.sendMessage(toOldFormat());
+                //Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + toName + " " + toJson());
             }
             return null;
         });
