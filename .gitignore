@@ -2,3 +2,6 @@
 .gitignore
 .idea/
 *.iml
+*.classpath
+.settings
+.project
