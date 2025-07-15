@@ -950,30 +950,6 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
     }
 
     @EventHandler
-    public void onDeath(PlayerDeathEvent e) {
-        Player p = e.getEntity();
-        if (UChat.get().getUCJDA() != null && !p.hasPermission(UChat.get().getUCConfig().getString("discord.vanish-perm"))) {
-            Bukkit.getScheduler().runTaskAsynchronously(UChat.get(), () ->
-                    UChat.get().getUCJDA().sendRawToDiscord(UChat.get().getLang().get("discord.death").replace("{player}", p.getName())));
-        }
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onCommand(PlayerCommandPreprocessEvent e) {
-        Player p = e.getPlayer();
-        Command cmd = Bukkit.getPluginCommand(e.getMessage().split(" ")[0].substring(1));
-        if (UChat.get().getUCJDA() != null && cmd != null && !UChat.get().getUCConfig().getString("discord.log-ignored-commands").contains(cmd.getName())) {
-            Calendar cal = Calendar.getInstance();
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-            Bukkit.getScheduler().runTaskAsynchronously(UChat.get(), () ->
-                    UChat.get().getUCJDA().sendCommandsToDiscord(UChat.get().getLang().get("discord.command")
-                    .replace("{player}", p.getName())
-                    .replace("{cmd}", e.getMessage())
-                    .replace("{time-now}", sdf.format(cal.getTime()))));
-        }
-    }
-
-    @EventHandler
     public void onJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
 
@@ -984,10 +960,6 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
             UChat.get().msgTogglePlayers.remove(p.getName());
         }
 
-        if (UChat.get().getUCJDA() != null && !p.hasPermission(UChat.get().getUCConfig().getString("discord.vanish-perm"))) {
-            Bukkit.getScheduler().runTaskAsynchronously(UChat.get(), () ->
-                    UChat.get().getUCJDA().sendRawToDiscord(UChat.get().getLang().get("discord.join").replace("{player}", p.getName())));
-        }
         if (UChat.get().getUCConfig().getBoolean("general.spy-enable-onjoin") && p.hasPermission("uchat.cmd.spy") && !UChat.get().isSpy.contains(p.getName())) {
             UChat.get().isSpy.add(p.getName());
             UChat.get().getLang().sendMessage(p, UChat.get().getLang().get("cmd.spy.enabled"));
@@ -1025,11 +997,6 @@ public class UCListener implements CommandExecutor, Listener, TabCompleter {
         UChat.get().tempChannels.remove(p.getName());
         UChat.get().tempChannels.entrySet().removeIf(k -> k.getValue().equals(p.getName()));
         UChat.get().command.remove(p.getName());
-
-        if (UChat.get().getUCJDA() != null && !p.hasPermission(UChat.get().getUCConfig().getString("discord.vanish-perm"))) {
-            Bukkit.getScheduler().runTaskAsynchronously(UChat.get(), () ->
-                    UChat.get().getUCJDA().sendRawToDiscord(UChat.get().getLang().get("discord.leave").replace("{player}", p.getName())));
-        }
     }
 
     @EventHandler

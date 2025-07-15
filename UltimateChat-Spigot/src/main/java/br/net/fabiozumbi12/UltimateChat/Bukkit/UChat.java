@@ -30,9 +30,6 @@ import br.net.fabiozumbi12.UltimateChat.Bukkit.API.uChatAPI;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.bungee.UChatBungee;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.config.UCConfig;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.config.UCLang;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.discord.UCDInterface;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.discord.UCDiscord;
-import br.net.fabiozumbi12.UltimateChat.Bukkit.discord.UCDiscordSync;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.hooks.HooksManager;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.jedis.UCJedisLoader;
 import br.net.fabiozumbi12.UltimateChat.Bukkit.metrics.Metrics;
@@ -76,19 +73,13 @@ public class UChat extends JavaPlugin {
     private HashMap<List<String>, UCChannel> channels;
     private UCLogger logger;
     private UCConfig config;
-    private UCDInterface UCJDA;
     private UCLang lang;
     private uChatAPI ucapi;
-    private UCDiscordSync sync;
     private UCJedisLoader jedis;
     private HooksManager hooksManager;
 
     public static UChat get() {
         return uchat;
-    }
-
-    public UCDiscordSync getDDSync() {
-        return this.sync;
     }
 
     public HashMap<List<String>, UCChannel> getChannels() {
@@ -109,10 +100,6 @@ public class UChat extends JavaPlugin {
 
     public UCConfig getUCConfig() {
         return this.config;
-    }
-
-    public UCDInterface getUCJDA() {
-        return this.UCJDA;
     }
 
     public UCLang getLang() {
@@ -163,9 +150,6 @@ public class UChat extends JavaPlugin {
             //Jedis
             registerJedis();
 
-            //JDA
-            registerJDA(true);
-
             initAutomessage();
 
             getUCLogger().info("Server Version: " + getServer().getBukkitVersion());
@@ -204,7 +188,6 @@ public class UChat extends JavaPlugin {
         this.lang = new UCLang();
         this.registerAliases();
 
-        this.registerJDA(false);
         this.registerJedis();
         this.initAutomessage();
 
@@ -229,38 +212,6 @@ public class UChat extends JavaPlugin {
                 this.logger.warning("Could not connect to REDIS server! Check ip, password and port, and if the REDIS server is running.");
             }
         }
-    }
-
-    private void registerJDA(boolean start) {
-        Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
-            if (checkJDA()) {
-                this.logger.info("JDA LibLoader is present...");
-                if (this.UCJDA != null) {
-                    if (this.sync != null) {
-                        if (hooksManager.getSc() != null)
-                            HandlerList.unregisterAll(this.sync.ddSimpleClansChat);
-                        this.sync = null;
-                    }
-                    Bukkit.getScheduler().cancelTask(this.UCJDA.getTaskId());
-                    this.UCJDA.shutdown();
-                    this.UCJDA = null;
-                }
-                if (getUCConfig().getBoolean("discord.use")) {
-                    this.UCJDA = new UCDiscord(this);
-                    if (!this.UCJDA.JDAAvailable()) {
-                        this.UCJDA = null;
-                        this.logger.info("JDA is not available due errors before...");
-                    } else {
-                        this.sync = new UCDiscordSync();
-                        if (hooksManager.getSc() != null)
-                            Bukkit.getPluginManager().registerEvents(this.sync.ddSimpleClansChat, this);
-
-                        this.logger.info("JDA connected and ready to use!");
-                        if (start) this.UCJDA.sendRawToDiscord(lang.get("discord.start"));
-                    }
-                }
-            }
-        });
     }
 
     private void initAutomessage() {
@@ -356,11 +307,6 @@ public class UChat extends JavaPlugin {
     }
 
     public void onDisable() {
-        if (this.UCJDA != null) {
-            this.UCJDA.sendRawToDiscord(lang.get("discord.stop"));
-            this.sync.unload();
-            this.UCJDA.shutdown();
-        }
         getUCLogger().info(getDescription().getFullName() + " disabled!");
     }
 

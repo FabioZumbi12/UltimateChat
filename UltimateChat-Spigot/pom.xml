@@ -133,13 +133,13 @@
         </dependency>
 
         <!-- Discord bridge -->
-        <dependency>
+        <!--<dependency>
             <groupId>JDALib</groupId>
             <artifactId>Loader</artifactId>
             <version>v4.0</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/../UltimateChat-JDA/target/UltimateChat-JDA.jar</systemPath>
-        </dependency>
+        </dependency>-->
 
         <!-- shade all -->
         <dependency>
@@ -217,7 +217,7 @@
                                     <include>io.github.fabiozumbi12.UltimateChat:UltimateChat-Velocity</include>
                                     <include>io.github.fabiozumbi12.UltimateChat:UltimateChat-Spigot</include>
                                     <include>redis.clients:jedis</include>
-                                    <include>org.apache.commons:commons-pool2</include>
+                                    <include>org.apache.commons:commons-pool2</include>-->
                                 </includes>
                             </artifactSet>
                             <relocations>
@@ -225,10 +225,10 @@
                                     <pattern>redis.clients</pattern>
                                     <shadedPattern>br.net.fabiozumbi12.UltimateChat.jedis</shadedPattern>
                                 </relocation>
-                                <relocation>
+                                <!--<relocation>
                                     <pattern>org.apache.commons.pool2</pattern>
                                     <shadedPattern>br.net.fabiozumbi12.UltimateChat.apache.commons.pool2</shadedPattern>
-                                </relocation>
+                                </relocation>-->
                             </relocations>
                             <filters>
                                 <filter>
@@ -243,12 +243,12 @@
                                         <include>**</include>
                                     </includes>
                                 </filter>
-                                <filter>
+                                <!--<filter>
                                     <artifact>org.apache.commons:commons-pool2</artifact>
                                     <includes>
                                         <include>**</include>
                                     </includes>
-                                </filter>
+                                </filter>-->
                             </filters>
                             <outputFile>
                                 ${project.basedir}/target/UltimateChat-${project.version}-b${BUILD_NUMBER}-Universal.jar

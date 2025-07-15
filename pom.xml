@@ -241,7 +241,7 @@
     </properties>
     <modules>
         <module>UltimateFancy</module>
-        <module>UltimateChat-JDA</module>
+        <!--<module>UltimateChat-JDA</module>-->
         <module>UltimateChat-Spigot</module>
         <module>UltimateChat-Bungee</module>
         <module>UltimateChat-Velocity</module>

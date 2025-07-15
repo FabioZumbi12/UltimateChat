@@ -252,15 +252,6 @@ public class UCMessages {
                     if (ch.useDynmap()) {
                         UCDynmapHook.sendToWeb(sender, finalEvmsg);
                     }
-
-                    //send to jda
-                    if (UChat.get().getUCJDA() != null) {
-                        if (ch.isTell()) {
-                            UChat.get().getUCJDA().sendTellToDiscord(msgPlayers.get(sender).toOldFormat());
-                        } else {
-                            UChat.get().getUCJDA().sendToDiscord(sender, finalEvmsg, ch);
-                        }
-                    }
                 }
             });
         });
