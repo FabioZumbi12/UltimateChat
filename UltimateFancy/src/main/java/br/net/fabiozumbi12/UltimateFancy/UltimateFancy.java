@@ -25,6 +25,7 @@
 
 package br.net.fabiozumbi12.UltimateFancy;
 
+import com.google.common.base.Utf8;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -37,7 +38,6 @@ import org.json.simple.JSONValue;
 
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
@@ -559,8 +559,7 @@ public class UltimateFancy {
      */
     public UltimateFancy hoverShowItem(ItemStack item) {
         JSONObject jItem = parseHoverItem(item);
-        var l = jItem.toJSONString().getBytes(StandardCharsets.UTF_8).length;
-        if (l > 32767)
+        if (Utf8.encodedLength(jItem.toJSONString()) > 32767)
             pendentElements.add(new ExtraElement("hoverEvent", parseHoverItem(new ItemStack(item.getType()))));
         else
             pendentElements.add(new ExtraElement("hoverEvent", jItem));
@@ -652,8 +651,7 @@ public class UltimateFancy {
         JSONObject obj = new JSONObject();
         obj.put("action", "show_item");
         String jItem = convertItemStackToJson(item);
-        var l = jItem.getBytes(StandardCharsets.UTF_8).length;
-        if (l > 32767)
+        if (Utf8.encodedLength(jItem) > 32767)
             obj.put("value", convertItemStackToJson(new ItemStack(item.getType())));
         else
             obj.put("value", jItem);
