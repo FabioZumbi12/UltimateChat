@@ -32,7 +32,7 @@
         <version>1.9.3-SNAPSHOT</version>
     </parent>
     <artifactId>UltimateChat-JDA</artifactId>
-    <version>4.0</version>
+    <version>5.0</version>
 
     <dependencies>
         <dependency>
@@ -43,7 +43,7 @@
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>5.0.1</version>
+            <version>5.0.0-alpha.2</version>
             <exclusions>
                 <exclusion>
                     <groupId>club.minnced</groupId>
@@ -93,6 +93,7 @@
                                     <include>com.fasterxml.jackson.core:jackson-annotations</include>
                                     <include>com.squareup.okio:okio</include>
                                     <include>org.slf4j:slf4j-api</include>
+                                    <include>org.slf4j:slf4j-simple</include>
                                 </includes>
                             </artifactSet>
                             <minimizeJar>true</minimizeJar>
@@ -129,6 +130,34 @@
                                 <relocation>
                                     <pattern>com.fasterxml</pattern>
                                     <shadedPattern>jdalib.com.fasterxml</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.iwebpp</pattern>
+                                    <shadedPattern>jdalib.com.iwebpp</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.neovisionaries</pattern>
+                                    <shadedPattern>jdalib.com.neovisionaries</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>javax.annotation</pattern>
+                                    <shadedPattern>jdalib.javax.annotation</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>okhttp3</pattern>
+                                    <shadedPattern>jdalib.okhttp3</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>okio</pattern>
+                                    <shadedPattern>jdalib.okio</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.slf4j</pattern>
+                                    <shadedPattern>jdalib.org.slf4j</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>gnu.trove</pattern>
+                                    <shadedPattern>jdalib.gnu.trove</shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>

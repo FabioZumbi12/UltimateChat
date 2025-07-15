@@ -34,8 +34,6 @@ import br.net.fabiozumbi12.UltimateFancy.UltimateFancy;
 import jdalib.jda.api.JDA;
 import jdalib.jda.api.JDABuilder;
 import jdalib.jda.api.entities.*;
-import jdalib.jda.api.entities.channel.ChannelType;
-import jdalib.jda.api.entities.channel.concrete.TextChannel;
 import jdalib.jda.api.events.message.MessageReceivedEvent;
 import jdalib.jda.api.exceptions.ErrorResponseException;
 import jdalib.jda.api.exceptions.PermissionException;
@@ -48,6 +46,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
+import javax.security.auth.login.LoginException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -77,7 +76,7 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
                 Activity activity = Activity.playing(game);
                 jda.getPresence().setActivity(activity);
             }
-        } catch (IllegalArgumentException | InterruptedException e) {
+        } catch (IllegalArgumentException | InterruptedException | LoginException e) {
             e.printStackTrace();
             return;
         }
@@ -393,14 +392,14 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
             Pattern pp = Pattern.compile("<@(.+?)>");
             Matcher mp = pp.matcher(message);
             if (mp.find()){
-                if (e.getMessage().getMentions().getRoles().stream().findFirst().isPresent()){
-                    String role = e.getMessage().getMentions().getRoles().stream().findFirst().get().getName();
+                if (e.getMessage().getMentionedRoles().stream().findFirst().isPresent()){
+                    String role = e.getMessage().getMentionedRoles().stream().findFirst().get().getName();
                     message = message.replaceAll("<@(.+?)>", "@" + role);
                 } else
-                if (e.getMessage().getMentions().getMembers().stream().findFirst().isPresent()){
-                    String nick = e.getMessage().getMentions().getMembers().stream().findFirst().get().getNickname();
+                if (e.getMessage().getMentionedMembers().stream().findFirst().isPresent()){
+                    String nick = e.getMessage().getMentionedMembers().stream().findFirst().get().getNickname();
                     if (nick == null || nick.isEmpty())
-                        nick = e.getMessage().getMentions().getMembers().stream().findFirst().get().getEffectiveName();
+                        nick = e.getMessage().getMentionedMembers().stream().findFirst().get().getEffectiveName();
 
                     message = message.replaceAll("<@(.+?)>", "@" + nick);
                 }
@@ -411,8 +410,8 @@ public class UCDiscord extends ListenerAdapter implements UCDInterface {
             //channel
             Pattern pc = Pattern.compile("<#(.+?)>");
             Matcher mc = pc.matcher(message);
-            if (mc.find() && e.getMessage().getMentions().getChannels().stream().anyMatch(chg -> chg.getId().equals(mc.group(1))))
-                message = message.replaceAll("<#(.+?)>", "#" + e.getMessage().getMentions().getChannels().stream().filter(chg -> chg.getId().equals(mc.group(1))).findFirst().get().getName());
+            if (mc.find() && e.getMessage().getMentionedChannels().stream().anyMatch(chg -> chg.getId().equals(mc.group(1))))
+                message = message.replaceAll("<#(.+?)>", "#" + e.getMessage().getMentionedChannels().stream().filter(chg -> chg.getId().equals(mc.group(1))).findFirst().get().getName());
             else
                 message = message.replaceAll("<#(.+?)>", "#?");
 
