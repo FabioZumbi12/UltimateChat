@@ -29,9 +29,10 @@
     <parent>
         <groupId>io.github.fabiozumbi12.UltimateChat</groupId>
         <artifactId>UltimateChat</artifactId>
-        <version>1.9.3-SNAPSHOT</version>
+        <version>1.9.3</version>
     </parent>
     <artifactId>UltimateChat-Velocity</artifactId>
+    <name>UltimateChat-Velocity</name>
 
     <repositories>
         <repository>

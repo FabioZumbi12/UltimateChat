@@ -31,7 +31,7 @@
     <artifactId>UltimateChat</artifactId>
     <packaging>pom</packaging>
     <name>UltimateChat</name>
-    <version>1.9.3-SNAPSHOT</version>
+    <version>1.9.3</version>
 
     <description>Ultimate Chat is an advanced chat hooking into most used plugins to show more info on player chat.
     </description>
@@ -188,6 +188,7 @@
                 </executions>
             </plugin>
 
+            <!-- Deploy to maven central for maven repo -->
             <plugin>
                 <groupId>org.sonatype.central</groupId>
                 <artifactId>central-publishing-maven-plugin</artifactId>
@@ -197,19 +198,6 @@
                     <publishingServerId>ossrh</publishingServerId>
                 </configuration>
             </plugin>
-            <!-- Deploy to maven central for maven repo
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6.13</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <serverId>ossrh</serverId>
-                    <nexusUrl>https://ossrh-staging-api.central.sonatype.com</nexusUrl>
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                    <stagingProgressTimeoutMinutes>10</stagingProgressTimeoutMinutes>
-                </configuration>
-            </plugin>-->
 
             <!-- Javadoc and sources for sonatype deploy -->
             <plugin>

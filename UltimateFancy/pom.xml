@@ -6,9 +6,10 @@
     <parent>
         <artifactId>UltimateChat</artifactId>
         <groupId>io.github.fabiozumbi12.UltimateChat</groupId>
-        <version>1.9.3-SNAPSHOT</version>
+        <version>1.9.3</version>
     </parent>
     <artifactId>UltimateFancy</artifactId>
+    <name>UltimateFancy</name>
 
     <dependencies> <!--Spigot-API-->
         <dependency>
