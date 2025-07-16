@@ -57,7 +57,7 @@ UltimateChat is hosted on Maven Central
 ```
 repositories {
     mavenCentral()
-    maven { url = 'https://s01.oss.sonatype.org/content/repositories/snapshots/' } // Only for snapshots
+    maven { url = ' https://central.sonatype.com/repository/maven-snapshots/' } // Only for snapshots
 }
 
 dependencies {
