@@ -33,7 +33,7 @@ UltimateChat is hosted on Maven Central
     <dependency>
         <groupId>io.github.fabiozumbi12.UltimateChat</groupId>
         <artifactId>UltimateChat-Spigot</artifactId>
-        <version>1.9.3</version>
+        <version>1.9.3-SNAPSHOT</version>
         <exclusions>
             <exclusion>
                 <!-- We don't need any of the dependencies -->
@@ -47,7 +47,7 @@ UltimateChat is hosted on Maven Central
     <dependency>
         <groupId>io.github.fabiozumbi12.UltimateChat</groupId>
         <artifactId>UltimateChat-Spigot</artifactId>
-        <version>1.9.3</version>
+        <version>1.9.3-SNAPSHOT</version>
         <classifier>javadoc</classifier>
     </dependency> 
 </dependencies>  
@@ -61,7 +61,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly ("io.github.fabiozumbi12.UltimateChat:UltimateChat-Spigot:1.9.3"){ exclude(group = "*")}
+    compileOnly ("io.github.fabiozumbi12.UltimateChat:UltimateChat-Spigot:1.9.3-SNAPSHOT"){ exclude(group = "*")}
 }
 ```
 
