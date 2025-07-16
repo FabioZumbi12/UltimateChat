@@ -29,9 +29,33 @@
     <parent>
         <groupId>io.github.fabiozumbi12.UltimateChat</groupId>
         <artifactId>UltimateChat</artifactId>
-        <version>1.9.3-SNAPSHOT</version>
+        <version>1.9.3</version>
     </parent>
     <artifactId>UltimateChat-Spigot</artifactId>
+    <name>UltimateChat-Spigot</name>
+
+    <description>Ultimate Chat is an advanced chat hooking into most used plugins to show more info on player chat.
+    </description>
+    <url>https://github.com/FabioZumbi12/RedProtect</url>
+
+    <licenses>
+        <license>
+            <name>GNU General Public License v3.0</name>
+            <url>https://www.gnu.org/licenses/gpl-3.0.en.html</url>
+            <distribution>repo</distribution>
+            <comments>Permissions of this strong copyleft license are conditioned on making available complete source code of licensed works and modifications, which include larger works using a licensed work, under the same license. Copyright and license notices must be preserved. Contributors provide an express grant of patent rights.</comments>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <name>Fabio F. Magalhães</name>
+            <url>https://github.com/FabioZumbi12</url>
+        </developer>
+    </developers>
+    <scm>
+        <connection>scm:git:git@github.com:FabioZumbi12/UltimateChat.git</connection>
+        <url>https://github.com/FabioZumbi12/UltimateChat/tree/master</url>
+    </scm>
 
     <dependencies>
         <!--Spigot-API-->
@@ -56,35 +80,34 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- start of local repos -->
-
+        <!-- https://mvnrepository.com/artifact/com.massivecraft.massivecore/MassiveCore -->
         <dependency>
-            <groupId>MassiveCore</groupId>
+            <groupId>com.massivecraft.massivecore</groupId>
             <artifactId>MassiveCore</artifactId>
-            <version>v1</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/MassiveCore.jar</systemPath>
+            <version>3.3.0</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.massivecraft/Factions -->
         <dependency>
-            <groupId>Factions</groupId>
+            <groupId>com.massivecraft</groupId>
             <artifactId>Factions</artifactId>
-            <version>v1</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/Factions.jar</systemPath>
+            <version>2.13.6</version>
+            <scope>provided</scope>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/us.dynmap/dynmap-api -->
         <dependency>
-            <groupId>Dynmap</groupId>
-            <artifactId>API</artifactId>
-            <version>v3.3-beta-3</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/Dynmap-3.3-beta-3-spigot.jar</systemPath>
+            <groupId>us.dynmap</groupId>
+            <artifactId>DynmapCoreAPI</artifactId>
+            <version>3.7-beta-6</version>
+            <scope>provided</scope>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.lenis0012.bukkit/marriage2 -->
         <dependency>
-            <groupId>Marriage</groupId>
-            <artifactId>Marriage</artifactId>
-            <version>v1</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/Marriage.jar</systemPath>
+            <groupId>com.lenis0012.bukkit</groupId>
+            <artifactId>marriage2</artifactId>
+            <version>2.3.1</version>
         </dependency>
 
         <dependency>
@@ -132,40 +155,39 @@
             <version>2.19.2</version>
         </dependency>
 
-        <!-- Discord bridge -->
-        <!--<dependency>
-            <groupId>JDALib</groupId>
-            <artifactId>Loader</artifactId>
-            <version>v4.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/../UltimateChat-JDA/target/UltimateChat-JDA.jar</systemPath>
-        </dependency>-->
-
         <!-- shade all -->
         <dependency>
             <groupId>io.github.fabiozumbi12.UltimateChat</groupId>
             <artifactId>UltimateChat-Bungee</artifactId>
-            <version>1.9.3-SNAPSHOT</version>
+            <version>1.9.3</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>io.github.fabiozumbi12.UltimateChat</groupId>
             <artifactId>UltimateFancy</artifactId>
-            <version>1.9.3-SNAPSHOT</version>
+            <version>1.9.3</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>io.github.fabiozumbi12.UltimateChat</groupId>
             <artifactId>UltimateChat-Velocity</artifactId>
-            <version>1.9.3-SNAPSHOT</version>
+            <version>1.9.3</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
 
     <repositories>
         <repository>
-            <id>dynmap-repo</id>
-            <url>https://repo.mikeprimm.com</url>
+            <id>factions</id>
+            <url>https://repo.bg-software.com/repository/dependencies/</url>
+        </repository>
+        <repository>
+            <id>massivecore-repo</id>
+            <url>https://repo.codemc.io/repository/maven-public/</url>
+        </repository>
+        <repository>
+            <id>MikeRepo</id>
+            <url>https://repo.mikeprimm.com/</url>
         </repository>
         <repository>
             <id>roinujnosde-repo</id>
