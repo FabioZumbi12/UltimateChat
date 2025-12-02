@@ -51,7 +51,6 @@ import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URL;
 import java.util.*;
@@ -77,7 +76,6 @@ public class UltimateFancy implements Listener {
 
     private BukkitAudiences audiences;
 
-    // components storage
     private final List<Component> constructor;
     private HashMap<String, Boolean> lastFormats;
     private List<Component> workingGroup;
@@ -110,8 +108,6 @@ public class UltimateFancy implements Listener {
         this(plugin);
         text(text);
     }
-
-    // ---------------- API (compat) ----------------
 
     public UltimateFancy coloredTextAndNext(String text) {
         text = UChatColor.translateAlternateColorCodes(text);
@@ -202,8 +198,6 @@ public class UltimateFancy implements Listener {
         return this;
     }
 
-    // ---------------- color parsing -> Components ----------------
-
     private List<Component> parseColorsToComponents(String text) {
         List<Component> out = new ArrayList<>();
         List<String> parts = splitVanillaColors(text);
@@ -292,12 +286,9 @@ public class UltimateFancy implements Listener {
             }
 
             Component comp = Component.text(rawText);
-
             if (color != null) comp = comp.color(color);
-
             for (TextDecoration dec : decorations) comp = comp.decorate(dec);
 
-            // apply lastFormats (if any)
             for (Entry<String, Boolean> fmt : lastFormats.entrySet()) {
                 try {
                     TextDecoration d = TextDecoration.valueOf(fmt.getKey().toUpperCase());
@@ -350,8 +341,6 @@ public class UltimateFancy implements Listener {
         }
     }
 
-    // ---------------- next & attaching events ----------------
-
     public UltimateFancy next() {
         if (!workingGroup.isEmpty()) {
             for (Component base : workingGroup) {
@@ -362,7 +351,6 @@ public class UltimateFancy implements Listener {
                     } else if (ex.type == ExtraElement.Type.HOVER_TEXT) {
                         withExtras = applyHoverText(withExtras, ex.hoverComponent);
                     } else if (ex.type == ExtraElement.Type.HOVER_ITEM) {
-                        // keep hover item as text SNBT (Adventure's showItem may vary between platforms)
                         withExtras = applyHoverItem(withExtras, ex.hoverEvent);
                     }
                 }
@@ -412,8 +400,6 @@ public class UltimateFancy implements Listener {
         }
     }
 
-    // ---------------- click / hover convenience ----------------
-
     public UltimateFancy clickRunCmd(String cmd) {
         pendentElements.add(ExtraElement.click(cmd));
         return this;
@@ -452,15 +438,11 @@ public class UltimateFancy implements Listener {
         return this;
     }
 
-
-    // helper to merge components into one
     private Component mergeComponents(List<Component> parts) {
         Component acc = Component.empty();
         for (Component c : parts) acc = acc.append(c);
         return acc;
     }
-
-    // ---------------- send / export ----------------
 
     public void send(CommandSender to) {
         next();
@@ -486,7 +468,6 @@ public class UltimateFancy implements Listener {
     }
 
     private void performSend(Player to, Component comp) {
-        // run sync (adventure sendMessage must be on main thread)
         Bukkit.getScheduler().runTask(plugin, () -> {
             Audience aud = audiences.player(to);
             aud.sendMessage(comp);
@@ -494,7 +475,6 @@ public class UltimateFancy implements Listener {
     }
 
     private void performSendConsole(Component comp) {
-        // console is safe to call sync
         Bukkit.getScheduler().runTask(plugin, () -> {
             Audience aud = audiences.console();
             aud.sendMessage(comp);
@@ -502,12 +482,10 @@ public class UltimateFancy implements Listener {
     }
 
     public String toOldFormat() {
-        // best-effort fallback: join text contents via legacy serializer
         try {
             Component merged = toComponent();
             return LegacyComponentSerializer.legacySection().serialize(merged);
         } catch (Throwable t) {
-            // last resort: join component.toString()
             StringBuilder sb = new StringBuilder();
             for (Component c : constructor) {
                 try {
@@ -520,20 +498,13 @@ public class UltimateFancy implements Listener {
         }
     }
 
-    // ---------------- ExtraElement (typed) ----------------
-
     static class ExtraElement {
         enum Type { CLICK, HOVER_TEXT, HOVER_ITEM }
 
         final Type type;
 
-        // CLICK
         String clickPayload;
-
-        // HOVER TEXT
         Component hoverComponent;
-
-        // HOVER ITEM
         HoverEvent<?> hoverEvent;
 
         private ExtraElement(Type type) {
@@ -559,8 +530,6 @@ public class UltimateFancy implements Listener {
             return e;
         }
     }
-
-    // ---------------- UChatColor ----------------
 
     static class UChatColor {
         public static final String HEX_PATTERN = "&?#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})";
@@ -602,7 +571,6 @@ public class UltimateFancy implements Listener {
         if (meta != null) {
             List<String> tagParts = new ArrayList<>();
 
-            // --- display (Name + Lore) ---
             try {
                 Component nameComponent;
                 if ((getBukkitVersion() >= 1112 || getBukkitVersion() == 0) && meta.hasLocalizedName()) {
@@ -636,15 +604,13 @@ public class UltimateFancy implements Listener {
                 t.printStackTrace();
             }
 
-            // --- Enchantments ---
             try {
                 if (meta.hasEnchants()) {
                     List<String> enchParts = new ArrayList<>();
                     for (Map.Entry<Enchantment, Integer> e : meta.getEnchants().entrySet()) {
-                        // Enchantment#getKey() requires Spigot 1.13+. Fallback to namespace if not available:
                         String enchId;
                         try {
-                            enchId = e.getKey().getKey().toString(); // NamespacedKey
+                            enchId = e.getKey().getKey().toString();
                         } catch (Throwable ex) {
                             enchId = "minecraft:" + e.getKey().getName().toLowerCase();
                         }
@@ -654,7 +620,6 @@ public class UltimateFancy implements Listener {
                 }
             } catch (Throwable ignored) {}
 
-            // --- Damage (if Damageable) ---
             try {
                 if (meta instanceof Damageable) {
                     int damage = ((Damageable) meta).getDamage();
@@ -700,7 +665,6 @@ public class UltimateFancy implements Listener {
     }
 
     private static String escapeForSNBT(String json) {
-        // Put JSON string into single quotes for SNBT; escape existing single quotes and backslashes
         return json.replace("\\", "\\\\").replace("'", "\\'");
     }
 

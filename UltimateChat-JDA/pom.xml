@@ -30,7 +30,7 @@
     <parent>
         <groupId>io.github.fabiozumbi12.UltimateChat</groupId>
         <artifactId>UltimateChat</artifactId>
-        <version>1.9.3-SNAPSHOT</version>
+        <version>1.9.4-SNAPSHOT</version>
     </parent>
     <artifactId>UltimateChat-JDA</artifactId>
     <version>4.0</version>
