@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2025 - @FabioZumbi12
- * Last Modified: 16/07/2025 18:07
+ * Last Modified: 02/12/2025 15:58
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -35,8 +35,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -478,17 +476,5 @@ public class UCChannel {
             fmsg.send(sender);
             UChat.get().tempChannels.remove(sender.getName());
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public String toString() {
-        JSONArray array = new JSONArray();
-        for (Entry<Object, Object> prop : properties.entrySet()) {
-            JSONObject json = new JSONObject();
-            json.put(prop.getKey(), prop.getValue());
-            array.add(json);
-        }
-        return array.toJSONString();
     }
 }

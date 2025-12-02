@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2025 - @FabioZumbi12
- * Last Modified: 16/07/2025 18:07
+ * Last Modified: 02/12/2025 15:59
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -26,18 +26,33 @@
 
 package br.net.fabiozumbi12.UltimateFancy;
 
-import com.google.common.base.Utf8;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.nbt.api.BinaryTagHolder;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
 
 import java.lang.reflect.Method;
+import java.net.URI;
 import java.net.URL;
 import java.util.*;
 import java.util.Map.Entry;
@@ -45,111 +60,186 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Class to generate JSON elements.
+ * UltimateFancy
  *
- * @author FabioZumbi12
+ * - Internals use Component only (no unsafe casting)
+ * - Hover/click built with Adventure events
+ * - SNBT for hover items via reflection (keeps compatibility)
+ *
+ * NOTE:
+ *   - Before using UltimateFancy you MUST call UltimateFancy.init(plugin)
+ *   - At plugin disable call UltimateFancy.shutdown()
+ *
+ * Author: FabioZumbi12 (refactor)
  */
 
-@SuppressWarnings({"unchecked"})
-public class UltimateFancy {
+public class UltimateFancy implements Listener {
 
-    private String hexColor = "";
-    private String lastRGBColor = "";
-    private ChatColor lastColor = ChatColor.WHITE;
-    private ChatColor last2Color = null;
-    private JSONArray constructor;
+    private BukkitAudiences audiences;
+
+    // components storage
+    private final List<Component> constructor;
     private HashMap<String, Boolean> lastFormats;
-    private List<JSONObject> workingGroup;
+    private List<Component> workingGroup;
     private List<ExtraElement> pendentElements;
     private final JavaPlugin plugin;
 
-    /**
-     * Creates a new instance of UltimateFancy.
-     */
     public UltimateFancy(JavaPlugin plugin) {
         this.plugin = plugin;
-        constructor = new JSONArray();
-        workingGroup = new ArrayList<>();
-        lastFormats = new HashMap<>();
-        pendentElements = new ArrayList<>();
+        this.constructor = new ArrayList<>();
+        this.workingGroup = new ArrayList<>();
+        this.lastFormats = new HashMap<>();
+        this.pendentElements = new ArrayList<>();
+
+        this.audiences = BukkitAudiences.create(plugin);
+
+        Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
-    /**
-     * Creates a new instance of UltimateFancy with an initial text.
-     *
-     * @param text {@code String}
-     */
+    @EventHandler
+    public void onPluginDisable(PluginDisableEvent e) {
+        if (e.getPlugin() == plugin) {
+            if (audiences != null) {
+                audiences.close();
+                audiences = null;
+            }
+        }
+    }
+
     public UltimateFancy(JavaPlugin plugin, String text) {
-        this.plugin = plugin;
-        constructor = new JSONArray();
-        workingGroup = new ArrayList<>();
-        lastFormats = new HashMap<>();
-        pendentElements = new ArrayList<>();
+        this(plugin);
         text(text);
     }
 
-    /**
-     * Root text to show with the colors parsed, close the last text properties and start a new text block.
-     *
-     * @param text text to show with the colors parsed
-     * @return instance of same {@link UltimateFancy}.
-     */
+    // ---------------- API (compat) ----------------
+
     public UltimateFancy coloredTextAndNext(String text) {
         text = UChatColor.translateAlternateColorCodes(text);
-        return this.textAndNext(text);
+        return textAndNext(text);
     }
 
-    /**
-     * Root text to show and close the last text properties and start a new text block.
-     *
-     * @param text text to show
-     * @return instance of same {@link UltimateFancy}.
-     */
     public UltimateFancy textAndNext(String text) {
         this.text(text);
         return next();
     }
 
-    /**
-     * Root text to show with the colors parsed.
-     *
-     * @param text text to show with the colors parsed
-     * @return instance of same {@link UltimateFancy}.
-     */
     public UltimateFancy coloredText(String text) {
         text = UChatColor.translateAlternateColorCodes(text);
         return this.text(text);
     }
 
-    private List<JSONObject> parseColors(String text) {
-        List<JSONObject> jsonList = new ArrayList<>();
-        List<String> vanillaColors = new ArrayList<>();
+    public UltimateFancy text(String text) {
+        List<Component> parts = parseColorsToComponents(text);
+        workingGroup.addAll(parts);
+        return this;
+    }
 
+    public UltimateFancy textAtStart(String text) {
+        List<Component> parts = parseColorsToComponents(text);
+        List<Component> newList = new ArrayList<>(parts);
+        newList.addAll(this.constructor);
+        this.constructor.clear();
+        this.constructor.addAll(newList);
+        return this;
+    }
+
+    public UltimateFancy appendObject(Component comp) {
+        workingGroup.add(comp);
+        return this;
+    }
+
+    public UltimateFancy appendString(String json) {
+        try {
+            Component c = GsonComponentSerializer.gson().deserialize(json);
+            workingGroup.add(c);
+        } catch (Throwable ignored) {}
+        return this;
+    }
+
+    public List<Component> getWorkingElements() {
+        return this.workingGroup;
+    }
+
+    public List<Component> getStoredElements() {
+        return new ArrayList<>(this.constructor);
+    }
+
+    public UltimateFancy removeObject(Component comp) {
+        this.workingGroup.remove(comp);
+        this.constructor.remove(comp);
+        return this;
+    }
+
+    public UltimateFancy appendAtFirst(Component comp) {
+        List<Component> newList = new ArrayList<>();
+        newList.add(comp);
+        newList.addAll(getStoredElements());
+        constructor.clear();
+        constructor.addAll(newList);
+        return this;
+    }
+
+    public UltimateFancy appendAtEnd(Component comp) {
+        List<Component> newList = new ArrayList<>(getWorkingElements());
+        newList.add(comp);
+        this.workingGroup = newList;
+        return this;
+    }
+
+    public List<UltimateFancy> getFancyElements() {
+        next();
+        List<UltimateFancy> list = new ArrayList<>();
+        for (Component c : this.constructor) {
+            UltimateFancy f = new UltimateFancy(plugin);
+            f.appendAtEnd(c);
+            list.add(f);
+        }
+        return list;
+    }
+
+    public UltimateFancy appendFancy(UltimateFancy fancy) {
+        this.appendAtEnd(fancy.toComponent());
+        return this;
+    }
+
+    // ---------------- color parsing -> Components ----------------
+
+    private List<Component> parseColorsToComponents(String text) {
+        List<Component> out = new ArrayList<>();
+        List<String> parts = splitVanillaColors(text);
+        for (String part : parts) {
+            Component c = buildComponentFromColoredPart(part);
+            if (c != null) out.add(c);
+        }
+        return out;
+    }
+
+    private List<String> splitVanillaColors(String text) {
+        List<String> vanillaColors = new ArrayList<>();
         int hexCount = 0;
         StringBuilder hexValue = new StringBuilder();
-        for (String vColor:text.split("(?=§)")){
+        for (String vColor : text.split("(?=§)")) {
             if (hexCount > 0) {
                 if (hexCount >= 7) {
-                    String lastValue = vanillaColors.get(vanillaColors.size()-1);
-                    vanillaColors.set(vanillaColors.size()-1, lastValue.replace("%uchathex-color%", hexValue.toString()));
+                    String lastValue = vanillaColors.get(vanillaColors.size() - 1);
+                    vanillaColors.set(vanillaColors.size() - 1, lastValue.replace("%uchathex-color%", hexValue.toString()));
                     hexValue = new StringBuilder();
                     hexCount = 0;
-                }
-                else {
-                    if (vColor.startsWith("§")){
+                } else {
+                    if (vColor.startsWith("§")) {
                         hexValue.append(vColor.replace("§", ""));
                         hexCount++;
                         continue;
                     } else {
-                        String lastValue = vanillaColors.get(vanillaColors.size()-1);
-                        vanillaColors.set(vanillaColors.size()-1, lastValue.replace("#%uchathex-color%", ""));
+                        String lastValue = vanillaColors.get(vanillaColors.size() - 1);
+                        vanillaColors.set(vanillaColors.size() - 1, lastValue.replace("#%uchathex-color%", ""));
                         hexValue = new StringBuilder();
                         hexCount = 0;
                     }
                 }
             }
             if (vColor.startsWith("§x")) {
-                vanillaColors.add("#%uchathex-color%"+vColor.replaceAll("§x", ""));
+                vanillaColors.add("#%uchathex-color%" + vColor.replaceAll("§x", ""));
                 hexCount = 1;
                 continue;
             }
@@ -158,396 +248,125 @@ public class UltimateFancy {
             }
             vanillaColors.add(vColor);
         }
+        return vanillaColors;
+    }
 
-        for (String part : vanillaColors) {
-            JSONObject workingText = new JSONObject();
+    private Component buildComponentFromColoredPart(String part) {
+        try {
             Matcher m = Pattern.compile("#[A-Fa-f0-9]{6}|#[A-Fa-f0-9]{3}").matcher(part);
-            // Hex colors
+            String rawText;
+            TextColor color = null;
+            Set<TextDecoration> decorations = new HashSet<>();
+
             if (m.find()) {
-
-                // Fix colors before
-                filterColors(workingText);
-
-                workingText.put("color", m.group());
-                workingText.put("text", part.replace(m.group(), ""));
-
-                hexColor = m.group();
-                lastRGBColor = hexColor;
-                if (lastColor.isColor()) lastColor = ChatColor.WHITE;
-                if (last2Color != null && last2Color.isColor()) last2Color = null;
-
-                //fix colors from latest
-                filterColors(workingText);
-                if (part.length() == 2) continue;
+                String hex = m.group();
+                // normalize 3-digit hex
+                if (hex.length() == 4) {
+                    String shortHex = hex.substring(1);
+                    String full = "" + shortHex.charAt(0) + shortHex.charAt(0)
+                            + shortHex.charAt(1) + shortHex.charAt(1)
+                            + shortHex.charAt(2) + shortHex.charAt(2);
+                    hex = "#" + full;
+                }
+                color = TextColor.color(Integer.parseInt(hex.substring(1), 16));
+                rawText = part.replace(m.group(), "");
             } else {
-                hexColor = "";
-
-                // Fix colors before
-                filterColors(workingText);
-
-                // Vanilla collors
+                rawText = part;
                 Matcher matcher1 = Pattern.compile("^§([0-9a-fA-Fk-oK-ORr]).*$").matcher(part);
                 if (matcher1.find()) {
-                    ChatColor color = ChatColor.getByChar(matcher1.group(1).charAt(0));
-                    if (color == null) color = ChatColor.WHITE;
-
-                    if (color.isColor()) {
-                        lastColor = color;
-                        last2Color = null;
-                    } else {
-                        // Set a second color if the first color is format
-                        if (lastColor.isColor()) last2Color = lastColor;
-                        lastColor = color;
+                    char code = matcher1.group(1).charAt(0);
+                    ChatColor cc = ChatColor.getByChar(code);
+                    if (cc != null) {
+                        if (cc.isColor()) {
+                            NamedTextColor ntc = mapNamedColor(cc);
+                            if (ntc != null) color = ntc;
+                        } else {
+                            TextDecoration dec = mapDecoration(cc);
+                            if (dec != null) decorations.add(dec);
+                        }
                     }
-                    lastRGBColor = "";
-                    //fix colors from latest
-                    filterColors(workingText);
-                    if (part.length() == 2) continue;
-                }
-
-                //continue if empty
-                if (UChatColor.stripColor(part).isEmpty()) {
-                    continue;
-                }
-
-                workingText.put("text", UChatColor.stripColor(part));
-
-                //fix colors after
-                filterColors(workingText);
-            }
-
-            if (!workingText.containsKey("color")) {
-                workingText.put("color", "white");
-            }
-            jsonList.add(workingText);
-        }
-        return jsonList;
-    }
-
-    /**
-     * Root text to show on chat.
-     *
-     * @param text Root text to show on chat
-     * @return instance of same {@link UltimateFancy}.
-     */
-    public UltimateFancy text(String text) {
-        workingGroup.addAll(parseColors(text));
-        return this;
-    }
-
-    /**
-     * Root text to show on chat, but in first position.
-     *
-     * @param text Root text to show on chat in first position
-     * @return instance of same {@link UltimateFancy}.
-     */
-    public UltimateFancy textAtStart(String text) {
-        JSONArray jarray = new JSONArray();
-        jarray.addAll(parseColors(text));
-        jarray.addAll(getStoredElements());
-        this.constructor = jarray;
-        return this;
-    }
-
-    /**
-     * Root text to show on chat, on last position.
-     *
-     * @param json Append other json
-     * @return instance of same {@link UltimateFancy}.
-     */
-    public UltimateFancy appendObject(JSONObject json) {
-        workingGroup.add(json);
-        return this;
-    }
-
-    /**
-     * Root text to show on chat, on last position.
-     *
-     * @param jsonObject Append other json string
-     * @return instance of same {@link UltimateFancy}.
-     */
-    public UltimateFancy appendString(String jsonObject) {
-        Object obj = JSONValue.parse(jsonObject);
-        if (obj instanceof JSONObject) {
-            workingGroup.add((JSONObject) obj);
-        }
-        if (obj instanceof JSONArray) {
-            for (Object object : ((JSONArray) obj)) {
-                if (object.toString().isEmpty()) continue;
-                if (object instanceof JSONArray) {
-                    appendString(object.toString());
+                    rawText = UChatColor.stripColor(part);
                 } else {
-                    workingGroup.add((JSONObject) JSONValue.parse(object.toString()));
+                    rawText = UChatColor.stripColor(part);
                 }
             }
-        }
-        return this;
-    }
 
-    /**
-     * Raw working elements from this object
-     *
-     * @return list with raw elements of actual working elements.
-     */
-    public List<JSONObject> getWorkingElements() {
-        return this.workingGroup;
-    }
+            Component comp = Component.text(rawText);
 
-    /**
-     * Raw elements already stored into this object
-     *
-     * @return list with raw elements of stored json elements.
-     */
-    public List<JSONObject> getStoredElements() {
-        return new ArrayList<JSONObject>(this.constructor);
-    }
+            if (color != null) comp = comp.color(color);
 
-    /**
-     * Remove an json element from actual elements
-     *
-     * @param json json element to remove
-     * @return instance of same {@link UltimateFancy}.
-     */
-    public UltimateFancy removeObject(JSONObject json) {
-        this.workingGroup.remove(json);
-        this.constructor.remove(json);
-        return this;
-    }
+            for (TextDecoration dec : decorations) comp = comp.decorate(dec);
 
-    /**
-     * Append text at beginning of all elements stored
-     *
-     * @param json string element to remove
-     * @return instance of same {@link UltimateFancy}.
-     */
-    public UltimateFancy appendAtFirst(String json) {
-        Object obj = JSONValue.parse(json);
-        if (obj instanceof JSONObject) {
-            appendAtFirst((JSONObject) obj);
-        }
-        if (obj instanceof JSONArray) {
-            for (Object object : ((JSONArray) obj)) {
-                if (object.toString().isEmpty()) continue;
-                appendAtFirst((JSONObject) JSONValue.parse(object.toString()));
-            }
-        }
-        return this;
-    }
-
-    /**
-     * Append text at beginning of all elements stored
-     *
-     * @param json json element to remove
-     * @return instance of same {@link UltimateFancy}.
-     */
-    public UltimateFancy appendAtFirst(JSONObject json) {
-        JSONArray jarray = new JSONArray();
-        jarray.add(json);
-        jarray.addAll(getStoredElements());
-        this.constructor = jarray;
-        return this;
-    }
-
-    /**
-     * Append text at the end of all elements stored
-     *
-     * @param json json element to remove
-     * @return instance of same {@link UltimateFancy}.
-     */
-    public UltimateFancy appendAtEnd(String json) {
-        Object obj = JSONValue.parse(json);
-        if (obj instanceof JSONObject) {
-            appendAtEnd((JSONObject) obj);
-        }
-        if (obj instanceof JSONArray) {
-            for (Object object : ((JSONArray) obj)) {
-                if (object.toString().isEmpty()) continue;
-                appendAtEnd((JSONObject) JSONValue.parse(object.toString()));
-            }
-        }
-        return this;
-    }
-
-    /**
-     * Append text at the end of all elements stored
-     *
-     * @param json json element to remove
-     * @return instance of same {@link UltimateFancy}.
-     */
-    public UltimateFancy appendAtEnd(JSONObject json) {
-        List<JSONObject> jarray = new ArrayList<>(getWorkingElements());
-        jarray.add(json);
-        this.workingGroup = jarray;
-        return this;
-    }
-
-    /**
-     * Get all elements stored as Fancy elements
-     *
-     * @return instance of same {@link UltimateFancy}.
-     */
-    public List<UltimateFancy> getFancyElements() {
-        next();
-        List<UltimateFancy> list = new ArrayList<>();
-        for (Object obj : this.constructor) {
-            if (obj instanceof JSONObject) {
-                list.add(new UltimateFancy(plugin).appendAtEnd((JSONObject) obj));
-            }
-        }
-        return list;
-    }
-
-    /**
-     * Append other fancy element
-     *
-     * @param fancy json element to remove
-     * @return instance of same {@link UltimateFancy}.
-     */
-    public UltimateFancy appendFancy(UltimateFancy fancy) {
-        this.appendAtEnd(fancy.toJson());
-        return this;
-    }
-
-    private void filterColors(JSONObject obj) {
-        for (Entry<String, Boolean> format : lastFormats.entrySet()) {
-            obj.put(format.getKey(), format.getValue());
-        }
-
-        // Parse last color
-        if (!hexColor.isEmpty()) {
-            obj.put("color", hexColor);
-        } else {
-            if (lastColor.isColor()) obj.put("color", lastColor.name().toLowerCase());
-        }
-
-        if (lastColor.equals(ChatColor.RESET) || (lastColor.isColor() || lastColor.isFormat())) {
-            for (String format : lastFormats.keySet()) {
-                if (lastColor.isFormat() && format.equalsIgnoreCase("color")) continue;
-                obj.remove(format);
-            }
-            if (lastColor.equals(ChatColor.RESET)) {
-                last2Color = null;
-                lastRGBColor = "";
-            }
-            lastFormats.clear();
-        }
-
-        if (lastColor.isFormat()) {
-            String formatStr = lastColor.name().toLowerCase();
-            if (lastColor.equals(ChatColor.MAGIC)) {
-                formatStr = "obfuscated";
-            }
-            if (lastColor.equals(ChatColor.UNDERLINE)) {
-                formatStr = "underlined";
-            }
-            lastFormats.put(formatStr, true);
-            obj.put(formatStr, true);
-        }
-
-        // Parse second color if the first color is format
-        if (last2Color != null)
-            obj.put("color", last2Color.name().toLowerCase());
-        else if (!lastRGBColor.isEmpty()) {
-            obj.put("color", lastRGBColor);
-        }
-    }
-
-    /**
-     * Send the JSON message to a {@link CommandSender} via {@code tellraw}.
-     *
-     * @param to {@link CommandSender}
-     */
-    public void send(CommandSender to) {
-        next();
-        if (to instanceof Player) {
-            performCommand((Player) to);
-        } else {
-            to.sendMessage(toOldFormat());
-        }
-    }
-
-    public void send(CommandSender to, boolean json) {
-        next();
-        if (to instanceof Player) {
-            if (json) {
-                performCommand((Player) to);
-            } else {
-                to.sendMessage(toOldFormat());
-            }
-        } else {
-            to.sendMessage(toOldFormat());
-        }
-    }
-
-    @Override
-    public String toString() {
-        return this.toJson();
-    }
-
-    private String toJson() {
-        next();
-
-        return "[\"\"," + constructor.toJSONString().substring(1);
-    }
-
-    private String serializeToSNBT(JSONArray constructor){
-        StringBuilder serialized = new StringBuilder("[");
-
-        constructor.forEach((a) -> {
-            var json = ((JSONObject)a);
-            getJsonPairValue(json, serialized);
-        });
-
-        serialized.append("]");
-        return serialized.toString();
-    }
-
-    private void getJsonPairValue(JSONObject json, StringBuilder serialized){
-        json.forEach((key, value) ->{
-            if (!key.equals("text") && !key.equals("value"))
-                serialized.append("{");
-
-            serialized.append(key).append(":");
-
-            if (value instanceof JSONObject) {
-                getJsonPairValue((JSONObject) value, serialized);
-            }
-            else if (value instanceof JSONArray) {
-                ((JSONArray) value).forEach((j) -> getJsonPairValue((JSONObject) j, serialized));
-            }
-            else if (value instanceof ExtraElement){
-                getExtraElement((ExtraElement) value, serialized);
-            }
-             else {
-                serialized.append("'").append(value.toString()).append("'");
+            // apply lastFormats (if any)
+            for (Entry<String, Boolean> fmt : lastFormats.entrySet()) {
+                try {
+                    TextDecoration d = TextDecoration.valueOf(fmt.getKey().toUpperCase());
+                    comp = comp.decorate(d);
+                } catch (Throwable ignored) {}
             }
 
-            if (key.equals("color") || key.equals("action"))
-                serialized.append(",");
-            else
-                serialized.append("},");
-        });
+            return comp;
+        } catch (Throwable t) {
+            return Component.text(UChatColor.stripColor(part));
+        }
     }
 
-    private void getExtraElement(ExtraElement extra, StringBuilder serialized){
-        serialized.append(extra.action).append(",");
-        getJsonPairValue(extra.json,serialized);
+    private NamedTextColor mapNamedColor(ChatColor cc) {
+        if (cc == null) return null;
+        try {
+            switch (cc) {
+                case BLACK: return NamedTextColor.BLACK;
+                case DARK_BLUE: return NamedTextColor.DARK_BLUE;
+                case DARK_GREEN: return NamedTextColor.DARK_GREEN;
+                case DARK_AQUA: return NamedTextColor.DARK_AQUA;
+                case DARK_RED: return NamedTextColor.DARK_RED;
+                case DARK_PURPLE: return NamedTextColor.DARK_PURPLE;
+                case GOLD: return NamedTextColor.GOLD;
+                case GRAY: return NamedTextColor.GRAY;
+                case DARK_GRAY: return NamedTextColor.DARK_GRAY;
+                case BLUE: return NamedTextColor.BLUE;
+                case GREEN: return NamedTextColor.GREEN;
+                case AQUA: return NamedTextColor.AQUA;
+                case RED: return NamedTextColor.RED;
+                case LIGHT_PURPLE: return NamedTextColor.LIGHT_PURPLE;
+                case YELLOW: return NamedTextColor.YELLOW;
+                case WHITE: return NamedTextColor.WHITE;
+                default: return null;
+            }
+        } catch (Throwable ignored) {
+            return null;
+        }
     }
 
-    /**
-     * Close the last text properties and start a new text element.
-     *
-     * @return instance of same {@link UltimateFancy}.
-     */
+    private TextDecoration mapDecoration(ChatColor cc) {
+        if (cc == null) return null;
+        switch (cc) {
+            case BOLD: return TextDecoration.BOLD;
+            case ITALIC: return TextDecoration.ITALIC;
+            case STRIKETHROUGH: return TextDecoration.STRIKETHROUGH;
+            case UNDERLINE: return TextDecoration.UNDERLINED;
+            case MAGIC: return TextDecoration.OBFUSCATED;
+            default: return null;
+        }
+    }
+
+    // ---------------- next & attaching events ----------------
+
     public UltimateFancy next() {
         if (!workingGroup.isEmpty()) {
-            for (JSONObject obj : workingGroup) {
-                if (obj.containsKey("text") && !obj.get("text").toString().isEmpty()) {
-                    for (ExtraElement element : pendentElements) {
-                        obj.put(element.getAction(), element.getJson());
+            for (Component base : workingGroup) {
+                Component withExtras = base;
+                for (ExtraElement ex : pendentElements) {
+                    if (ex.type == ExtraElement.Type.CLICK) {
+                        withExtras = applyClick(withExtras, ex.type, ex.clickPayload);
+                    } else if (ex.type == ExtraElement.Type.HOVER_TEXT) {
+                        withExtras = applyHoverText(withExtras, ex.hoverComponent);
+                    } else if (ex.type == ExtraElement.Type.HOVER_ITEM) {
+                        // keep hover item as text SNBT (Adventure's showItem may vary between platforms)
+                        withExtras = applyHoverItem(withExtras, ex.hoverEvent);
                     }
-                    constructor.add(obj);
                 }
+                constructor.add(withExtras);
             }
         }
         workingGroup = new ArrayList<>();
@@ -555,407 +374,341 @@ public class UltimateFancy {
         return this;
     }
 
-    /**
-     * Add a command to execute on click the text.
-     *
-     * @param cmd {@link String}
-     * @return instance of same {@link UltimateFancy}.
-     */
-    public UltimateFancy clickRunCmd(String cmd) {
-        pendentElements.add(new ExtraElement("clickEvent", parseJson("run_command", cmd)));
-        return this;
-    }
-
-    /**
-     * @param cmd {@link String}
-     * @return instance of same {@link UltimateFancy}.
-     */
-    public UltimateFancy clickSuggestCmd(String cmd) {
-        pendentElements.add(new ExtraElement("clickEvent", parseJson("suggest_command", cmd)));
-        return this;
-    }
-
-    /**
-     * URL to open on external browser when click this text.
-     *
-     * @param url {@link String}
-     * @return instance of same {@link UltimateFancy}.
-     */
-    public UltimateFancy clickOpenURL(URL url) {
-        pendentElements.add(new ExtraElement("clickEvent", parseJson("open_url", url.toString())));
-        return this;
-    }
-
-    /**
-     * Text to show on hover the mouse under this text.
-     *
-     * @param text {@link String}
-     * @return instance of same {@link UltimateFancy}.
-     */
-    public UltimateFancy hoverShowText(String text) {
-        pendentElements.add(new ExtraElement("hoverEvent", parseHoverText(text)));
-        return this;
-    }
-
-    /**
-     * Item to show on chat message under this text.
-     *
-     * @param item {@link ItemStack}
-     * @return instance of same {@link UltimateFancy}.
-     */
-    public UltimateFancy hoverShowItem(ItemStack item) {
-        JSONObject jItem = parseHoverItem(item);
-        if (Utf8.encodedLength(jItem.toJSONString()) > 32767)
-            pendentElements.add(new ExtraElement("hoverEvent", parseHoverItem(new ItemStack(item.getType()))));
-        else
-            pendentElements.add(new ExtraElement("hoverEvent", jItem));
-        return this;
-    }
-
-    /**
-     * Convert JSON string to Minecraft string.
-     *
-     * @return {@code String} with traditional Minecraft colors.
-     */
-    public String toOldFormat() {
-        StringBuilder result = new StringBuilder();
-        for (Object mjson : constructor) {
-            JSONObject json = (JSONObject) mjson;
-            if (!json.containsKey("text")) continue;
-
-            try {
-                //get color
-                String colorStr = json.get("color").toString();
-                try {
-                    ChatColor color = ChatColor.valueOf(colorStr.toUpperCase());
-                    if (color.equals(ChatColor.WHITE)) {
-                        result.append(ChatColor.RESET);
-                    } else {
-                        result.append(color);
-                    }
-                } catch (Exception ignored) {}
-
-                //get format
-                for (ChatColor frmt : ChatColor.values()) {
-                    if (frmt.isColor()) continue;
-                    String frmtStr = frmt.name().toLowerCase();
-                    if (frmt.equals(ChatColor.MAGIC)) {
-                        frmtStr = "obfuscated";
-                    }
-                    if (frmt.equals(ChatColor.UNDERLINE)) {
-                        frmtStr = "underlined";
-                    }
-                    if (json.containsKey(frmtStr)) {
-                        result.append(frmt);
-                    }
-                }
-            } catch (Exception ignored) {
-            }
-
-            result.append(json.get("text").toString());
+    private Component applyClick(Component base, ExtraElement.Type kind, String payload) {
+        try {
+            return switch (kind) {
+                case CLICK -> base.clickEvent(ClickEvent.runCommand(payload));
+                case HOVER_TEXT -> base.clickEvent(ClickEvent.suggestCommand(payload));
+                default -> base.clickEvent(ClickEvent.openUrl(URI.create(payload).toURL()));
+            };
+        } catch (Throwable ignored) {
         }
-        return result.toString();
+        return base;
     }
 
-    private void performCommand(Player to) {
-        Bukkit.getScheduler().callSyncMethod(plugin, () -> {
-            if (Bukkit.getOnlinePlayers().stream().anyMatch(p -> p.equals(to))) {
-                String toName = to.getName();
-
-                Pattern p = Pattern.compile("[^a-z0-9_ ]", Pattern.CASE_INSENSITIVE);
-                Matcher m = p.matcher(toName);
-                boolean b = m.find();
-
-                if (b)
-                    toName = "\"" + toName +"\"";
-
-                var receiver = Bukkit.getPlayer(toName);
-                if (receiver != null)
-                    receiver.sendMessage(toOldFormat());
-                //Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + toName + " " + toJson());
+    private Component applyHoverItem(Component base, HoverEvent hover) {
+        try {
+            return base.hoverEvent(hover);
+        } catch (Throwable ignored) {
+            // fallback to text
+            try {
+                return base.hoverEvent(HoverEvent.showText(Component.text(hover.toString())));
+            } catch (Throwable ex) {
+                return base;
             }
-            return null;
+        }
+    }
+
+    private Component applyHoverText(Component base, Component hover) {
+        try {
+            return base.hoverEvent(HoverEvent.showText(hover));
+        } catch (Throwable ignored) {
+            // fallback to text
+            try {
+                return base.hoverEvent(HoverEvent.showText(Component.text(hover.toString())));
+            } catch (Throwable ex) {
+                return base;
+            }
+        }
+    }
+
+    // ---------------- click / hover convenience ----------------
+
+    public UltimateFancy clickRunCmd(String cmd) {
+        pendentElements.add(ExtraElement.click(cmd));
+        return this;
+    }
+
+    public UltimateFancy clickSuggestCmd(String cmd) {
+        pendentElements.add(ExtraElement.click(cmd));
+        return this;
+    }
+
+    public UltimateFancy clickOpenURL(URL url) {
+        pendentElements.add(ExtraElement.click(url.toString()));
+        return this;
+    }
+
+    public UltimateFancy hoverShowText(String text) {
+        String t = UChatColor.translateAlternateColorCodes(text);
+        Component hover = mergeComponents(parseColorsToComponents(t));
+        pendentElements.add(ExtraElement.hoverText(hover));
+        return this;
+    }
+
+    public UltimateFancy hoverShowItem(ItemStack item) {
+        String snbt = toManualSNBT(item);
+        Key key = Key.key("minecraft:" + item.getType().name().toLowerCase());
+
+        pendentElements.add(
+                ExtraElement.hoverItem(
+                        HoverEvent.showItem(
+                                key,
+                                item.getAmount(),
+                                BinaryTagHolder.binaryTagHolder(snbt)
+                        )
+                )
+        );
+        return this;
+    }
+
+
+    // helper to merge components into one
+    private Component mergeComponents(List<Component> parts) {
+        Component acc = Component.empty();
+        for (Component c : parts) acc = acc.append(c);
+        return acc;
+    }
+
+    // ---------------- send / export ----------------
+
+    public void send(CommandSender to) {
+        next();
+        Component comp = toComponent();
+        if (to instanceof Player) performSend((Player) to, comp);
+        else performSendConsole(comp);
+    }
+
+    public void send(CommandSender to, boolean json) {
+        next();
+        Component comp = toComponent();
+        if (to instanceof Player) {
+            if (json) performSend((Player) to, comp);
+            else to.sendMessage(toOldFormat());
+        } else {
+            performSendConsole(comp);
+        }
+    }
+
+    public Component toComponent() {
+        next();
+        return mergeComponents(constructor);
+    }
+
+    private void performSend(Player to, Component comp) {
+        // run sync (adventure sendMessage must be on main thread)
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            Audience aud = audiences.player(to);
+            aud.sendMessage(comp);
         });
     }
-    
-    private JSONObject parseHoverText(String text) {
-        JSONArray extraArr = addColorToArray(UChatColor.translateAlternateColorCodes(text));
-        JSONObject objExtra = new JSONObject();
-        objExtra.put("text", "");
-        objExtra.put("extra", extraArr);
-        JSONObject obj = new JSONObject();
-        obj.put("action", "show_text");
-        obj.put("value", objExtra);
-        return obj;
+
+    private void performSendConsole(Component comp) {
+        // console is safe to call sync
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            Audience aud = audiences.console();
+            aud.sendMessage(comp);
+        });
     }
 
-    private JSONObject parseJson(String action, String value) {
-        JSONObject obj = new JSONObject();
-        obj.put("action", action);
-        obj.put("value", value);
-        return obj;
-    }
-
-    private JSONObject parseHoverItem(ItemStack item) {
-        JSONObject obj = new JSONObject();
-        obj.put("action", "show_item");
-        String jItem = convertItemStackToJson(item);
-        if (Utf8.encodedLength(jItem) > 32767)
-            obj.put("value", convertItemStackToJson(new ItemStack(item.getType())));
-        else
-            obj.put("value", jItem);
-        return obj;
-    }
-
-    private String convertItemStackToJson(ItemStack itemStack) {
-        Class<?> craftItemStackClazz = ReflectionUtil.getOBCClass("inventory.CraftItemStack");
-        Method asNMSCopyMethod;
+    public String toOldFormat() {
+        // best-effort fallback: join text contents via legacy serializer
         try {
-            asNMSCopyMethod = ReflectionUtil.getMethod(craftItemStackClazz, "asNMSCopy", ItemStack.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-
-        Class<?> nmsItemStackClazz = ReflectionUtil.getNMSClassItem("ItemStack");
-        Class<?> nbtTagCompoundClazz = ReflectionUtil.getNMSClassNbt("NBTTagCompound");
-
-        Method saveNmsItemStackMethod;
-
-        try{
-            saveNmsItemStackMethod = ReflectionUtil.getMethod(nmsItemStackClazz, "save", nbtTagCompoundClazz); // <= 1.17
-        } catch (Exception t1){
-            try{
-                saveNmsItemStackMethod = ReflectionUtil.getMethod(nmsItemStackClazz, "b", nbtTagCompoundClazz); // <= 1.20.4
-            } catch (Exception t2){
-                t2.printStackTrace();
-                return null;
-            }
-        }
-
-        Object nmsNbtTagCompoundObj;
-        Object nmsItemStackObj;
-        Object itemAsJsonObject;
-
-        try {
-            nmsNbtTagCompoundObj = nbtTagCompoundClazz.newInstance();
-            nmsItemStackObj = asNMSCopyMethod.invoke(null, itemStack);
-            itemAsJsonObject = saveNmsItemStackMethod.invoke(nmsItemStackObj, nmsNbtTagCompoundObj);
+            Component merged = toComponent();
+            return LegacyComponentSerializer.legacySection().serialize(merged);
         } catch (Throwable t) {
-            t.printStackTrace();
-            return null;
-        }
-        return itemAsJsonObject.toString();
-    }
-
-    private JSONArray addColorToArray(String text) {
-        JSONArray extraArr = new JSONArray();
-        ChatColor color = ChatColor.WHITE;
-        for (String part : text.split("(?=" + ChatColor.COLOR_CHAR + "[0-9a-fA-Fk-oK-ORr])")) {
-            JSONObject objExtraTxt = new JSONObject();
-            Matcher match = Pattern.compile("^" + ChatColor.COLOR_CHAR + "([0-9a-fA-Fk-oK-ORr]).*$").matcher(part);
-            if (match.find()) {
-                color = ChatColor.getByChar(match.group(1).charAt(0));
-                if (part.length() == 2) continue;
-            }
-            objExtraTxt.put("text", UChatColor.stripColor(part));
-            if (color.isColor()) {
-                objExtraTxt.put("color", color.name().toLowerCase());
-                objExtraTxt.remove("obfuscated");
-                objExtraTxt.remove("underlined");
-                objExtraTxt.remove(ChatColor.STRIKETHROUGH.name().toLowerCase());
-            }
-            if (color.equals(ChatColor.RESET)) {
-                objExtraTxt.put("color", "white");
-                objExtraTxt.remove("obfuscated");
-                objExtraTxt.remove("underlined");
-                objExtraTxt.remove(ChatColor.STRIKETHROUGH.name().toLowerCase());
-            }
-            if (color.isFormat()) {
-                if (color.equals(ChatColor.MAGIC)) {
-                    objExtraTxt.put("obfuscated", true);
-                } else if (color.equals(ChatColor.UNDERLINE)) {
-                    objExtraTxt.put("underlined", true);
-                } else {
-                    objExtraTxt.put(color.name().toLowerCase(), true);
-                }
-            }
-            extraArr.add(objExtraTxt);
-        }
-        return extraArr;
-    }
-
-    public void setContructor(JSONArray array) {
-        this.constructor = array;
-    }
-
-    @Override
-    public UltimateFancy clone() {
-        UltimateFancy newFanci = new UltimateFancy(plugin);
-        newFanci.constructor = this.constructor;
-        newFanci.pendentElements = this.pendentElements;
-        newFanci.workingGroup = this.workingGroup;
-        newFanci.lastFormats = this.lastFormats;
-        return newFanci;
-    }
-
-    /**
-     * An immutable pair of actions and {@link JSONObject} values.
-     *
-     * @author FabioZumbi12
-     */
-    public static class ExtraElement {
-        private final String action;
-        private final JSONObject json;
-
-        public ExtraElement(String action, JSONObject json) {
-            this.action = action;
-            this.json = json;
-        }
-
-        public String getAction() {
-            return this.action;
-        }
-
-        public JSONObject getJson() {
-            return this.json;
-        }
-    }
-}
-
-/**
- * Class to use with new rgb colors from 1.16
- */
-class UChatColor {
-
-    public static final String HEX_PATTERN = "&?#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})";
-
-    public static String stripColor(String text) {
-        text = ChatColor.stripColor(text);
-        text = text.replaceAll(HEX_PATTERN, "");
-        return text;
-    }
-
-    public static String translateAlternateColorCodes(String text) {
-        Matcher matcher = Pattern.compile(HEX_PATTERN).matcher(text);
-        while (matcher.find()) {
-            String toReplace = matcher.group(0);
-            String find = matcher.group(1);
-            text = text.replace(toReplace, "§#"+find);
-        }
-        return ChatColor.translateAlternateColorCodes('&',text);
-    }
-}
-
-/**
- * Help get native itemstack properties
- * 
- * @author FabioZumbi12
- */
-class ReflectionUtil {
-    private static String versionString;
-    private static final Map<String, Class<?>> loadedNMSClasses = new HashMap<>();
-    private static final Map<String, Class<?>> loadedOBCClasses = new HashMap<>();
-    private static final Map<Class<?>, Map<String, Method>> loadedMethods = new HashMap<>();
-
-    public static String getVersion() {
-        if (versionString == null) {
-            String name = Bukkit.getServer().getClass().getPackage().getName();
-            versionString = name.substring(name.lastIndexOf('.') + 1) + ".";
-        }
-
-        if (versionString.equals("craftbukkit."))
-            versionString = "";
-
-        return versionString;
-    }
-
-    public static Class<?> getNMSClassNbt(String nmsClassName) {
-        if (loadedNMSClasses.containsKey(nmsClassName)) {
-            return loadedNMSClasses.get(nmsClassName);
-        }
-
-        String clazzName = "net.minecraft.server." + getVersion() + nmsClassName;
-        Class<?> clazz;
-
-        try {
-            clazz = Class.forName(clazzName);
-        } catch (Throwable t1) {
-            try {
-                clazzName = "net.minecraft.nbt." + nmsClassName;
-                clazz = Class.forName(clazzName);
-            } catch (Throwable t2) {
+            // last resort: join component.toString()
+            StringBuilder sb = new StringBuilder();
+            for (Component c : constructor) {
                 try {
-                    clazzName = "net.minecraft.core." + nmsClassName;
-                    clazz = Class.forName(clazzName);
-                } catch (Throwable t3) {
-                    t3.printStackTrace();
-                    return null;
+                    sb.append(GsonComponentSerializer.gson().serialize(c));
+                } catch (Throwable ignored) {
+                    sb.append(c.toString());
                 }
             }
+            return sb.toString();
         }
-
-        loadedNMSClasses.put(nmsClassName, clazz);
-        return clazz;
     }
 
-    public static Class<?> getNMSClassItem(String nmsClassName) {
-        if (loadedNMSClasses.containsKey(nmsClassName)) {
-            return loadedNMSClasses.get(nmsClassName);
+    // ---------------- ExtraElement (typed) ----------------
+
+    static class ExtraElement {
+        enum Type { CLICK, HOVER_TEXT, HOVER_ITEM }
+
+        final Type type;
+
+        // CLICK
+        String clickPayload;
+
+        // HOVER TEXT
+        Component hoverComponent;
+
+        // HOVER ITEM
+        HoverEvent<?> hoverEvent;
+
+        private ExtraElement(Type type) {
+            this.type = type;
         }
 
-        String clazzName = "net.minecraft.server." + getVersion() + nmsClassName;
-        Class<?> clazz;
 
-        try {
-            clazz = Class.forName(clazzName);
-        } catch (Throwable t1) {
+        static ExtraElement click(String payload) {
+            ExtraElement e = new ExtraElement(Type.CLICK);
+            e.clickPayload = payload;
+            return e;
+        }
+
+        static ExtraElement hoverText(Component c) {
+            ExtraElement e = new ExtraElement(Type.HOVER_TEXT);
+            e.hoverComponent = c;
+            return e;
+        }
+
+        static ExtraElement hoverItem(HoverEvent<?> event) {
+            ExtraElement e = new ExtraElement(Type.HOVER_ITEM);
+            e.hoverEvent = event;
+            return e;
+        }
+    }
+
+    // ---------------- UChatColor ----------------
+
+    static class UChatColor {
+        public static final String HEX_PATTERN = "&?#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})";
+
+        public static String stripColor(String text) {
+            text = ChatColor.stripColor(text);
+            text = text.replaceAll(HEX_PATTERN, "");
+            return text;
+        }
+
+        public static String translateAlternateColorCodes(String text) {
+            Matcher matcher = Pattern.compile(HEX_PATTERN).matcher(text);
+            StringBuilder buffer = new StringBuilder();
+            while (matcher.find()) {
+                String find = matcher.group(1);
+                if (find.length() == 3) {
+                    find = "" + find.charAt(0) + find.charAt(0)
+                            + find.charAt(1) + find.charAt(1)
+                            + find.charAt(2) + find.charAt(2);
+                }
+                matcher.appendReplacement(buffer, "§x§" + find.charAt(0) + "§" +
+                        find.charAt(1) + "§" + find.charAt(2) + "§" +
+                        find.charAt(3) + "§" + find.charAt(4) + "§" +
+                        find.charAt(5));
+            }
+            matcher.appendTail(buffer);
+            return ChatColor.translateAlternateColorCodes('&', buffer.toString());
+        }
+    }
+
+    public static String toManualSNBT(ItemStack item) {
+        StringBuilder sb = new StringBuilder();
+        String id = "minecraft:" + item.getType().name().toLowerCase();
+        sb.append("{");
+        sb.append("id:\"").append(id).append("\",");
+        sb.append("Count:").append(item.getAmount()).append("b");
+
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            List<String> tagParts = new ArrayList<>();
+
+            // --- display (Name + Lore) ---
             try {
-                clazzName = "net.minecraft.world.item." + nmsClassName;
-                clazz = Class.forName(clazzName);
-            } catch (Throwable t2) {
-                t2.printStackTrace();
-                return null;
+                Component nameComponent;
+                if ((getBukkitVersion() >= 1112 || getBukkitVersion() == 0) && meta.hasLocalizedName()) {
+                    nameComponent = LegacyComponentSerializer.legacySection().deserialize(item.getItemMeta().getLocalizedName());
+                } else if (meta.hasDisplayName()) {
+                    nameComponent = LegacyComponentSerializer.legacySection().deserialize(item.getItemMeta().getDisplayName());
+                } else {
+                    nameComponent = LegacyComponentSerializer.legacySection().deserialize(capitalize(item.getType().toString()));
+                }
+
+                List<String> loreJsonList = new ArrayList<>();
+
+                if (meta.hasLore()) {
+                    List<String> loreStrings = meta.getLore();
+                    if (loreStrings != null) {
+                        for (String s : loreStrings) {
+                            Component c = LegacyComponentSerializer.legacySection().deserialize(s);
+                            loreJsonList.add(escapeForSNBT(GsonComponentSerializer.gson().serialize(c)));
+                        }
+                    }
+                }
+
+                List<String> displayParts = new ArrayList<>();
+                String nameJson = GsonComponentSerializer.gson().serialize(nameComponent);
+                displayParts.add("Name:'" + escapeForSNBT(nameJson) + "'");
+                if (!loreJsonList.isEmpty()) {
+                    displayParts.add("Lore:[" + String.join(",", wrapWithQuotes(loreJsonList)) + "]");
+                }
+                tagParts.add("display:{" + String.join(",", displayParts) + "}");
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+
+            // --- Enchantments ---
+            try {
+                if (meta.hasEnchants()) {
+                    List<String> enchParts = new ArrayList<>();
+                    for (Map.Entry<Enchantment, Integer> e : meta.getEnchants().entrySet()) {
+                        // Enchantment#getKey() requires Spigot 1.13+. Fallback to namespace if not available:
+                        String enchId;
+                        try {
+                            enchId = e.getKey().getKey().toString(); // NamespacedKey
+                        } catch (Throwable ex) {
+                            enchId = "minecraft:" + e.getKey().getName().toLowerCase();
+                        }
+                        enchParts.add("{id:\"" + enchId + "\",lvl:" + e.getValue() + "}");
+                    }
+                    tagParts.add("Enchantments:[" + String.join(",", enchParts) + "]");
+                }
+            } catch (Throwable ignored) {}
+
+            // --- Damage (if Damageable) ---
+            try {
+                if (meta instanceof Damageable) {
+                    int damage = ((Damageable) meta).getDamage();
+                    tagParts.add("Damage:" + damage);
+                }
+            } catch (Throwable ignored) {}
+
+            if (!tagParts.isEmpty()) {
+                sb.append(",tag:{").append(String.join(",", tagParts)).append("}");
             }
         }
 
-        loadedNMSClasses.put(nmsClassName, clazz);
-        return clazz;
+        sb.append("}");
+        return sb.toString();
     }
 
-    public static Class<?> getOBCClass(String obcClassName) {
-        if (loadedOBCClasses.containsKey(obcClassName)) {
-            return loadedOBCClasses.get(obcClassName);
-        }
+    public static int getBukkitVersion() {
+        String name = Bukkit.getServer().getClass().getPackage().getName();
+        String v = name.substring(name.lastIndexOf('.') + 1) + ".";
+        String[] version = v.replace('_', '.').split("\\.");
 
-        String clazzName = "org.bukkit.craftbukkit." + getVersion() + obcClassName;
-        Class<?> clazz;
+        if (Objects.equals(version[0], "craftbukkit")) return 0;
 
+        int lesserVersion = 0;
         try {
-            clazz = Class.forName(clazzName);
-        } catch (Throwable t) {
-            t.printStackTrace();
-            return null;
+            lesserVersion = Integer.parseInt(version[2]);
+        } catch (NumberFormatException ignored) {
         }
-
-        loadedOBCClasses.put(obcClassName, clazz);
-        return clazz;
+        return Integer.parseInt((version[0] + version[1]).substring(1) + lesserVersion);
     }
 
-    public static Method getMethod(Class<?> clazz, String methodName, Class<?>... params) throws Exception {
-        if (!loadedMethods.containsKey(clazz)) {
-            loadedMethods.put(clazz, new HashMap<>());
+    public static String capitalize(String text) {
+        StringBuilder cap = new StringBuilder();
+        text = text.replace("_", " ");
+        for (String t : text.split(" ")) {
+            if (t.length() > 2) {
+                cap.append(t.substring(0, 1).toUpperCase()).append(t.substring(1).toLowerCase()).append(" ");
+            } else {
+                cap.append(t).append(" ");
+            }
         }
+        return cap.substring(0, cap.length() - 1);
+    }
 
-        Map<String, Method> methods = loadedMethods.get(clazz);
+    private static String escapeForSNBT(String json) {
+        // Put JSON string into single quotes for SNBT; escape existing single quotes and backslashes
+        return json.replace("\\", "\\\\").replace("'", "\\'");
+    }
 
-        if (methods.containsKey(methodName)) {
-            return methods.get(methodName);
+    private static List<String> wrapWithQuotes(List<String> raw) {
+        List<String> out = new ArrayList<>();
+        for (String s : raw) {
+            out.add("'" + s + "'");
         }
-
-        Method method = clazz.getMethod(methodName, params);
-        methods.put(methodName, method);
-        loadedMethods.put(clazz, methods);
-        return method;
+        return out;
     }
 }

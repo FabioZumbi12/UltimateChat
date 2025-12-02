@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2025 - @FabioZumbi12
- * Last Modified: 16/07/2025 18:07
+ * Last Modified: 02/12/2025 15:59
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -43,6 +43,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 
 public class UCUtil {
@@ -51,6 +52,8 @@ public class UCUtil {
         String name = Bukkit.getServer().getClass().getPackage().getName();
         String v = name.substring(name.lastIndexOf('.') + 1) + ".";
         String[] version = v.replace('_', '.').split("\\.");
+
+        if (Objects.equals(version[0], "craftbukkit")) return 0;
 
         int lesserVersion = 0;
         try {

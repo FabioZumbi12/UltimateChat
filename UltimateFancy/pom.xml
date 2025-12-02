@@ -41,20 +41,40 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.20.2-R0.1-SNAPSHOT</version>
+            <version>1.21.5-R0.1-SNAPSHOT</version>
         </dependency>
-
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.20.2-R0.1-SNAPSHOT</version>
+            <version>1.21.5-R0.1-SNAPSHOT</version>
             <classifier>javadoc</classifier>
         </dependency>
 
         <dependency>
-            <groupId>com.googlecode.json-simple</groupId>
-            <artifactId>json-simple</artifactId>
-            <version>1.1.1</version>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-api</artifactId>
+            <version>4.25.0</version>
+        </dependency>
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-text-serializer-gson</artifactId>
+            <version>4.25.0</version>
+        </dependency>
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-text-serializer-legacy</artifactId>
+            <version>4.25.0</version>
+        </dependency>
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-text-minimessage</artifactId>
+            <version>4.25.0</version>
+        </dependency>
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-platform-bukkit</artifactId>
+            <version>4.4.1</version>
+            <scope>compile</scope>
         </dependency>
 
     </dependencies>
@@ -91,13 +111,23 @@
                         <configuration>
                             <artifactSet>
                                 <includes>
-                                    <include>com.googlecode.json-simple:json-simple</include>
+                                    <include>net.kyori:adventure-api</include>
+                                    <include>net.kyori:adventure-text-serializer-gson</include>
+                                    <include>net.kyori:adventure-text-serializer-legacy</include>
+                                    <include>net.kyori:adventure-platform-bukkit</include>
+                                    <include>net.kyori:examination-api</include>
+                                    <include>net.kyori:examination-string</include>
+                                    <include>net.kyori:adventure-key</include>
+                                    <include>net.kyori:adventure-platform-api</include>
+                                    <include>net.kyori:adventure-platform-facet</include>
+                                    <include>net.kyori:option</include>
+                                    <include>net.kyori:adventure-text-serializer-json</include>
                                 </includes>
                             </artifactSet>
                             <relocations>
                                 <relocation>
-                                    <pattern>org.json.simple</pattern>
-                                    <shadedPattern>br.net.fabiozumbi12.UltimateFancy.jsonsimple</shadedPattern>
+                                    <pattern>net.kyori</pattern>
+                                    <shadedPattern>br.net.fabiozumbi12.UltimateFancy.kyori</shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>

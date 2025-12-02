@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2025 - @FabioZumbi12
- * Last Modified: 16/07/2025 18:07
+ * Last Modified: 02/12/2025 15:58
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -564,7 +564,7 @@ public class UCMessages {
                 text = text.replace("{hand-durability}", String.valueOf(item.getDurability()));
                 if (item.hasItemMeta()) {
                     ItemMeta meta = item.getItemMeta();
-                    if (UCUtil.getBukkitVersion() >= 1112 && meta.hasLocalizedName()) {
+                    if ((UCUtil.getBukkitVersion() >= 1112 || UCUtil.getBukkitVersion() == 0) && meta.hasLocalizedName()) {
                         text = text.replace("{hand-name}", item.getItemMeta().getLocalizedName());
                     } else if (meta.hasDisplayName()) {
                         text = text.replace("{hand-name}", item.getItemMeta().getDisplayName());
