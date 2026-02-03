@@ -102,18 +102,18 @@ jobs:
           NOTES_FILE="release_notes.md"
           echo "UltimateChat-${TAG}-b${BUILD_NUMBER}" > release_name.txt
           if [ -n "$PREV_TAG" ]; then
-            echo "Alterações desde ${PREV_TAG}:" > "$NOTES_FILE"
+            echo "## Changes since ${PREV_TAG}:" > "$NOTES_FILE"
             if [[ "${{ steps.meta.outputs.is_tag }}" == "true" ]]; then
-              git log --pretty=format:"- %s (%h https://github.com/${GITHUB_REPOSITORY}/commit/%H)" "${PREV_TAG}..${GITHUB_REF_NAME}" >> "$NOTES_FILE"
+              git log --pretty=format:"- %s (%h)" "${PREV_TAG}..${GITHUB_REF_NAME}" >> "$NOTES_FILE"
             else
-              git log --pretty=format:"- %s (%h https://github.com/${GITHUB_REPOSITORY}/commit/%H)" "${PREV_TAG}..HEAD" >> "$NOTES_FILE"
+              git log --pretty=format:"- %s (%h)" "${PREV_TAG}..HEAD" >> "$NOTES_FILE"
             fi
           else
-            echo "Alterações:" > "$NOTES_FILE"
-            git log --pretty=format:"- %s (%h https://github.com/${GITHUB_REPOSITORY}/commit/%H)" "HEAD" >> "$NOTES_FILE"
+            echo "## Changes:" > "$NOTES_FILE"
+            git log --pretty=format:"- %s (%h)" "HEAD" >> "$NOTES_FILE"
           fi
           echo "" >> "$NOTES_FILE"
-          echo "Hashes:" >> "$NOTES_FILE"
+          echo "## Hashes:" >> "$NOTES_FILE"
           echo "\`\`\`" >> "$NOTES_FILE"
           (cd dist && sha256sum *) >> "$NOTES_FILE"
           echo "\`\`\`" >> "$NOTES_FILE"
@@ -123,7 +123,7 @@ jobs:
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ steps.meta.outputs.is_tag == 'true' && github.ref_name || format('main-b{0}', steps.meta.outputs.build_number) }}
+          tag_name: ${{ steps.meta.outputs.is_tag == 'true' && github.ref_name || format('SNAPSHOT-b{0}', steps.meta.outputs.build_number) }}
           name: ${{ steps.release.outputs.release_name }}
           body_path: ${{ steps.release.outputs.notes_file }}
           prerelease: ${{ steps.meta.outputs.is_tag != 'true' }}
