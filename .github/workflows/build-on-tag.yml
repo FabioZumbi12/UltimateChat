@@ -3,7 +3,7 @@ name: Build on tag
 on:
   push:
     branches:
-      - develop
+      - main
     tags:
       - "*"
 
@@ -36,10 +36,17 @@ jobs:
             TAG="${GITHUB_REF_NAME#v}"
             echo "is_tag=true" >> "$GITHUB_OUTPUT"
             echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+            echo "src_version=${TAG}" >> "$GITHUB_OUTPUT"
           else
+            LAST_TAG="$(git describe --tags --abbrev=0 2>/dev/null || true)"
             VERSION="$(mvn -B -DskipTests help:evaluate -Dexpression=project.version -q -DforceStdout)"
+            TAG="${LAST_TAG#v}"
+            if [[ -z "${TAG}" ]]; then
+              TAG="${VERSION#v}"
+            fi
             echo "is_tag=false" >> "$GITHUB_OUTPUT"
-            echo "tag=${VERSION}" >> "$GITHUB_OUTPUT"
+            echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+            echo "src_version=${VERSION}" >> "$GITHUB_OUTPUT"
           fi
           echo "build_number=${BUILD_NUMBER}" >> "$GITHUB_OUTPUT"
 
@@ -62,10 +69,15 @@ jobs:
         run: |
           set -euo pipefail
           VERSION="${{ steps.meta.outputs.tag }}"
+          SRC_VERSION="${{ steps.meta.outputs.src_version }}"
           BUILD_NUMBER="${{ steps.meta.outputs.build_number }}"
-          SRC="UltimateChat-Spigot/target/UltimateChat-${VERSION}.jar"
+          SRC="UltimateChat-Spigot/target/UltimateChat-${SRC_VERSION}.jar"
           DEST_DIR="dist"
-          DEST="${DEST_DIR}/UltimateChat-${VERSION}-b${BUILD_NUMBER}.jar"
+          if [[ "${{ steps.meta.outputs.is_tag }}" == "true" ]]; then
+            DEST="${DEST_DIR}/UltimateChat-${VERSION}-b${BUILD_NUMBER}-release.jar"
+          else
+            DEST="${DEST_DIR}/UltimateChat-${VERSION}-b${BUILD_NUMBER}.jar"
+          fi
           if [ ! -f "$SRC" ]; then
             echo "Expected jar not found: $SRC"
             ls -la UltimateChat-Spigot/target
@@ -111,9 +123,9 @@ jobs:
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ steps.meta.outputs.is_tag == 'true' && github.ref_name || format('develop-b{0}', steps.meta.outputs.build_number) }}
+          tag_name: ${{ steps.meta.outputs.is_tag == 'true' && github.ref_name || format('main-b{0}', steps.meta.outputs.build_number) }}
           name: ${{ steps.release.outputs.release_name }}
           body_path: ${{ steps.release.outputs.notes_file }}
           prerelease: ${{ steps.meta.outputs.is_tag != 'true' }}
           files: |
-            dist/UltimateChat-${{ steps.meta.outputs.tag }}-b${{ steps.meta.outputs.build_number }}.jar
+            dist/UltimateChat-${{ steps.meta.outputs.tag }}-b${{ steps.meta.outputs.build_number }}${{ steps.meta.outputs.is_tag == 'true' && '-release' || '' }}.jar
