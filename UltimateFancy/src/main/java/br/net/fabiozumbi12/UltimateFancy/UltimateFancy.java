@@ -574,9 +574,9 @@ public class UltimateFancy implements Listener {
             try {
                 Component nameComponent;
                 if ((getBukkitVersion() >= 1112 || getBukkitVersion() == 0) && meta.hasLocalizedName()) {
-                    nameComponent = LegacyComponentSerializer.legacySection().deserialize(item.getItemMeta().getLocalizedName());
+                    nameComponent = LegacyComponentSerializer.legacySection().deserialize(meta.getLocalizedName());
                 } else if (meta.hasDisplayName()) {
-                    nameComponent = LegacyComponentSerializer.legacySection().deserialize(item.getItemMeta().getDisplayName());
+                    nameComponent = LegacyComponentSerializer.legacySection().deserialize(meta.getDisplayName());
                 } else {
                     nameComponent = LegacyComponentSerializer.legacySection().deserialize(capitalize(item.getType().toString()));
                 }

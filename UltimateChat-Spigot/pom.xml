@@ -119,13 +119,13 @@
         <dependency>
             <groupId>at.pcgamingfreaks</groupId>
             <artifactId>MarriageMaster</artifactId>
-            <version>2.7.2-SNAPSHOT</version>
+            <version>2.7.13</version>
             <scope>provided</scope>
         </dependency>
 		<dependency>
 			<groupId>at.pcgamingfreaks</groupId>
 			<artifactId>MarriageMaster-API-Bukkit</artifactId>
-			<version>2.7.2-SNAPSHOT</version>
+			<version>2.7.13</version>
 			<scope>provided</scope>
 		</dependency>
         <dependency>
@@ -214,7 +214,7 @@
     </repositories>
 
     <build>
-        <finalName>DONT-DOWNLOAD-Spigot-Reference</finalName>
+        <finalName>UltimateChat-${project.version}</finalName>
         <plugins>
 
             <plugin>
@@ -235,7 +235,7 @@
                                     <include>io.github.fabiozumbi12.UltimateChat:UltimateChat-Velocity</include>
                                     <include>io.github.fabiozumbi12.UltimateChat:UltimateChat-Spigot</include>
                                     <include>redis.clients:jedis</include>
-                                    <include>org.apache.commons:commons-pool2</include>-->
+                                    <include>org.apache.commons:commons-pool2</include>
                                 </includes>
                             </artifactSet>
                             <relocations>
@@ -269,7 +269,7 @@
                                 </filter>-->
                             </filters>
                             <outputFile>
-                                ${project.basedir}/target/UltimateChat-${project.version}-b${BUILD_NUMBER}-Universal.jar
+                                ${project.basedir}/target/UltimateChat-${project.version}.jar
                             </outputFile>
                         </configuration>
                     </execution>
