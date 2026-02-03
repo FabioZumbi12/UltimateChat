@@ -76,7 +76,7 @@ jobs:
           if [[ "${{ steps.meta.outputs.is_tag }}" == "true" ]]; then
             DEST="${DEST_DIR}/UltimateChat-${VERSION}-b${BUILD_NUMBER}-release.jar"
           else
-            DEST="${DEST_DIR}/UltimateChat-${VERSION}-b${BUILD_NUMBER}.jar"
+            DEST="${DEST_DIR}/UltimateChat-${VERSION}-SNAPSHOT-b${BUILD_NUMBER}.jar"
           fi
           if [ ! -f "$SRC" ]; then
             echo "Expected jar not found: $SRC"
@@ -104,13 +104,13 @@ jobs:
           if [ -n "$PREV_TAG" ]; then
             echo "Alterações desde ${PREV_TAG}:" > "$NOTES_FILE"
             if [[ "${{ steps.meta.outputs.is_tag }}" == "true" ]]; then
-              git log --pretty=format:"- %s" "${PREV_TAG}..${GITHUB_REF_NAME}" >> "$NOTES_FILE"
+              git log --pretty=format:"- %s (%h https://github.com/${GITHUB_REPOSITORY}/commit/%H)" "${PREV_TAG}..${GITHUB_REF_NAME}" >> "$NOTES_FILE"
             else
-              git log --pretty=format:"- %s" "${PREV_TAG}..HEAD" >> "$NOTES_FILE"
+              git log --pretty=format:"- %s (%h https://github.com/${GITHUB_REPOSITORY}/commit/%H)" "${PREV_TAG}..HEAD" >> "$NOTES_FILE"
             fi
           else
             echo "Alterações:" > "$NOTES_FILE"
-            git log --pretty=format:"- %s" "HEAD" >> "$NOTES_FILE"
+            git log --pretty=format:"- %s (%h https://github.com/${GITHUB_REPOSITORY}/commit/%H)" "HEAD" >> "$NOTES_FILE"
           fi
           echo "" >> "$NOTES_FILE"
           echo "Hashes:" >> "$NOTES_FILE"
@@ -128,4 +128,4 @@ jobs:
           body_path: ${{ steps.release.outputs.notes_file }}
           prerelease: ${{ steps.meta.outputs.is_tag != 'true' }}
           files: |
-            dist/UltimateChat-${{ steps.meta.outputs.tag }}-b${{ steps.meta.outputs.build_number }}${{ steps.meta.outputs.is_tag == 'true' && '-release' || '' }}.jar
+            dist/UltimateChat-${{ steps.meta.outputs.tag }}${{ steps.meta.outputs.is_tag == 'true' && '' || '-SNAPSHOT' }}-b${{ steps.meta.outputs.build_number }}${{ steps.meta.outputs.is_tag == 'true' && '-release' || '' }}.jar
