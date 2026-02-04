@@ -1,18 +1,21 @@
 ![logo](https://media.forgecdn.net/attachments/123/595/uchat.png)  
-Ultimate and advanced Chat for Spigot, Sponge and BungeeCoord
+Ultimate and advanced chat plugin for Spigot, BungeeCord, and Sponge with rich formatting, channels, hooks, and cross‑server support.
 
-## Available versions:
-Spigot: [https://www.spigotmc.org/resources/uchat.23767/](https://www.spigotmc.org/resources/uchat.23767/)  
-Bukkit: [https://dev.bukkit.org/projects/uchat](https://dev.bukkit.org/projects/uchat)  
-Sponge: [https://ore.spongepowered.org/FabioZumbi12/UltimateChat](https://ore.spongepowered.org/FabioZumbi12/UltimateChat)  
+[![Latest Release](https://img.shields.io/github/v/release/FabioZumbi12/UltimateChat?label=release)](https://github.com/FabioZumbi12/UltimateChat/releases/latest)
 
-## Source:
-The source is available on GitHub: [https://github.com/FabioZumbi12/UltimateChat](https://github.com/FabioZumbi12/UltimateChat)  
+## Downloads
+- GitHub Releases (latest stable and pre‑releases): https://github.com/FabioZumbi12/UltimateChat/releases  
+- Spigot: https://www.spigotmc.org/resources/uchat.23767/  
+- Bukkit: https://dev.bukkit.org/projects/uchat  
+- Sponge: https://ore.spongepowered.org/FabioZumbi12/UltimateChat  
 
-## Dev Builds:
-Dev builds on Jenkins: [![Build Status](http://host.areaz12server.net.br:8081/buildStatus/icon?job=UltimateChat)](http://host.areaz12server.net.br:8081/job/UltimateChat/)
+## Source
+https://github.com/FabioZumbi12/UltimateChat  
 
-## UltimateChat WIKI:
+## CI Builds
+Builds are published to GitHub Releases (pre‑releases for main branch commits).
+
+## UltimateChat WIKI
 Check WIKI for:  
 * Commands
 * Permissions
@@ -23,10 +26,8 @@ Check WIKI for:
 * API Usage
 * ...and more
 
-## API repository:
-
-**Repository:**  
-UltimateChat is hosted on Maven Central
+## API repository
+UltimateChat is hosted on Maven Central.
 ### Maven
 ```xml
 <dependencies>
@@ -53,7 +54,7 @@ UltimateChat is hosted on Maven Central
 </dependencies>  
 ```
 
-### Gradle:
+### Gradle
 ```
 repositories {
     mavenCentral()
@@ -65,5 +66,5 @@ dependencies {
 }
 ```
 
-## Wiki:
-UltimateChat WIKI: [Click Here!](https://github.com/FabioZumbi12/UltimateChat/wiki)
+## Wiki
+UltimateChat WIKI: https://github.com/FabioZumbi12/UltimateChat/wiki
