@@ -1,3 +1,8 @@
+# This workflow runs when a new tag starting with 'v' is pushed.
+# It builds the plugin with the tag version, creates a GitHub Release, and uploads the final JAR.
+#  For buils on github, push tags:
+#  - git tag v1.0.0
+#  - git push origin --tags
 name: Build on tag
 
 on:
@@ -86,6 +91,31 @@ jobs:
           mkdir -p "$DEST_DIR"
           cp "$SRC" "$DEST"
 
+      - name: Prepare artifact links
+        id: artifact_links
+        shell: bash
+        run: |
+          set -euo pipefail
+          BUILD_NUMBER="${{ steps.meta.outputs.build_number }}"
+          if [[ "${{ steps.meta.outputs.is_tag }}" == "true" ]]; then
+            TAG_NAME="${GITHUB_REF_NAME}"
+          else
+            TAG_NAME="SNAPSHOT-b${BUILD_NUMBER}"
+          fi
+          BASE_URL="https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG_NAME}"
+          PLUGIN_LINKS=""
+          for FILE in dist/*.jar; do
+            NAME="$(basename "$FILE")"
+            URL="${BASE_URL}/${NAME}"
+            PLUGIN_LINKS="${PLUGIN_LINKS}- [${NAME}](${URL})\n"
+          done
+          if [[ -z "${PLUGIN_LINKS}" ]]; then
+            PLUGIN_LINKS="- (no plugin artifact found)\n"
+          fi
+          echo "plugin_links<<EOF" >> "$GITHUB_OUTPUT"
+          printf "%b" "${PLUGIN_LINKS}" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
       - name: Generate release notes
         id: release
         shell: bash
@@ -108,15 +138,16 @@ jobs:
           if [ -n "$PREV_TAG" ]; then
             echo "## Changes since ${PREV_TAG}:" > "$NOTES_FILE"
             if [[ "${{ steps.meta.outputs.is_tag }}" == "true" ]]; then
-              git log --pretty=format:"- %s (%h)" "${PREV_TAG}..${GITHUB_REF_NAME}" >> "$NOTES_FILE"
+              CHANGELOG="$(git log --pretty=format:"- %s (%h)" "${PREV_TAG}..${GITHUB_REF_NAME}")"
             else
-              git log --pretty=format:"- %s (%h)" "${PREV_TAG}..HEAD" >> "$NOTES_FILE"
+              CHANGELOG="$(git log --pretty=format:"- %s (%h)" "${PREV_TAG}..HEAD")"
             fi
           else
             YEAR="$(date +%Y)"
             echo "## Changes:" > "$NOTES_FILE"
-            git log --pretty=format:"- %s (%h)" --since="${YEAR}-01-01" "HEAD" >> "$NOTES_FILE"
+            CHANGELOG="$(git log --pretty=format:"- %s (%h)" --since="${YEAR}-01-01" "HEAD")"
           fi
+          echo "${CHANGELOG}" >> "$NOTES_FILE"
           echo "" >> "$NOTES_FILE"
           echo "## Hashes:" >> "$NOTES_FILE"
           echo "\`\`\`" >> "$NOTES_FILE"
@@ -124,6 +155,9 @@ jobs:
           echo "\`\`\`" >> "$NOTES_FILE"
           echo "notes_file=${NOTES_FILE}" >> "$GITHUB_OUTPUT"
           echo "release_name=$(cat release_name.txt)" >> "$GITHUB_OUTPUT"
+          echo "raw_changelog<<EOF" >> "$GITHUB_OUTPUT"
+          echo "${CHANGELOG}" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
 
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2
@@ -134,3 +168,20 @@ jobs:
           prerelease: ${{ steps.meta.outputs.is_tag != 'true' }}
           files: |
             dist/UltimateChat-${{ steps.meta.outputs.is_tag == 'true' && steps.meta.outputs.tag || 'SNAPSHOT' }}-b${{ steps.meta.outputs.build_number }}${{ steps.meta.outputs.is_tag == 'true' && '-release' || '' }}.jar
+
+      - name: Send Discord Embed
+        shell: bash
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          WEBHOOK_USERNAME: GitHub Actions
+          WEBHOOK_AVATAR_URL: https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png
+          RELEASE_NAME: ${{ steps.release.outputs.release_name }}
+          BUILD_NUMBER: ${{ steps.meta.outputs.build_number }}
+          BUILD_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          PLUGIN_LINKS: ${{ steps.artifact_links.outputs.plugin_links }}
+          RAW_CHANGELOG: ${{ steps.release.outputs.raw_changelog }}
+        run: |
+          set -euo pipefail
+          python -c $'import json,os\ntext=os.environ.get(\"RAW_CHANGELOG\",\"\").strip()\nlimit=900\nif len(text)>limit:\n  text=text[:limit].rsplit(\"\\n\",1)[0]+\"\\n- ... (truncated)\"\nrelease_name=os.environ.get(\"RELEASE_NAME\",\"UltimateChat Build\")\nbuild_number=os.environ.get(\"BUILD_NUMBER\",\"\")\nbuild_url=os.environ.get(\"BUILD_URL\",\"\")\nplugin_links=os.environ.get(\"PLUGIN_LINKS\",\"\").strip() or \"-\"\nusername=os.environ.get(\"WEBHOOK_USERNAME\",\"GitHub Actions\")\navatar_url=os.environ.get(\"WEBHOOK_AVATAR_URL\",\"\")\ntitle=f\"UltimateChat #{build_number}\" if build_number else release_name\nembed={\"title\":title,\"url\":build_url,\"color\":0x2ecc71,\"fields\":[{\"name\":\"Build\",\"value\":build_number or \"-\",\"inline\":True},{\"name\":\"Status\",\"value\":\"success\",\"inline\":True},{\"name\":\"Changes\",\"value\":text or \"-\"},{\"name\":\"Plugin\",\"value\":plugin_links,\"inline\":False}]}\npayload={\"username\":username,\"avatar_url\":avatar_url,\"embeds\":[embed]}\nprint(json.dumps(payload))' > payload.json
+
+          curl -sS -H "Content-Type: application/json" -d @payload.json "${DISCORD_WEBHOOK_URL}"
