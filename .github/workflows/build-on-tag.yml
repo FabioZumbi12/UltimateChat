@@ -76,7 +76,7 @@ jobs:
           if [[ "${{ steps.meta.outputs.is_tag }}" == "true" ]]; then
             DEST="${DEST_DIR}/UltimateChat-${VERSION}-b${BUILD_NUMBER}-release.jar"
           else
-            DEST="${DEST_DIR}/UltimateChat-${VERSION}-SNAPSHOT-b${BUILD_NUMBER}.jar"
+            DEST="${DEST_DIR}/UltimateChat-SNAPSHOT-b${BUILD_NUMBER}.jar"
           fi
           if [ ! -f "$SRC" ]; then
             echo "Expected jar not found: $SRC"
@@ -100,7 +100,11 @@ jobs:
             PREV_TAG="$(git describe --tags --abbrev=0 2>/dev/null || true)"
           fi
           NOTES_FILE="release_notes.md"
-          echo "UltimateChat-${TAG}-b${BUILD_NUMBER}" > release_name.txt
+          if [[ "${{ steps.meta.outputs.is_tag }}" == "true" ]]; then
+            echo "UltimateChat-${TAG}-b${BUILD_NUMBER}" > release_name.txt
+          else
+            echo "UltimateChat-SNAPSHOT-b${BUILD_NUMBER}" > release_name.txt
+          fi
           if [ -n "$PREV_TAG" ]; then
             echo "## Changes since ${PREV_TAG}:" > "$NOTES_FILE"
             if [[ "${{ steps.meta.outputs.is_tag }}" == "true" ]]; then
@@ -129,4 +133,4 @@ jobs:
           body_path: ${{ steps.release.outputs.notes_file }}
           prerelease: ${{ steps.meta.outputs.is_tag != 'true' }}
           files: |
-            dist/UltimateChat-${{ steps.meta.outputs.tag }}${{ steps.meta.outputs.is_tag == 'true' && '' || '-SNAPSHOT' }}-b${{ steps.meta.outputs.build_number }}${{ steps.meta.outputs.is_tag == 'true' && '-release' || '' }}.jar
+            dist/UltimateChat-${{ steps.meta.outputs.is_tag == 'true' && steps.meta.outputs.tag || 'SNAPSHOT' }}-b${{ steps.meta.outputs.build_number }}${{ steps.meta.outputs.is_tag == 'true' && '-release' || '' }}.jar
